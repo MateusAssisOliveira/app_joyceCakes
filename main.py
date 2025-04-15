@@ -1,11 +1,12 @@
 import flet as ft
-from views.listagem_produtos import ListagemProdutos
+from views.estoque import Estoque
 
 def main(page: ft.Page):
-    page.title = "Controle de Estoque - Produtos"
-    
-    lista_produtos = ListagemProdutos()
-    
-    page.add(lista_produtos.build())
-    
+    page.title = "Controle de Estoque - Joyce Cakes"
+    page.padding = 20
+    page.scroll = True
+
+    estoque_view = Estoque(page)
+    page.add(estoque_view)
+
 ft.app(target=main)
