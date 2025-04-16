@@ -32,7 +32,10 @@ class CadastroProduto(ft.AlertDialog):
             label="Tipo",
             options=[
                 ft.dropdown.Option("unidade"),
-                ft.dropdown.Option("peso")
+                ft.dropdown.Option("kg"),
+                ft.dropdown.Option("litro"),
+                ft.dropdown.Option("pacote"),
+                ft.dropdown.Option("caixa")
             ],
             value="unidade"
         )
@@ -97,11 +100,12 @@ class CadastroProduto(ft.AlertDialog):
                 return
 
             novo_produto = Produto(
-                _nome=nome,
-                _descricao=descricao,
-                _preco=preco,
-                _quantidade=quantidade,
-                _tipo=tipo
+                id = None,
+                nome=nome,
+                descricao=descricao,
+                preco=preco,
+                quantidade=quantidade,
+                tipo=tipo
             )
             logging.info(f"Cadastrando produto: {novo_produto}")  # Log do produto sendo cadastrado
 
