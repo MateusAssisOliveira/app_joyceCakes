@@ -7,18 +7,23 @@ class CadastroProduto(ft.AlertDialog):
         super().__init__()
         self.on_save = on_save
         self.title = ft.Text("Cadastro de Produto")
-        self.nome = ft.TextField(label="Nome")
+
+        self.mensagem_erro = ft.Text("", color="red")
+
+        self.nome = ft.TextField(label="Nome", autofocus=True)
         self.descricao = ft.TextField(label="Descrição")
-        self.preco = ft.TextField(label="Preço")
-        self.quantidade = ft.TextField(label="Quantidade")
-        
-        self.quantidade.keyboard_type = ft.KeyboardType.NUMBER
-        self.preco.keyboard_type = ft.KeyboardType.NUMBER
-        self.nome.autofocus = True
-        self.descricao.autofocus = False
-        self.preco.autofocus = False
-        self.quantidade.autofocus = False
-        
+
+        self.preco = ft.TextField(
+            label="Preço",
+            keyboard_type=ft.KeyboardType.NUMBER,
+            input_filter=ft.InputFilter.allow_digits(True, decimal=True)
+        )
+        self.quantidade = ft.TextField(
+            label="Quantidade",
+            keyboard_type=ft.KeyboardType.NUMBER,
+            input_filter=ft.InputFilter.allow_digits(True)
+        )
+
         self.tipo = ft.Dropdown(
             label="Tipo",
             options=[
@@ -29,6 +34,7 @@ class CadastroProduto(ft.AlertDialog):
         )
 
         self.content = ft.Column([
+            self.mensagem_erro,
             self.nome,
             self.descricao,
             self.preco,
@@ -46,23 +52,54 @@ class CadastroProduto(ft.AlertDialog):
         self.update()
 
     def salvar(self, e):
+        # Limpa mensagem anterior
+        self.mensagem_erro.value = ""
+        self.update()
+
         try:
-            
+            nome = self.nome.value.strip()
+            descricao = self.descricao.value.strip()
+            tipo = self.tipo.value
+
+            # Valida nome
+            if not nome:
+                self.mostrar_erro("Nome do produto não pode ser vazio.")
+                return
+
+            # Valida preço
+            try:
+                preco = float(self.preco.value)
+                if preco < 0:
+                    raise ValueError
+            except ValueError:
+                self.mostrar_erro("Preço inválido. Use um número positivo.")
+                return
+
+            # Valida quantidade
+            try:
+                quantidade = int(self.quantidade.value)
+                if quantidade < 0:
+                    raise ValueError
+            except ValueError:
+                self.mostrar_erro("Quantidade inválida. Use um número inteiro positivo.")
+                return
+
             novo_produto = Produto(
-                nome=self.nome.value,
-                descricao=self.descricao.value,
-                preco=float(self.preco.value),
-                quantidade=int(self.quantidade.value),
-                tipo=self.tipo.value
+                nome=nome,
+                descricao=descricao,
+                preco=preco,
+                quantidade=quantidade,
+                tipo=tipo
             )
-                       
-            print(f"Produto a ser cadastrado: {novo_produto}")
-            # Chama o método de cadastro do controller
-            # e passa o novo produto como argumento
-            
+
             ProdutoController.cadastrar_produto(novo_produto)
             self.open = False
-            self.on_save()  # Atualiza a lista após salvar
+            self.on_save()
+
         except Exception as err:
-            print(f"Erro ao salvar produto: {err}")
+            self.mostrar_erro(f"Erro inesperado: {err}")
+        self.update()
+
+    def mostrar_erro(self, mensagem):
+        self.mensagem_erro.value = mensagem
         self.update()
