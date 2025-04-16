@@ -10,7 +10,7 @@ class ProdutoController:
     logging.info("Iniciando o ProdutoController")
 
     @staticmethod
-    def cadastrar_produto(produto_data):
+    def cadastrar_produto(produto_data : Produto):
         logging.info(f"Dados recebidos para cadastro: {produto_data}")
 
         # Validações
@@ -64,7 +64,7 @@ class ProdutoController:
         query = "SELECT id, nome, descricao, preco, quantidade, tipo FROM produtos"
         resultados = db.buscar_dados(query)
         
-        logging.info(f"Resultados da consulta: {resultados}")
+        logging.info(f"Resultados da consulta em listar_produtos: {resultados}")
         if not resultados:
             return []
         

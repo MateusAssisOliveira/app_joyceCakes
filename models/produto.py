@@ -1,3 +1,4 @@
+from decimal import Decimal
 import logging
 from dataclasses import dataclass, field
 
@@ -5,40 +6,65 @@ from dataclasses import dataclass, field
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
+from decimal import Decimal
+import logging
+from dataclasses import dataclass, field
+from typing import Optional
+
+# Configuração básica do logging
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
 @dataclass
 class Produto:
-    _id: int = field(default=None, repr=False)
-    _nome: str = field(default='', repr=False)
-    _descricao: str = field(default='', repr=False)
-    _preco: float = field(default=0.0, repr=False)
-    _quantidade: int = field(default=0, repr=False)
-    _tipo: str = field(default='unidade', repr=False)
+    """Classe que representa um produto com validações robustas.
+    
+    Atributos:
+        id: Identificador único (opcional)
+        nome: Nome do produto (não pode ser vazio)
+        descricao: Descrição detalhada
+        preco: Preço unitário (não negativo)
+        quantidade: Quantidade em estoque (inteiro não negativo)
+        tipo: Tipo de unidade (deve estar em TIPOS_VALIDOS)
+    """
+    
+    id: Optional[int] = field(default=None)
+    nome: str = field(default='', repr=False)
+    descricao: str = field(default='', repr=False)
+    preco: float = field(default=0.0, repr=False)
+    quantidade: int = field(default=0, repr=False)
+    tipo: str = field(default='unidade', repr=False)
 
     TIPOS_VALIDOS = {'unidade', 'kg', 'litro', 'pacote', 'caixa'}
 
     def __post_init__(self):
-        # Chamamos os setters para forçar validação ao criar
-        logger.debug(f"Inicializando Produto com: id={self._id}, nome={self._nome}, descricao={self._descricao}, "
-                     f"preco={self._preco}, quantidade={self._quantidade}, tipo={self._tipo}")
-        if self._id is not None:
-            self.id = self._id  # Usando o setter id
-        self.nome = self._nome  # Usando o setter nome
-        self.descricao = self._descricao  # Usando o setter descricao
-        self.preco = self._preco  # Usando o setter preco
-        self.quantidade = self._quantidade  # Usando o setter quantidade
-        self.tipo = self._tipo  # Usando o setter tipo
+        """Dispara validações apenas para atributos fornecidos"""
+        logger.debug("Validando atributos via __post_init__")
+        
+        # Valida apenas os atributos que foram fornecidos
+        for attr in ['nome', 'descricao', 'preco', 'quantidade', 'tipo']:
+            if hasattr(self, attr):  # Verifica se o atributo foi inicializado
+                setattr(self, attr, getattr(self, attr))
+        
+        # Validação especial para id (só valida se foi fornecido)
+        if hasattr(self, 'id'):
+            self.id = self.id
 
-    # ID
     @property
-    def id(self):
+    def id(self) -> Optional[int]:
+        """Retorna o ID do produto."""
         return self._id
 
     @id.setter
-    def id(self, valor):
+    def id(self, valor: Optional[int]):
+        """Define o ID com validação."""
         logger.debug(f"Setando ID com valor: {valor}")
-        if valor is not None and not isinstance(valor, int):
-            logger.error("ID deve ser um inteiro ou None.")
-            raise TypeError("ID deve ser um inteiro ou None.")
+        if valor is not None:
+            if isinstance(valor, str) and valor.isdigit():
+                valor = int(valor)
+            elif not isinstance(valor, int):
+                logger.error("ID deve ser um inteiro ou None.")
+                raise TypeError("ID deve ser um inteiro ou None.")
         self._id = valor
         logger.info(f"ID setado com sucesso: {self._id}")
 
@@ -81,6 +107,8 @@ class Produto:
     @preco.setter
     def preco(self, valor):
         logger.debug(f"Setando preço com valor: {valor}")
+        if isinstance(valor, Decimal):
+            valor = float(valor)
         if not isinstance(valor, (int, float)):
             logger.error("Preço deve ser um número.")
             raise TypeError("Preço deve ser um número.")
@@ -119,7 +147,24 @@ class Produto:
             logger.error("Tipo deve ser uma string.")
             raise TypeError("Tipo deve ser uma string.")
         if valor.lower() not in self.TIPOS_VALIDOS:
-            logger.error(f"Tipo inválido. Tipos válidos: {', '.join(self.TIPOS_VALIDOS)}.")
-            raise ValueError(f"Tipo inválido. Tipos válidos: {', '.join(self.TIPOS_VALIDOS)}.")
+            tipos_validos = ', '.join(sorted(self.TIPOS_VALIDOS))
+            logger.error(f"Tipo inválido. Tipos válidos: {tipos_validos}.")
+            raise ValueError(f"Tipo inválido. Tipos válidos: {tipos_validos}.")
         self._tipo = valor.lower()
         logger.info(f"Tipo setado com sucesso: {self._tipo}")
+    
+    def to_dict(self):
+        """Retorna os dados do produto como dicionário."""
+        return {
+            'id': self.id,
+            'nome': self.nome,
+            'descricao': self.descricao,
+            'preco': self.preco,
+            'quantidade': self.quantidade,
+            'tipo': self.tipo
+        }
+
+    def __str__(self):
+        """Retorna uma representação em string amigável do produto."""
+        return (f"Produto(id={self.id}, nome='{self.nome}', descricao='{self.descricao}', "
+                f"preco={self.preco:.2f}, quantidade={self.quantidade}, tipo='{self.tipo}')")
