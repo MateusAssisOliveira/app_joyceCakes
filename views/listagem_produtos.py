@@ -9,6 +9,9 @@ logger = logging.getLogger(__name__)
 
 class ListagemProdutos(ft.Column):
     def __init__(self):
+
+        self._produto_activo = None
+
         super().__init__()
         self.tabela = ft.DataTable(
             columns=[
@@ -17,9 +20,8 @@ class ListagemProdutos(ft.Column):
                 ft.DataColumn(ft.Text("Descrição")),
                 ft.DataColumn(ft.Text("Preço")),
                 ft.DataColumn(ft.Text("Quantidade")),
-                ft.DataColumn(ft.Text("Tipo")),
-                ft.DataColumn(ft.Text("Ações")),
-            ],
+                ft.DataColumn(ft.Text("Tipo"))
+                ],
             rows=[]
         )
 
@@ -49,23 +51,23 @@ class ListagemProdutos(ft.Column):
                 return
             
             for produto in produtos:
+                selecionado = self._produto_activo == produto.id
                 logger.debug(f"Adicionando produto {produto.id}: {produto.nome}")  # Log de cada produto adicionado
                 self.tabela.rows.append(
                     ft.DataRow(
+                        
                         cells=[
                             ft.DataCell(ft.Text(str(produto.id))),
                             ft.DataCell(ft.Text(produto.nome)),
                             ft.DataCell(ft.Text(produto.descricao)),
                             ft.DataCell(ft.Text(f"R$ {produto.preco:.2f}")),
                             ft.DataCell(ft.Text(str(produto.quantidade))),
-                            ft.DataCell(ft.Text(produto.tipo)),
-                            ft.DataCell(
-                                ft.Row([
-                                    ft.IconButton(ft.icons.EDIT, on_click=partial(self.editar_produto, produto.id)),
-                                    ft.IconButton(ft.icons.DELETE, on_click=partial(self.excluir_produto, produto.id)),
-                                ])
-                            ),
-                        ]
+                            ft.DataCell(ft.Text(produto.tipo))
+                            ],
+                        on_select_changed=partial(self.selecionar_produto, produto),
+                        selected=selecionado,
+                        bgcolor=ft.colors.BLUE_100 if selecionado else None,
+
                     )
                 )
         except Exception as e:
@@ -84,3 +86,6 @@ class ListagemProdutos(ft.Column):
         self.carregar_produtos()
         self.update()
 
+    def selecionar_produto(self, produto, is_selected=None, event=None):
+        logger.info(f"Produto Selecionado{produto}")
+        self._produto_activo = produto
