@@ -82,7 +82,31 @@ class ProdutoController:
         else:
             logging.warning(f"Produto com ID {produto_id} não encontrado.")
             return None
-
+    @staticmethod
+    def buscar_produto_por_nome(nome):
+        db = Database()
+        query = "SELECT * FROM produtos WHERE nome=%s"
+        resultado = db.buscar_dados(query, (nome,))
+        
+        if resultado:
+            logging.info(f"Produto encontrado com nome '{nome}': {resultado[0]}")
+            return Produto(**resultado[0])
+        else:
+            logging.warning(f"Produto com nome '{nome}' não encontrado.")
+            return None
+    @staticmethod    
+    def buscar_produto(termo):
+        if termo is None or termo.strip() == "":
+            logging.warning("Termo de busca vazio ou nulo.")
+            return []
+        elif termo.isdigit():
+            logging.info(f"Buscando produto por ID: {termo}")
+            return ProdutoController.buscar_por_id(termo)
+        else:
+            logging.info(f"Buscando produto por nome: {termo}")
+            return ProdutoController.buscar_produto_por_nome(termo)
+    
+    
     @staticmethod
     def deletar(produto_id):
         db = Database()
