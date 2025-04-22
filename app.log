@@ -1,0 +1,150 @@
+2025-04-20 18:54:03,929 - INFO - [listar_produtos] - Resultados da consulta: [{'id': 4, 'nome': 'Teste', 'descricao': '...', 'preco': Decimal('99.00'), 'quantidade': 1, 'tipo': 'kg'}, {'id': 5, 'nome': 'Teste2', 'descricao': '...', 'preco': Decimal('88.00'), 'quantidade': 2, 'tipo': 'unidade'}, {'id': 6, 'nome': 'Teste_3', 'descricao': '...', 'preco': Decimal('88.00'), 'quantidade': 7, 'tipo': 'litro'}]
+2025-04-20 18:54:09,051 - INFO - [listar_produtos] - Resultados da consulta: [{'id': 4, 'nome': 'Teste', 'descricao': '...', 'preco': Decimal('99.00'), 'quantidade': 1, 'tipo': 'kg'}, {'id': 5, 'nome': 'Teste2', 'descricao': '...', 'preco': Decimal('88.00'), 'quantidade': 2, 'tipo': 'unidade'}, {'id': 6, 'nome': 'Teste_3', 'descricao': '...', 'preco': Decimal('88.00'), 'quantidade': 7, 'tipo': 'litro'}]
+2025-04-20 18:54:09,148 - INFO - [listar_produtos] - Resultados da consulta: [{'id': 4, 'nome': 'Teste', 'descricao': '...', 'preco': Decimal('99.00'), 'quantidade': 1, 'tipo': 'kg'}, {'id': 5, 'nome': 'Teste2', 'descricao': '...', 'preco': Decimal('88.00'), 'quantidade': 2, 'tipo': 'unidade'}, {'id': 6, 'nome': 'Teste_3', 'descricao': '...', 'preco': Decimal('88.00'), 'quantidade': 7, 'tipo': 'litro'}]
+2025-04-20 18:54:13,438 - INFO - [listar_produtos] - Resultados da consulta: [{'id': 4, 'nome': 'Teste', 'descricao': '...', 'preco': Decimal('99.00'), 'quantidade': 1, 'tipo': 'kg'}, {'id': 5, 'nome': 'Teste2', 'descricao': '...', 'preco': Decimal('88.00'), 'quantidade': 2, 'tipo': 'unidade'}, {'id': 6, 'nome': 'Teste_3', 'descricao': '...', 'preco': Decimal('88.00'), 'quantidade': 7, 'tipo': 'litro'}]
+2025-04-20 18:54:13,477 - INFO - [listar_produtos] - Resultados da consulta: [{'id': 4, 'nome': 'Teste', 'descricao': '...', 'preco': Decimal('99.00'), 'quantidade': 1, 'tipo': 'kg'}, {'id': 5, 'nome': 'Teste2', 'descricao': '...', 'preco': Decimal('88.00'), 'quantidade': 2, 'tipo': 'unidade'}, {'id': 6, 'nome': 'Teste_3', 'descricao': '...', 'preco': Decimal('88.00'), 'quantidade': 7, 'tipo': 'litro'}]
+2025-04-20 18:54:14,510 - INFO - [listar_produtos] - Resultados da consulta: [{'id': 4, 'nome': 'Teste', 'descricao': '...', 'preco': Decimal('99.00'), 'quantidade': 1, 'tipo': 'kg'}, {'id': 5, 'nome': 'Teste2', 'descricao': '...', 'preco': Decimal('88.00'), 'quantidade': 2, 'tipo': 'unidade'}, {'id': 6, 'nome': 'Teste_3', 'descricao': '...', 'preco': Decimal('88.00'), 'quantidade': 7, 'tipo': 'litro'}]
+2025-04-20 18:54:14,543 - INFO - [listar_produtos] - Resultados da consulta: [{'id': 4, 'nome': 'Teste', 'descricao': '...', 'preco': Decimal('99.00'), 'quantidade': 1, 'tipo': 'kg'}, {'id': 5, 'nome': 'Teste2', 'descricao': '...', 'preco': Decimal('88.00'), 'quantidade': 2, 'tipo': 'unidade'}, {'id': 6, 'nome': 'Teste_3', 'descricao': '...', 'preco': Decimal('88.00'), 'quantidade': 7, 'tipo': 'litro'}]
+2025-04-20 18:54:22,560 - INFO - [buscar_produto] - Buscando produto por nome: test
+2025-04-20 18:54:22,578 - INFO - [buscar_produto_por_nome] - 3 produto(s) encontrados com nome parecido com 'test'.
+2025-04-20 18:58:13,454 - INFO - [listar_produtos] - Resultados da consulta: [{'id': 4, 'nome': 'Teste', 'descricao': '...', 'preco': Decimal('99.00'), 'quantidade': 1, 'tipo': 'kg'}, {'id': 5, 'nome': 'Teste2', 'descricao': '...', 'preco': Decimal('88.00'), 'quantidade': 2, 'tipo': 'unidade'}, {'id': 6, 'nome': 'Teste_3', 'descricao': '...', 'preco': Decimal('88.00'), 'quantidade': 7, 'tipo': 'litro'}]
+2025-04-20 18:58:34,934 - INFO - [buscar_produto] - Buscando produto por nome: test
+2025-04-20 18:58:34,949 - INFO - [buscar_produto_por_nome] - 3 produto(s) encontrados com nome parecido com 'test'.
+2025-04-20 19:02:07,182 - INFO - [listar_produtos] - Resultados da consulta: [{'id': 4, 'nome': 'Teste', 'descricao': '...', 'preco': Decimal('99.00'), 'quantidade': 1, 'tipo': 'kg'}, {'id': 5, 'nome': 'Teste2', 'descricao': '...', 'preco': Decimal('88.00'), 'quantidade': 2, 'tipo': 'unidade'}, {'id': 6, 'nome': 'Teste_3', 'descricao': '...', 'preco': Decimal('88.00'), 'quantidade': 7, 'tipo': 'litro'}]
+2025-04-20 19:02:11,035 - INFO - [buscar_produto] - Buscando produto por nome: test
+2025-04-20 19:02:11,051 - INFO - [buscar_produto_por_nome] - 3 produto(s) encontrados com nome parecido com 'test'.
+2025-04-20 19:06:26,950 - INFO - [listar_produtos] - Resultados da consulta: [{'id': 4, 'nome': 'Teste', 'descricao': '...', 'preco': Decimal('99.00'), 'quantidade': 1, 'tipo': 'kg'}, {'id': 5, 'nome': 'Teste2', 'descricao': '...', 'preco': Decimal('88.00'), 'quantidade': 2, 'tipo': 'unidade'}, {'id': 6, 'nome': 'Teste_3', 'descricao': '...', 'preco': Decimal('88.00'), 'quantidade': 7, 'tipo': 'litro'}]
+2025-04-20 19:06:38,928 - INFO - [buscar_produto] - Buscando produto por nome: teste
+2025-04-20 19:06:38,944 - INFO - [buscar_produto_por_nome] - 3 produto(s) encontrados com nome parecido com 'teste'.
+2025-04-20 19:06:46,023 - INFO - [buscar_produto] - Buscando produto por nome: teste_
+2025-04-20 19:06:46,038 - INFO - [buscar_produto_por_nome] - 2 produto(s) encontrados com nome parecido com 'teste_'.
+2025-04-20 19:09:31,972 - INFO - [listar_produtos] - Resultados da consulta: [{'id': 4, 'nome': 'Teste', 'descricao': '...', 'preco': Decimal('99.00'), 'quantidade': 1, 'tipo': 'kg'}, {'id': 5, 'nome': 'Teste2', 'descricao': '...', 'preco': Decimal('88.00'), 'quantidade': 2, 'tipo': 'unidade'}, {'id': 6, 'nome': 'Teste_3', 'descricao': '...', 'preco': Decimal('88.00'), 'quantidade': 7, 'tipo': 'litro'}]
+2025-04-20 19:09:44,566 - INFO - [buscar_produto] - Buscando produto por nome: test
+2025-04-20 19:09:44,579 - INFO - [buscar_produto_por_nome] - 3 produto(s) encontrados com nome parecido com 'test'.
+2025-04-20 19:09:51,813 - INFO - [buscar_produto] - Buscando produto por nome: teste_
+2025-04-20 19:09:51,826 - INFO - [buscar_produto_por_nome] - 2 produto(s) encontrados com nome parecido com 'teste_'.
+2025-04-20 19:10:00,045 - INFO - [buscar_produto] - Buscando produto por nome: teste_3
+2025-04-20 19:10:00,059 - INFO - [buscar_produto_por_nome] - 1 produto(s) encontrados com nome parecido com 'teste_3'.
+2025-04-20 19:10:04,606 - INFO - [buscar_produto] - Buscando produto por nome: teste
+2025-04-20 19:10:04,619 - INFO - [buscar_produto_por_nome] - 3 produto(s) encontrados com nome parecido com 'teste'.
+2025-04-20 19:10:17,046 - INFO - [buscar_produto] - Buscando produto por nome: te
+2025-04-20 19:10:17,059 - INFO - [buscar_produto_por_nome] - 3 produto(s) encontrados com nome parecido com 'te'.
+2025-04-20 19:10:23,469 - INFO - [buscar_produto] - Buscando produto por ID: 2
+2025-04-20 19:10:23,482 - WARNING - [buscar_por_id] - Produto com ID 2 não encontrado.
+2025-04-20 19:10:23,500 - INFO - [listar_produtos] - Resultados da consulta: [{'id': 4, 'nome': 'Teste', 'descricao': '...', 'preco': Decimal('99.00'), 'quantidade': 1, 'tipo': 'kg'}, {'id': 5, 'nome': 'Teste2', 'descricao': '...', 'preco': Decimal('88.00'), 'quantidade': 2, 'tipo': 'unidade'}, {'id': 6, 'nome': 'Teste_3', 'descricao': '...', 'preco': Decimal('88.00'), 'quantidade': 7, 'tipo': 'litro'}]
+2025-04-20 19:10:32,997 - INFO - [buscar_produto] - Buscando produto por nome: _3
+2025-04-20 19:10:33,012 - INFO - [buscar_produto_por_nome] - 1 produto(s) encontrados com nome parecido com '_3'.
+2025-04-20 19:10:37,318 - INFO - [buscar_produto] - Buscando produto por nome: _
+2025-04-20 19:10:37,331 - INFO - [buscar_produto_por_nome] - 3 produto(s) encontrados com nome parecido com '_'.
+2025-04-20 19:10:48,709 - INFO - [buscar_produto] - Buscando produto por ID: 4
+2025-04-20 19:10:48,723 - INFO - [buscar_por_id] - Produto encontrado com ID 4: {'id': 4, 'nome': 'Teste', 'descricao': '...', 'preco': Decimal('99.00'), 'quantidade': 1, 'tipo': 'kg'}
+2025-04-20 19:11:04,172 - INFO - [buscar_produto] - Buscando produto por ID: 5
+2025-04-20 19:11:04,186 - INFO - [buscar_por_id] - Produto encontrado com ID 5: {'id': 5, 'nome': 'Teste2', 'descricao': '...', 'preco': Decimal('88.00'), 'quantidade': 2, 'tipo': 'unidade'}
+2025-04-20 19:25:39,451 - INFO - [log_info] - 🔄 Carregando produtos...
+2025-04-20 19:25:39,493 - INFO - [listar_produtos] - Resultados da consulta: [{'id': 4, 'nome': 'Teste', 'descricao': '...', 'preco': Decimal('99.00'), 'quantidade': 1, 'tipo': 'kg'}, {'id': 5, 'nome': 'Teste2', 'descricao': '...', 'preco': Decimal('88.00'), 'quantidade': 2, 'tipo': 'unidade'}, {'id': 6, 'nome': 'Teste_3', 'descricao': '...', 'preco': Decimal('88.00'), 'quantidade': 7, 'tipo': 'litro'}]
+2025-04-20 19:25:39,512 - INFO - [log_info] - Adicionando produto: ID=4, Nome=Teste, Preço=99.0, Quantidade=1, Tipo=kg
+2025-04-20 19:25:39,512 - INFO - [log_info] - Montando linha para produto: Teste (Selecionado: False)
+2025-04-20 19:25:39,514 - INFO - [log_info] - Adicionando produto: ID=5, Nome=Teste2, Preço=88.0, Quantidade=2, Tipo=unidade
+2025-04-20 19:25:39,514 - INFO - [log_info] - Montando linha para produto: Teste2 (Selecionado: False)
+2025-04-20 19:25:39,516 - INFO - [log_info] - Adicionando produto: ID=6, Nome=Teste_3, Preço=88.0, Quantidade=7, Tipo=litro
+2025-04-20 19:25:39,517 - INFO - [log_info] - Montando linha para produto: Teste_3 (Selecionado: False)
+2025-04-20 19:25:39,523 - INFO - [log_info] - ✅ Produtos carregados com sucesso.
+2025-04-20 19:25:39,524 - ERROR - [log_error] - Erro ao carregar produtos - Erro: DataTable Control must be added to the page first
+Traceback (most recent call last):
+  File "c:\Users\Usuario\Desktop\app_joyceCakes\views\listagem_produtos.py", line 98, in carregar_produtos
+    self.tabela.update()
+  File "C:\Users\Mateus\AppData\Local\Programs\Python\Python312\Lib\site-packages\flet\core\control.py", line 326, in update
+    self.__page
+AssertionError: DataTable Control must be added to the page first
+2025-04-20 19:30:28,934 - INFO - [log_info] - 🔄 Carregando produtos...
+2025-04-20 19:30:28,966 - INFO - [listar_produtos] - Resultados da consulta: [{'id': 4, 'nome': 'Teste', 'descricao': '...', 'preco': Decimal('99.00'), 'quantidade': 1, 'tipo': 'kg'}, {'id': 5, 'nome': 'Teste2', 'descricao': '...', 'preco': Decimal('88.00'), 'quantidade': 2, 'tipo': 'unidade'}, {'id': 6, 'nome': 'Teste_3', 'descricao': '...', 'preco': Decimal('88.00'), 'quantidade': 7, 'tipo': 'litro'}]
+2025-04-20 19:30:28,984 - INFO - [log_info] - Adicionando produto: ID=4, Nome=Teste, Preço=99.0, Quantidade=1, Tipo=kg
+2025-04-20 19:30:28,984 - INFO - [log_info] - Montando linha para produto: Teste (Selecionado: False)
+2025-04-20 19:30:28,986 - INFO - [log_info] - Adicionando produto: ID=5, Nome=Teste2, Preço=88.0, Quantidade=2, Tipo=unidade
+2025-04-20 19:30:28,989 - INFO - [log_info] - Montando linha para produto: Teste2 (Selecionado: False)
+2025-04-20 19:30:28,991 - INFO - [log_info] - Adicionando produto: ID=6, Nome=Teste_3, Preço=88.0, Quantidade=7, Tipo=litro
+2025-04-20 19:30:28,993 - INFO - [log_info] - Montando linha para produto: Teste_3 (Selecionado: False)
+2025-04-20 19:30:28,997 - INFO - [log_info] - ✅ Produtos carregados com sucesso.
+2025-04-20 19:30:37,520 - INFO - [buscar_produto] - Buscando produto por nome: test
+2025-04-20 19:30:37,538 - INFO - [buscar_produto_por_nome] - 3 produto(s) encontrados com nome parecido com 'test'.
+2025-04-20 19:30:37,563 - INFO - [log_info] - 🔄 Carregando produtos...
+2025-04-20 19:30:37,564 - INFO - [log_info] - Adicionando produto: ID=4, Nome=Teste, Preço=99.0, Quantidade=1, Tipo=kg
+2025-04-20 19:30:37,564 - INFO - [log_info] - Montando linha para produto: Teste (Selecionado: False)
+2025-04-20 19:30:37,566 - INFO - [log_info] - Adicionando produto: ID=5, Nome=Teste2, Preço=88.0, Quantidade=2, Tipo=unidade
+2025-04-20 19:30:37,567 - INFO - [log_info] - Montando linha para produto: Teste2 (Selecionado: False)
+2025-04-20 19:30:37,569 - INFO - [log_info] - Adicionando produto: ID=6, Nome=Teste_3, Preço=88.0, Quantidade=7, Tipo=litro
+2025-04-20 19:30:37,572 - INFO - [log_info] - Montando linha para produto: Teste_3 (Selecionado: False)
+2025-04-20 19:30:37,575 - INFO - [log_info] - ✅ Produtos carregados com sucesso.
+2025-04-20 19:30:52,799 - INFO - [buscar_produto] - Buscando produto por nome: teste_3
+2025-04-20 19:30:52,812 - INFO - [buscar_produto_por_nome] - 1 produto(s) encontrados com nome parecido com 'teste_3'.
+2025-04-20 19:30:52,815 - INFO - [log_info] - 🔄 Carregando produtos...
+2025-04-20 19:30:52,815 - INFO - [log_info] - Adicionando produto: ID=6, Nome=Teste_3, Preço=88.0, Quantidade=7, Tipo=litro
+2025-04-20 19:30:52,816 - INFO - [log_info] - Montando linha para produto: Teste_3 (Selecionado: False)
+2025-04-20 19:30:52,817 - INFO - [log_info] - ✅ Produtos carregados com sucesso.
+2025-04-20 19:31:11,501 - INFO - [log_info] - 🔄 Carregando produtos...
+2025-04-20 19:31:11,556 - INFO - [listar_produtos] - Resultados da consulta: [{'id': 4, 'nome': 'Teste', 'descricao': '...', 'preco': Decimal('99.00'), 'quantidade': 1, 'tipo': 'kg'}, {'id': 5, 'nome': 'Teste2', 'descricao': '...', 'preco': Decimal('88.00'), 'quantidade': 2, 'tipo': 'unidade'}, {'id': 6, 'nome': 'Teste_3', 'descricao': '...', 'preco': Decimal('88.00'), 'quantidade': 7, 'tipo': 'litro'}]
+2025-04-20 19:31:11,565 - INFO - [log_info] - Adicionando produto: ID=4, Nome=Teste, Preço=99.0, Quantidade=1, Tipo=kg
+2025-04-20 19:31:11,565 - INFO - [log_info] - Montando linha para produto: Teste (Selecionado: False)
+2025-04-20 19:31:11,567 - INFO - [log_info] - Adicionando produto: ID=5, Nome=Teste2, Preço=88.0, Quantidade=2, Tipo=unidade
+2025-04-20 19:31:11,568 - INFO - [log_info] - Montando linha para produto: Teste2 (Selecionado: False)
+2025-04-20 19:31:11,569 - INFO - [log_info] - Adicionando produto: ID=6, Nome=Teste_3, Preço=88.0, Quantidade=7, Tipo=litro
+2025-04-20 19:31:11,569 - INFO - [log_info] - Montando linha para produto: Teste_3 (Selecionado: False)
+2025-04-20 19:31:11,572 - INFO - [log_info] - ✅ Produtos carregados com sucesso.
+2025-04-20 19:31:11,576 - ERROR - [log_error] - Erro ao carregar produtos - Erro: DataTable Control must be added to the page first
+Traceback (most recent call last):
+  File "c:\Users\Usuario\Desktop\app_joyceCakes\views\listagem_produtos.py", line 98, in carregar_produtos
+    self.tabela.update()
+  File "C:\Users\Mateus\AppData\Local\Programs\Python\Python312\Lib\site-packages\flet\core\control.py", line 326, in update
+    self.__page
+AssertionError: DataTable Control must be added to the page first
+2025-04-20 19:31:13,494 - INFO - [log_info] - 🔄 Carregando produtos...
+2025-04-20 19:31:13,509 - INFO - [listar_produtos] - Resultados da consulta: [{'id': 4, 'nome': 'Teste', 'descricao': '...', 'preco': Decimal('99.00'), 'quantidade': 1, 'tipo': 'kg'}, {'id': 5, 'nome': 'Teste2', 'descricao': '...', 'preco': Decimal('88.00'), 'quantidade': 2, 'tipo': 'unidade'}, {'id': 6, 'nome': 'Teste_3', 'descricao': '...', 'preco': Decimal('88.00'), 'quantidade': 7, 'tipo': 'litro'}]
+2025-04-20 19:31:13,524 - INFO - [log_info] - Adicionando produto: ID=4, Nome=Teste, Preço=99.0, Quantidade=1, Tipo=kg
+2025-04-20 19:31:13,524 - INFO - [log_info] - Montando linha para produto: Teste (Selecionado: False)
+2025-04-20 19:31:13,526 - INFO - [log_info] - Adicionando produto: ID=5, Nome=Teste2, Preço=88.0, Quantidade=2, Tipo=unidade
+2025-04-20 19:31:13,527 - INFO - [log_info] - Montando linha para produto: Teste2 (Selecionado: False)
+2025-04-20 19:31:13,528 - INFO - [log_info] - Adicionando produto: ID=6, Nome=Teste_3, Preço=88.0, Quantidade=7, Tipo=litro
+2025-04-20 19:31:13,528 - INFO - [log_info] - Montando linha para produto: Teste_3 (Selecionado: False)
+2025-04-20 19:31:13,529 - INFO - [log_info] - ✅ Produtos carregados com sucesso.
+2025-04-20 19:31:15,111 - INFO - [log_info] - 🔄 Carregando produtos...
+2025-04-20 19:31:15,123 - INFO - [listar_produtos] - Resultados da consulta: [{'id': 4, 'nome': 'Teste', 'descricao': '...', 'preco': Decimal('99.00'), 'quantidade': 1, 'tipo': 'kg'}, {'id': 5, 'nome': 'Teste2', 'descricao': '...', 'preco': Decimal('88.00'), 'quantidade': 2, 'tipo': 'unidade'}, {'id': 6, 'nome': 'Teste_3', 'descricao': '...', 'preco': Decimal('88.00'), 'quantidade': 7, 'tipo': 'litro'}]
+2025-04-20 19:31:15,135 - INFO - [log_info] - Adicionando produto: ID=4, Nome=Teste, Preço=99.0, Quantidade=1, Tipo=kg
+2025-04-20 19:31:15,136 - INFO - [log_info] - Montando linha para produto: Teste (Selecionado: False)
+2025-04-20 19:31:15,137 - INFO - [log_info] - Adicionando produto: ID=5, Nome=Teste2, Preço=88.0, Quantidade=2, Tipo=unidade
+2025-04-20 19:31:15,138 - INFO - [log_info] - Montando linha para produto: Teste2 (Selecionado: False)
+2025-04-20 19:31:15,140 - INFO - [log_info] - Adicionando produto: ID=6, Nome=Teste_3, Preço=88.0, Quantidade=7, Tipo=litro
+2025-04-20 19:31:15,142 - INFO - [log_info] - Montando linha para produto: Teste_3 (Selecionado: False)
+2025-04-20 19:31:15,144 - INFO - [log_info] - ✅ Produtos carregados com sucesso.
+2025-04-20 19:31:19,854 - INFO - [buscar_produto] - Buscando produto por nome: teste
+2025-04-20 19:31:19,867 - INFO - [buscar_produto_por_nome] - 3 produto(s) encontrados com nome parecido com 'teste'.
+2025-04-20 19:31:19,883 - INFO - [log_info] - 🔄 Carregando produtos...
+2025-04-20 19:31:19,883 - INFO - [log_info] - Adicionando produto: ID=4, Nome=Teste, Preço=99.0, Quantidade=1, Tipo=kg
+2025-04-20 19:31:19,884 - INFO - [log_info] - Montando linha para produto: Teste (Selecionado: False)
+2025-04-20 19:31:19,885 - INFO - [log_info] - Adicionando produto: ID=5, Nome=Teste2, Preço=88.0, Quantidade=2, Tipo=unidade
+2025-04-20 19:31:19,886 - INFO - [log_info] - Montando linha para produto: Teste2 (Selecionado: False)
+2025-04-20 19:31:19,887 - INFO - [log_info] - Adicionando produto: ID=6, Nome=Teste_3, Preço=88.0, Quantidade=7, Tipo=litro
+2025-04-20 19:31:19,889 - INFO - [log_info] - Montando linha para produto: Teste_3 (Selecionado: False)
+2025-04-20 19:31:19,890 - INFO - [log_info] - ✅ Produtos carregados com sucesso.
+2025-04-20 19:31:28,646 - INFO - [buscar_produto] - Buscando produto por ID: 3
+2025-04-20 19:31:28,661 - WARNING - [buscar_por_id] - Produto com ID 3 não encontrado.
+2025-04-20 19:31:28,662 - INFO - [log_info] - 🔄 Carregando produtos...
+2025-04-20 19:31:28,682 - INFO - [listar_produtos] - Resultados da consulta: [{'id': 4, 'nome': 'Teste', 'descricao': '...', 'preco': Decimal('99.00'), 'quantidade': 1, 'tipo': 'kg'}, {'id': 5, 'nome': 'Teste2', 'descricao': '...', 'preco': Decimal('88.00'), 'quantidade': 2, 'tipo': 'unidade'}, {'id': 6, 'nome': 'Teste_3', 'descricao': '...', 'preco': Decimal('88.00'), 'quantidade': 7, 'tipo': 'litro'}]
+2025-04-20 19:31:28,702 - INFO - [log_info] - Adicionando produto: ID=4, Nome=Teste, Preço=99.0, Quantidade=1, Tipo=kg
+2025-04-20 19:31:28,702 - INFO - [log_info] - Montando linha para produto: Teste (Selecionado: False)
+2025-04-20 19:31:28,703 - INFO - [log_info] - Adicionando produto: ID=5, Nome=Teste2, Preço=88.0, Quantidade=2, Tipo=unidade
+2025-04-20 19:31:28,708 - INFO - [log_info] - Montando linha para produto: Teste2 (Selecionado: False)
+2025-04-20 19:31:28,710 - INFO - [log_info] - Adicionando produto: ID=6, Nome=Teste_3, Preço=88.0, Quantidade=7, Tipo=litro
+2025-04-20 19:31:28,711 - INFO - [log_info] - Montando linha para produto: Teste_3 (Selecionado: False)
+2025-04-20 19:31:28,713 - INFO - [log_info] - ✅ Produtos carregados com sucesso.
+2025-04-20 19:31:36,805 - INFO - [buscar_produto] - Buscando produto por nome: teste_3
+2025-04-20 19:31:36,818 - INFO - [buscar_produto_por_nome] - 1 produto(s) encontrados com nome parecido com 'teste_3'.
+2025-04-20 19:31:36,821 - INFO - [log_info] - 🔄 Carregando produtos...
+2025-04-20 19:31:36,822 - INFO - [log_info] - Adicionando produto: ID=6, Nome=Teste_3, Preço=88.0, Quantidade=7, Tipo=litro
+2025-04-20 19:31:36,822 - INFO - [log_info] - Montando linha para produto: Teste_3 (Selecionado: False)
+2025-04-20 19:31:36,823 - INFO - [log_info] - ✅ Produtos carregados com sucesso.
+2025-04-20 19:31:41,615 - INFO - [buscar_produto] - Buscando produto por nome: teste_3
+2025-04-20 19:31:41,627 - INFO - [buscar_produto_por_nome] - 1 produto(s) encontrados com nome parecido com 'teste_3'.
+2025-04-20 19:31:41,631 - INFO - [log_info] - 🔄 Carregando produtos...
+2025-04-20 19:31:41,632 - INFO - [log_info] - Adicionando produto: ID=6, Nome=Teste_3, Preço=88.0, Quantidade=7, Tipo=litro
+2025-04-20 19:31:41,632 - INFO - [log_info] - Montando linha para produto: Teste_3 (Selecionado: False)
+2025-04-20 19:31:41,633 - INFO - [log_info] - ✅ Produtos carregados com sucesso.

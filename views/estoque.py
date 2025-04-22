@@ -52,7 +52,6 @@ class Estoque(ft.Column):
                 logger.warning("Nenhum produto encontrado com o termo fornecido.")
                 self.tabela.carregar_produtos([])
                 
-        self.tabela.carregar_produtos(termo)
     def editar_produto(self, e):
         logger.info("🔧 Abrindo tela de edição de produto")
         if self.tabela._produto_activo:

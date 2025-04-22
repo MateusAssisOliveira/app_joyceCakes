@@ -1,3 +1,4 @@
+from venv import logger
 import flet as ft
 from views.listagem_produtos import ListagemProdutos
 
@@ -26,6 +27,7 @@ class NavebarSuperiorEstoque(ft.Column):
         termo = self.campo_busca.value.strip().lower()
         if termo == "":
             self.acoes.buscar(e)
+            logger.info(e)
         else:
             self.acoes.buscar(termo)
         self.campo_busca.value = termo
