@@ -72,7 +72,7 @@ class ProdutoController:
 
         if resultado:
             logger.info(f"Produto encontrado com ID {produto_id}: {resultado[0]}")
-            return [Produto(**row) for row in resultado]
+            return Produto(**resultado[0])  # Retorna o primeiro (e único) produto encontrado
         else:
             logger.warning(f"Produto com ID {produto_id} não encontrado.")
             return None

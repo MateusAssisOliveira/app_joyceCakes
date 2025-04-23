@@ -7,7 +7,7 @@ from models.produto import Produto
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class CadastroProduto(ft.AlertDialog):
-    def __init__(self, on_save, produto=None):
+    def __init__(self, on_save, produto = None):
         super().__init__()
         self.on_save = on_save
         self.produto = produto  # Armazena o produto para edição
