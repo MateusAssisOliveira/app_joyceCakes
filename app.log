@@ -198,3 +198,109 @@ TypeError: CadastroProduto.__init__() missing 1 required positional argument: 'p
 2025-04-23 15:04:54,957 - INFO - [buscar_produto] - Buscando produto por nome: p
 2025-04-23 15:04:54,972 - INFO - [buscar_produto_por_nome] - 5 produto(s) encontrados com nome parecido com 'p'.
 2025-04-23 15:04:56,907 - INFO - [listar_produtos] - Resultados da consulta: [{'id': 2, 'nome': 'Prod_002', 'descricao': '...00', 'preco': Decimal('55.00'), 'quantidade': 18, 'tipo': 'unidade'}, {'id': 3, 'nome': 'Prod_55', 'descricao': '...', 'preco': Decimal('99.00'), 'quantidade': 55, 'tipo': 'kg'}, {'id': 4, 'nome': 'Pod 77', 'descricao': 'texto', 'preco': Decimal('778.00'), 'quantidade': 4, 'tipo': 'unidade'}, {'id': 5, 'nome': 'Prod_88', 'descricao': 'Descrição Nova', 'preco': Decimal('77.00'), 'quantidade': 44, 'tipo': 'kg'}, {'id': 6, 'nome': 'Prod_77', 'descricao': '11k11k1k', 'preco': Decimal('85.00'), 'quantidade': 88, 'tipo': 'litro'}, {'id': 8, 'nome': 'kkk', 'descricao': 'kkkk', 'preco': Decimal('99.00'), 'quantidade': 555, 'tipo': 'caixa'}, {'id': 9, 'nome': 'A', 'descricao': 'A', 'preco': Decimal('1.00'), 'quantidade': 14, 'tipo': 'unidade'}]
+2025-04-23 15:16:16,288 - INFO - [listar_produtos] - Resultados da consulta: [{'id': 2, 'nome': 'Prod_002', 'descricao': '...00', 'preco': Decimal('55.00'), 'quantidade': 18, 'tipo': 'unidade'}, {'id': 3, 'nome': 'Prod_55', 'descricao': '...', 'preco': Decimal('99.00'), 'quantidade': 55, 'tipo': 'kg'}, {'id': 4, 'nome': 'Pod 77', 'descricao': 'texto', 'preco': Decimal('778.00'), 'quantidade': 4, 'tipo': 'unidade'}, {'id': 5, 'nome': 'Prod_88', 'descricao': 'Descrição Nova', 'preco': Decimal('77.00'), 'quantidade': 44, 'tipo': 'kg'}, {'id': 6, 'nome': 'Prod_77', 'descricao': '11k11k1k', 'preco': Decimal('85.00'), 'quantidade': 88, 'tipo': 'litro'}, {'id': 8, 'nome': 'kkk', 'descricao': 'kkkk', 'preco': Decimal('99.00'), 'quantidade': 555, 'tipo': 'caixa'}, {'id': 9, 'nome': 'A', 'descricao': 'A', 'preco': Decimal('1.00'), 'quantidade': 14, 'tipo': 'unidade'}]
+2025-04-23 15:16:16,386 - INFO - [__init__] - Componente Estoque inicializado com sucesso
+2025-04-23 15:16:17,869 - INFO - [listar_produtos] - Resultados da consulta: [{'id': 2, 'nome': 'Prod_002', 'descricao': '...00', 'preco': Decimal('55.00'), 'quantidade': 18, 'tipo': 'unidade'}, {'id': 3, 'nome': 'Prod_55', 'descricao': '...', 'preco': Decimal('99.00'), 'quantidade': 55, 'tipo': 'kg'}, {'id': 4, 'nome': 'Pod 77', 'descricao': 'texto', 'preco': Decimal('778.00'), 'quantidade': 4, 'tipo': 'unidade'}, {'id': 5, 'nome': 'Prod_88', 'descricao': 'Descrição Nova', 'preco': Decimal('77.00'), 'quantidade': 44, 'tipo': 'kg'}, {'id': 6, 'nome': 'Prod_77', 'descricao': '11k11k1k', 'preco': Decimal('85.00'), 'quantidade': 88, 'tipo': 'litro'}, {'id': 8, 'nome': 'kkk', 'descricao': 'kkkk', 'preco': Decimal('99.00'), 'quantidade': 555, 'tipo': 'caixa'}, {'id': 9, 'nome': 'A', 'descricao': 'A', 'preco': Decimal('1.00'), 'quantidade': 14, 'tipo': 'unidade'}]
+2025-04-23 15:16:20,964 - INFO - [buscar_produto] - Iniciando busca por produtos com termo: 'a'
+2025-04-23 15:16:20,964 - INFO - [buscar_produto] - Buscando produto por nome: a
+2025-04-23 15:16:20,992 - INFO - [buscar_produto_por_nome] - 1 produto(s) encontrados com nome parecido com 'a'.
+2025-04-23 15:16:23,683 - INFO - [buscar_produto] - Iniciando busca por produtos com termo: ''
+2025-04-23 15:16:23,684 - DEBUG - [buscar_produto] - Termo de busca vazio - carregando todos os produtos
+2025-04-23 15:16:23,711 - INFO - [listar_produtos] - Resultados da consulta: [{'id': 2, 'nome': 'Prod_002', 'descricao': '...00', 'preco': Decimal('55.00'), 'quantidade': 18, 'tipo': 'unidade'}, {'id': 3, 'nome': 'Prod_55', 'descricao': '...', 'preco': Decimal('99.00'), 'quantidade': 55, 'tipo': 'kg'}, {'id': 4, 'nome': 'Pod 77', 'descricao': 'texto', 'preco': Decimal('778.00'), 'quantidade': 4, 'tipo': 'unidade'}, {'id': 5, 'nome': 'Prod_88', 'descricao': 'Descrição Nova', 'preco': Decimal('77.00'), 'quantidade': 44, 'tipo': 'kg'}, {'id': 6, 'nome': 'Prod_77', 'descricao': '11k11k1k', 'preco': Decimal('85.00'), 'quantidade': 88, 'tipo': 'litro'}, {'id': 8, 'nome': 'kkk', 'descricao': 'kkkk', 'preco': Decimal('99.00'), 'quantidade': 555, 'tipo': 'caixa'}, {'id': 9, 'nome': 'A', 'descricao': 'A', 'preco': Decimal('1.00'), 'quantidade': 14, 'tipo': 'unidade'}]
+2025-04-23 15:16:27,035 - INFO - [buscar_produto] - Iniciando busca por produtos com termo: 'k'
+2025-04-23 15:16:27,036 - INFO - [buscar_produto] - Buscando produto por nome: k
+2025-04-23 15:16:27,061 - INFO - [buscar_produto_por_nome] - 1 produto(s) encontrados com nome parecido com 'k'.
+2025-04-23 15:16:29,572 - INFO - [adicionar_produto] - Iniciando processo de adição de novo produto
+2025-04-23 15:16:29,574 - DEBUG - [_abrir_dialogo] - Abrindo diálogo: CadastroProduto
+2025-04-23 15:16:29,577 - DEBUG - [_abrir_dialogo] - Diálogo aberto com sucesso
+2025-04-23 15:16:29,578 - INFO - [adicionar_produto] - Diálogo de cadastro de produto aberto com sucesso
+2025-04-23 15:16:31,483 - INFO - [editar_produto] - Iniciando processo de edição de produto
+2025-04-23 15:16:31,484 - DEBUG - [editar_produto] - Produto selecionado para edição - ID: 8
+2025-04-23 15:16:31,512 - INFO - [obter_produto_por_id] - Produto encontrado com ID 8: {'id': 8, 'nome': 'kkk', 'descricao': 'kkkk', 'preco': Decimal('99.00'), 'quantidade': 555, 'tipo': 'caixa'}
+2025-04-23 15:16:31,518 - DEBUG - [_abrir_dialogo] - Abrindo diálogo: CadastroProduto
+2025-04-23 15:16:31,523 - DEBUG - [_abrir_dialogo] - Diálogo aberto com sucesso
+2025-04-23 15:16:31,524 - INFO - [editar_produto] - Diálogo de edição aberto para produto ID: 8
+2025-04-23 15:16:33,740 - INFO - [adicionar_produto] - Iniciando processo de adição de novo produto
+2025-04-23 15:16:33,742 - DEBUG - [_abrir_dialogo] - Abrindo diálogo: CadastroProduto
+2025-04-23 15:16:33,747 - DEBUG - [_abrir_dialogo] - Diálogo aberto com sucesso
+2025-04-23 15:16:33,747 - INFO - [adicionar_produto] - Diálogo de cadastro de produto aberto com sucesso
+2025-04-23 15:40:37,508 - ERROR - [listar_produtos_paginados] - Erro ao listar produtos paginados: cannot access local variable 'cursor' where it is not associated with a value
+Traceback (most recent call last):
+  File "c:\PYTHON\app_joyceCakes\controllers\produto_controller.py", line 85, in listar_produtos_paginados
+    total_result = db.buscar_dados(count_query)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\PYTHON\app_joyceCakes\config\db.py", line 97, in buscar_dados
+    cursor.close()
+    ^^^^^^
+UnboundLocalError: cannot access local variable 'cursor' where it is not associated with a value
+2025-04-23 15:43:41,041 - ERROR - [listar_produtos_paginados] - Erro ao listar produtos paginados: 'Database' object has no attribute 'buscar_dados'
+Traceback (most recent call last):
+  File "c:\PYTHON\app_joyceCakes\controllers\produto_controller.py", line 71, in listar_produtos_paginados
+    resultados = db.buscar_dados(query, (por_pagina, offset))
+                 ^^^^^^^^^^^^^^^
+AttributeError: 'Database' object has no attribute 'buscar_dados'
+2025-04-23 15:50:38,422 - INFO - [__init__] - Componente Estoque inicializado com sucesso
+2025-04-23 15:52:01,483 - INFO - [__init__] - Componente Estoque inicializado com sucesso
+2025-04-23 15:53:46,060 - INFO - [__init__] - Componente Estoque inicializado com sucesso
+2025-04-23 15:54:00,150 - INFO - [adicionar_produto] - Iniciando processo de adição de novo produto
+2025-04-23 15:54:00,154 - DEBUG - [_abrir_dialogo] - Abrindo diálogo: CadastroProduto
+2025-04-23 15:54:00,160 - DEBUG - [_abrir_dialogo] - Diálogo aberto com sucesso
+2025-04-23 15:54:00,160 - INFO - [adicionar_produto] - Diálogo de cadastro de produto aberto com sucesso
+2025-04-23 15:54:10,041 - INFO - [cadastrar_produto] - Dados recebidos para cadastro: Produto(id=None, nome='p1', descricao='p1', preco=0.00, quantidade=1, tipo='unidade')
+2025-04-23 15:54:10,041 - INFO - [cadastrar_produto] - Valores a serem inseridos no banco: ('p1', 'p1', 0.0, 1, 'unidade')
+2025-04-23 15:54:10,132 - INFO - [cadastrar_produto] - ✅ Produto cadastrado com sucesso!
+2025-04-23 15:54:10,134 - DEBUG - [atualizar_tabela] - Atualizando tabela de produtos
+2025-04-23 15:54:10,180 - DEBUG - [atualizar_tabela] - Tabela de produtos atualizada com sucesso
+2025-04-23 15:54:18,727 - INFO - [adicionar_produto] - Iniciando processo de adição de novo produto
+2025-04-23 15:54:18,730 - DEBUG - [_abrir_dialogo] - Abrindo diálogo: CadastroProduto
+2025-04-23 15:54:18,737 - DEBUG - [_abrir_dialogo] - Diálogo aberto com sucesso
+2025-04-23 15:54:18,737 - INFO - [adicionar_produto] - Diálogo de cadastro de produto aberto com sucesso
+2025-04-23 15:54:28,274 - INFO - [cadastrar_produto] - Dados recebidos para cadastro: Produto(id=None, nome='phujkfv', descricao='uku', preco=33.00, quantidade=33, tipo='kg')
+2025-04-23 15:54:28,274 - INFO - [cadastrar_produto] - Valores a serem inseridos no banco: ('phujkfv', 'uku', 33.0, 33, 'kg')
+2025-04-23 15:54:28,318 - INFO - [cadastrar_produto] - ✅ Produto cadastrado com sucesso!
+2025-04-23 15:54:28,320 - DEBUG - [atualizar_tabela] - Atualizando tabela de produtos
+2025-04-23 15:54:28,385 - DEBUG - [atualizar_tabela] - Tabela de produtos atualizada com sucesso
+2025-04-23 15:54:29,734 - INFO - [adicionar_produto] - Iniciando processo de adição de novo produto
+2025-04-23 15:54:29,738 - DEBUG - [_abrir_dialogo] - Abrindo diálogo: CadastroProduto
+2025-04-23 15:54:29,746 - DEBUG - [_abrir_dialogo] - Diálogo aberto com sucesso
+2025-04-23 15:54:29,747 - INFO - [adicionar_produto] - Diálogo de cadastro de produto aberto com sucesso
+2025-04-23 15:54:37,600 - INFO - [cadastrar_produto] - Dados recebidos para cadastro: Produto(id=None, nome='fdfdf', descricao='dfsfs', preco=5215.00, quantidade=515, tipo='unidade')
+2025-04-23 15:54:37,600 - INFO - [cadastrar_produto] - Valores a serem inseridos no banco: ('fdfdf', 'dfsfs', 5215.0, 515, 'unidade')
+2025-04-23 15:54:37,643 - INFO - [cadastrar_produto] - ✅ Produto cadastrado com sucesso!
+2025-04-23 15:54:37,644 - DEBUG - [atualizar_tabela] - Atualizando tabela de produtos
+2025-04-23 15:54:37,703 - DEBUG - [atualizar_tabela] - Tabela de produtos atualizada com sucesso
+2025-04-23 15:54:52,662 - INFO - [adicionar_produto] - Iniciando processo de adição de novo produto
+2025-04-23 15:54:52,664 - DEBUG - [_abrir_dialogo] - Abrindo diálogo: CadastroProduto
+2025-04-23 15:54:52,675 - DEBUG - [_abrir_dialogo] - Diálogo aberto com sucesso
+2025-04-23 15:54:52,676 - INFO - [adicionar_produto] - Diálogo de cadastro de produto aberto com sucesso
+2025-04-23 15:54:58,520 - INFO - [cadastrar_produto] - Dados recebidos para cadastro: Produto(id=None, nome='dfsdf', descricao='sfsdf', preco=515.00, quantidade=22, tipo='unidade')
+2025-04-23 15:54:58,521 - INFO - [cadastrar_produto] - Valores a serem inseridos no banco: ('dfsdf', 'sfsdf', 515.0, 22, 'unidade')
+2025-04-23 15:54:58,552 - INFO - [cadastrar_produto] - ✅ Produto cadastrado com sucesso!
+2025-04-23 15:54:58,554 - DEBUG - [atualizar_tabela] - Atualizando tabela de produtos
+2025-04-23 15:54:58,621 - DEBUG - [atualizar_tabela] - Tabela de produtos atualizada com sucesso
+2025-04-23 16:00:41,268 - INFO - [__init__] - Componente Estoque inicializado com sucesso
+2025-04-23 16:03:38,482 - INFO - [adicionar_produto] - Iniciando processo de adição de novo produto
+2025-04-23 16:03:38,485 - DEBUG - [_abrir_dialogo] - Abrindo diálogo: CadastroProduto
+2025-04-23 16:03:38,491 - DEBUG - [_abrir_dialogo] - Diálogo aberto com sucesso
+2025-04-23 16:03:38,492 - INFO - [adicionar_produto] - Diálogo de cadastro de produto aberto com sucesso
+2025-04-23 16:03:40,431 - INFO - [editar_produto] - Iniciando processo de edição de produto
+2025-04-23 16:03:40,432 - DEBUG - [editar_produto] - Produto selecionado para edição - ID: 2
+2025-04-23 16:03:40,464 - INFO - [obter_produto_por_id] - Produto encontrado com ID 2: {'id': 2, 'nome': 'Prod_002', 'descricao': '...00', 'preco': Decimal('55.00'), 'quantidade': 18, 'tipo': 'unidade'}
+2025-04-23 16:03:40,472 - DEBUG - [_abrir_dialogo] - Abrindo diálogo: CadastroProduto
+2025-04-23 16:03:40,479 - DEBUG - [_abrir_dialogo] - Diálogo aberto com sucesso
+2025-04-23 16:03:40,480 - INFO - [editar_produto] - Diálogo de edição aberto para produto ID: 2
+2025-04-23 16:03:44,352 - INFO - [editar_produto] - Iniciando processo de edição de produto
+2025-04-23 16:03:44,353 - DEBUG - [editar_produto] - Produto selecionado para edição - ID: 2
+2025-04-23 16:03:44,378 - INFO - [obter_produto_por_id] - Produto encontrado com ID 2: {'id': 2, 'nome': 'Prod_002', 'descricao': '...00', 'preco': Decimal('55.00'), 'quantidade': 18, 'tipo': 'unidade'}
+2025-04-23 16:03:44,388 - DEBUG - [_abrir_dialogo] - Abrindo diálogo: CadastroProduto
+2025-04-23 16:03:44,395 - DEBUG - [_abrir_dialogo] - Diálogo aberto com sucesso
+2025-04-23 16:03:44,399 - INFO - [editar_produto] - Diálogo de edição aberto para produto ID: 2
+2025-04-23 16:03:47,288 - INFO - [editar_produto] - Iniciando processo de edição de produto
+2025-04-23 16:03:47,289 - DEBUG - [editar_produto] - Produto selecionado para edição - ID: 4
+2025-04-23 16:03:47,309 - INFO - [obter_produto_por_id] - Produto encontrado com ID 4: {'id': 4, 'nome': 'Pod 77', 'descricao': 'texto', 'preco': Decimal('778.00'), 'quantidade': 4, 'tipo': 'unidade'}
+2025-04-23 16:03:47,319 - DEBUG - [_abrir_dialogo] - Abrindo diálogo: CadastroProduto
+2025-04-23 16:03:47,328 - DEBUG - [_abrir_dialogo] - Diálogo aberto com sucesso
+2025-04-23 16:03:47,328 - INFO - [editar_produto] - Diálogo de edição aberto para produto ID: 4
+2025-04-23 16:08:26,195 - INFO - [__init__] - Componente Estoque inicializado com sucesso
+2025-04-23 16:09:46,099 - INFO - [__init__] - Componente Estoque inicializado com sucesso
+2025-04-23 16:14:36,203 - INFO - [__init__] - Componente Estoque inicializado com sucesso

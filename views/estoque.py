@@ -12,18 +12,29 @@ class Estoque(ft.Column):
         self.page = page
         self.logger = ConfigurarLogger.configurar("Estoque", log_em_arquivo=True)
         
+        # Configuração do layout principal
+        self.expand = True  # Faz a coluna expandir para ocupar todo o espaço
+        self.spacing = 20  # Espaçamento entre os elementos
+        self.scroll = ft.ScrollMode.AUTO  # Habilita scroll se necessário
+        
         self.navbar = NavebarSuperiorEstoque(
             on_adicionar=self.adicionar_produto,
             on_buscar=self.buscar_produto,
             on_editar=self.editar_produto,
             on_remover=self.remover_produto
         )
+        
+        # Configura a tabela para expandir
         self.tabela = ListagemProdutos(self.page)
-
+        
         self.controls = [
             self.navbar,
-            ft.Divider(),
-            self.tabela.content
+            ft.Divider(height=1, thickness=1),
+            ft.Container(
+                content=self.tabela.content,
+                expand=True,  # Faz o container expandir
+                padding=ft.padding.symmetric(horizontal=20)  # Padding horizontal
+            )
         ]
         
         self.logger.info("Componente Estoque inicializado com sucesso")
@@ -48,12 +59,12 @@ class Estoque(ft.Column):
             self.logger.info(f"Iniciando busca por produtos com termo: '{termo}'")
 
             if not termo:
-                self.logger.debug("Termo de busca vazio - carregando todos os produtos")
+                self.logger.debug("Termo de busca vazio - carregando todos os produtos com paginação")
+                self.tabela.pagina_atual = 1  # Reset para a primeira página
                 self.tabela.carregar_produtos()
             else:
                 produtos = produto_controller.ProdutoController.buscar_produto(termo)
-                #self.logger.debug(f"Busca retornou {len(produtos) if produtos else 0} resultados")
-                
+                # Desativa a paginação para resultados de busca
                 self.tabela.carregar_produtos(produtos if produtos else None)
 
         except Exception as e:
@@ -115,6 +126,7 @@ class Estoque(ft.Column):
         """Atualiza a tabela de produtos."""
         try:
             self.logger.debug("Atualizando tabela de produtos")
+            self.tabela.pagina_atual = 1  # Reset para a primeira página ao atualizar
             self.tabela.carregar_produtos()
             self.page.update()
             self.logger.debug("Tabela de produtos atualizada com sucesso")

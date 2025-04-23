@@ -1,7 +1,9 @@
 import mysql.connector
+from mysql.connector import Error
 from dotenv import load_dotenv
 import os
 import logging
+from typing import Optional, List, Dict, Union
 
 # Configuração do logger
 logging.basicConfig(
@@ -10,89 +12,105 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-
 class Database:
-    def __init__(self, host="localhost", user="seu_usuario", password="sua_senha", database="joyce_cakes"):
+    def __init__(self):
         load_dotenv()
-        self.host = os.getenv('DB_HOST')
-        self.user = os.getenv('DB_USER')
-        self.password = os.getenv('DB_PASSWORD')
-        self.database = os.getenv('DB_DATABASE')
-        self.conexao = None
+        self.host = os.getenv('DB_HOST', 'localhost')
+        self.user = os.getenv('DB_USER', 'root')
+        self.password = os.getenv('DB_PASSWORD', '')
+        self.database = os.getenv('DB_DATABASE', 'joyce_cakes')
+        self.connection = None
+        self._validate_credentials()
 
-    def conectar(self):
-        logger.info("🔌 Conectando ao MySQL...")
-        logger.info(f"Host: {self.host}, User: {self.user}, Database: {self.database}")
-        
-        if not self.host or not self.user or not self.password or not self.database:
-            logger.error("❌ Erro: Variáveis de ambiente não configuradas corretamente.")
-            return
-        
-        if self.conexao and self.conexao.is_connected():
-            logger.info("🔌 Já está conectado.")
-            return
-        
+    def _validate_credentials(self):
+        """Valida se as credenciais mínimas estão configuradas"""
+        if not all([self.host, self.user, self.database]):
+            logger.error("❌ Configuração de banco de dados incompleta")
+            raise ValueError("Credenciais do banco de dados incompletas")
+
+    def _connect(self) -> bool:
+        """Estabelece conexão com o banco de dados"""
         try:
-            self.conexao = mysql.connector.connect(
+            if self.connection and self.connection.is_connected():
+                return True
+                
+            self.connection = mysql.connector.connect(
                 host=self.host,
                 user=self.user,
                 password=self.password,
-                database=self.database
+                database=self.database,
+                autocommit=True
             )
-            logger.info("✅ Conectado ao MySQL!")
-        except mysql.connector.Error as e:
-            logger.error(f"❌ Erro na conexão: {e}")
-            self.conexao = None
-
-    def desconectar(self):
-        if self.conexao:
-            self.conexao.close()
-            logger.info("🔌 Conexão fechada.")
-
-    def executar_query(self, query, valores=None):
-        if not self.conexao or not self.conexao.is_connected():
-            self.conectar()
-        
-        try:
-            if self.conexao is None:
-                self.conectar()
-            logger.info(f"📝 Executando query: {query} com valores: {valores}")
-            self.cursor = self.conexao.cursor(dictionary=True)
-            self.cursor.execute(query, valores)
-            self.conexao.commit()
-            logger.info("✅ Query executada com sucesso.")
+            logger.info("✅ Conexão com MySQL estabelecida")
             return True
-        except mysql.connector.Error as e:
+        except Error as e:
+            logger.error(f"❌ Falha na conexão: {e}")
+            self.connection = None
+            return False
+
+    def _ensure_connection(self) -> bool:
+        """Garante que há uma conexão ativa"""
+        if not self.connection or not self.connection.is_connected():
+            return self._connect()
+        return True
+
+    def execute_query(self, query: str, params: Optional[tuple] = None) -> bool:
+        """
+        Executa uma query de modificação (INSERT, UPDATE, DELETE)
+        Retorna True se bem sucedido
+        """
+        cursor = None
+        try:
+            if not self._ensure_connection():
+                return False
+
+            logger.info(f"📝 Executando query: {query} com parâmetros: {params}")
+            cursor = self.connection.cursor()
+            cursor.execute(query, params or ())
+            logger.info("✅ Query executada com sucesso")
+            return True
+        except Error as e:
             logger.error(f"❌ Erro ao executar query: {e}")
             return False
         finally:
-            if hasattr(self, 'cursor') and self.cursor:
-                self.cursor.close()
+            if cursor:
+                cursor.close()
 
-    def buscar_dados(self, query, valores=None):
+    def fetch_data(self, query: str, params: Optional[tuple] = None) -> List[Dict]:
+        """
+        Executa uma query de consulta (SELECT)
+        Retorna lista de dicionários com os resultados
+        """
+        cursor = None
         try:
-            if self.conexao is None:
-                self.conectar()
-            cursor = self.conexao.cursor()
-            logger.info(f"🔍 Buscando dados com query: {query} e valores: {valores}")
-            
-            if valores is None:
-                cursor.execute(query)
-            else:
-                cursor.execute(query, valores)
-            
-            logger.info("✅ Dados buscados com sucesso.")
-            
-            if cursor.description:
-                colunas = [coluna[0] for coluna in cursor.description]
-                resultados = cursor.fetchall()
-                return [dict(zip(colunas, resultado)) for resultado in resultados]
-            else:
-                logger.info("✅ Nenhum dado encontrado.")
+            if not self._ensure_connection():
                 return []
-        except mysql.connector.Error as e:
+
+            logger.info(f"🔍 Buscando dados: {query} com parâmetros: {params}")
+            cursor = self.connection.cursor(dictionary=True)
+            cursor.execute(query, params or ())
+            results = cursor.fetchall()
+            logger.info(f"✅ {len(results)} registros encontrados")
+            return results
+        except Error as e:
             logger.error(f"❌ Erro ao buscar dados: {e}")
             return []
         finally:
-            cursor.close()
-            self.desconectar()
+            if cursor:
+                cursor.close()
+
+    def close(self):
+        """Fecha a conexão com o banco de dados"""
+        if self.connection and self.connection.is_connected():
+            self.connection.close()
+            logger.info("🔌 Conexão encerrada")
+        self.connection = None
+
+    def __enter__(self):
+        """Suporte para context manager (with statement)"""
+        self._ensure_connection()
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Garante que a conexão é fechada ao sair do contexto"""
+        self.close()
