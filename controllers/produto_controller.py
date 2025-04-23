@@ -65,14 +65,14 @@ class ProdutoController:
         return [Produto(**produto) for produto in resultados]
 
     @staticmethod
-    def buscar_por_id(produto_id):
+    def obter_produto_por_id(produto_id):
         db = Database()
         query = "SELECT * FROM produtos WHERE id=%s"
         resultado = db.buscar_dados(query, (produto_id,))
 
         if resultado:
             logger.info(f"Produto encontrado com ID {produto_id}: {resultado[0]}")
-            return Produto(**resultado[0])
+            return [Produto(**row) for row in resultado]
         else:
             logger.warning(f"Produto com ID {produto_id} não encontrado.")
             return None
@@ -108,13 +108,13 @@ class ProdutoController:
 
         if termo.isdigit():
             logger.info(f"Buscando produto por ID: {termo}")
-            return ProdutoController.buscar_por_id(termo)
+            return ProdutoController.obter_produto_por_id(termo)
         else:
             logger.info(f"Buscando produto por nome: {termo}")
             return ProdutoController.buscar_produto_por_nome(termo)
 
     @staticmethod
-    def deletar(produto_id):
+    def deletar_produto(produto_id):
         db = Database()
         query = "DELETE FROM produtos WHERE id=%s"
         sucesso = db.executar_query(query, (produto_id,))
@@ -125,3 +125,51 @@ class ProdutoController:
             logger.warning(f"Falha ao deletar o produto com ID {produto_id}.")
 
         return sucesso
+    
+    @staticmethod
+    def editar_produto(produto_data: Produto):
+        logger.info(f"Dados recebidos para edição (ID {produto_data.id}): {produto_data}")
+
+        if not produto_data.nome or produto_data.descricao is None or produto_data.tipo is None:
+            logger.warning("Preencha todos os campos obrigatórios para edição!")
+            return False, "Preencha todos os campos obrigatórios!"
+
+        try:
+            preco = float(produto_data.preco)
+        except ValueError:
+            logger.error("Preço inválido!", exc_info=True)
+            return False, "Preço inválido!"
+
+        if produto_data.quantidade is None:
+            logger.error("Quantidade inválida!")
+            return False, "Quantidade inválida!"
+
+        try:
+            quantidade = int(produto_data.quantidade)
+        except ValueError:
+            logger.error("Quantidade inválida (erro na conversão)!", exc_info=True)
+            return False, "Quantidade inválida!"
+
+        db = Database()
+        query = """
+            UPDATE produtos
+            SET nome = %s, descricao = %s, preco = %s, quantidade = %s, tipo = %s
+            WHERE id = %s
+        """
+        valores = (
+            produto_data.nome,
+            produto_data.descricao,
+            preco,
+            quantidade,
+            produto_data.tipo,
+            produto_data.id
+        )
+
+        logger.info(f"Valores para atualização do produto com ID {produto_data.id}: {valores}")
+        if db.executar_query(query, valores):
+            logger.info(f"✅ Produto com ID {produto_data.id} atualizado com sucesso!")
+            return True, "Produto atualizado com sucesso!"
+
+        logger.error(f"❌ Erro ao atualizar o produto com ID {produto_data.id}.")
+        return False, "Erro ao atualizar o produto!"
+

@@ -7,10 +7,14 @@ from models.produto import Produto
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class CadastroProduto(ft.AlertDialog):
-    def __init__(self, on_save):
+    def __init__(self, on_save, produto=None):
         super().__init__()
         self.on_save = on_save
-        self.title = ft.Text("Cadastro de Produto")
+        self.produto = produto  # Armazena o produto para edição
+        self.modo_edicao = produto is not None  # Define se está em modo de edição
+        
+        # Define o título baseado no modo
+        self.title = ft.Text("Editar Produto" if self.modo_edicao else "Cadastro de Produto")
 
         self.mensagem_erro = ft.Text("", color="red")
 
@@ -54,14 +58,26 @@ class CadastroProduto(ft.AlertDialog):
             ft.ElevatedButton("Salvar", on_click=self.salvar)
         ]
 
+        # Se estiver em modo de edição, preenche os campos com os dados do produto
+        if self.modo_edicao:
+            self.preencher_campos()
+
+    def preencher_campos(self):
+        """Preenche os campos com os dados do produto em edição."""
+        logging.info(f"Preenchendo campos para edição do produto: {self.produto}")
+        self.nome.value = self.produto.nome
+        self.descricao.value = self.produto.descricao
+        self.preco.value = str(self.produto.preco)
+        self.quantidade.value = str(self.produto.quantidade)
+        self.tipo.value = self.produto.tipo
+
     def cancelar(self, e):
-        logging.info("Cancelando o cadastro do produto...")  # Log de cancelamento
+        logging.info("Cancelando o cadastro/edição do produto...")
         self.open = False
         self.update()
 
     def salvar(self, e):
-        logging.info("Iniciando processo de salvar produto...")  # Log de início de salvamento
-        # Limpa mensagem anterior
+        logging.info("Iniciando processo de salvar produto...")
         self.mensagem_erro.value = ""
         self.update()
 
@@ -69,57 +85,70 @@ class CadastroProduto(ft.AlertDialog):
             nome = self.nome.value.strip()
             descricao = self.descricao.value.strip()
             tipo = self.tipo.value
-            logging.debug(f"Validação do nome: {nome}")  # Log de nome
+            logging.debug(f"Validação do nome: {nome}")
 
-            # Valida nome
             if not nome:
-                logging.error("Erro: Nome vazio.")  # Log de erro de nome
+                logging.error("Erro: Nome vazio.")
                 self.mostrar_erro("Nome do produto não pode ser vazio.")
                 return
 
-            # Valida preço
             try:
                 preco = float(self.preco.value)
-                logging.debug(f"Validação do preço: {preco}")  # Log do preço
+                logging.debug(f"Validação do preço: {preco}")
                 if preco < 0:
                     raise ValueError
             except ValueError:
-                logging.error("Erro: Preço inválido.")  # Log de erro de preço
+                logging.error("Erro: Preço inválido.")
                 self.mostrar_erro("Preço inválido. Use um número positivo.")
                 return
 
-            # Valida quantidade
             try:
                 quantidade = int(self.quantidade.value)
-                logging.debug(f"Validação da quantidade: {quantidade}")  # Log da quantidade
+                logging.debug(f"Validação da quantidade: {quantidade}")
                 if quantidade < 0:
                     raise ValueError
             except ValueError:
-                logging.error("Erro: Quantidade inválida.")  # Log de erro de quantidade
+                logging.error("Erro: Quantidade inválida.")
                 self.mostrar_erro("Quantidade inválida. Use um número inteiro positivo.")
                 return
 
-            novo_produto = Produto(
-                id = None,
-                nome=nome,
-                descricao=descricao,
-                preco=preco,
-                quantidade=quantidade,
-                tipo=tipo
-            )
-            logging.info(f"Cadastrando produto: {novo_produto}")  # Log do produto sendo cadastrado
+            # Cria ou atualiza o produto conforme o modo
+            if self.modo_edicao:
+                # Modo edição - atualiza o produto existente
+                produto_atualizado = Produto(
+                    id=self.produto.id,
+                    nome=nome,
+                    descricao=descricao,
+                    preco=preco,
+                    quantidade=quantidade,
+                    tipo=tipo
+                )
+                logging.info(f"Atualizando produto: {produto_atualizado}")
+                ProdutoController.editar_produto(produto_atualizado)
+                logging.info("Produto atualizado com sucesso!")
+            else:
+                # Modo cadastro - cria novo produto
+                novo_produto = Produto(
+                    id=None,
+                    nome=nome,
+                    descricao=descricao,
+                    preco=preco,
+                    quantidade=quantidade,
+                    tipo=tipo
+                )
+                logging.info(f"Cadastrando produto: {novo_produto}")
+                ProdutoController.cadastrar_produto(novo_produto)
+                logging.info("Produto cadastrado com sucesso!")
 
-            ProdutoController.cadastrar_produto(novo_produto)
-            logging.info("Produto cadastrado com sucesso!")  # Log de sucesso no cadastro
             self.open = False
             self.on_save()
 
         except Exception as err:
-            logging.error(f"Erro inesperado: {err}")  # Log de erro inesperado
+            logging.error(f"Erro inesperado: {err}")
             self.mostrar_erro(f"Erro inesperado: {err}")
         self.update()
 
     def mostrar_erro(self, mensagem):
-        logging.error(f"Erro exibido: {mensagem}")  # Log de erro exibido ao usuário
+        logging.error(f"Erro exibido: {mensagem}")
         self.mensagem_erro.value = mensagem
         self.update()
