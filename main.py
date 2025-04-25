@@ -6,7 +6,6 @@ def main(page: ft.Page):
     # Configuração da página
     page.title = "Controle de Estoque - Joyce Cakes"
     page.padding = 0
-    page.scroll = ft.ScrollMode.AUTO
     page.window_min_width = 1000
     page.window_min_height = 600
     

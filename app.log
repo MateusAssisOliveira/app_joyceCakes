@@ -1,37 +1,33 @@
-2025-04-24 14:07:45,045 - INFO - [__init__] - Componente Estoque inicializado com sucesso
-2025-04-25 08:37:01,979 - INFO - [adicionar_produto] - Iniciando processo de adição de novo produto
-2025-04-25 08:37:01,996 - INFO - [adicionar_produto] - Diálogo de cadastro de produto aberto com sucesso
-2025-04-25 08:37:28,317 - INFO - [cadastrar_produto] - Dados recebidos para cadastro: Produto(id=None, nome='Produto_teste_01', descricao='Produto_teste_01', preco=88.00, quantidade=99, tipo='litro')
-2025-04-25 08:37:28,318 - INFO - [cadastrar_produto] - Valores a serem inseridos no banco: ('Produto_teste_01', 'Produto_teste_01', 88.0, 99, 'litro')
-2025-04-25 08:37:28,397 - INFO - [cadastrar_produto] - ✅ Produto cadastrado com sucesso!
-2025-04-25 08:37:28,398 - DEBUG - [atualizar_tabela] - Atualizando tabela de produtos
-2025-04-25 08:37:28,465 - DEBUG - [atualizar_tabela] - Tabela de produtos atualizada com sucesso
-2025-04-25 08:37:36,209 - INFO - [buscar_produto] - Iniciando busca por produtos com termo: 'produto_teste_01'
-2025-04-25 08:37:36,209 - INFO - [buscar_produto] - Buscando produto por nome: produto_teste_01
-2025-04-25 08:37:36,244 - INFO - [buscar_produto_por_nome] - 1 produto(s) encontrados com nome parecido com 'produto_teste_01'.
-2025-04-25 08:37:38,946 - INFO - [editar_produto] - Iniciando processo de edição de produto
-2025-04-25 08:37:38,946 - DEBUG - [editar_produto] - Produto selecionado para edição - ID: 14
-2025-04-25 08:37:38,974 - INFO - [obter_produto_por_id] - Produto encontrado com ID 14: {'id': 14, 'nome': 'Produto_teste_01', 'descricao': 'Produto_teste_01', 'preco': Decimal('88.00'), 'quantidade': 99, 'tipo': 'litro'}
-2025-04-25 08:37:38,985 - INFO - [editar_produto] - Diálogo de edição aberto para produto ID: 14
-2025-04-25 08:37:45,044 - INFO - [editar_produto] - Dados recebidos para edição (ID 14): Produto(id=14, nome='Produto_teste_01', descricao='Produto_teste_01....', preco=88.00, quantidade=99, tipo='litro')
-2025-04-25 08:37:45,044 - INFO - [editar_produto] - Valores para atualização do produto com ID 14: ('Produto_teste_01', 'Produto_teste_01....', 88.0, 99, 'litro', 14)
-2025-04-25 08:37:45,089 - INFO - [editar_produto] - ✅ Produto com ID 14 atualizado com sucesso!
-2025-04-25 08:37:45,091 - DEBUG - [atualizar_tabela] - Atualizando tabela de produtos
-2025-04-25 08:37:45,232 - DEBUG - [atualizar_tabela] - Tabela de produtos atualizada com sucesso
-2025-04-25 08:37:48,042 - INFO - [adicionar_produto] - Iniciando processo de adição de novo produto
-2025-04-25 08:37:48,054 - INFO - [adicionar_produto] - Diálogo de cadastro de produto aberto com sucesso
-2025-04-25 08:37:49,546 - INFO - [buscar_produto] - Iniciando busca por produtos com termo: 'produto_teste_01'
-2025-04-25 08:37:49,546 - INFO - [buscar_produto] - Buscando produto por nome: produto_teste_01
-2025-04-25 08:37:49,564 - INFO - [buscar_produto_por_nome] - 1 produto(s) encontrados com nome parecido com 'produto_teste_01'.
-2025-04-25 08:37:53,337 - INFO - [buscar_produto] - Iniciando busca por produtos com termo: 'produto_teste_01'
-2025-04-25 08:37:53,337 - INFO - [buscar_produto] - Buscando produto por nome: produto_teste_01
-2025-04-25 08:37:53,357 - INFO - [buscar_produto_por_nome] - 1 produto(s) encontrados com nome parecido com 'produto_teste_01'.
-2025-04-25 08:37:57,842 - INFO - [buscar_produto] - Iniciando busca por produtos com termo: ''
-2025-04-25 08:37:57,842 - DEBUG - [buscar_produto] - Termo de busca vazio - carregando todos os produtos com paginação
-2025-04-25 10:54:44,733 - INFO - [buscar_produto] - Iniciando busca por produtos com termo: '3'
-2025-04-25 10:54:44,734 - INFO - [buscar_produto] - Buscando produto por ID: 3
-2025-04-25 10:54:44,776 - INFO - [obter_produto_por_id] - Produto encontrado com ID 3: {'id': 3, 'nome': 'Prod_55', 'descricao': '...', 'preco': Decimal('99.00'), 'quantidade': 55, 'tipo': 'kg'}
-2025-04-25 10:54:44,781 - ERROR - [buscar_produto] - Erro na busca: 'Produto' object has no attribute 'sort'
+2025-04-25 13:42:57,776 - INFO - [adicionar_produto] - Iniciando processo de adição de novo produto
+2025-04-25 13:42:59,753 - ERROR - [_processar_produto] - Erro inesperado: ID deve ser um inteiro ou None.
+2025-04-25 13:43:15,961 - ERROR - [_processar_produto] - Erro inesperado: ID deve ser um inteiro ou None.
+2025-04-25 13:43:19,880 - INFO - [editar_produto] - Iniciando processo de edição de produto
+2025-04-25 13:43:19,881 - DEBUG - [editar_produto] - Produto selecionado para edição - ID: 3
+2025-04-25 13:43:19,916 - INFO - [editar_produto] - Diálogo de edição aberto para produto ID: 3
+2025-04-25 13:43:23,280 - ERROR - [_processar_produto] - Erro inesperado: Preço deve ser um número.
+2025-04-25 13:47:49,550 - INFO - [editar_produto] - Iniciando processo de edição de produto
+2025-04-25 13:47:49,558 - DEBUG - [editar_produto] - Produto selecionado para edição - ID: 3
+2025-04-25 13:47:49,598 - INFO - [editar_produto] - Diálogo de edição aberto para produto ID: 3
+2025-04-25 13:47:55,278 - ERROR - [_processar_produto] - Erro inesperado: Preço deve ser um número.
+2025-04-25 13:47:59,358 - ERROR - [_processar_produto] - Erro inesperado: Preço deve ser um número.
+2025-04-25 13:48:02,007 - INFO - [adicionar_produto] - Iniciando processo de adição de novo produto
+2025-04-25 13:48:03,460 - ERROR - [_processar_produto] - Erro inesperado: ID deve ser um inteiro ou None.
+2025-04-25 13:48:08,701 - ERROR - [_processar_produto] - Erro inesperado: ID deve ser um inteiro ou None.
+2025-04-25 13:48:09,117 - ERROR - [_processar_produto] - Erro inesperado: ID deve ser um inteiro ou None.
+2025-04-25 13:50:45,492 - INFO - [adicionar_produto] - Iniciando processo de adição de novo produto
+2025-04-25 13:50:47,075 - ERROR - [_processar_produto] - Erro de validação: Preço deve ser um número válido (ex: 10.99)
+2025-04-25 13:51:02,659 - INFO - [_executar_query] - ✅ Cadastro de produto realizado com sucesso
+2025-04-25 13:51:02,661 - DEBUG - [atualizar_tabela] - Atualizando tabela de produtos
+2025-04-25 13:51:02,713 - DEBUG - [atualizar_tabela] - Tabela de produtos atualizada com sucesso
+2025-04-25 13:53:24,856 - INFO - [editar_produto] - Iniciando processo de edição de produto
+2025-04-25 13:53:24,857 - DEBUG - [editar_produto] - Produto selecionado para edição - ID: 6
+2025-04-25 13:53:24,894 - INFO - [editar_produto] - Diálogo de edição aberto para produto ID: 6
+2025-04-25 13:53:27,959 - INFO - [_executar_query] - ✅ Edição de produto realizado com sucesso
+2025-04-25 13:53:27,961 - DEBUG - [atualizar_tabela] - Atualizando tabela de produtos
+2025-04-25 13:53:28,021 - DEBUG - [atualizar_tabela] - Tabela de produtos atualizada com sucesso
+2025-04-25 13:53:40,313 - INFO - [buscar_produto] - Iniciando busca por produtos com termo: 'p'
+2025-04-25 13:53:45,065 - INFO - [buscar_produto] - Iniciando busca por produtos com termo: '3'
+2025-04-25 13:53:45,108 - ERROR - [buscar_produto] - Erro na busca: 'Produto' object has no attribute 'sort'
 Traceback (most recent call last):
   File "c:\PYTHON\app_joyceCakes\controllers\estoque_controller.py", line 37, in buscar_produto
     self.view.tabela.carregar_produtos(produtos if produtos else None)
@@ -39,18 +35,8 @@ Traceback (most recent call last):
     produtos.sort(
     ^^^^^^^^^^^^^
 AttributeError: 'Produto' object has no attribute 'sort'
-2025-04-25 10:54:52,774 - INFO - [buscar_produto] - Iniciando busca por produtos com termo: 'prod'
-2025-04-25 10:54:52,775 - INFO - [buscar_produto] - Buscando produto por nome: prod
-2025-04-25 10:54:52,813 - INFO - [buscar_produto_por_nome] - 4 produto(s) encontrados com nome parecido com 'prod'.
-2025-04-25 10:55:01,364 - INFO - [buscar_produto] - Iniciando busca por produtos com termo: ''
-2025-04-25 10:55:01,365 - DEBUG - [buscar_produto] - Termo de busca vazio - carregando todos os produtos com paginação
-2025-04-25 11:01:35,209 - INFO - [buscar_produto] - Iniciando busca por produtos com termo: 'p'
-2025-04-25 11:01:35,209 - INFO - [buscar_produto] - Buscando produto por nome: p
-2025-04-25 11:01:35,249 - INFO - [buscar_produto_por_nome] - 7 produto(s) encontrados com nome parecido com 'p'.
-2025-04-25 11:01:40,465 - INFO - [buscar_produto] - Iniciando busca por produtos com termo: '3'
-2025-04-25 11:01:40,466 - INFO - [buscar_produto] - Buscando produto por ID: 3
-2025-04-25 11:01:40,506 - INFO - [obter_produto_por_id] - Produto encontrado com ID 3: {'id': 3, 'nome': 'Prod_55', 'descricao': '...', 'preco': Decimal('99.00'), 'quantidade': 55, 'tipo': 'kg'}
-2025-04-25 11:01:40,510 - ERROR - [buscar_produto] - Erro na busca: 'Produto' object has no attribute 'sort'
+2025-04-25 13:54:16,657 - INFO - [buscar_produto] - Iniciando busca por produtos com termo: '3'
+2025-04-25 13:54:16,675 - ERROR - [buscar_produto] - Erro na busca: 'Produto' object has no attribute 'sort'
 Traceback (most recent call last):
   File "c:\PYTHON\app_joyceCakes\controllers\estoque_controller.py", line 37, in buscar_produto
     self.view.tabela.carregar_produtos(produtos if produtos else None)
@@ -58,15 +44,17 @@ Traceback (most recent call last):
     produtos.sort(
     ^^^^^^^^^^^^^
 AttributeError: 'Produto' object has no attribute 'sort'
-2025-04-25 11:06:12,042 - INFO - [buscar_produto] - Iniciando busca por produtos com termo: '55'
-2025-04-25 11:06:12,042 - INFO - [buscar_produto] - Buscando produto por ID: 55
-2025-04-25 11:06:12,083 - WARNING - [obter_produto_por_id] - Produto com ID 55 não encontrado.
-2025-04-25 11:06:14,578 - INFO - [buscar_produto] - Iniciando busca por produtos com termo: '55'
-2025-04-25 11:06:14,578 - INFO - [buscar_produto] - Buscando produto por ID: 55
-2025-04-25 11:06:14,612 - WARNING - [obter_produto_por_id] - Produto com ID 55 não encontrado.
-2025-04-25 11:06:16,409 - INFO - [buscar_produto] - Iniciando busca por produtos com termo: '55'
-2025-04-25 11:06:16,410 - INFO - [buscar_produto] - Buscando produto por ID: 55
-2025-04-25 11:06:16,449 - WARNING - [obter_produto_por_id] - Produto com ID 55 não encontrado.
-2025-04-25 11:06:20,001 - INFO - [buscar_produto] - Iniciando busca por produtos com termo: 'p'
-2025-04-25 11:06:20,002 - INFO - [buscar_produto] - Buscando produto por nome: p
-2025-04-25 11:06:20,035 - INFO - [buscar_produto_por_nome] - 7 produto(s) encontrados com nome parecido com 'p'.
+2025-04-25 14:04:55,010 - INFO - [buscar_produto] - Iniciando busca por produtos com termo: '4'
+2025-04-25 14:04:59,353 - INFO - [buscar_produto] - Iniciando busca por produtos com termo: '3'
+2025-04-25 14:05:02,305 - INFO - [buscar_produto] - Iniciando busca por produtos com termo: '1'
+2025-04-25 14:14:31,978 - INFO - [buscar_produto] - Iniciando busca por produtos com termo: '56'
+2025-04-25 14:14:37,586 - INFO - [buscar_produto] - Iniciando busca por produtos com termo: '5'
+2025-04-25 14:14:41,187 - INFO - [buscar_produto] - Iniciando busca por produtos com termo: '9'
+2025-04-25 14:14:44,714 - INFO - [buscar_produto] - Iniciando busca por produtos com termo: '250'
+2025-04-25 14:18:17,833 - INFO - [buscar_produto] - Iniciando busca por produtos com termo: '212e'
+2025-04-25 14:18:20,624 - INFO - [buscar_produto] - Iniciando busca por produtos com termo: '6'
+2025-04-25 14:18:25,044 - INFO - [buscar_produto] - Iniciando busca por produtos com termo: 'prod'
+2025-04-25 14:25:29,523 - DEBUG - [atualizar_tabela] - Atualizando tabela de produtos
+2025-04-25 14:25:29,569 - DEBUG - [atualizar_tabela] - Tabela de produtos atualizada com sucesso
+2025-04-25 14:25:30,883 - DEBUG - [atualizar_tabela] - Atualizando tabela de produtos
+2025-04-25 14:25:30,931 - DEBUG - [atualizar_tabela] - Tabela de produtos atualizada com sucesso

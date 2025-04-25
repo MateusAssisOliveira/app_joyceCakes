@@ -11,8 +11,7 @@ class EstoqueView(ft.Column):
         self.page = page
         self.expand = True
         self.spacing = 20
-        self.scroll = ft.ScrollMode.AUTO
-        
+                
         # Componentes da interface
         self.tabela = ListagemProdutos(self.page)
         self.cadastro_produto_class = CadastroProduto
@@ -35,7 +34,7 @@ class EstoqueView(ft.Column):
         self.navbar = NavBar(
             page=self.page,
             actions={
-                ft.icons.SEARCH: lambda e: self.controller.buscar_produto(self.navbar.controls[0].controls[1].value),
+                ft.icons.SEARCH: lambda e: self.controller.buscar_produto(self.navbar.controls[0].controls[0].value),
                 ft.icons.ADD: lambda e: self.controller.adicionar_produto(),
                 ft.icons.EDIT: lambda e: self.controller.editar_produto(),
                 ft.icons.DELETE: lambda e: self.controller.remover_produto(),

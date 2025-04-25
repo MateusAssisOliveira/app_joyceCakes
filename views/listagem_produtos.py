@@ -28,8 +28,11 @@ class ListagemProdutos:
             heading_row_height=50,
             data_row_min_height=40,
             column_spacing=20,
-            horizontal_margin=20,
-            expand= True,
+            horizontal_margin=0,
+            expand=True,
+            vertical_lines=ft.border.BorderSide(1, ft.colors.BLACK38),
+            horizontal_lines=ft.border.BorderSide(1, ft.colors.BLACK38),
+            divider_thickness=0,
         )
 
         # Configuração da paginação
@@ -44,25 +47,25 @@ class ListagemProdutos:
                 [
                     ft.Text("Lista de Produtos", size=24, weight="bold"),
                     ft.Container(
-                        content=self.tabela,
+                        content=ft.Row(
+                            [self.tabela],
+                            expand=True,
+                        ),
                         padding=20,
                         border=ft.border.all(1, ft.colors.OUTLINE),
                         border_radius=10,
-                        alignment=ft.alignment.center,  # Centraliza o conteúdo
+                        expand=True,
                     ),
                     ft.Container(
                         content=self.paginacao,
                         padding=10,
-                        alignment=ft.alignment.center
                     )
                 ],
                 spacing=20,
-                expand=True,  # Centraliza a coluna
+                expand=True,
             ),
             expand=True,
-            alignment=ft.alignment.center  # Centraliza o container principal
         )
-
 
         self.carregar_produtos()
         self.page.update()
@@ -94,32 +97,62 @@ class ListagemProdutos:
         self.pagina_atual = 1
         self.carregar_produtos()
 
-    def carregar_produtos(self, produtos: list[Produto] = None) -> None:
-        if produtos is None:
-            produtos, paginacao = ProdutoController.listar_produtos_paginados(
-                pagina=self.pagina_atual,
-                por_pagina=self.itens_por_pagina
-            )
-            # Atualiza as linhas da tabela
-            self.tabela.rows = self._criar_linhas_tabela(produtos)
+    def carregar_produtos(self, produtos: list[Produto] | None = None) -> None:
+        if produtos is not None:
+            produtos_lista = produtos if isinstance(produtos, list) else [produtos]
             
-            # Atualiza a paginação
-            if hasattr(self, 'paginacao') and self.paginacao:
-                self.paginacao.atualizar(
-                    paginacao['pagina_atual'],
-                    paginacao['total_paginas'],
-                    paginacao['total_itens']
-                )
-        else:
-            # Se produtos foram passados diretamente (como em uma busca)
-            if produtos:
-                produtos.sort(
+            if produtos_lista:
+                produtos_lista.sort(
                     key=lambda p: getattr(p, self.coluna_ordenacao),
                     reverse=not self.ordem_crescente
                 )
-            self.tabela.rows = self._criar_linhas_tabela(produtos)
+            
+            self.tabela.rows = self._criar_linhas_tabela(produtos_lista)
+            self.page.update()
+            return
+
+        # Modo padrão com ordenação do banco
+        produtos, paginacao = ProdutoController.listar_produtos_paginados(
+            pagina=self.pagina_atual,
+            por_pagina=self.itens_por_pagina,
+            coluna_ordenacao=self.coluna_ordenacao,
+            ordem_crescente=self.ordem_crescente
+        )
+        
+        self.tabela.rows = self._criar_linhas_tabela(produtos)
+        
+        if self.paginacao:
+            self.paginacao.atualizar(
+                paginacao['pagina_atual'],
+                paginacao['total_paginas'],
+                paginacao['total_itens']
+            )
         
         self.page.update()
+
+    def ordenar_por(self, coluna):
+        mapa_colunas = {
+            "id": "id",
+            "nome": "nome",
+            "preco": "preco",
+            "quantidade": "quantidade",
+            "tipo": "tipo"
+        }
+        
+        if coluna in mapa_colunas:
+            nova_coluna = mapa_colunas[coluna]
+            
+            if self.coluna_ordenacao == nova_coluna:
+                self.ordem_crescente = not self.ordem_crescente
+            else:
+                self.coluna_ordenacao = nova_coluna
+                self.ordem_crescente = True
+
+            self.tabela.sort_column_index = list(mapa_colunas.keys()).index(coluna)
+            self.tabela.sort_ascending = self.ordem_crescente
+            
+            self.carregar_produtos()
+
         
     def _criar_linhas_tabela(self, produtos):
         if not produtos:
