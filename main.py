@@ -1,15 +1,16 @@
 import flet as ft
-from views.estoque import Estoque
+from views.estoque_view import EstoqueView
+from controllers.estoque_controller import EstoqueController
 
 def main(page: ft.Page):
     # Configuração da página
     page.title = "Controle de Estoque - Joyce Cakes"
-    page.padding = 0  # Removemos o padding da página
+    page.padding = 0
     page.scroll = ft.ScrollMode.AUTO
-    page.window_min_width = 1000  # Largura mínima da janela
-    page.window_min_height = 600  # Altura mínima da janela
+    page.window_min_width = 1000
+    page.window_min_height = 600
     
-    # Configuração do tema (opcional)
+    # Configuração do tema
     page.theme = ft.Theme(
         color_scheme=ft.ColorScheme(
             primary=ft.colors.BLUE,
@@ -17,9 +18,12 @@ def main(page: ft.Page):
         ),
     )
     
-    estoque_view = Estoque(page)
+    # Criação das instâncias
+    estoque_view = EstoqueView(page)
+    estoque_controller = EstoqueController(estoque_view)
+    estoque_view.set_controller(estoque_controller)
     
-    # Usamos um Container para controlar o padding geral
+    # Layout principal
     page.add(
         ft.Container(
             content=estoque_view,
