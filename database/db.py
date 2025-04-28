@@ -114,3 +114,20 @@ class Database:
     def __exit__(self, exc_type, exc_val, exc_tb):
         """Garante que a conexão é fechada ao sair do contexto"""
         self.close()
+
+    def executar_script_sql(self,caminho_sql):
+        cursor = self.connection.cursor()
+
+        with open(caminho_sql, 'r', encoding='utf-8') as arquivo:
+            comandos_sql = arquivo.read()
+
+        # separa em comandos individuais
+        comandos = comandos_sql.split(';')
+
+        for comando in comandos:
+            comando = comando.strip()
+            if comando:
+                cursor.execute(comando)
+
+        cursor.close()
+        self.close()

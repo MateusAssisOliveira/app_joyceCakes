@@ -58,3 +58,18 @@ AttributeError: 'Produto' object has no attribute 'sort'
 2025-04-25 14:25:29,569 - DEBUG - [atualizar_tabela] - Tabela de produtos atualizada com sucesso
 2025-04-25 14:25:30,883 - DEBUG - [atualizar_tabela] - Atualizando tabela de produtos
 2025-04-25 14:25:30,931 - DEBUG - [atualizar_tabela] - Tabela de produtos atualizada com sucesso
+2025-04-28 11:01:29,193 - INFO - [editar_produto] - Iniciando processo de edição de produto
+2025-04-28 11:01:29,194 - DEBUG - [editar_produto] - Produto selecionado para edição - ID: 3
+2025-04-28 11:01:29,266 - INFO - [editar_produto] - Diálogo de edição aberto para produto ID: 3
+2025-04-28 11:01:34,314 - INFO - [_executar_query] - ✅ Edição de produto realizado com sucesso
+2025-04-28 11:01:34,317 - DEBUG - [atualizar_tabela] - Atualizando tabela de produtos
+2025-04-28 11:01:34,371 - DEBUG - [atualizar_tabela] - Tabela de produtos atualizada com sucesso
+2025-04-28 11:24:16,815 - INFO - [editar_produto] - Iniciando processo de edição de produto
+2025-04-28 11:24:16,816 - DEBUG - [editar_produto] - Produto selecionado para edição - ID: 3
+2025-04-28 11:24:16,869 - INFO - [editar_produto] - Diálogo de edição aberto para produto ID: 3
+2025-04-28 11:24:20,018 - INFO - [_executar_query] - ✅ Edição de produto realizado com sucesso
+2025-04-28 11:24:20,022 - DEBUG - [atualizar_tabela] - Atualizando tabela de produtos
+2025-04-28 11:24:20,140 - DEBUG - [atualizar_tabela] - Tabela de produtos atualizada com sucesso
+2025-04-28 11:24:44,463 - INFO - [buscar_produto] - Iniciando busca por produtos com termo: 'prod'
+2025-04-28 11:24:54,238 - INFO - [buscar_produto] - Iniciando busca por produtos com termo: ''
+2025-04-28 11:24:54,239 - DEBUG - [buscar_produto] - Termo de busca vazio - carregando todos os produtos com paginação

@@ -1,6 +1,6 @@
 import inspect
 from typing import Optional, Tuple, List, Union
-from config.db import Database
+from database.db import Database
 from config.logger_config import ConfigurarLogger
 from models.produto import Produto
 
