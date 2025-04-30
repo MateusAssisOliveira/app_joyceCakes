@@ -18,6 +18,7 @@ class Paginacao(ft.Row):
         self.texto_total = ft.Text("", size=14)
         
         self.controls = [
+            
             ft.IconButton(
                 icon=ft.icons.ARROW_BACK,
                 on_click=lambda _: self.on_mudar_pagina(-1),
@@ -41,7 +42,7 @@ class Paginacao(ft.Row):
                 ],
                 value="20",
                 width=100,
-                text_size=14,
+                text_size=12,
                 on_change=self.on_alterar_itens_por_pagina
             ),
             self.texto_total

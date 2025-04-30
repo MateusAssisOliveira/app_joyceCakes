@@ -58,10 +58,10 @@ class ListagemProdutos:
                     ),
                     ft.Container(
                         content=self.paginacao,
-                        padding=10,
+                        padding=10                        
                     )
                 ],
-                spacing=20,
+                spacing=10,
                 expand=True,
             ),
             expand=True,

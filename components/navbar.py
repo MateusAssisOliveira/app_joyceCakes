@@ -3,32 +3,34 @@ import flet as ft
 class NavBar(ft.Row):
     def __init__(self, page: ft.Page, actions: dict):
         """
-        Cria uma barra de navegação genérica
+        Cria uma barra de navegação genérica com ícones personalizados.
         
         Args:
             page: referência à página Flet
             actions: dicionário no formato {ícone: função}
-                    Exemplo: {ft.icons.ADD: lambda e: print("Adicionar")}
         """
         super().__init__()
         self.page = page
         self.alignment = ft.MainAxisAlignment.SPACE_BETWEEN
+        
+        size_icons = 20  # <<<<< Aqui você define o tamanho padrão dos ícones
+        padding_icons = 10  # <<<<< E aqui o padding interno do botão
+
         self.controls = [
             ft.Row([
-                self._create_action_button(icon, callback)
+                self._create_action_button(icon, callback, size_icons, padding_icons)
                 for icon, callback in actions.items()
-            ]),
-            ft.Text("Controle de Estoque - Joyce Cakes", size=18, weight=ft.FontWeight.BOLD)
+            ])
         ]
     
-    def _create_action_button(self, icon, callback):
+    def _create_action_button(self, icon, callback, size_icons, padding_icons):
         return ft.IconButton(
             icon=icon,
             on_click=callback,
-            icon_size=30,
+            icon_size=size_icons,
             tooltip=icon.split(".")[-1].capitalize(),
             style=ft.ButtonStyle(
                 shape=ft.CircleBorder(),
-                padding=15
+                padding=padding_icons
             )
         )

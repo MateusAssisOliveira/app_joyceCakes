@@ -1,5 +1,4 @@
 import flet as ft
-from views.nave_bar_estoque import NavebarSuperiorEstoque
 from views.listagem_produtos import ListagemProdutos
 from views.cadastro_produto_view import CadastroProduto
 from components.navbar import NavBar
@@ -10,7 +9,8 @@ class EstoqueView(ft.Column):
         super().__init__()
         self.page = page
         self.expand = True
-        self.spacing = 20
+        self.spacing = 5
+        self.page.clean()
                 
         # Componentes da interface
         self.tabela = ListagemProdutos(self.page)
@@ -18,7 +18,7 @@ class EstoqueView(ft.Column):
         self.navbar = None  # Será configurado após ter o controller
         
         self.controls = [
-            ft.Divider(height=1, thickness=1),
+            ft.Divider(height=0.5, thickness=0.5),
             ft.Container(
                 content=self.tabela.content,
                 expand=True,
