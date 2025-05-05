@@ -1,4 +1,5 @@
 import flet as ft
+<<<<<<< HEAD
 from router.router import Router
 from views.estoque_view import EstoqueView
 from controllers.estoque_controller import EstoqueController
@@ -36,3 +37,16 @@ def main(page: ft.Page):
 
 # Roda o app
 ft.app(target=main)
+=======
+from views.estoque import Estoque
+
+def main(page: ft.Page):
+    page.title = "Controle de Estoque - Joyce Cakes"
+    page.padding = 20
+    page.scroll = True
+
+    estoque_view = Estoque(page)
+    page.add(estoque_view)
+
+ft.app(target=main)
+>>>>>>> f08f16e695d0881e7c5fcdaa28b14b86b2e789f1
