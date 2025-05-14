@@ -24,9 +24,9 @@ class EstoquePage:
         self.page.add(
             ft.Column(
                 controls=[
-                    self.controller.exibir_view_estoque()  # O DataTable ou outro componente será adicionado aqui
+                    self.controller.exibir_view_estoque()
                 ],
-                expand=True  # Esta linha faz com que a coluna expanda para preencher o espaço disponível
+                expand=True
             )
         )
         
