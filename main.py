@@ -1,38 +1,11 @@
 import flet as ft
-from router.router import Router
-from views.estoque_view import EstoqueView
-from controllers.estoque_controller import EstoqueController
+from page.estoque_page import EstoquePage
 
-
-
-# Função principal para rodar o app
 def main(page: ft.Page):
-    # Configuração da página
-    #page.title = "Controle de Estoque - Joyce Cakes"
-    page.padding = 0
-    page.window_min_width = 1000
-    page.window_min_height = 600
+    page.title = "Sistema"
+    page.scroll = "auto"
     
-    # Configuração do tema
-    page.theme = ft.Theme(
-        color_scheme=ft.ColorScheme(
-            primary=ft.colors.BLUE,
-            secondary=ft.colors.GREEN,
-        ),
-    )
-    
-    # Instancia o Router para controle de rotas
-    router = Router(page)
+    estoque_page = EstoquePage(page)
+    estoque_page.start()
 
-    # Define o comportamento de mudança de rota
-    def route_change(e):
-        router.route_change(e)
-
-    page.on_route_change = route_change
-    
-    # Começa pela rota inicial (estoque)
-    page.go("/estoque")
-
-
-# Roda o app
 ft.app(target=main)

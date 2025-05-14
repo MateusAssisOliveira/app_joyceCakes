@@ -1,5 +1,5 @@
-import mysql.connector
-from mysql.connector import Error
+import pymysql
+from pymysql.err import MySQLError as Error
 from dotenv import load_dotenv
 import os
 import logging
@@ -31,10 +31,10 @@ class Database:
     def _connect(self) -> bool:
         """Estabelece conexão com o banco de dados"""
         try:
-            if self.connection and self.connection.is_connected():
+            if self.connection and self.connection.open:
                 return True
                 
-            self.connection = mysql.connector.connect(
+            self.connection = pymysql.connect(
                 host=self.host,
                 user=self.user,
                 password=self.password,
@@ -50,7 +50,7 @@ class Database:
 
     def _ensure_connection(self) -> bool:
         """Garante que há uma conexão ativa"""
-        if not self.connection or not self.connection.is_connected():
+        if not self.connection or not self.connection.open:
             return self._connect()
         return True
 
@@ -87,7 +87,7 @@ class Database:
                 return []
 
             logger.info(f"🔍 Buscando dados: {query} com parâmetros: {params}")
-            cursor = self.connection.cursor(dictionary=True)
+            cursor = self.connection.cursor(pymysql.cursors.DictCursor)  # Ajuste aqui
             cursor.execute(query, params or ())
             results = cursor.fetchall()
             logger.info(f"✅ {len(results)} registros encontrados")
@@ -101,7 +101,7 @@ class Database:
 
     def close(self):
         """Fecha a conexão com o banco de dados"""
-        if self.connection and self.connection.is_connected():
+        if self.connection and self.connection.open:
             self.connection.close()
             logger.info("🔌 Conexão encerrada")
         self.connection = None
@@ -115,7 +115,7 @@ class Database:
         """Garante que a conexão é fechada ao sair do contexto"""
         self.close()
 
-    def executar_script_sql(self,caminho_sql):
+    def executar_script_sql(self, caminho_sql):
         cursor = self.connection.cursor()
 
         with open(caminho_sql, 'r', encoding='utf-8') as arquivo:
