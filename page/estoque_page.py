@@ -11,9 +11,9 @@ class EstoquePage:
 
         self.log.info("Iniciando EstoquePage...")
 
-        _model = EstoqueModel()
-        _view = EstoquePageView()
-        self.controller = EstoquePageController(_model, _view)
+        _estoque_model = EstoqueModel()
+        _estoque_view = EstoquePageView()
+        self.controller = EstoquePageController(_estoque_model, _estoque_view)
 
         self.log.info("EstoquePageController criado com sucesso.")
 
@@ -31,3 +31,6 @@ class EstoquePage:
         )
         
         self.log.info("View de estoque adicionada à página.")
+        self.log.info(self.controller.listar_produtos())
+
+        
