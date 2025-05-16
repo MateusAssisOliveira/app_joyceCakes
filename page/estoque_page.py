@@ -31,6 +31,6 @@ class EstoquePage:
         )
         
         self.log.info("View de estoque adicionada à página.")
-        self.log.info(self.controller.listar_produtos())
+        self.log.info(self.controller.listar_produtos_paginados())
 
         

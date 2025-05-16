@@ -1,6 +1,7 @@
 from components.navbar import NavBar
 from components.data_table import Table
 from logs.logger import Logger
+from components.rodape_paginacao import RodapePaginacao
 import flet as ft
 
 class EstoquePageView:
@@ -8,7 +9,7 @@ class EstoquePageView:
         self.navbar = NavBar()
         self.table = Table()
         self.log = Logger()
-        
+        self.rodaPe = RodapePaginacao()
         self.loading_indicator = ft.ProgressBar(visible=False)
         self.error_message = ft.Text("", color=ft.Colors.RED)
         
@@ -19,9 +20,13 @@ class EstoquePageView:
             self.log.info("Construindo view de estoque...")
             self.loading_indicator.visible = True
             self.error_message.value = ""
-            
+
             self.table.set_data(headers_produtos, rows_produtos)
-            
+
+            self.log.debug(f'\n\ncreate_view_estoque-Table{self.table.rows}\n\n')
+            self.log.debug(f'\n\ncreate_view_estoque-Table{self.table.headers}\n\n')
+
+
             return ft.Container(
                 content=ft.Column(
                     controls=[
@@ -29,7 +34,7 @@ class EstoquePageView:
                         self.loading_indicator,
                         self.error_message,
                         ft.Container(
-                            content=ft.Row(  
+                            content=ft.Row(
                                 controls=[
                                     self.table.build()
                                 ],
@@ -39,7 +44,11 @@ class EstoquePageView:
                             border=ft.border.all(2, "green"),
                             expand=True,
                             padding=5
-                            
+                        ),
+                        ft.Container(  # Adiciona o rodapé com margem para separação
+                            content=self.rodaPe.build(),
+                            margin=ft.margin.only(top=10, bottom=10),
+                            alignment=ft.alignment.center
                         )
                     ],
                     expand=True

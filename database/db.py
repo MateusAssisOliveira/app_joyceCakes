@@ -87,7 +87,7 @@ class Database:
                 return []
 
             logger.info(f"🔍 Buscando dados: {query} com parâmetros: {params}")
-            cursor = self.connection.cursor(pymysql.cursors.DictCursor)  # Ajuste aqui
+            cursor = self.connection.cursor(pymysql.cursors.DictCursor)
             cursor.execute(query, params or ())
             results = cursor.fetchall()
             logger.info(f"✅ {len(results)} registros encontrados")

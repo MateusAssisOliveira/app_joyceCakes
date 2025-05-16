@@ -21,7 +21,7 @@ class Table:
             rows=[
                 ft.DataRow(
                     cells=[
-                        ft.DataCell(ft.Text(str(getattr(produto, header, ""))))
+                        ft.DataCell(ft.Text(str(produto.get(header, "")), weight=ft.FontWeight.NORMAL))
                         for header in self.headers
                     ]
                 )
@@ -37,5 +37,5 @@ class Table:
             padding=ft.padding.all(1),
             border=ft.border.all(2, ft.Colors.BLUE_400),
             border_radius=ft.border_radius.all(8),
-            bgcolor=ft.Colors.GREY_100
+            bgcolor=ft.Colors.BLACK12
         )
