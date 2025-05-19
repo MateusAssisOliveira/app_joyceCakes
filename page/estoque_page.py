@@ -11,26 +11,28 @@ class EstoquePage:
 
         self.log.info("Iniciando EstoquePage...")
 
-        _estoque_model = EstoqueModel()
-        _estoque_view = EstoquePageView()
-        self.controller = EstoquePageController(_estoque_model, _estoque_view)
+        self._estoque_model = EstoqueModel()
+        self._estoque_view = EstoquePageView()
+        self.controller = EstoquePageController(page, self._estoque_model, self._estoque_view)
 
         self.log.info("EstoquePageController criado com sucesso.")
 
     def start(self):
         self.log.debug("Método start() chamado. Exibindo view do estoque.")
         
-        # Adicionando a view de estoque com um layout expansível (para expandir com a tela)
+        # Limpa os controles anteriores da página
+        self.page.controls.clear()
+
+        # Adiciona a nova view
         self.page.add(
             ft.Column(
-                controls=[
-                    self.controller.exibir_view_estoque()
-                ],
+                controls=[self.controller.exibir_view_estoque()],
                 expand=True
             )
         )
-        
+
+        # Atualiza a interface
+        self.page.update()
+
         self.log.info("View de estoque adicionada à página.")
         self.log.info(self.controller.listar_produtos_paginados())
-
-        

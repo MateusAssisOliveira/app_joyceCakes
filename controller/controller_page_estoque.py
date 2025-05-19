@@ -1,17 +1,19 @@
 from logs.logger import Logger
 
 class EstoquePageController:
-    def __init__(self, estoque_model, estoque_view):
+    def __init__(self, page , estoque_model, estoque_view):
         self.estoque_model = estoque_model
         self.estoque_view = estoque_view
         self.log = Logger()
         self._cache_paginacao = {}
+        self.page = page
 
         self.log.info("EstoquePageController inicializado.")
 
     def exibir_view_estoque(self):
         self.log.debug("Chamando view_estoque() da view.")
-        return self.carregar_dados_estoque()
+        self.carregar_dados_estoque()
+        return self.estoque_view.create_view_estoque()
 
     def carregar_dados_estoque(self, pagina=1):
         self.log.debug("Buscando dados de produtos no model.")
@@ -27,10 +29,11 @@ class EstoquePageController:
 
         # Atualiza o total de páginas e a função de callback
         self.estoque_view.rodaPe.total_paginas = total_paginas
+        self.estoque_view.alimentar_Dados(headers_produtos, rows_produtos)
         self.estoque_view.rodaPe.ao_mudar_pagina = self.carregar_dados_estoque
-
-        return self.estoque_view.create_view_estoque(headers_produtos, rows_produtos)
-
+        self.page.update()
+        
+        return 
 
     def listar_produtos_paginados(self, pagina=1, por_pagina=20, ordenar_por=None):
         self.log.debug(f"Chamando listar_produtos() com: Página={pagina}, Quantidade={por_pagina}, OrdenarPor={ordenar_por}")
