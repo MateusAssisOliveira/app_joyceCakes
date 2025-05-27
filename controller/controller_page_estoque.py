@@ -7,6 +7,8 @@ class EstoquePageController:
         self.log = Logger()
         self._cache_paginacao = {}
         self.page = page
+        self.estoque_view.set_on_buscar(self.busca_por_nome)
+
 
         self.log.info("EstoquePageController inicializado.")
 
@@ -16,6 +18,7 @@ class EstoquePageController:
         return self.estoque_view.create_view_estoque()
 
     def carregar_dados_estoque(self, pagina=1):
+
         self.log.debug("Buscando dados de produtos no model.")
         resultado_final = self.listar_produtos_paginados(pagina=pagina)
 
@@ -64,3 +67,41 @@ class EstoquePageController:
         
     def limpar_cache_paginacao(self):
         self._cache_paginacao.clear()
+
+    
+    def busca_por_nome(self, produto=None, pagina=1):
+
+        if not produto :
+            self.limpar_cache_paginacao()
+            return self.listar_produtos_paginados()
+        
+        self.log.debug(f"Realizando busca por nome: {produto}")
+
+        try:
+            resultado_final = self.estoque_model.get_pagina(
+                tabela="produtos",
+                pagina=pagina,
+                por_pagina=20,
+                ordenar_por="nome",
+                filtros=str(produto)
+            )
+
+            headers_produtos = resultado_final.get('colunas', [])
+            rows_produtos = resultado_final.get('dados', [])
+            total_paginas = resultado_final.get('total_paginas', 1)
+
+            if not rows_produtos:
+                self.estoque_view.error_message.value = f"Nenhum produto encontrado com o nome '{produto}'."
+            else:
+                self.estoque_view.error_message.value = ""  # limpa erro anterior
+
+            self.estoque_view.rodaPe.total_paginas = total_paginas
+            self.estoque_view.alimentar_Dados(headers_produtos, rows_produtos)
+            self.estoque_view.rodaPe.ao_mudar_pagina = lambda p: self.busca_por_nome(produto, pagina=p)
+            self.page.update()
+
+        except Exception as e:
+            self.log.error(f"Erro na busca por nome: {e}")
+            self.estoque_view.error_message.value = f"Erro ao buscar produtos: {e}"
+            self.page.update()
+

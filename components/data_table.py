@@ -22,15 +22,15 @@ class Table:
         :param headers: lista de strings com nomes das colunas
         :param rows: lista de dicionários contendo os dados (chaves são os headers)
         """
-        self.data_table.columns = [ft.DataColumn(ft.Text(header)) for header in self.headers]
+        self.data_table.columns = [ft.DataColumn(ft.Text(header)) for header in headers]
 
         self.data_table.rows = [ft.DataRow(
                     cells=[
                         ft.DataCell(ft.Text(str(produto.get(header, "")), weight=ft.FontWeight.NORMAL))
-                        for header in self.headers
+                        for header in headers
                     ]
                 )
-                for produto in self.rows]
+                for produto in rows]
 
     def _format_cell(self, value):
         """

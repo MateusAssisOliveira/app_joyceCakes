@@ -14,7 +14,38 @@ class EstoquePageView:
         self.error_message = ft.Text("", color=ft.Colors.RED)
         self.table_view = None  # Instância persistente da view da tabela
 
+        self.campo_busca = ft.TextField(
+                label="Buscar produto",
+                hint_text="Digite o nome do produto",
+                expand=True
+            )
+        
+        self.botao_buscar = ft.ElevatedButton(
+                text="Buscar",
+                icon=ft.Icons.SEARCH,   
+                on_click=None  # Callback será setado via método público
+            )
+        
+        self.busca_container = ft.Row(
+            controls=[self.campo_busca, self.botao_buscar],
+            alignment=ft.MainAxisAlignment.CENTER
+        )
+
         self.log.info("EstoquePageView inicializado.")
+
+    def set_on_buscar(self, callback):
+        def ao_clicar_buscar(event):
+            nome_produto = self.campo_busca.value.strip()
+            
+            if nome_produto:
+                self.error_message.value = ""
+                callback(nome_produto)
+            else:
+                self.error_message.value = "Digite o nome de um produto para buscar."
+                callback()
+        
+        self.botao_buscar.on_click = ao_clicar_buscar
+
 
     def alimentar_Dados(self, headers_produtos, rows_produtos):
         self.log.info("Atualizando dados da tabela...")
@@ -34,8 +65,8 @@ class EstoquePageView:
         self.error_message.value = ""
 
         try:
-            self.log.debug(f'Table Headers: {self.table.headers}')
-            self.log.debug(f'Table Rows: {self.table.rows}')
+            #self.log.debug(f'Table Headers: {self.table.headers}')
+            #self.log.debug(f'Table Rows: {self.table.rows}')
 
             self._build_table()  # Garante que table_view foi construída uma vez
 
@@ -45,6 +76,7 @@ class EstoquePageView:
                         self.navbar.build(),
                         self.loading_indicator,
                         self.error_message,
+                        self.busca_container,  # <-- AQUI ENTRA O CAMPO DE BUSCA
                         ft.Container(
                             content=ft.Row(
                                 controls=[self.table_view],
@@ -65,6 +97,7 @@ class EstoquePageView:
                 ),
                 expand=True
             )
+
 
         except Exception as e:
             self.log.error(f"Erro ao criar view: {str(e)}")
