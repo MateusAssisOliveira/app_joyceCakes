@@ -1,3 +1,4 @@
+from components.dialog_adicionar_produto import DialogAdicionarProduto
 from components.navbar import NavBar
 from components.data_table import Table
 from logs.logger import Logger
@@ -5,6 +6,7 @@ from components.rodape_paginacao import RodapePaginacao
 import flet as ft
 
 class EstoquePageView:
+
     def __init__(self):
         self.navbar = NavBar()
         self.table = Table()
@@ -13,6 +15,7 @@ class EstoquePageView:
         self.loading_indicator = ft.ProgressBar(visible=False)
         self.error_message = ft.Text("", color=ft.Colors.RED)
         self.table_view = None  # Instância persistente da view da tabela
+        self.dialog_adicionar = DialogAdicionarProduto()
 
         self.campo_busca = ft.TextField(
                 label="Buscar produto",
@@ -33,6 +36,9 @@ class EstoquePageView:
 
         self.log.info("EstoquePageView inicializado.")
 
+    def definir_acoes_botoes(self,callbacks):
+        self.navbar.set_callbacks(callbacks)
+
     def set_on_buscar(self, callback):
         def ao_clicar_buscar(event):
             nome_produto = self.campo_busca.value.strip()
@@ -41,7 +47,7 @@ class EstoquePageView:
                 self.error_message.value = ""
                 callback(nome_produto)
             else:
-                self.error_message.value = "Digite o nome de um produto para buscar."
+                #self.error_message.value = "Digite o nome de um produto para buscar."
                 callback()
         
         self.botao_buscar.on_click = ao_clicar_buscar
