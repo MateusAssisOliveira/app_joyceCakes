@@ -105,12 +105,20 @@ class EstoquePageController:
         def callback_salvar(dados):
             # Valida e salva os dados
             self.estoque_model.adicionar(dados)
+            
+            # Atualiza a tabela ou dados do estoque
             self.carregar_dados_estoque()
-        
+
+            # Fecha o diálogo e atualiza a página
+            self.estoque_view.dialog_adicionar.dialog.open = False
+            self.page.update()
+
+        # Abre o diálogo para adicionar produto, passando a página e o callback de salvar
         self.estoque_view.dialog_adicionar.abrir(
             page=self.page,
             on_salvar=callback_salvar
         )
+
 
     def _salvar_produto(self, dados):
         # Lógica para salvar no model

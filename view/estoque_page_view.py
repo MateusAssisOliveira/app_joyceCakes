@@ -71,8 +71,6 @@ class EstoquePageView:
         self.error_message.value = ""
 
         try:
-            #self.log.debug(f'Table Headers: {self.table.headers}')
-            #self.log.debug(f'Table Rows: {self.table.rows}')
 
             self._build_table()  # Garante que table_view foi construída uma vez
 

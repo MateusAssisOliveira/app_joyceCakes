@@ -83,11 +83,15 @@ class NavBar:
         :param icone: Ícone do botão
         :return: Um botão do tipo ElevatedButton
         """
+        # Usando lambda para passar o evento e ainda manter o produto ou outro argumento
+        def on_click_wrapper(e):
+            callback()
+
         return ft.Container(
             content=ft.ElevatedButton(
                 text=texto,
                 icon=icone,
-                on_click=callback  # Função de callback passada para o botão
+                on_click=on_click_wrapper  # Usando o wrapper para lidar com o evento
             ),
             border=ft.border.all(1, "purple"),
             padding=1

@@ -1,10 +1,12 @@
-
 from logs.logger import Logger
 import flet as ft
 
 # dialogue.py
 class DialogAdicionarProduto:
     def __init__(self):
+        self.log = Logger()
+        self.log.info("Iniciando o Dialogue")
+
         self.campo_nome = ft.TextField(label="Nome")
         self.campo_quantidade = ft.TextField(label="Quantidade")
         self.dialog = ft.AlertDialog(
@@ -14,6 +16,12 @@ class DialogAdicionarProduto:
         )
 
     def abrir(self, page, on_salvar):
+        self.log.info("Abrindo Dialogue")
+        
+        # Verifique o tipo e as propriedades da page
+        self.log.debug(f"Tipo de page: {type(page)}")
+        self.log.debug(f"Propriedades de page: {dir(page)}")
+        
         def salvar(e):
             dados = {
                 "nome": self.campo_nome.value,
@@ -28,6 +36,5 @@ class DialogAdicionarProduto:
             ft.TextButton("Cancelar", on_click=lambda e: setattr(page.dialog, "open", False))
         ]
         
-        page.dialog = self.dialog
         self.dialog.open = True
         page.update()
