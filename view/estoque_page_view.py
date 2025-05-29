@@ -15,8 +15,7 @@ class EstoquePageView:
         self.loading_indicator = ft.ProgressBar(visible=False)
         self.error_message = ft.Text("", color=ft.Colors.RED)
         self.table_view = None  # Instância persistente da view da tabela
-        self.dialog_adicionar = DialogAdicionarProduto()
-
+        
         self.campo_busca = ft.TextField(
                 label="Buscar produto",
                 hint_text="Digite o nome do produto",

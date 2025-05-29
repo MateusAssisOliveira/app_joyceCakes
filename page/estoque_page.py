@@ -1,29 +1,37 @@
 import flet as ft
-from controller.controller_page_estoque import EstoquePageController
+from controller.page_estoque.controller_page_estoque import EstoquePageController
 from view.estoque_page_view import EstoquePageView
 from model.estoque_model import EstoqueModel
 from logs.logger import Logger
 
 class EstoquePage:
-    def __init__(self, page):
+    def __init__(self, page: ft.Page):
         self.log = Logger()  # Instância do logger
         self.page = page
 
         self.log.info("Iniciando EstoquePage...")
 
+        # Inicializa os componentes do padrão MVC
         self._estoque_model = EstoqueModel()
         self._estoque_view = EstoquePageView()
-        self.controller = EstoquePageController(page, self._estoque_model, self._estoque_view)
+        
+        # Cria o controller com as dependências injetadas
+        self.controller = EstoquePageController(
+            page=page,
+            estoque_model=self._estoque_model,
+            estoque_view=self._estoque_view
+        )
 
         self.log.info("EstoquePageController criado com sucesso.")
 
-    def start(self):
+    def start(self) -> None:
+        """Inicia a página de estoque, configurando a interface do usuário"""
         self.log.debug("Método start() chamado. Exibindo view do estoque.")
         
         # Limpa os controles anteriores da página
         self.page.controls.clear()
 
-        # Adiciona a nova view
+        # Adiciona a nova view usando o controller
         self.page.add(
             ft.Column(
                 controls=[self.controller.exibir_view_estoque()],
@@ -35,4 +43,14 @@ class EstoquePage:
         self.page.update()
 
         self.log.info("View de estoque adicionada à página.")
-        self.log.info(self.controller.listar_produtos_paginados())
+        
+        # Registra o carregamento inicial dos dados (opcional)
+        self._log_initial_data()
+
+    def _log_initial_data(self) -> None:
+        """Método auxiliar para registrar dados iniciais (opcional)"""
+        try:
+            initial_data = self.controller.data_handler.listar_produtos_paginados()
+            self.log.debug(f"Dados iniciais carregados: {initial_data.get('dados', [])[:1]}...")  # Log apenas do primeiro item
+        except Exception as e:
+            self.log.error(f"Erro ao registrar dados iniciais: {e}")
