@@ -1,4 +1,3 @@
-from components.dialog_adicionar_produto import DialogAdicionarProduto
 from components.navbar import NavBar
 from components.data_table import Table
 from logs.logger import Logger
