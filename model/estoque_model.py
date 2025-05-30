@@ -1,3 +1,4 @@
+from typing import Any, Dict
 from database.db import Database
 from logs.logger import Logger
 from model.produto import Produto
@@ -123,3 +124,29 @@ class EstoqueModel:
         except Exception as e:
             self.log.error(f"Erro no model: {str(e)}")
             raise
+
+    def adicionar(self, dados_produto: Dict[str, Any]) -> bool:
+        """Adiciona um novo produto ao banco de dados"""
+        try:
+            query = """
+            INSERT INTO produtos (nome, descricao, preco, quantidade, tipo)
+            VALUES (%s, %s, %s, %s, %s)
+            """
+            # Dados do produto que serão inseridos
+            produto_data = (
+                dados_produto["nome"],
+                dados_produto["descricao"],
+                dados_produto["preco"],
+                dados_produto["quantidade"],
+                dados_produto["tipo"]
+            )
+
+            # Executa a query para inserção do produto
+            self.database.execute_query(query, produto_data)
+            
+            self.log.info(f"Produto '{dados_produto['nome']}' adicionado com sucesso.")
+            return True  # Produto adicionado com sucesso
+        
+        except Exception as e:
+            self.log.error(f"Erro ao adicionar produto: {e}")
+            return False  # Caso de erro na inserção

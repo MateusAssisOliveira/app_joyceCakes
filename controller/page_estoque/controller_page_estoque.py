@@ -86,21 +86,39 @@ class EstoquePageController:
         self.page.update()
 
     def adicionar_produto(self):
-
+        
+        # Criação do diálogo
         dialog = DialogAdicionarProduto(page=self.page)
         
+        # Função callback para o botão "Salvar"
         def salvar_callback(dados):
+            # Tenta adicionar o produto
             success, message = self.product_handler.adicionar_produto(dados)
+            
+            # Exibe a Snackbar com a mensagem de sucesso ou erro
             self._show_snackbar(message, success)
+
+            # Se a operação foi bem-sucedida, recarrega os dados do estoque
             if success:
                 self.carregar_dados_estoque()
-                
+
+            # Fecha o diálogo após a operação
+            dialog.fechar()
+
+        # Função callback para o botão "Cancelar"
+        def cancelar_callback():
+            self.log.debug("Operação cancelada pelo usuário")
+            
+            # Fecha o diálogo ao cancelar
+            dialog.fechar()
+
+        # Exibe o diálogo com os callbacks configurados
         dialog.mostrar(
             on_salvar=salvar_callback,
-            on_cancelar=lambda: self.log.debug("Operação cancelada pelo usuário")
+            on_cancelar=cancelar_callback
         )
 
-        dialog.verificar_visibilidade()
+
 
     def _show_snackbar(self, message, success=True):
         """Método auxiliar para mostrar snackbar"""
