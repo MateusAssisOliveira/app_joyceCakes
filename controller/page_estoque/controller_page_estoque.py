@@ -89,11 +89,13 @@ class EstoquePageController:
     def _show_snackbar(self, message, success=True):
         """Exibe uma snackbar com mensagem"""
         self.page.snack_bar = ft.SnackBar(
-            ft.Text(message),
-            bgcolor=ft.Colors.GREEN_300 if success else ft.Colors.RED_300
+            content=ft.Text(message),
+            bgcolor=ft.colors.GREEN_300 if success else ft.colors.RED_300,
+            duration=3000  # duração em milissegundos
         )
+        self.page.open(self.page.snack_bar)
         self.page.snack_bar.open = True
-        self.page.update()
+
 
     def adicionar_produto(self, e=None):
         """Abre diálogo para adicionar novo produto"""
@@ -102,15 +104,19 @@ class EstoquePageController:
         def salvar_callback(dados):
             success, message = self.product_handler.adicionar_produto(dados)
             self._show_snackbar(message, success)
+            
             if success:
+                self.log.info(f"Produto adicionado: {dados}")
+                dialog.fechar()
                 self.carregar_dados_estoque()
-            dialog.fechar()
+           
 
         dialog.abrir(
             modo_edicao=False,
             on_salvar=salvar_callback,
             on_cancelar=lambda: print("Operação cancelada")
         )
+        
 
     def editar_produto(self, e=None):
         """Abre diálogo para editar produto selecionado"""
@@ -120,7 +126,7 @@ class EstoquePageController:
 
         produto = self.product_handler.produto_selecionado
         self.log.info(f"Produto para ediar : {produto}")
-        dialog = DialogProduto(self.page,produto)
+        dialog = DialogProduto(self.page)
         
         def salvar_callback(dados_editados):
             success, message = self.product_handler.editar_produto(dados_editados)
