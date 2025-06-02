@@ -13,8 +13,9 @@ class EstoqueProductHandler:
         """Adiciona um novo produto ao estoque"""
         try:
             dados["quantidade"] = int(dados["quantidade"])
-            self.estoque_model.adicionar(dados)
-            return True, "Produto adicionado com sucesso!"
+            if self.estoque_model.adicionar(dados):
+                self.log.info(f"Produto '{dados['nome']}' adicionado com sucesso.")
+                return True, "Produto adicionado com sucesso!"
         except Exception as e:
             self.log.error(f"Erro ao salvar produto: {e}")
             return False, f"Erro ao salvar: {str(e)}"
@@ -42,15 +43,15 @@ class EstoqueProductHandler:
             self.log.error(f"Erro ao editar produto: {e}")
             return False, f"Erro ao editar: {str(e)}"
 
-    def excluir_produto(self, produto_id: Optional[int] = None) -> tuple[bool, str]:
+    def excluir_produto(self) -> tuple[bool, str]:
         """Exclui o produto selecionado ou um específico por ID"""
         try:
-            id_a_excluir = produto_id or (self.produto_selecionado['id'] if self.produto_selecionado else None)
+            id_a_excluir = self.produto_selecionado['id'] if self.produto_selecionado else None
             
             if not id_a_excluir:
                 return False, "Nenhum produto especificado para exclusão"
             
-            self.estoque_model.deletar_produto(id_a_excluir)
+            self.estoque_model.excluir(id_a_excluir)
             
             # Se estava excluindo o produto selecionado, limpa a seleção
             if self.produto_selecionado and self.produto_selecionado['id'] == id_a_excluir:

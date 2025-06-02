@@ -131,3 +131,12 @@ class Database:
 
         cursor.close()
         self.close()
+        
+    def commit(self):
+       """Realiza o commit manual das transações, se necessário"""
+       if self.connection and self.connection.open:
+           try:
+               self.connection.commit()
+               logger.info("💾 Commit realizado com sucesso")
+           except Error as e:
+               logger.error(f"❌ Erro ao realizar commit: {e}")
