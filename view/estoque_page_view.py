@@ -51,11 +51,15 @@ class EstoquePageView:
         self.botao_buscar.on_click = ao_clicar_buscar
 
 
-    def alimentar_Dados(self, headers_produtos, rows_produtos):
+    def alimentar_Dados(self, headers_produtos, rows_produtos) -> bool:
         self.log.info("Atualizando dados da tabela...")
-        self.table.set_data(headers_produtos, rows_produtos)
+        sucesso = self.table.set_data(headers_produtos, rows_produtos)
+
         self.log.debug(f"Headers: {headers_produtos}")
         self.log.debug(f"Total de linhas: {len(rows_produtos)}")
+
+        return sucesso
+
 
     def _build_table(self):
         # Só cria a view uma vez
@@ -71,14 +75,16 @@ class EstoquePageView:
         try:
 
             self._build_table()  # Garante que table_view foi construída uma vez
+            self.rodaPe_view = self.rodaPe.build()
+            self.navbar_view = self.navbar.build()
 
             return ft.Container(
                 content=ft.Column(
                     controls=[
-                        self.navbar.build(),
+                        self.navbar_view,
                         self.loading_indicator,
                         self.error_message,
-                        self.busca_container,  # <-- AQUI ENTRA O CAMPO DE BUSCA
+                        self.busca_container,  
                         ft.Container(
                             content=ft.Row(
                                 controls=[self.table_view],
@@ -90,7 +96,7 @@ class EstoquePageView:
                             padding=5
                         ),
                         ft.Container(
-                            content=self.rodaPe.build(),
+                            content=self.rodaPe_view,
                             margin=ft.margin.only(top=10, bottom=10),
                             alignment=ft.alignment.center
                         )
@@ -108,7 +114,7 @@ class EstoquePageView:
             return ft.Container(
                 content=ft.Column(
                     controls=[
-                        self.navbar.build(),
+                        self.navbar_view,
                         self.error_message
                     ],
                     expand=True

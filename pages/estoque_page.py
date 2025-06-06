@@ -54,3 +54,23 @@ class EstoquePage:
             self.log.debug(f"Dados iniciais carregados: {initial_data.get('dados', [])[:1]}...")  # Log apenas do primeiro item
         except Exception as e:
             self.log.error(f"Erro ao registrar dados iniciais: {e}")
+            
+    def as_view(self) -> ft.View:
+        """Retorna a tela de estoque como uma View para navegação com rotas"""
+        self.page.controls.clear()
+
+        view = ft.View(
+            route="/estoque",
+            controls=[
+                ft.Column(
+                    controls=[self.controller.exibir_view_estoque()],
+                    expand=True
+                )
+            ]
+        )
+        self.page.views.clear()
+        self.page.views.append(view)
+        self.page.update()
+        
+        self._log_initial_data()
+        return view

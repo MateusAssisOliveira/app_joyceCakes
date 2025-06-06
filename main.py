@@ -1,11 +1,16 @@
 import flet as ft
-from page.estoque_page import EstoquePage
+from controller.routes.route_controller import RouteController  # Ajuste o caminho conforme necessário
 
 def main(page: ft.Page):
     page.title = "Sistema"
     page.scroll = "auto"
-    
-    estoque_page = EstoquePage(page)
-    estoque_page.start()
+    page.theme_mode = ft.ThemeMode.LIGHT
+
+    # Inicia o sistema de rotas
+    router = RouteController(page)
+    page.on_route_change = router.route_change
+
+    # Vai para a rota atual (ou "/" se nenhuma)
+    page.go(page.route or "/")
 
 ft.app(target=main)

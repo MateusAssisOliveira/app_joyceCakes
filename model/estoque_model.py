@@ -152,6 +152,7 @@ class EstoqueModel:
         except Exception as e:
             self.log.error(f"Erro ao adicionar produto: {e}")
             return False  # Caso de erro na inserção
+        
     def atualizar(self, id_produto: int, dados_produto: Dict[str, Any]) -> bool:
         """Atualiza um produto existente no banco de dados"""
         try:

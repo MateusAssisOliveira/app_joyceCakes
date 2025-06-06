@@ -28,7 +28,10 @@ class Table:
         :param headers: lista de strings com nomes das colunas
         :param rows: lista de dicionários contendo os dados (chaves são os headers)
         """
-        self.data_table.columns = [ft.DataColumn(ft.Text(header)) for header in headers]
+        if not headers:
+            headers = ["Sem dados"]
+
+        self.data_table.columns = [ft.DataColumn(ft.Text(header.upper())) for header in headers]
         self.rows_data = rows  # Armazena os dados originais
 
         self.data_table.rows = [
@@ -41,6 +44,13 @@ class Table:
             )
             for i, produto in enumerate(rows)
         ]
+        return {
+            
+            "success": True,
+            "total_rows": len(rows),
+            "columns": headers
+        }
+
 
     def _handle_row_click(self, row_index):
         """Manipula o clique na linha e chama o callback com os dados da linha"""

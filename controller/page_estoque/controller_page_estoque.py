@@ -83,13 +83,18 @@ class EstoquePageController:
         try:
             headers_produtos = resultado_final.get('colunas', [])
             rows_produtos = resultado_final.get('dados', [])
-            total_paginas = resultado_final.get('total_paginas', 1)
+            total_paginas = resultado_final.get('total_paginas')
 
             self.estoque_view.rodaPe.total_paginas = total_paginas
-            self.estoque_view.alimentar_Dados(headers_produtos, rows_produtos)
             self.estoque_view.rodaPe.ao_mudar_pagina = callback_paginacao
+
+            sucesso = self.estoque_view.alimentar_Dados(headers_produtos, rows_produtos)
+            
+            if not sucesso:
+                self._handle_error("Falha ao preencher a tabela com os dados.")
         except Exception as e:
             self._handle_error(f"Erro ao atualizar dados na view: {e}")
+
 
     def _handle_error(self, error_msg):
         self.log.error(error_msg)
@@ -138,6 +143,7 @@ class EstoquePageController:
             self._handle_error(f"Erro ao abrir diálogo de novo produto: {e}")
 
     def editar_produto(self, e=None):
+
         self.log.debug("Abrindo diálogo para edição de produto.")
         try:
             if not self.product_handler.produto_selecionado:
@@ -173,6 +179,7 @@ class EstoquePageController:
             self._handle_error(f"Erro ao abrir diálogo de edição: {e}")
 
     def excluir_produto_selecionado(self, e=None):
+
         self.log.debug("Iniciando processo de exclusão de produto.")
         try:
             if not self.product_handler.produto_selecionado:
