@@ -28,7 +28,8 @@ class RodapePaginacao():
         self.texto_pagina = ft.Text(f"Página {self.pagina_atual} de {self.total_paginas}")
         self.log.debug(f"Texto da página: {self.texto_pagina.value}")
 
-        self._row = ft.Row(
+        self._row = ft.Container( 
+            content = ft.Row(
             controls=[
                 self.btn_anterior,
                 self.texto_pagina,
@@ -37,6 +38,10 @@ class RodapePaginacao():
             alignment=ft.MainAxisAlignment.CENTER,
             vertical_alignment=ft.CrossAxisAlignment.CENTER,
             spacing=20
+            
+        ),
+        margin=ft.margin.only(top=10, bottom=10),
+        alignment=ft.alignment.center
         )
         return self._row
 

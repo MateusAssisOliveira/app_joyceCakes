@@ -56,6 +56,7 @@ class EstoquePageController:
             self._handle_error(f"Erro ao carregar dados do estoque: {e}")
 
     def busca_por_nome(self, produto=None, pagina=1):
+
         self.log.debug(f"Iniciando busca_por_nome - Produto: {produto}, Página: {pagina}")
         try:
             if not produto:
@@ -81,9 +82,15 @@ class EstoquePageController:
 
     def _atualizar_view_com_dados(self, resultado_final, callback_paginacao):
         try:
+            
             headers_produtos = resultado_final.get('colunas', [])
             rows_produtos = resultado_final.get('dados', [])
             total_paginas = resultado_final.get('total_paginas')
+
+            self.log.info(f"headers_produtos : {headers_produtos}")
+            self.log.info(f"rows_produtos : {rows_produtos}")
+            self.log.info(f"total_paginas : {total_paginas}")
+
 
             self.estoque_view.rodaPe.total_paginas = total_paginas
             self.estoque_view.rodaPe.ao_mudar_pagina = callback_paginacao
@@ -115,6 +122,7 @@ class EstoquePageController:
             self._handle_error(f"Erro ao exibir snackbar: {e}")
 
     def adicionar_produto(self, e=None):
+
         self.log.debug("Abrindo diálogo para adicionar novo produto.")
         try:
             dialog = DialogProduto(self.page)
@@ -131,6 +139,7 @@ class EstoquePageController:
                         self.page.update()
                         time.sleep(0.3)
                         self.carregar_dados_estoque()
+
                 except Exception as e:
                     self._handle_error(f"Erro ao salvar novo produto: {e}")
 

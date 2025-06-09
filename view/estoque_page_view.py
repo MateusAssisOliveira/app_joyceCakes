@@ -93,7 +93,7 @@ class EstoquePageView:
                             margin=ft.margin.only(top=0),
                             border=ft.border.all(2, "green"),
                             expand=True,
-                            padding=5
+                            padding=1
                         ),
                         ft.Container(
                             content=self.rodaPe_view,

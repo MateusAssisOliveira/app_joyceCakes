@@ -17,39 +17,59 @@ class Table:
             border=ft.border.all(1, "#e0e0e0"),
             horizontal_lines=ft.border.BorderSide(1, "#e0e0e0"),
             vertical_lines=ft.border.BorderSide(1, "#e0e0e0"),
+            data_row_min_height=10,
+            data_row_max_height=20,
+            heading_row_height=20
         )
         self.rows_data = []  # Armazenará os dados originais das linhas
         self.selected_row_data = None
 
     def set_data(self, headers, rows):
         """
-        Define os dados da tabela.
-        
+        Define os dados da tabela com tratamento de erro.
+
         :param headers: lista de strings com nomes das colunas
         :param rows: lista de dicionários contendo os dados (chaves são os headers)
+        :return: dict com sucesso e, se erro, mensagem
         """
-        if not headers:
-            headers = ["Sem dados"]
+        try:
+            if not headers:
+                headers = ["Sem dados"]
 
-        self.data_table.columns = [ft.DataColumn(ft.Text(header.upper())) for header in headers]
-        self.rows_data = rows  # Armazena os dados originais
+            self.data_table.columns = [ft.DataColumn(ft.Text(header.upper())) for header in headers]
+            self.rows_data = rows  # Armazena os dados originais
 
-        self.data_table.rows = [
-            ft.DataRow(
-                cells=[
-                    ft.DataCell(ft.Text(str(produto.get(header, "")), weight=ft.FontWeight.NORMAL))
+            self.data_table.rows = []
+
+            for i, produto in enumerate(rows):
+                if not isinstance(produto, dict):
+                    raise ValueError(f"Linha {i} não é um dicionário válido: {produto}")
+
+                cells = [
+                    ft.DataCell(
+                        ft.Text(str(produto.get(header, "")), weight=ft.FontWeight.NORMAL)
+                    )
                     for header in headers
-                ],
-                on_select_changed=lambda e, idx=i: self._handle_row_click(idx) if self.selected_row_data else None
-            )
-            for i, produto in enumerate(rows)
-        ]
-        return {
-            
-            "success": True,
-            "total_rows": len(rows),
-            "columns": headers
-        }
+                ]
+
+                row = ft.DataRow(
+                    cells=cells,
+                    on_select_changed=lambda e, idx=i: self._handle_row_click(idx) if self.selected_row_data else None
+                )
+                self.data_table.rows.append(row)
+
+            return {
+                "success": True,
+                "total_rows": len(rows),
+                "columns": headers
+            }
+
+        except Exception as e:
+            return {
+                "success": False,
+                "error": f"Erro ao construir tabela: {str(e)}"
+            }
+
 
 
     def _handle_row_click(self, row_index):
@@ -87,7 +107,7 @@ class Table:
         """
         return ft.Container(
             content=self.data_table,
-            padding=10,
+            padding=1,
             expand=True,
             border_radius=ft.border_radius.all(5),
         )

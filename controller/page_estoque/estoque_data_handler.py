@@ -10,6 +10,7 @@ class EstoqueDataHandler:
         self._cache_paginacao = {}
 
     def listar_produtos_paginados(self, pagina=1, por_pagina=20, ordenar_por=None, filtros=None):
+        
         self.log.debug(f"Chamando listar_produtos() com: Página={pagina}, Quantidade={por_pagina}, OrdenarPor={ordenar_por}, Filtros={filtros}")
         chave_cache = f"{pagina}-{por_pagina}-{ordenar_por}-{filtros}"
 
