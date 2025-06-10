@@ -1,62 +1,123 @@
 import flet as ft
 from decimal import Decimal
-
-from model import produto
+from typing import List, Dict, Optional, Callable
 
 class Table:
     def __init__(self):
         """
         Inicializa a tabela com estilo padrão.
-        
-        :param on_row_click: função de callback que será chamada quando uma linha for clicada
-                             receberá os dados da linha como parâmetro
         """
         self.data_table = ft.DataTable(
-            columns=[],
-            expand=True,
-            border=ft.border.all(1, "#e0e0e0"),
+            columns=[],  # Colunas serão configuradas sem texto visível
+            border=ft.border.only(
+                left=ft.border.BorderSide(1, "#e0e0e0"),
+                right=ft.border.BorderSide(1, "#e0e0e0"),
+                bottom=ft.border.BorderSide(1, "#e0e0e0")
+            ),
             horizontal_lines=ft.border.BorderSide(1, "#e0e0e0"),
             vertical_lines=ft.border.BorderSide(1, "#e0e0e0"),
-            data_row_min_height=10,
-            data_row_max_height=20,
-            heading_row_height=20
+            data_row_min_height=40,
+            data_row_max_height=40,
+            heading_row_height=0,  # Esconde o cabeçalho nativo
+            divider_thickness=0,
+            column_spacing=20,
+            expand=True
         )
-        self.rows_data = []  # Armazenará os dados originais das linhas
-        self.selected_row_data = None
+        self.rows_data: List[Dict] = []
+        self.selected_row_data: Optional[Callable] = None
+        self.header_container = ft.Row()  # Container para o título
+        self.table_container = ft.Container(expand=True)  # Container para a tabela rolável
 
-    def set_data(self, headers, rows):
+    def set_data(self, headers: List[str], rows: List[Dict]) -> Dict:
         """
         Define os dados da tabela com tratamento de erro.
 
         :param headers: lista de strings com nomes das colunas
-        :param rows: lista de dicionários contendo os dados (chaves são os headers)
+        :param rows: lista de dicionários contendo os dados
         :return: dict com sucesso e, se erro, mensagem
+
         """
+        
         try:
-            if not headers:
-                headers = ["Sem dados"]
+            if not headers or not isinstance(headers, list):
+                return {
+                    "success": False,
+                    "error": "Cabeçalhos inválidos: deve ser uma lista não vazia"
+                }
 
-            self.data_table.columns = [ft.DataColumn(ft.Text(header.upper())) for header in headers]
-            self.rows_data = rows  # Armazena os dados originais
+            if not rows:
+                return {
+                    "success": False,
+                    "error": "Dados inválidos: deve ser uma lista não vazia"
+                }
 
+            #>
+            """ self.data_table.columns = [
+                ft.DataColumn(ft.Text(header.upper())) 
+                for header in headers
+            ] """
+            #<
+
+            self.data_table.columns = [
+                ft.DataColumn(ft.Text(' ')) 
+                for header in headers
+            ]
+            
+            self.header_container.controls = [
+                ft.Container(
+                    content=ft.Text(
+                        header.upper(),
+                        weight=ft.FontWeight.BOLD,
+                        size=14,
+                        color=ft.Colors.WHITE
+                    ),
+                    padding=10,
+                    width=150,  
+                    bgcolor=ft.Colors.BLUE_700,
+                    alignment=ft.alignment.center,
+                    border_radius=ft.border_radius.only(top_left=5, top_right=5),
+                    expand=True
+                
+                )
+                for header in headers
+            ]
+            
+            self.rows_data = rows
             self.data_table.rows = []
 
-            for i, produto in enumerate(rows):
-                if not isinstance(produto, dict):
-                    raise ValueError(f"Linha {i} não é um dicionário válido: {produto}")
+            for i, row in enumerate(rows):
+                if not isinstance(row, dict):
+                    return {
+                        "success": False,
+                        "error": f"Linha {i} não é um dicionário válido: {row}"
+                    }
 
                 cells = [
-                    ft.DataCell(
-                        ft.Text(str(produto.get(header, "")), weight=ft.FontWeight.NORMAL)
-                    )
+                    ft.DataCell(self._format_cell(row.get(header, "")))
                     for header in headers
                 ]
 
-                row = ft.DataRow(
-                    cells=cells,
-                    on_select_changed=lambda e, idx=i: self._handle_row_click(idx) if self.selected_row_data else None
+                self.data_table.rows.append(
+                    ft.DataRow(
+                        cells=cells,
+                        on_select_changed=lambda e, idx=i: self._handle_row_click(idx)
+                    )
                 )
-                self.data_table.rows.append(row)
+
+            scrollable_table = ft.ListView(
+                controls=[self.data_table],
+                expand=True,
+                spacing=0,
+                padding=0
+            )
+
+            self.table_container.content = scrollable_table
+            self.table_container.border = ft.border.only(
+                bottom=ft.border.BorderSide(1, "#e0e0e0"),
+                left=ft.border.BorderSide(1, "#e0e0e0"),
+                right=ft.border.BorderSide(1, "#e0e0e0")
+            )
+
 
             return {
                 "success": True,
@@ -70,44 +131,45 @@ class Table:
                 "error": f"Erro ao construir tabela: {str(e)}"
             }
 
-
-
-    def _handle_row_click(self, row_index):
+    def _handle_row_click(self, row_index: int) -> None:
         """Manipula o clique na linha e chama o callback com os dados da linha"""
-        if 0 <= row_index < len(self.rows_data):
+        if self.selected_row_data and 0 <= row_index < len(self.rows_data):
             self.selected_row_data(self.rows_data[row_index])
-            
 
-        
-    def _format_cell(self, value):
+    def _format_cell(self, value) -> ft.Text:
         """
         Formata o valor da célula para exibição.
         
-        :param value: valor da célula, pode ser Decimal, None ou outro tipo
+        :param value: valor da célula
         :return: widget ft.Text formatado
         """
         if isinstance(value, Decimal):
-            if value >= 0:
-                return ft.Text(f"R$ {value:.2f}")
-            else:
-                return ft.Text(f"-R$ {abs(value):.2f}")
+            return ft.Text(f"R$ {abs(value):.2f}" if value >= 0 else f"-R$ {abs(value):.2f}")
         elif value is None:
             return ft.Text("")
-        else:
-            return ft.Text(str(value))
-
-    def set_callback_handle_row_click(self,handle_row_click):
-        self.selected_row_data = handle_row_click
-
-    def build(self):
-        """
-        Retorna o widget Container com a tabela pronta para uso.
+        return ft.Text(str(value)
         
-        :return: widget ft.Container
-        """
-        return ft.Container(
-            content=self.data_table,
-            padding=1,
-            expand=True,
-            border_radius=ft.border_radius.all(5),
+        )
+
+    def set_callback_handle_row_click(self, callback: Callable) -> None:
+        """Define a função de callback para clique em linha"""
+        self.selected_row_data = callback
+
+    def build(self) -> ft.Container:
+        """Retorna o widget Container com a tabela pronta para uso"""
+        return ft.Column(
+            controls=[
+                self.header_container,  # Título fixo
+                ft.Container(
+                    content=ft.Column(
+                        controls=[self.table_container],
+                        spacing=0,
+                        expand=True
+                    ),
+                    expand=True,
+                    border_radius=ft.border_radius.only(bottom_left=5, bottom_right=5)
+                )
+            ],
+            spacing=0,
+            expand=True
         )
