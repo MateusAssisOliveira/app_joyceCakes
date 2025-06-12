@@ -18,7 +18,7 @@ class Table:
             vertical_lines=ft.border.BorderSide(1, "#e0e0e0"),
             data_row_min_height=40,
             data_row_max_height=40,
-            heading_row_height=0,  # Esconde o cabeçalho nativo
+            heading_row_height=25,  
             divider_thickness=0,
             column_spacing=20,
             expand=True
@@ -51,37 +51,10 @@ class Table:
                     "error": "Dados inválidos: deve ser uma lista não vazia"
                 }
 
-            #>
-            """ self.data_table.columns = [
+            self.data_table.columns = [
                 ft.DataColumn(ft.Text(header.upper())) 
                 for header in headers
-            ] """
-            #<
-
-            self.data_table.columns = [
-                ft.DataColumn(ft.Text(' ')) 
-                for header in headers
             ]
-            
-            self.header_container.controls = [
-                ft.Container(
-                    content=ft.Text(
-                        header.upper(),
-                        weight=ft.FontWeight.BOLD,
-                        size=14,
-                        color=ft.Colors.WHITE
-                    ),
-                    padding=10,
-                    width=150,  
-                    bgcolor=ft.Colors.BLUE_700,
-                    alignment=ft.alignment.center,
-                    border_radius=ft.border_radius.only(top_left=5, top_right=5),
-                    expand=True
-                
-                )
-                for header in headers
-            ]
-            
             self.rows_data = rows
             self.data_table.rows = []
 
@@ -159,7 +132,6 @@ class Table:
         """Retorna o widget Container com a tabela pronta para uso"""
         return ft.Column(
             controls=[
-                self.header_container,  # Título fixo
                 ft.Container(
                     content=ft.Column(
                         controls=[self.table_container],

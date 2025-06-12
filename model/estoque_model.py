@@ -220,31 +220,49 @@ class EstoqueModel:
         except Exception as e:
             self.log.error(f"Erro ao buscar produto por ID: {e}")
             return None
-    def buscar_por_nome(self, nome_produto: str) -> Produto:
-        """Busca um produto pelo nome"""
+        
+    def buscar_por_nome(self, nome_produto: str, pagina: int = 1, por_pagina: int = 20) -> Dict[str, Any]:
+        """Busca produtos pelo nome de forma paginada"""
         try:
-            query = "SELECT * FROM produtos WHERE nome LIKE %s"
-            resultado = self.database.fetch_data(query, (f"%{nome_produto}%",))
+            offset = (pagina - 1) * por_pagina  # Calcula o offset para a página
+            query = "SELECT * FROM produtos WHERE nome LIKE %s LIMIT %s OFFSET %s"
+            resultado = self.database.fetch_data(query, (f"%{nome_produto}%", por_pagina, offset))
             
             if not resultado:
                 self.log.error(f"Nenhum produto encontrado com o nome '{nome_produto}'.")
-                return None
+                return {"dados": [], "pagina_atual": pagina, "por_pagina": por_pagina, "total_registros": 0}
             
-            row = resultado[0]
-            produto = Produto(
-                id=row["id"],
-                nome=row["nome"],
-                descricao=row["descricao"],
-                preco=row["preco"],
-                quantidade=row["quantidade"],
-                tipo=row["tipo"]
-            )
-            self.log.info(f"Produto encontrado: {produto.nome}")
-            return produto
-        
+            # Obtém o total de produtos que correspondem ao nome para calcular o número de páginas
+            query_total = "SELECT COUNT(*) AS total FROM produtos WHERE nome LIKE %s"
+            total = self.database.fetch_data(query_total, (f"%{nome_produto}%",))
+            total_registros = total[0]["total"]
+            total_paginas = (total_registros + por_pagina - 1) // por_pagina  # Calcula o total de páginas
+
+            produtos = []
+            for row in resultado:
+                produto = Produto(
+                    id=row["id"],
+                    nome=row["nome"],
+                    descricao=row["descricao"],
+                    preco=row["preco"],
+                    quantidade=row["quantidade"],
+                    tipo=row["tipo"]
+                )
+                produtos.append(produto)
+
+            return {
+                "dados": produtos,
+                "pagina_atual": pagina,
+                "por_pagina": por_pagina,
+                "total_registros": total_registros,
+                "total_paginas": total_paginas
+            }
+
         except Exception as e:
-            self.log.error(f"Erro ao buscar produto por nome: {e}")
-            return None
+            self.log.error(f"Erro ao buscar produto por nome paginado: {e}")
+            return {"dados": [], "pagina_atual": pagina, "por_pagina": por_pagina, "total_registros": 0}
+
+        
     def buscar_por_tipo(self, tipo_produto: str) -> list:
         """Busca produtos pelo tipo"""
         try:

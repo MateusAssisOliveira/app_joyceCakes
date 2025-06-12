@@ -12,6 +12,8 @@ class RodapePaginacao():
         self.log.info("RodapePaginacao inicializado.")
         self.log.debug(f"Total de páginas definido: {self.total_paginas}")
 
+    def set_callbacks(self,callbacks):
+        self.ao_mudar_pagina = callbacks
     def construir(self):
         
         self.log.debug("Construindo controles do rodapé de paginação.")
@@ -49,41 +51,57 @@ class RodapePaginacao():
     def pagina_anterior(self, e):
         self.log.debug("Botão 'anterior' clicado.")
         if self.pagina_atual > 1:
-            self.pagina_atual -= 1
-            self.log.info(f"Indo para a página anterior: {self.pagina_atual}")
-            self.atualizar()
+            nova_pagina = self.pagina_atual - 1
+            if nova_pagina != self.pagina_atual:
+                self.pagina_atual = nova_pagina
+                self.log.info(f"Indo para a página anterior: {self.pagina_atual}")
+                self.atualizar()
         else:
             self.log.debug("Página atual já é a primeira. Nenhuma ação tomada.")
 
     def proxima_pagina(self, e):
         self.log.debug("Botão 'próximo' clicado.")
         if self.pagina_atual < self.total_paginas:
-            self.pagina_atual += 1
-            self.log.info(f"Indo para a próxima página: {self.pagina_atual}")
-            self.atualizar()
+            nova_pagina = self.pagina_atual + 1
+            if nova_pagina != self.pagina_atual:
+                self.pagina_atual = nova_pagina
+                self.log.info(f"Indo para a próxima página: {self.pagina_atual}")
+                self.atualizar()
         else:
             self.log.debug("Página atual já é a última. Nenhuma ação tomada.")
 
     def atualizar(self):
-        self.log.debug(f"Atualizando componentes para a página {self.pagina_atual}.")
-        self.texto_pagina.value = f"Página {self.pagina_atual} de {self.total_paginas}"
-        self.btn_anterior.disabled = self.pagina_atual == 1
-        self.btn_proximo.disabled = self.pagina_atual == self.total_paginas
+        if hasattr(self, '_em_atualizacao') and self._em_atualizacao:
+            return  # Evita chamada recursiva
 
-        # Atualiza os widgets individualmente
-        self.texto_pagina.update()
-        self.btn_anterior.update()
-        self.btn_proximo.update()
-        
-        # Atualiza o container do rodapé para refletir as mudanças
-        if hasattr(self, '_row'):
-            self._row.update()
+        try:
+            self._em_atualizacao = True  # Sinaliza que a atualização está em andamento
+            self.log.debug(f"Atualizando componentes para a página {self.pagina_atual}.")
+            self.texto_pagina.value = f"Página {self.pagina_atual} de {self.total_paginas}"
+            self.btn_anterior.disabled = self.pagina_atual == 1
+            self.btn_proximo.disabled = self.pagina_atual == self.total_paginas
 
-        if callable(self.ao_mudar_pagina):
-            self.log.debug("Chamando callback ao_mudar_pagina.")
-            self.ao_mudar_pagina(self.pagina_atual)
-        else:
-            self.log.warning("Callback ao_mudar_pagina não é callable ou não foi definido.")
+            # Atualiza os widgets individualmente
+            self.texto_pagina.update()
+            self.btn_anterior.update()
+            self.btn_proximo.update()
+            
+            # Atualiza o container do rodapé para refletir as mudanças
+            if hasattr(self, '_row'):
+                self._row.update()
+
+            if callable(self.ao_mudar_pagina):
+                self.log.debug("Chamando callback ao_mudar_pagina.")
+                self.ao_mudar_pagina(self.pagina_atual)
+            else:
+                self.log.warning("Callback ao_mudar_pagina não é callable ou não foi definido.")
+
+        except Exception as e:
+            #self._handle_error(f"Erro ao atualizar componentes: {e}")
+            pass
+        finally:
+            self._em_atualizacao = False  # Libera a atualização após o término
+
 
     def build(self):
         self.log.debug("Chamando build() do RodapePaginacao.")

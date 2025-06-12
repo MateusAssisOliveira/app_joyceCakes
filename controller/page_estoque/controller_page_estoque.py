@@ -28,12 +28,17 @@ class EstoquePageController:
         try:
             self.estoque_view.set_on_buscar(self.busca_por_nome)
             self.estoque_view.table.set_callback_handle_row_click(self.product_handler.selecionar_produto)
-            self.estoque_view.definir_acoes_botoes(callbacks={
+
+            self.estoque_view.definir_acoes_botoes_navBar(callbacks={
                 "home": lambda: print("Navegar para home"),
                 "novo": self.adicionar_produto,
                 "editar": self.editar_produto,
                 "deletar": self.excluir_produto_selecionado
             })
+
+            self.estoque_view.definir_acoes_botoes_rodape(callbacks=self.carregar_dados_estoque)
+
+
             self.log.debug("Callbacks configurados com sucesso.")
         except Exception as e:
             self._handle_error(f"Erro ao configurar callbacks: {e}")
@@ -47,24 +52,25 @@ class EstoquePageController:
             self._handle_error(f"Erro ao exibir a view do estoque: {e}")
 
     def carregar_dados_estoque(self, pagina=1):
+
+        
         try:
             self.log.debug(f"Carregando dados do estoque - Página: {pagina}")
             resultado_final = self.data_handler.listar_produtos_paginados(pagina=pagina)
-            self._atualizar_view_com_dados(resultado_final, lambda p: self.carregar_dados_estoque(p))
+            self._atualizar_view_com_dados(resultado_final)
             self.page.update()
         except Exception as e:
             self._handle_error(f"Erro ao carregar dados do estoque: {e}")
 
-    def busca_por_nome(self, produto=None, pagina=1):
+    def busca_por_nome(self, produto=None):
 
-        self.log.debug(f"Iniciando busca_por_nome - Produto: {produto}, Página: {pagina}")
+        self.log.debug(f"Iniciando busca_por_nome - Produto: {produto}")
         try:
             if not produto:
                 self.data_handler.limpar_cache_paginacao()
-                return self.carregar_dados_estoque(pagina)
+                return self.carregar_dados_estoque()
 
             resultado_final = self.data_handler.listar_produtos_paginados(
-                pagina=pagina,
                 filtros=str(produto)
             )
             if not resultado_final.get('dados', []):
@@ -72,15 +78,12 @@ class EstoquePageController:
             else:
                 self.estoque_view.error_message.value = ""
 
-            self._atualizar_view_com_dados(
-                resultado_final,
-                lambda p: self.busca_por_nome(produto, pagina=p)
-            )
+            self._atualizar_view_com_dados(resultado_final)
             self.page.update()
         except Exception as e:
             self._handle_error(f"Erro na busca por nome: {e}")
 
-    def _atualizar_view_com_dados(self, resultado_final, callback_paginacao):
+    def _atualizar_view_com_dados(self, resultado_final):
         try:
             
             headers_produtos = resultado_final.get('colunas', [])
@@ -93,9 +96,8 @@ class EstoquePageController:
 
 
             self.estoque_view.rodaPe.total_paginas = total_paginas
-            self.estoque_view.rodaPe.ao_mudar_pagina = callback_paginacao
-
             sucesso = self.estoque_view.alimentar_Dados(headers_produtos, rows_produtos)
+            self.estoque_view.rodaPe.atualizar()
             
             if not sucesso:
                 self._handle_error("Falha ao preencher a tabela com os dados.")

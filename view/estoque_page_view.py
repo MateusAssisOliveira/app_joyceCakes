@@ -34,8 +34,12 @@ class EstoquePageView:
 
         self.log.info("EstoquePageView inicializado.")
 
-    def definir_acoes_botoes(self,callbacks):
+    def definir_acoes_botoes_navBar(self,callbacks):
         self.navbar.set_callbacks(callbacks)
+
+    def definir_acoes_botoes_rodape(self,callbacks):
+        self.rodaPe.set_callbacks(callbacks)
+
 
     def set_on_buscar(self, callback):
         def ao_clicar_buscar(event):
@@ -45,7 +49,7 @@ class EstoquePageView:
                 self.error_message.value = ""
                 callback(nome_produto)
             else:
-                #self.error_message.value = "Digite o nome de um produto para buscar."
+                self.error_message.value = "Digite o nome de um produto para buscar."
                 callback()
         
         self.botao_buscar.on_click = ao_clicar_buscar
