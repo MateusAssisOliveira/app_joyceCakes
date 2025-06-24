@@ -1,4 +1,4 @@
-from pages.estoque_page import EstoquePage
+from pages.estoque.estoque_page import EstoquePage
 from pages.home_page import home_page
 from pages.not_found_page import not_found_page
 

@@ -1,6 +1,6 @@
 import flet as ft
 from controller.page_estoque.controller_page_estoque import EstoquePageController
-from view.estoque_page_view import EstoquePageView
+from view.estoque.estoque_page_view import EstoquePageView
 from model.estoque_model import EstoqueModel
 from logs.logger import Logger
 
