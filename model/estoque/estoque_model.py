@@ -1,7 +1,7 @@
 from typing import Any, Dict
 from database.db import Database
 from logs.logger import Logger
-from model.produto import Produto
+from model.estoque.produto_model import Produto
 from math import ceil
 
 class EstoqueModel:
@@ -145,7 +145,7 @@ class EstoqueModel:
             self.database.execute_query(query, produto_data)
             
             self.log.info(f"Produto '{dados_produto['nome']}' adicionado com sucesso.")
-            self.database.commit()  # <-- Adicione esta linha
+            self.database.commit() 
             self.log.info(f"Produto '{dados_produto['nome']}' adicionado com sucesso.")
             return True  # Produto adicionado com sucesso
         
@@ -181,6 +181,7 @@ class EstoqueModel:
         except Exception as e:
             self.log.error(f"Erro ao atualizar produto: {e}")
             return False  # Caso de erro na atualização
+        
     def excluir(self, id_produto: int) -> bool:
         """Exclui um produto do banco de dados"""
         try:
@@ -291,6 +292,7 @@ class EstoqueModel:
         except Exception as e:
             self.log.error(f"Erro ao buscar produtos por tipo: {e}")
             return []
+        
     def buscar_por_preco(self, preco_min: float, preco_max: float) -> list:
         """Busca produtos por faixa de preço"""
         try:

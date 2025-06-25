@@ -1,6 +1,7 @@
 from pages.estoque.estoque_page import EstoquePage
-from pages.home_page import home_page
-from pages.not_found_page import not_found_page
+from pages.home.home_page import home_page
+from pages.page_404.not_found_page import not_found_page
+from pages.receitas.receitas_page import ReceitasPage
 
 class RouteController:
     def __init__(self, page):
@@ -8,6 +9,7 @@ class RouteController:
         self.routes = {
             "/": self.home_view,
             "/estoque": self.estoque_view,
+            "/receitas": self.receitas_view
         }
 
     def home_view(self):
@@ -15,6 +17,9 @@ class RouteController:
 
     def estoque_view(self):
         return EstoquePage(self.page).as_view()
+    
+    def receitas_view(self):
+        return ReceitasPage(self.page).as_view()
     
     def not_found(self):
         return not_found_page(self.page)

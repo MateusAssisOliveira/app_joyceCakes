@@ -1,6 +1,6 @@
 from typing import Dict, Any, Optional, Tuple
 from logs.logger import Logger
-from model.estoque_model import EstoqueModel
+from model.estoque.estoque_model import EstoqueModel
 
 class EstoqueProductHandler:
     """Handler para operações específicas de produtos"""

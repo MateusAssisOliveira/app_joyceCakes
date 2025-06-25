@@ -1,6 +1,6 @@
 from typing import Dict, Any, Optional
 from logs.logger import Logger
-from model.estoque_model import EstoqueModel
+from model.estoque.estoque_model import EstoqueModel
 
 class EstoqueDataHandler:
     """Handler para operações de dados do estoque com suporte a paginação e cache"""

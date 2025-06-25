@@ -11,6 +11,6 @@ def main(page: ft.Page):
     page.on_route_change = router.route_change
 
     # Vai para a rota atual (ou "/" se nenhuma)
-    page.go(page.route or "/")
+    page.go(page.route or "/receitas")
 
 ft.app(target=main)

@@ -1,10 +1,10 @@
 import flet as ft
 import time
 from typing import Callable, Optional
-from controller.controller_page_estoque.estoque_data_handler import EstoqueDataHandler
-from controller.controller_page_estoque.estoque_product_handler import EstoqueProductHandler
+from controller.estoque.controller_estoque_data_handler import EstoqueDataHandler
+from controller.estoque.controller_estoque_product_handler import EstoqueProductHandler
 from logs.logger import Logger
-from model.estoque_model import EstoqueModel
+from model.estoque.estoque_model import EstoqueModel
 from view.estoque.estoque_page_view import EstoquePageView
 from components.dialog_produto import DialogProduto
 

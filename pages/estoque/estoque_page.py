@@ -1,7 +1,7 @@
 import flet as ft
-from controller.page_estoque.controller_page_estoque import EstoquePageController
+from controller.estoque.controller_page_estoque import EstoquePageController
 from view.estoque.estoque_page_view import EstoquePageView
-from model.estoque_model import EstoqueModel
+from model.estoque.estoque_model import EstoqueModel
 from logs.logger import Logger
 
 class EstoquePage:
@@ -17,7 +17,7 @@ class EstoquePage:
         
         # Cria o controller com as dependências injetadas
         self.controller = EstoquePageController(
-            page=page,
+            page=self.page,
             estoque_model=self._estoque_model,
             estoque_view=self._estoque_view
         )

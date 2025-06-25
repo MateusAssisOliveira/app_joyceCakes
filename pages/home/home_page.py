@@ -12,8 +12,8 @@ def home_page(page: ft.Page) -> ft.View:
                     ft.Text("Bem-vindo ao Sistema", size=30, weight=ft.FontWeight.BOLD),
                     ft.Text("Escolha uma opção para continuar.", size=18),
                     ft.ElevatedButton(
-                        text="Ir para Estoque",
-                        on_click=lambda e: page.go("/estoque")
+                        text="Ir para Receitas",
+                        on_click=lambda e: page.go("/receitas")
                     ),
                 ]
             )
