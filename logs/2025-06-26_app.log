@@ -1,0 +1,392 @@
+2025-06-26 09:57:45,658 - INFO - [ReceitasPage.__init__] Iniciando ReceitasPage... [_log | meu_logger]
+2025-06-26 09:57:45,665 - INFO - [ReceitasModel.__init__] ReceitasModel inicializado [_log | meu_logger]
+2025-06-26 09:57:45,672 - INFO - [ReceitaBloco.__init__] Componente ReceitaBloco inicializado [_log | meu_logger]
+2025-06-26 09:57:45,676 - DEBUG - [RodapePaginacao.set_callback] Callback definido: None [_log | meu_logger]
+2025-06-26 09:57:45,677 - INFO - [RodapePaginacao.__init__] RodapePaginacao inicializado [_log | meu_logger]
+2025-06-26 09:57:45,679 - DEBUG - [ReceitasPageView._initialize_components] Componentes básicos da view inicializados [_log | meu_logger]
+2025-06-26 09:57:45,682 - DEBUG - [ReceitasPageView._setup_ui_elements] Elementos de busca configurados [_log | meu_logger]
+2025-06-26 09:57:45,682 - INFO - [ReceitasPageView.__init__] ReceitasPageView inicializada [_log | meu_logger]
+2025-06-26 09:57:45,683 - INFO - [ReceitasPageController.__init__] Inicializando ReceitasPageController [_log | meu_logger]
+2025-06-26 09:57:45,683 - DEBUG - [ReceitasPageController._setup_callbacks] Configurando callbacks da view [_log | meu_logger]
+2025-06-26 09:57:45,683 - DEBUG - [ReceitasPageView.set_on_buscar] Callback de busca configurado [_log | meu_logger]
+2025-06-26 09:57:45,684 - DEBUG - [ReceitasPageView.definir_acoes_botoes_navBar] Callbacks definidos para navbar [_log | meu_logger]
+2025-06-26 09:57:45,684 - DEBUG - [RodapePaginacao.set_callback] Callback definido: <bound method ReceitasPageController._handle_paginacao_receitas of <controller.receitas.receitas_page_controller.ReceitasPageController object at 0x000001F1DB94FF80>> [_log | meu_logger]
+2025-06-26 09:57:45,684 - DEBUG - [ReceitasPageView.definir_acoes_botoes_rodape] Callback definido para rodapé [_log | meu_logger]
+2025-06-26 09:57:45,684 - INFO - [ReceitasPage.__init__] ReceitasPageController criado com sucesso. [_log | meu_logger]
+2025-06-26 09:57:45,685 - DEBUG - [ReceitasPageController.exibir_view_receitas] Exibindo view inicial de receitas [_log | meu_logger]
+2025-06-26 09:57:45,685 - DEBUG - [ReceitasPageView.create_view] Construindo a view completa de receitas [_log | meu_logger]
+2025-06-26 10:17:49,599 - INFO - [ReceitasPage.__init__] Iniciando ReceitasPage... [_log | meu_logger]
+2025-06-26 10:17:49,603 - INFO - [ReceitasModel.__init__] ReceitasModel inicializado [_log | meu_logger]
+2025-06-26 10:17:49,604 - INFO - [ReceitaBloco.__init__] Componente ReceitaBloco inicializado [_log | meu_logger]
+2025-06-26 10:17:49,605 - DEBUG - [RodapePaginacao.set_callback] Callback definido: None [_log | meu_logger]
+2025-06-26 10:17:49,605 - INFO - [RodapePaginacao.__init__] RodapePaginacao inicializado [_log | meu_logger]
+2025-06-26 10:17:49,606 - DEBUG - [ReceitasPageView._initialize_components] Componentes básicos da view inicializados [_log | meu_logger]
+2025-06-26 10:17:49,609 - DEBUG - [ReceitasPageView._setup_ui_elements] Elementos de busca configurados [_log | meu_logger]
+2025-06-26 10:17:49,609 - INFO - [ReceitasPageView.__init__] ReceitasPageView inicializada [_log | meu_logger]
+2025-06-26 10:17:49,610 - INFO - [ReceitasPageController.__init__] Inicializando ReceitasPageController [_log | meu_logger]
+2025-06-26 10:17:49,610 - DEBUG - [ReceitasPageController._setup_callbacks] Configurando callbacks da view [_log | meu_logger]
+2025-06-26 10:17:49,611 - DEBUG - [ReceitasPageView.set_on_buscar] Callback de busca configurado [_log | meu_logger]
+2025-06-26 10:17:49,611 - DEBUG - [ReceitasPageView.definir_acoes_botoes_navBar] Callbacks definidos para navbar [_log | meu_logger]
+2025-06-26 10:17:49,612 - DEBUG - [RodapePaginacao.set_callback] Callback definido: <bound method ReceitasPageController._handle_paginacao_receitas of <controller.receitas.receitas_page_controller.ReceitasPageController object at 0x000001F28B77E600>> [_log | meu_logger]
+2025-06-26 10:17:49,612 - DEBUG - [ReceitasPageView.definir_acoes_botoes_rodape] Callback definido para rodapé [_log | meu_logger]
+2025-06-26 10:17:49,613 - INFO - [ReceitasPage.__init__] ReceitasPageController criado com sucesso. [_log | meu_logger]
+2025-06-26 10:17:49,613 - DEBUG - [ReceitasPageController.exibir_view_receitas] Exibindo view inicial de receitas [_log | meu_logger]
+2025-06-26 10:17:49,613 - DEBUG - [ReceitasPageView.create_view] Construindo a view completa de receitas [_log | meu_logger]
+2025-06-26 10:18:07,103 - INFO - [ReceitasPage.__init__] Iniciando ReceitasPage... [_log | meu_logger]
+2025-06-26 10:18:07,106 - INFO - [ReceitasModel.__init__] ReceitasModel inicializado [_log | meu_logger]
+2025-06-26 10:18:07,107 - INFO - [ReceitaBloco.__init__] Componente ReceitaBloco inicializado [_log | meu_logger]
+2025-06-26 10:18:07,108 - DEBUG - [RodapePaginacao.set_callback] Callback definido: None [_log | meu_logger]
+2025-06-26 10:18:07,108 - INFO - [RodapePaginacao.__init__] RodapePaginacao inicializado [_log | meu_logger]
+2025-06-26 10:18:07,109 - DEBUG - [ReceitasPageView._initialize_components] Componentes básicos da view inicializados [_log | meu_logger]
+2025-06-26 10:18:07,109 - DEBUG - [ReceitasPageView._setup_ui_elements] Elementos de busca configurados [_log | meu_logger]
+2025-06-26 10:18:07,109 - INFO - [ReceitasPageView.__init__] ReceitasPageView inicializada [_log | meu_logger]
+2025-06-26 10:18:07,110 - INFO - [ReceitasPageController.__init__] Inicializando ReceitasPageController [_log | meu_logger]
+2025-06-26 10:18:07,111 - DEBUG - [ReceitasPageController._setup_callbacks] Configurando callbacks da view [_log | meu_logger]
+2025-06-26 10:18:07,111 - DEBUG - [ReceitasPageView.set_on_buscar] Callback de busca configurado [_log | meu_logger]
+2025-06-26 10:18:07,111 - DEBUG - [ReceitasPageView.definir_acoes_botoes_navBar] Callbacks definidos para navbar [_log | meu_logger]
+2025-06-26 10:18:07,111 - DEBUG - [RodapePaginacao.set_callback] Callback definido: <bound method ReceitasPageController._handle_paginacao_receitas of <controller.receitas.receitas_page_controller.ReceitasPageController object at 0x000001E0043FD280>> [_log | meu_logger]
+2025-06-26 10:18:07,112 - DEBUG - [ReceitasPageView.definir_acoes_botoes_rodape] Callback definido para rodapé [_log | meu_logger]
+2025-06-26 10:18:07,112 - INFO - [ReceitasPage.__init__] ReceitasPageController criado com sucesso. [_log | meu_logger]
+2025-06-26 10:18:07,113 - DEBUG - [ReceitasPageController.exibir_view_receitas] Exibindo view inicial de receitas [_log | meu_logger]
+2025-06-26 10:18:07,113 - DEBUG - [ReceitasPageView.create_view] Construindo a view completa de receitas [_log | meu_logger]
+2025-06-26 14:01:28,406 - INFO - [ReceitasPage.__init__] Iniciando ReceitasPage... [_log | meu_logger]
+2025-06-26 14:01:28,414 - INFO - [ReceitasModel.__init__] ReceitasModel inicializado [_log | meu_logger]
+2025-06-26 14:01:28,415 - DEBUG - [RodapePaginacao.set_callback] Callback definido: None [_log | meu_logger]
+2025-06-26 14:01:28,415 - INFO - [RodapePaginacao.__init__] RodapePaginacao inicializado [_log | meu_logger]
+2025-06-26 14:01:28,416 - DEBUG - [ReceitasPageView._initialize_components] Componentes básicos da view inicializados [_log | meu_logger]
+2025-06-26 14:01:28,417 - DEBUG - [ReceitasPageView._setup_ui_elements] Elementos de busca configurados [_log | meu_logger]
+2025-06-26 14:01:28,417 - INFO - [ReceitasPageView.__init__] ReceitasPageView inicializada [_log | meu_logger]
+2025-06-26 14:01:28,418 - INFO - [ReceitaBloco.__init__] Componente ReceitaBloco inicializado [_log | meu_logger]
+2025-06-26 14:01:28,420 - INFO - [ReceitasPageController.__init__] Inicializando ReceitasPageController [_log | meu_logger]
+2025-06-26 14:01:28,420 - DEBUG - [ReceitasPageController._setup_callbacks] Configurando callbacks da view [_log | meu_logger]
+2025-06-26 14:01:28,422 - DEBUG - [ReceitasPageView.set_on_buscar] Callback de busca configurado [_log | meu_logger]
+2025-06-26 14:01:28,422 - DEBUG - [ReceitasPageView.definir_acoes_botoes_navBar] Callbacks definidos para navbar [_log | meu_logger]
+2025-06-26 14:01:28,422 - DEBUG - [RodapePaginacao.set_callback] Callback definido: <bound method ReceitasPageController._handle_paginacao_receitas of <controller.receitas.controller_receitas_page.ReceitasPageController object at 0x0000020F07452720>> [_log | meu_logger]
+2025-06-26 14:01:28,425 - DEBUG - [ReceitasPageView.definir_acoes_botoes_rodape] Callback definido para rodapé [_log | meu_logger]
+2025-06-26 14:01:28,425 - ERROR - [ReceitasPageController._handle_error] Falha na inicialização: ReceitastHandler.__init__() takes 1 positional argument but 3 were given [_log | meu_logger]
+2025-06-26 14:01:28,426 - INFO - [ReceitasPage.__init__] ReceitasPageController criado com sucesso. [_log | meu_logger]
+2025-06-26 14:01:28,426 - DEBUG - [ReceitasPageController.exibir_view_receitas] Exibindo view inicial de receitas [_log | meu_logger]
+2025-06-26 14:01:28,428 - ERROR - [ReceitasDataHandler.listar_receitas_paginadas] Erro buscando dados: ReceitasModel.get_paginas_receita_produtos() got an unexpected keyword argument 'tabela' [_log | meu_logger]
+2025-06-26 14:01:28,430 - DEBUG - [ReceitasPageController.carregar_dados_receitas] Resultado da busca (listar_receitas_paginadas) : {'erro': "ReceitasModel.get_paginas_receita_produtos() got an unexpected keyword argument 'tabela'"} [_log | meu_logger]
+2025-06-26 14:01:28,430 - DEBUG - [ReceitasPageController.adicionar_receitas_view] Adicionando receita: sem nome [_log | meu_logger]
+2025-06-26 14:01:28,431 - ERROR - [ReceitaBloco.criar_bloco] Erro ao criar bloco: 'nome' [_log | meu_logger]
+2025-06-26 14:01:28,431 - ERROR - [ReceitasPageController.adicionar_receitas_view] Erro ao adicionar receita: Column Control must be added to the page first [_log | meu_logger]
+2025-06-26 14:01:28,432 - ERROR - [ReceitasPageController._handle_error] Erro atualizando view: 'NoneType' object has no attribute 'value' [_log | meu_logger]
+2025-06-26 14:01:28,433 - DEBUG - [ReceitasPageView.create_view] Construindo a view completa de receitas [_log | meu_logger]
+2025-06-26 14:06:47,083 - INFO - [ReceitasPage.__init__] Iniciando ReceitasPage... [_log | meu_logger]
+2025-06-26 14:06:47,085 - INFO - [ReceitasModel.__init__] ReceitasModel inicializado [_log | meu_logger]
+2025-06-26 14:06:47,086 - DEBUG - [RodapePaginacao.set_callback] Callback definido: None [_log | meu_logger]
+2025-06-26 14:06:47,087 - INFO - [RodapePaginacao.__init__] RodapePaginacao inicializado [_log | meu_logger]
+2025-06-26 14:06:47,088 - DEBUG - [ReceitasPageView._initialize_components] Componentes básicos da view inicializados [_log | meu_logger]
+2025-06-26 14:06:47,089 - DEBUG - [ReceitasPageView._setup_ui_elements] Elementos de busca configurados [_log | meu_logger]
+2025-06-26 14:06:47,089 - INFO - [ReceitasPageView.__init__] ReceitasPageView inicializada [_log | meu_logger]
+2025-06-26 14:06:47,090 - INFO - [ReceitaBloco.__init__] Componente ReceitaBloco inicializado [_log | meu_logger]
+2025-06-26 14:06:47,091 - INFO - [ReceitasPageController.__init__] Inicializando ReceitasPageController [_log | meu_logger]
+2025-06-26 14:06:47,093 - DEBUG - [ReceitasPageController._setup_callbacks] Configurando callbacks da view [_log | meu_logger]
+2025-06-26 14:06:47,094 - DEBUG - [ReceitasPageView.set_on_buscar] Callback de busca configurado [_log | meu_logger]
+2025-06-26 14:06:47,094 - DEBUG - [ReceitasPageView.definir_acoes_botoes_navBar] Callbacks definidos para navbar [_log | meu_logger]
+2025-06-26 14:06:47,095 - DEBUG - [RodapePaginacao.set_callback] Callback definido: <bound method ReceitasPageController._handle_paginacao_receitas of <controller.receitas.controller_receitas_page.ReceitasPageController object at 0x00000262D4EEA2D0>> [_log | meu_logger]
+2025-06-26 14:06:47,095 - DEBUG - [ReceitasPageView.definir_acoes_botoes_rodape] Callback definido para rodapé [_log | meu_logger]
+2025-06-26 14:06:47,095 - ERROR - [ReceitasPageController._handle_error] Falha na inicialização: ReceitastHandler.__init__() takes 1 positional argument but 3 were given [_log | meu_logger]
+2025-06-26 14:06:47,097 - INFO - [ReceitasPage.__init__] ReceitasPageController criado com sucesso. [_log | meu_logger]
+2025-06-26 14:06:47,097 - DEBUG - [ReceitasPageController.exibir_view_receitas] Exibindo view inicial de receitas [_log | meu_logger]
+2025-06-26 14:06:47,098 - ERROR - [ReceitasDataHandler.listar_receitas_paginadas] Erro buscando dados: ReceitasModel.get_paginas_receita_produtos() got an unexpected keyword argument 'tabela' [_log | meu_logger]
+2025-06-26 14:06:47,098 - DEBUG - [ReceitasPageController.carregar_dados_receitas] Resultado da busca (listar_receitas_paginadas) : {'erro': "ReceitasModel.get_paginas_receita_produtos() got an unexpected keyword argument 'tabela'"} [_log | meu_logger]
+2025-06-26 14:06:47,099 - DEBUG - [ReceitasPageController.adicionar_receitas_view] Adicionando receita: sem nome [_log | meu_logger]
+2025-06-26 14:06:47,099 - ERROR - [ReceitaBloco.criar_bloco] Erro ao criar bloco: 'nome' [_log | meu_logger]
+2025-06-26 14:06:47,100 - ERROR - [ReceitasPageController.adicionar_receitas_view] Erro ao adicionar receita: Column Control must be added to the page first [_log | meu_logger]
+2025-06-26 14:06:47,100 - ERROR - [ReceitasPageController._handle_error] Erro atualizando view: 'NoneType' object has no attribute 'value' [_log | meu_logger]
+2025-06-26 14:06:47,101 - DEBUG - [ReceitasPageView.create_view] Construindo a view completa de receitas [_log | meu_logger]
+2025-06-26 14:30:53,089 - INFO - [ReceitasPage.__init__] Iniciando ReceitasPage... [_log | meu_logger]
+2025-06-26 14:30:53,093 - INFO - [ReceitasModel.__init__] ReceitasModel inicializado [_log | meu_logger]
+2025-06-26 14:30:53,095 - DEBUG - [RodapePaginacao.set_callback] Callback definido: None [_log | meu_logger]
+2025-06-26 14:30:53,095 - INFO - [RodapePaginacao.__init__] RodapePaginacao inicializado [_log | meu_logger]
+2025-06-26 14:30:53,095 - DEBUG - [ReceitasPageView._initialize_components] Componentes básicos da view inicializados [_log | meu_logger]
+2025-06-26 14:30:53,096 - DEBUG - [ReceitasPageView._setup_ui_elements] Elementos de busca configurados [_log | meu_logger]
+2025-06-26 14:30:53,096 - INFO - [ReceitasPageView.__init__] ReceitasPageView inicializada [_log | meu_logger]
+2025-06-26 14:30:53,098 - INFO - [ReceitaBloco.__init__] Componente ReceitaBloco inicializado [_log | meu_logger]
+2025-06-26 14:30:53,098 - INFO - [ReceitasPageController.__init__] Inicializando ReceitasPageController [_log | meu_logger]
+2025-06-26 14:30:53,099 - DEBUG - [ReceitasPageController._setup_callbacks] Configurando callbacks da view [_log | meu_logger]
+2025-06-26 14:30:53,099 - DEBUG - [ReceitasPageView.set_on_buscar] Callback de busca configurado [_log | meu_logger]
+2025-06-26 14:30:53,099 - DEBUG - [ReceitasPageView.definir_acoes_botoes_navBar] Callbacks definidos para navbar [_log | meu_logger]
+2025-06-26 14:30:53,100 - DEBUG - [RodapePaginacao.set_callback] Callback definido: <bound method ReceitasPageController._handle_paginacao_receitas of <controller.receitas.controller_receitas_page.ReceitasPageController object at 0x0000021E35D62420>> [_log | meu_logger]
+2025-06-26 14:30:53,100 - DEBUG - [ReceitasPageView.definir_acoes_botoes_rodape] Callback definido para rodapé [_log | meu_logger]
+2025-06-26 14:30:53,101 - INFO - [ReceitasPageController._initialize_handlers] Handlers inicializados com sucesso [_log | meu_logger]
+2025-06-26 14:30:53,101 - INFO - [ReceitasPage.__init__] ReceitasPageController criado com sucesso. [_log | meu_logger]
+2025-06-26 14:30:53,101 - DEBUG - [ReceitasPageController.exibir_view_receitas] Exibindo view inicial de receitas [_log | meu_logger]
+2025-06-26 14:30:53,233 - DEBUG - [ReceitasPageController.carregar_dados_receitas] Resultado da busca (listar_receitas_paginadas) : {'dados': [], 'colunas': [], 'pagina_atual': 1, 'por_pagina': 20, 'total_registros': 0, 'total_paginas': 1} [_log | meu_logger]
+2025-06-26 14:30:53,233 - DEBUG - [ReceitasPageController.adicionar_receitas_view] Adicionando receita:{'dados': [], 'colunas': [], 'pagina_atual': 1, 'por_pagina': 20, 'total_registros': 0, 'total_paginas': 1} [_log | meu_logger]
+2025-06-26 14:30:53,234 - ERROR - [ReceitaBloco.criar_bloco] Erro ao criar bloco: 'nome' [_log | meu_logger]
+2025-06-26 14:30:53,235 - ERROR - [ReceitasPageController.adicionar_receitas_view] Erro ao adicionar receita: Column Control must be added to the page first [_log | meu_logger]
+2025-06-26 14:30:53,236 - ERROR - [ReceitasPageController._handle_error] Erro atualizando view: 'NoneType' object has no attribute 'value' [_log | meu_logger]
+2025-06-26 14:30:53,238 - DEBUG - [ReceitasPageView.create_view] Construindo a view completa de receitas [_log | meu_logger]
+2025-06-26 14:32:02,295 - INFO - [ReceitasPage.__init__] Iniciando ReceitasPage... [_log | meu_logger]
+2025-06-26 14:32:02,297 - INFO - [ReceitasModel.__init__] ReceitasModel inicializado [_log | meu_logger]
+2025-06-26 14:32:02,298 - DEBUG - [RodapePaginacao.set_callback] Callback definido: None [_log | meu_logger]
+2025-06-26 14:32:02,299 - INFO - [RodapePaginacao.__init__] RodapePaginacao inicializado [_log | meu_logger]
+2025-06-26 14:32:02,299 - DEBUG - [ReceitasPageView._initialize_components] Componentes básicos da view inicializados [_log | meu_logger]
+2025-06-26 14:32:02,301 - DEBUG - [ReceitasPageView._setup_ui_elements] Elementos de busca configurados [_log | meu_logger]
+2025-06-26 14:32:02,301 - INFO - [ReceitasPageView.__init__] ReceitasPageView inicializada [_log | meu_logger]
+2025-06-26 14:32:02,302 - INFO - [ReceitaBloco.__init__] Componente ReceitaBloco inicializado [_log | meu_logger]
+2025-06-26 14:32:02,303 - INFO - [ReceitasPageController.__init__] Inicializando ReceitasPageController [_log | meu_logger]
+2025-06-26 14:32:02,303 - DEBUG - [ReceitasPageController._setup_callbacks] Configurando callbacks da view [_log | meu_logger]
+2025-06-26 14:32:02,303 - DEBUG - [ReceitasPageView.set_on_buscar] Callback de busca configurado [_log | meu_logger]
+2025-06-26 14:32:02,303 - DEBUG - [ReceitasPageView.definir_acoes_botoes_navBar] Callbacks definidos para navbar [_log | meu_logger]
+2025-06-26 14:32:02,304 - DEBUG - [RodapePaginacao.set_callback] Callback definido: <bound method ReceitasPageController._handle_paginacao_receitas of <controller.receitas.controller_receitas_page.ReceitasPageController object at 0x000001A82264A240>> [_log | meu_logger]
+2025-06-26 14:32:02,304 - DEBUG - [ReceitasPageView.definir_acoes_botoes_rodape] Callback definido para rodapé [_log | meu_logger]
+2025-06-26 14:32:02,304 - INFO - [ReceitasPageController._initialize_handlers] Handlers inicializados com sucesso [_log | meu_logger]
+2025-06-26 14:32:02,305 - INFO - [ReceitasPage.__init__] ReceitasPageController criado com sucesso. [_log | meu_logger]
+2025-06-26 14:32:02,305 - DEBUG - [ReceitasPageController.exibir_view_receitas] Exibindo view inicial de receitas [_log | meu_logger]
+2025-06-26 14:32:02,314 - DEBUG - [ReceitasPageController.carregar_dados_receitas] Resultado da busca (listar_receitas_paginadas) : {'dados': [{'id': 1, 'receita_id': 1, 'produto_id': 49, 'quantidade': Decimal('1.00'), 'observacoes': '...'}], 'colunas': ['id', 'receita_id', 'produto_id', 'quantidade', 'observacoes'], 'pagina_atual': 1, 'por_pagina': 20, 'total_registros': 1, 'total_paginas': 1} [_log | meu_logger]
+2025-06-26 14:32:02,314 - DEBUG - [ReceitasPageController.adicionar_receitas_view] Adicionando receita:{'dados': [{'id': 1, 'receita_id': 1, 'produto_id': 49, 'quantidade': Decimal('1.00'), 'observacoes': '...'}], 'colunas': ['id', 'receita_id', 'produto_id', 'quantidade', 'observacoes'], 'pagina_atual': 1, 'por_pagina': 20, 'total_registros': 1, 'total_paginas': 1} [_log | meu_logger]
+2025-06-26 14:32:02,315 - ERROR - [ReceitaBloco.criar_bloco] Erro ao criar bloco: 'nome' [_log | meu_logger]
+2025-06-26 14:32:02,315 - ERROR - [ReceitasPageController.adicionar_receitas_view] Erro ao adicionar receita: Column Control must be added to the page first [_log | meu_logger]
+2025-06-26 14:32:02,315 - ERROR - [ReceitasPageController._handle_error] Erro atualizando view: 'NoneType' object has no attribute 'value' [_log | meu_logger]
+2025-06-26 14:32:02,316 - DEBUG - [ReceitasPageView.create_view] Construindo a view completa de receitas [_log | meu_logger]
+2025-06-26 14:41:06,870 - INFO - [ReceitasPage.__init__] Iniciando ReceitasPage... [_log | meu_logger]
+2025-06-26 14:41:06,872 - INFO - [ReceitasModel.__init__] ReceitasModel inicializado [_log | meu_logger]
+2025-06-26 14:41:06,873 - DEBUG - [RodapePaginacao.set_callback] Callback definido: None [_log | meu_logger]
+2025-06-26 14:41:06,873 - INFO - [RodapePaginacao.__init__] RodapePaginacao inicializado [_log | meu_logger]
+2025-06-26 14:41:06,874 - DEBUG - [ReceitasPageView._initialize_components] Componentes básicos da view inicializados [_log | meu_logger]
+2025-06-26 14:41:06,875 - DEBUG - [ReceitasPageView._setup_ui_elements] Elementos de busca configurados [_log | meu_logger]
+2025-06-26 14:41:06,875 - INFO - [ReceitasPageView.__init__] ReceitasPageView inicializada [_log | meu_logger]
+2025-06-26 14:41:06,876 - INFO - [ReceitaBloco.__init__] Componente ReceitaBloco inicializado [_log | meu_logger]
+2025-06-26 14:41:06,877 - INFO - [ReceitasPageController.__init__] Inicializando ReceitasPageController [_log | meu_logger]
+2025-06-26 14:41:06,877 - DEBUG - [ReceitasPageController._setup_callbacks] Configurando callbacks da view [_log | meu_logger]
+2025-06-26 14:41:06,877 - DEBUG - [ReceitasPageView.set_on_buscar] Callback de busca configurado [_log | meu_logger]
+2025-06-26 14:41:06,877 - DEBUG - [ReceitasPageView.definir_acoes_botoes_navBar] Callbacks definidos para navbar [_log | meu_logger]
+2025-06-26 14:41:06,878 - DEBUG - [RodapePaginacao.set_callback] Callback definido: <bound method ReceitasPageController._handle_paginacao_receitas of <controller.receitas.controller_receitas_page.ReceitasPageController object at 0x0000027CA1F79DC0>> [_log | meu_logger]
+2025-06-26 14:41:06,878 - DEBUG - [ReceitasPageView.definir_acoes_botoes_rodape] Callback definido para rodapé [_log | meu_logger]
+2025-06-26 14:41:06,878 - INFO - [ReceitasPageController._initialize_handlers] Handlers inicializados com sucesso [_log | meu_logger]
+2025-06-26 14:41:06,878 - INFO - [ReceitasPage.__init__] ReceitasPageController criado com sucesso. [_log | meu_logger]
+2025-06-26 14:41:06,879 - DEBUG - [ReceitasPageController.exibir_view_receitas] Exibindo view inicial de receitas [_log | meu_logger]
+2025-06-26 14:41:06,879 - ERROR - [ReceitasDataHandler.listar_receitas_paginadas] Erro buscando dados: ReceitasModel.get_paginas_receita_com_produtos() got an unexpected keyword argument 'tabela' [_log | meu_logger]
+2025-06-26 14:41:06,879 - DEBUG - [ReceitasPageController.carregar_dados_receitas] Resultado da busca (listar_receitas_paginadas) : {'erro': "ReceitasModel.get_paginas_receita_com_produtos() got an unexpected keyword argument 'tabela'"} [_log | meu_logger]
+2025-06-26 14:41:06,879 - DEBUG - [ReceitasPageController.adicionar_receitas_view] Adicionando receita:{'erro': "ReceitasModel.get_paginas_receita_com_produtos() got an unexpected keyword argument 'tabela'"} [_log | meu_logger]
+2025-06-26 14:41:06,879 - ERROR - [ReceitaBloco.criar_bloco] Erro ao criar bloco: 'nome' [_log | meu_logger]
+2025-06-26 14:41:06,880 - ERROR - [ReceitasPageController.adicionar_receitas_view] Erro ao adicionar receita: Column Control must be added to the page first [_log | meu_logger]
+2025-06-26 14:41:06,880 - ERROR - [ReceitasPageController._handle_error] Erro atualizando view: 'NoneType' object has no attribute 'value' [_log | meu_logger]
+2025-06-26 14:41:06,881 - DEBUG - [ReceitasPageView.create_view] Construindo a view completa de receitas [_log | meu_logger]
+2025-06-26 14:42:39,658 - INFO - [ReceitasPage.__init__] Iniciando ReceitasPage... [_log | meu_logger]
+2025-06-26 14:42:39,660 - INFO - [ReceitasModel.__init__] ReceitasModel inicializado [_log | meu_logger]
+2025-06-26 14:42:39,661 - DEBUG - [RodapePaginacao.set_callback] Callback definido: None [_log | meu_logger]
+2025-06-26 14:42:39,662 - INFO - [RodapePaginacao.__init__] RodapePaginacao inicializado [_log | meu_logger]
+2025-06-26 14:42:39,662 - DEBUG - [ReceitasPageView._initialize_components] Componentes básicos da view inicializados [_log | meu_logger]
+2025-06-26 14:42:39,663 - DEBUG - [ReceitasPageView._setup_ui_elements] Elementos de busca configurados [_log | meu_logger]
+2025-06-26 14:42:39,663 - INFO - [ReceitasPageView.__init__] ReceitasPageView inicializada [_log | meu_logger]
+2025-06-26 14:42:39,664 - INFO - [ReceitaBloco.__init__] Componente ReceitaBloco inicializado [_log | meu_logger]
+2025-06-26 14:42:39,665 - INFO - [ReceitasPageController.__init__] Inicializando ReceitasPageController [_log | meu_logger]
+2025-06-26 14:42:39,666 - DEBUG - [ReceitasPageController._setup_callbacks] Configurando callbacks da view [_log | meu_logger]
+2025-06-26 14:42:39,666 - DEBUG - [ReceitasPageView.set_on_buscar] Callback de busca configurado [_log | meu_logger]
+2025-06-26 14:42:39,667 - DEBUG - [ReceitasPageView.definir_acoes_botoes_navBar] Callbacks definidos para navbar [_log | meu_logger]
+2025-06-26 14:42:39,667 - DEBUG - [RodapePaginacao.set_callback] Callback definido: <bound method ReceitasPageController._handle_paginacao_receitas of <controller.receitas.controller_receitas_page.ReceitasPageController object at 0x00000246A152A240>> [_log | meu_logger]
+2025-06-26 14:42:39,667 - DEBUG - [ReceitasPageView.definir_acoes_botoes_rodape] Callback definido para rodapé [_log | meu_logger]
+2025-06-26 14:42:39,667 - INFO - [ReceitasPageController._initialize_handlers] Handlers inicializados com sucesso [_log | meu_logger]
+2025-06-26 14:42:39,668 - INFO - [ReceitasPage.__init__] ReceitasPageController criado com sucesso. [_log | meu_logger]
+2025-06-26 14:42:39,668 - DEBUG - [ReceitasPageController.exibir_view_receitas] Exibindo view inicial de receitas [_log | meu_logger]
+2025-06-26 14:42:39,710 - DEBUG - [ReceitasPageController.carregar_dados_receitas] Resultado da busca (listar_receitas_paginadas) : {'dados': [{'id': 1, 'nome_receita': 'Nome_Receita_1_Teste', 'nome_produto': 'Ggggggggg', 'quantidade': Decimal('1.00'), 'preco_total': Decimal('0.00'), 'observacoes': '...'}], 'colunas': ['id', 'nome_receita', 'nome_produto', 'quantidade', 'preco_total', 'observacoes'], 'pagina_atual': 1, 'por_pagina': 20, 'total_registros': 1, 'total_paginas': 1} [_log | meu_logger]
+2025-06-26 14:42:39,710 - DEBUG - [ReceitasPageController.adicionar_receitas_view] Adicionando receita:{'dados': [{'id': 1, 'nome_receita': 'Nome_Receita_1_Teste', 'nome_produto': 'Ggggggggg', 'quantidade': Decimal('1.00'), 'preco_total': Decimal('0.00'), 'observacoes': '...'}], 'colunas': ['id', 'nome_receita', 'nome_produto', 'quantidade', 'preco_total', 'observacoes'], 'pagina_atual': 1, 'por_pagina': 20, 'total_registros': 1, 'total_paginas': 1} [_log | meu_logger]
+2025-06-26 14:42:39,711 - ERROR - [ReceitaBloco.criar_bloco] Erro ao criar bloco: 'nome' [_log | meu_logger]
+2025-06-26 14:42:39,711 - ERROR - [ReceitasPageController.adicionar_receitas_view] Erro ao adicionar receita: Column Control must be added to the page first [_log | meu_logger]
+2025-06-26 14:42:39,711 - ERROR - [ReceitasPageController._handle_error] Erro atualizando view: 'NoneType' object has no attribute 'value' [_log | meu_logger]
+2025-06-26 14:42:39,712 - DEBUG - [ReceitasPageView.create_view] Construindo a view completa de receitas [_log | meu_logger]
+2025-06-26 14:45:47,145 - INFO - [ReceitasPage.__init__] Iniciando ReceitasPage... [_log | meu_logger]
+2025-06-26 14:45:47,148 - INFO - [ReceitasModel.__init__] ReceitasModel inicializado [_log | meu_logger]
+2025-06-26 14:45:47,149 - DEBUG - [RodapePaginacao.set_callback] Callback definido: None [_log | meu_logger]
+2025-06-26 14:45:47,149 - INFO - [RodapePaginacao.__init__] RodapePaginacao inicializado [_log | meu_logger]
+2025-06-26 14:45:47,150 - DEBUG - [ReceitasPageView._initialize_components] Componentes básicos da view inicializados [_log | meu_logger]
+2025-06-26 14:45:47,151 - DEBUG - [ReceitasPageView._setup_ui_elements] Elementos de busca configurados [_log | meu_logger]
+2025-06-26 14:45:47,151 - INFO - [ReceitasPageView.__init__] ReceitasPageView inicializada [_log | meu_logger]
+2025-06-26 14:45:47,152 - INFO - [ReceitaBloco.__init__] Componente ReceitaBloco inicializado [_log | meu_logger]
+2025-06-26 14:45:47,153 - INFO - [ReceitasPageController.__init__] Inicializando ReceitasPageController [_log | meu_logger]
+2025-06-26 14:45:47,153 - DEBUG - [ReceitasPageController._setup_callbacks] Configurando callbacks da view [_log | meu_logger]
+2025-06-26 14:45:47,154 - DEBUG - [ReceitasPageView.set_on_buscar] Callback de busca configurado [_log | meu_logger]
+2025-06-26 14:45:47,154 - DEBUG - [ReceitasPageView.definir_acoes_botoes_navBar] Callbacks definidos para navbar [_log | meu_logger]
+2025-06-26 14:45:47,155 - DEBUG - [RodapePaginacao.set_callback] Callback definido: <bound method ReceitasPageController._handle_paginacao_receitas of <controller.receitas.controller_receitas_page.ReceitasPageController object at 0x000002067A93E450>> [_log | meu_logger]
+2025-06-26 14:45:47,155 - DEBUG - [ReceitasPageView.definir_acoes_botoes_rodape] Callback definido para rodapé [_log | meu_logger]
+2025-06-26 14:45:47,155 - INFO - [ReceitasPageController._initialize_handlers] Handlers inicializados com sucesso [_log | meu_logger]
+2025-06-26 14:45:47,156 - INFO - [ReceitasPage.__init__] ReceitasPageController criado com sucesso. [_log | meu_logger]
+2025-06-26 14:45:47,156 - DEBUG - [ReceitasPageController.exibir_view_receitas] Exibindo view inicial de receitas [_log | meu_logger]
+2025-06-26 14:45:47,170 - ERROR - [ReceitasPageController._handle_error] Erro carregando dados: Object of type Decimal is not JSON serializable [_log | meu_logger]
+2025-06-26 14:45:47,170 - DEBUG - [ReceitasPageView.create_view] Construindo a view completa de receitas [_log | meu_logger]
+2025-06-26 14:49:17,671 - INFO - [ReceitasPage.__init__] Iniciando ReceitasPage... [_log | meu_logger]
+2025-06-26 14:49:17,682 - INFO - [ReceitasModel.__init__] ReceitasModel inicializado [_log | meu_logger]
+2025-06-26 14:49:17,683 - DEBUG - [RodapePaginacao.set_callback] Callback definido: None [_log | meu_logger]
+2025-06-26 14:49:17,683 - INFO - [RodapePaginacao.__init__] RodapePaginacao inicializado [_log | meu_logger]
+2025-06-26 14:49:17,684 - DEBUG - [ReceitasPageView._initialize_components] Componentes básicos da view inicializados [_log | meu_logger]
+2025-06-26 14:49:17,685 - DEBUG - [ReceitasPageView._setup_ui_elements] Elementos de busca configurados [_log | meu_logger]
+2025-06-26 14:49:17,685 - INFO - [ReceitasPageView.__init__] ReceitasPageView inicializada [_log | meu_logger]
+2025-06-26 14:49:17,686 - INFO - [ReceitaBloco.__init__] Componente ReceitaBloco inicializado [_log | meu_logger]
+2025-06-26 14:49:17,687 - INFO - [ReceitasPageController.__init__] Inicializando ReceitasPageController [_log | meu_logger]
+2025-06-26 14:49:17,687 - DEBUG - [ReceitasPageController._setup_callbacks] Configurando callbacks da view [_log | meu_logger]
+2025-06-26 14:49:17,688 - DEBUG - [ReceitasPageView.set_on_buscar] Callback de busca configurado [_log | meu_logger]
+2025-06-26 14:49:17,688 - DEBUG - [ReceitasPageView.definir_acoes_botoes_navBar] Callbacks definidos para navbar [_log | meu_logger]
+2025-06-26 14:49:17,689 - DEBUG - [RodapePaginacao.set_callback] Callback definido: <bound method ReceitasPageController._handle_paginacao_receitas of <controller.receitas.controller_receitas_page.ReceitasPageController object at 0x000002E404648A10>> [_log | meu_logger]
+2025-06-26 14:49:17,689 - DEBUG - [ReceitasPageView.definir_acoes_botoes_rodape] Callback definido para rodapé [_log | meu_logger]
+2025-06-26 14:49:17,690 - INFO - [ReceitasPageController._initialize_handlers] Handlers inicializados com sucesso [_log | meu_logger]
+2025-06-26 14:49:17,690 - INFO - [ReceitasPage.__init__] ReceitasPageController criado com sucesso. [_log | meu_logger]
+2025-06-26 14:49:17,690 - DEBUG - [ReceitasPageController.exibir_view_receitas] Exibindo view inicial de receitas [_log | meu_logger]
+2025-06-26 14:49:17,711 - DEBUG - [ReceitasPageController.carregar_dados_receitas] {
+    "dados": [
+        {
+            "id": 1,
+            "nome_receita": "Nome_Receita_1_Teste",
+            "nome_produto": "Ggggggggg",
+            "quantidade": 1.00,
+            "preco_total": 0.00,
+            "observacoes": "..."
+        }
+    ],
+    "colunas": [
+        "id",
+        "nome_receita",
+        "nome_produto",
+        "quantidade",
+        "preco_total",
+        "observacoes"
+    ],
+    "pagina_atual": 1,
+    "por_pagina": 20,
+    "total_registros": 1,
+    "total_paginas": 1
+} [_log | meu_logger]
+2025-06-26 14:49:17,711 - DEBUG - [ReceitasPageController.adicionar_receitas_view] Adicionando receita:{'dados': [{'id': 1, 'nome_receita': 'Nome_Receita_1_Teste', 'nome_produto': 'Ggggggggg', 'quantidade': Decimal('1.00'), 'preco_total': Decimal('0.00'), 'observacoes': '...'}], 'colunas': ['id', 'nome_receita', 'nome_produto', 'quantidade', 'preco_total', 'observacoes'], 'pagina_atual': 1, 'por_pagina': 20, 'total_registros': 1, 'total_paginas': 1} [_log | meu_logger]
+2025-06-26 14:49:17,712 - ERROR - [ReceitaBloco.criar_bloco] Erro ao criar bloco: 'nome' [_log | meu_logger]
+2025-06-26 14:49:17,713 - ERROR - [ReceitasPageController.adicionar_receitas_view] Erro ao adicionar receita: Column Control must be added to the page first [_log | meu_logger]
+2025-06-26 14:49:17,713 - ERROR - [ReceitasPageController._handle_error] Erro atualizando view: 'NoneType' object has no attribute 'value' [_log | meu_logger]
+2025-06-26 14:49:17,714 - DEBUG - [ReceitasPageView.create_view] Construindo a view completa de receitas [_log | meu_logger]
+2025-06-26 14:53:59,357 - INFO - [ReceitasPage.__init__] Iniciando ReceitasPage... [_log | meu_logger]
+2025-06-26 14:53:59,359 - INFO - [ReceitasModel.__init__] ReceitasModel inicializado [_log | meu_logger]
+2025-06-26 14:53:59,360 - DEBUG - [RodapePaginacao.set_callback] Callback definido: None [_log | meu_logger]
+2025-06-26 14:53:59,360 - INFO - [RodapePaginacao.__init__] RodapePaginacao inicializado [_log | meu_logger]
+2025-06-26 14:53:59,361 - DEBUG - [ReceitasPageView._initialize_components] Componentes básicos da view inicializados [_log | meu_logger]
+2025-06-26 14:53:59,362 - DEBUG - [ReceitasPageView._setup_ui_elements] Elementos de busca configurados [_log | meu_logger]
+2025-06-26 14:53:59,362 - INFO - [ReceitasPageView.__init__] ReceitasPageView inicializada [_log | meu_logger]
+2025-06-26 14:53:59,362 - INFO - [ReceitaBloco.__init__] Componente ReceitaBloco inicializado [_log | meu_logger]
+2025-06-26 14:53:59,363 - INFO - [ReceitasPageController.__init__] Inicializando ReceitasPageController [_log | meu_logger]
+2025-06-26 14:53:59,364 - DEBUG - [ReceitasPageController._setup_callbacks] Configurando callbacks da view [_log | meu_logger]
+2025-06-26 14:53:59,364 - DEBUG - [ReceitasPageView.set_on_buscar] Callback de busca configurado [_log | meu_logger]
+2025-06-26 14:53:59,365 - DEBUG - [ReceitasPageView.definir_acoes_botoes_navBar] Callbacks definidos para navbar [_log | meu_logger]
+2025-06-26 14:53:59,365 - DEBUG - [RodapePaginacao.set_callback] Callback definido: <bound method ReceitasPageController._handle_paginacao_receitas of <controller.receitas.controller_receitas_page.ReceitasPageController object at 0x000001FB4FE383E0>> [_log | meu_logger]
+2025-06-26 14:53:59,365 - DEBUG - [ReceitasPageView.definir_acoes_botoes_rodape] Callback definido para rodapé [_log | meu_logger]
+2025-06-26 14:53:59,365 - INFO - [ReceitasPageController._initialize_handlers] Handlers inicializados com sucesso [_log | meu_logger]
+2025-06-26 14:53:59,366 - INFO - [ReceitasPage.__init__] ReceitasPageController criado com sucesso. [_log | meu_logger]
+2025-06-26 14:53:59,367 - DEBUG - [ReceitasPageController.exibir_view_receitas] Exibindo view inicial de receitas [_log | meu_logger]
+2025-06-26 14:53:59,390 - DEBUG - [ReceitasPageController.carregar_dados_receitas] {
+    "dados": [
+        {
+            "id": 1,
+            "nome_receita": "Nome_Receita_1_Teste",
+            "nome_produto": "Ggggggggg",
+            "quantidade": 1.00,
+            "preco_total": 0.00,
+            "observacoes": "..."
+        }
+    ],
+    "colunas": [
+        "id",
+        "nome_receita",
+        "nome_produto",
+        "quantidade",
+        "preco_total",
+        "observacoes"
+    ],
+    "pagina_atual": 1,
+    "por_pagina": 20,
+    "total_registros": 1,
+    "total_paginas": 1
+} [_log | meu_logger]
+2025-06-26 14:53:59,390 - DEBUG - [ReceitasPageController.adicionar_receitas_view] Adicionando receita:{'dados': [{'id': 1, 'nome_receita': 'Nome_Receita_1_Teste', 'nome_produto': 'Ggggggggg', 'quantidade': Decimal('1.00'), 'preco_total': Decimal('0.00'), 'observacoes': '...'}], 'colunas': ['id', 'nome_receita', 'nome_produto', 'quantidade', 'preco_total', 'observacoes'], 'pagina_atual': 1, 'por_pagina': 20, 'total_registros': 1, 'total_paginas': 1} [_log | meu_logger]
+2025-06-26 14:53:59,390 - ERROR - [ReceitaBloco.criar_bloco] Erro ao criar bloco: 'nome' [_log | meu_logger]
+2025-06-26 14:53:59,391 - ERROR - [ReceitasPageController.adicionar_receitas_view] Erro ao adicionar receita: Column Control must be added to the page first [_log | meu_logger]
+2025-06-26 14:53:59,391 - ERROR - [ReceitasPageController._handle_error] Erro atualizando view: 'NoneType' object has no attribute 'value' [_log | meu_logger]
+2025-06-26 14:53:59,392 - DEBUG - [ReceitasPageView.create_view] Construindo a view completa de receitas [_log | meu_logger]
+2025-06-26 14:55:10,868 - INFO - [ReceitasPage.__init__] Iniciando ReceitasPage... [_log | meu_logger]
+2025-06-26 14:55:10,871 - DEBUG - [RodapePaginacao.set_callback] Callback definido: None [_log | meu_logger]
+2025-06-26 14:55:10,871 - INFO - [RodapePaginacao.__init__] RodapePaginacao inicializado [_log | meu_logger]
+2025-06-26 14:55:10,872 - DEBUG - [ReceitasPageView._initialize_components] Componentes básicos da view inicializados [_log | meu_logger]
+2025-06-26 14:55:10,873 - DEBUG - [ReceitasPageView._setup_ui_elements] Elementos de busca configurados [_log | meu_logger]
+2025-06-26 14:55:10,873 - INFO - [ReceitasPageView.__init__] ReceitasPageView inicializada [_log | meu_logger]
+2025-06-26 14:55:10,874 - INFO - [ReceitaBloco.__init__] Componente ReceitaBloco inicializado [_log | meu_logger]
+2025-06-26 14:55:10,875 - INFO - [ReceitasPageController.__init__] Inicializando ReceitasPageController [_log | meu_logger]
+2025-06-26 14:55:10,875 - DEBUG - [ReceitasPageController._setup_callbacks] Configurando callbacks da view [_log | meu_logger]
+2025-06-26 14:55:10,875 - DEBUG - [ReceitasPageView.set_on_buscar] Callback de busca configurado [_log | meu_logger]
+2025-06-26 14:55:10,875 - DEBUG - [ReceitasPageView.definir_acoes_botoes_navBar] Callbacks definidos para navbar [_log | meu_logger]
+2025-06-26 14:55:10,876 - DEBUG - [RodapePaginacao.set_callback] Callback definido: <bound method ReceitasPageController._handle_paginacao_receitas of <controller.receitas.controller_receitas_page.ReceitasPageController object at 0x000001F2B16BC140>> [_log | meu_logger]
+2025-06-26 14:55:10,876 - DEBUG - [ReceitasPageView.definir_acoes_botoes_rodape] Callback definido para rodapé [_log | meu_logger]
+2025-06-26 14:55:10,876 - INFO - [ReceitasPageController._initialize_handlers] Handlers inicializados com sucesso [_log | meu_logger]
+2025-06-26 14:55:10,876 - INFO - [ReceitasPage.__init__] ReceitasPageController criado com sucesso. [_log | meu_logger]
+2025-06-26 14:55:10,877 - DEBUG - [ReceitasPageController.exibir_view_receitas] Exibindo view inicial de receitas [_log | meu_logger]
+2025-06-26 14:55:10,895 - DEBUG - [ReceitasPageController.carregar_dados_receitas] {
+    "dados": [
+        {
+            "id": 1,
+            "nome_receita": "Nome_Receita_1_Teste",
+            "nome_produto": "Ggggggggg",
+            "quantidade": 1.00,
+            "preco_total": 0.00,
+            "observacoes": "..."
+        }
+    ],
+    "colunas": [
+        "id",
+        "nome_receita",
+        "nome_produto",
+        "quantidade",
+        "preco_total",
+        "observacoes"
+    ],
+    "pagina_atual": 1,
+    "por_pagina": 20,
+    "total_registros": 1,
+    "total_paginas": 1
+} [_log | meu_logger]
+2025-06-26 14:55:10,896 - DEBUG - [ReceitasPageController.adicionar_receitas_view] Adicionando receita:{'dados': [{'id': 1, 'nome_receita': 'Nome_Receita_1_Teste', 'nome_produto': 'Ggggggggg', 'quantidade': Decimal('1.00'), 'preco_total': Decimal('0.00'), 'observacoes': '...'}], 'colunas': ['id', 'nome_receita', 'nome_produto', 'quantidade', 'preco_total', 'observacoes'], 'pagina_atual': 1, 'por_pagina': 20, 'total_registros': 1, 'total_paginas': 1} [_log | meu_logger]
+2025-06-26 14:55:10,896 - ERROR - [ReceitaBloco.criar_bloco] Erro ao criar bloco: 'nome' [_log | meu_logger]
+2025-06-26 14:55:10,897 - ERROR - [ReceitasPageController.adicionar_receitas_view] Erro ao adicionar receita: Column Control must be added to the page first [_log | meu_logger]
+2025-06-26 14:55:10,897 - ERROR - [ReceitasPageController._handle_error] Erro atualizando view: 'NoneType' object has no attribute 'value' [_log | meu_logger]
+2025-06-26 14:55:10,898 - DEBUG - [ReceitasPageView.create_view] Construindo a view completa de receitas [_log | meu_logger]
+2025-06-26 14:56:09,789 - DEBUG - [RodapePaginacao.set_callback] Callback definido: None [_log | meu_logger]
+2025-06-26 14:56:09,790 - INFO - [RodapePaginacao.__init__] RodapePaginacao inicializado [_log | meu_logger]
+2025-06-26 14:56:09,790 - DEBUG - [ReceitasPageView._initialize_components] Componentes básicos da view inicializados [_log | meu_logger]
+2025-06-26 14:56:09,791 - DEBUG - [ReceitasPageView._setup_ui_elements] Elementos de busca configurados [_log | meu_logger]
+2025-06-26 14:56:09,791 - INFO - [ReceitasPageView.__init__] ReceitasPageView inicializada [_log | meu_logger]
+2025-06-26 14:56:09,792 - INFO - [ReceitaBloco.__init__] Componente ReceitaBloco inicializado [_log | meu_logger]
+2025-06-26 14:56:09,792 - INFO - [ReceitasPageController.__init__] Inicializando ReceitasPageController [_log | meu_logger]
+2025-06-26 14:56:09,792 - DEBUG - [ReceitasPageController._setup_callbacks] Configurando callbacks da view [_log | meu_logger]
+2025-06-26 14:56:09,793 - DEBUG - [ReceitasPageView.set_on_buscar] Callback de busca configurado [_log | meu_logger]
+2025-06-26 14:56:09,793 - DEBUG - [ReceitasPageView.definir_acoes_botoes_navBar] Callbacks definidos para navbar [_log | meu_logger]
+2025-06-26 14:56:09,793 - DEBUG - [RodapePaginacao.set_callback] Callback definido: <bound method ReceitasPageController._handle_paginacao_receitas of <controller.receitas.controller_receitas_page.ReceitasPageController object at 0x0000018C117DCBC0>> [_log | meu_logger]
+2025-06-26 14:56:09,794 - DEBUG - [ReceitasPageView.definir_acoes_botoes_rodape] Callback definido para rodapé [_log | meu_logger]
+2025-06-26 14:56:09,794 - INFO - [ReceitasPageController._initialize_handlers] Handlers inicializados com sucesso [_log | meu_logger]
+2025-06-26 14:56:09,794 - INFO - [ReceitasPage.__init__] ReceitasPageController criado com sucesso. [_log | meu_logger]
+2025-06-26 14:56:09,795 - DEBUG - [ReceitasPageController.exibir_view_receitas] Exibindo view inicial de receitas [_log | meu_logger]
+2025-06-26 14:56:09,805 - DEBUG - [ReceitasPageController.carregar_dados_receitas] {
+    "dados": [
+        {
+            "id": 1,
+            "nome_receita": "Nome_Receita_1_Teste",
+            "nome_produto": "Ggggggggg",
+            "quantidade": 1.00,
+            "preco_total": 0.00,
+            "observacoes": "..."
+        }
+    ],
+    "colunas": [
+        "id",
+        "nome_receita",
+        "nome_produto",
+        "quantidade",
+        "preco_total",
+        "observacoes"
+    ],
+    "pagina_atual": 1,
+    "por_pagina": 20,
+    "total_registros": 1,
+    "total_paginas": 1
+} [_log | meu_logger]
+2025-06-26 14:56:09,805 - DEBUG - [ReceitasPageController.adicionar_receitas_view] Adicionando receita:{'dados': [{'id': 1, 'nome_receita': 'Nome_Receita_1_Teste', 'nome_produto': 'Ggggggggg', 'quantidade': Decimal('1.00'), 'preco_total': Decimal('0.00'), 'observacoes': '...'}], 'colunas': ['id', 'nome_receita', 'nome_produto', 'quantidade', 'preco_total', 'observacoes'], 'pagina_atual': 1, 'por_pagina': 20, 'total_registros': 1, 'total_paginas': 1} [_log | meu_logger]
+2025-06-26 14:56:09,806 - ERROR - [ReceitaBloco.criar_bloco] Erro ao criar bloco: 'nome' [_log | meu_logger]
+2025-06-26 14:56:09,806 - ERROR - [ReceitasPageController.adicionar_receitas_view] Erro ao adicionar receita: Column Control must be added to the page first [_log | meu_logger]
+2025-06-26 14:56:09,807 - ERROR - [ReceitasPageController._handle_error] Erro atualizando view: 'NoneType' object has no attribute 'value' [_log | meu_logger]
+2025-06-26 14:56:09,807 - DEBUG - [ReceitasPageView.create_view] Construindo a view completa de receitas [_log | meu_logger]

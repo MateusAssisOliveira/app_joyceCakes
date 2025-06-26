@@ -1,7 +1,6 @@
 # view/receitas/receitas_page_view.py
 from components.navbar import NavBar
 from components.rodape_paginacao import RodapePaginacao
-from components.receita_bloco import ReceitaBloco
 from logs.logger import Logger
 import flet as ft
 
@@ -10,7 +9,6 @@ class ReceitasPageView:
     
     def __init__(self):
         self.log = Logger()
-        self._bloco_component = ReceitaBloco()  # Componente de blocos
         self._initialize_components()
         self._setup_ui_elements()
         self.log.info("ReceitasPageView inicializada")
@@ -49,16 +47,6 @@ class ReceitasPageView:
         )
         self.log.debug("Elementos de busca configurados")
 
-    def adicionar_receita(self, receita: dict):
-        """Adiciona um bloco de receita ao body"""
-        try:
-            self.log.debug(f"Adicionando receita: {receita.get('nome', 'sem nome')}")
-            bloco = self._bloco_component.criar_bloco(receita)
-            self.body.controls.append(bloco)
-            self.body.update()
-        except Exception as e:
-            self.log.error(f"Erro ao adicionar receita: {str(e)}")
-
     def limpar_receitas(self):
         """Remove todas as receitas"""
         try:
@@ -82,11 +70,6 @@ class ReceitasPageView:
         """Configura callback para busca"""
         self.botao_buscar.on_click = lambda e: callback(self.campo_busca.value.strip())
         self.log.debug("Callback de busca configurado")
-
-    def set_on_clique_bloco(self, callback: callable):
-        """Configura callback para clique nos blocos"""
-        self._bloco_component._handle_clique_bloco = callback
-        self.log.debug("Callback de clique em bloco configurado")
 
     def create_view(self) -> ft.Container:
         """Constrói a view completa"""

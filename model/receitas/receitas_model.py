@@ -7,6 +7,99 @@ class ReceitasModel:
         self.log = Logger()
         self.log.info("ReceitasModel inicializado")
 
+    def get_paginas_receita_com_produtos(
+        self,
+        tabela,
+        pagina=1,
+        por_pagina=20,
+        ordenar_por=None,
+        filtros=None,
+        direcao='ASC'
+    ):
+        """
+        Retorna dados paginados de receitas com produtos, incluindo nome da receita e do produto.
+        """
+        try:
+            # Prevenção contra SQL Injection
+            colunas_validas = {
+                "receitas.id", "receitas.nome", "produtos.nome",
+                "receitas_produtos.quantidade", "produtos.preco_total"
+            }
+
+            if isinstance(filtros, str):
+                filtros = {'receitas.observacoes': filtros} if filtros else None
+
+            query = """
+                SELECT 
+                    receitas_produtos.id,
+                    receitas.nome AS nome_receita,
+                    produtos.nome AS nome_produto,
+                    receitas_produtos.quantidade,
+                    produtos.preco_total,
+                    receitas_produtos.observacoes
+                FROM receitas_produtos
+                JOIN receitas ON receitas.id = receitas_produtos.receita_id
+                JOIN produtos ON produtos.id = receitas_produtos.produto_id
+            """
+            query_total = """
+                SELECT COUNT(*) AS total
+                FROM receitas_produtos
+                JOIN receitas ON receitas.id = receitas_produtos.receita_id
+                JOIN produtos ON produtos.id = receitas_produtos.produto_id
+            """
+
+            params = []
+
+            # Filtros
+            if filtros:
+                conditions = []
+                for campo, valor in filtros.items():
+                    if not campo.replace("_", "").replace(".", "").isalnum():
+                        continue
+                    if isinstance(valor, str):
+                        conditions.append(f"{campo} LIKE %s")
+                        params.append(f"%{valor}%")
+                    else:
+                        conditions.append(f"{campo} = %s")
+                        params.append(valor)
+
+                if conditions:
+                    where = " WHERE " + " AND ".join(conditions)
+                    query += where
+                    query_total += where
+
+            # Ordenação
+            if ordenar_por in colunas_validas:
+                direcao = 'DESC' if direcao.upper() == 'DESC' else 'ASC'
+                query += f" ORDER BY {ordenar_por} {direcao}"
+
+            # Paginação
+            offset = (pagina - 1) * por_pagina
+            query += f" LIMIT {por_pagina} OFFSET {offset}"
+
+            dados = self.db.fetch_data(query, tuple(params))
+            total = self.db.fetch_data(query_total, tuple(params))
+
+            total_registros = total[0]['total'] if total else 0
+            total_paginas = max(1, (total_registros + por_pagina - 1) // por_pagina)
+
+            colunas = list(dados[0].keys()) if dados else []
+
+            return {
+                'dados': dados,
+                'colunas': colunas,
+                'pagina_atual': pagina,
+                'por_pagina': por_pagina,
+                'total_registros': total_registros,
+                'total_paginas': total_paginas
+            }
+
+        except Exception as e:
+            self.log.error(f"Erro ao buscar receitas com produtos: {str(e)}")
+            raise
+
+
+
     def buscar_receitas(self, pagina: int = 1, por_pagina: int = 10, filtro: str = None) -> dict:
         """Busca receitas paginadas"""
         self.log.info(f"Iniciando busca de receitas | Página: {pagina}, Por página: {por_pagina}, Filtro: '{filtro}'")

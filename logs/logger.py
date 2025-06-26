@@ -1,12 +1,20 @@
+# logs/logger.py
 import logging
 import os
 import inspect
 from datetime import datetime
 
 class Logger:
-    def __init__(self, nome_arquivo='app.log', nome_logger='meu_logger'):
-        os.makedirs('logs', exist_ok=True)
+    _instance = None  # 🔒 Singleton
 
+    def __new__(cls, nome_arquivo='app.log', nome_logger='meu_logger'):
+        if cls._instance is None:
+            cls._instance = super(Logger, cls).__new__(cls)
+            cls._instance._init(nome_arquivo, nome_logger)
+        return cls._instance
+
+    def _init(self, nome_arquivo, nome_logger):
+        os.makedirs('logs', exist_ok=True)
         data_str = datetime.now().strftime('%Y-%m-%d')
         caminho_log = os.path.join('logs', f'{data_str}_{nome_arquivo}')
 
@@ -20,7 +28,6 @@ class Logger:
             console_handler = logging.StreamHandler()
             console_handler.setLevel(logging.INFO)
 
-            # Personaliza o formato para incluir nome da função e classe
             formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s [%(funcName)s | %(name)s]')
             file_handler.setFormatter(formatter)
             console_handler.setFormatter(formatter)
@@ -29,34 +36,15 @@ class Logger:
             self.logger.addHandler(console_handler)
 
     def _log(self, level, msg):
-        # Captura a stack e extrai nome da classe e função
         frame = inspect.currentframe().f_back.f_back
         func_name = frame.f_code.co_name
         cls_name = frame.f_locals.get('self', None).__class__.__name__ if 'self' in frame.f_locals else ''
         mensagem = f'[{cls_name}.{func_name}] {msg}'
 
-        if level == 'debug':
-            self.logger.debug(mensagem)
-        elif level == 'info':
-            self.logger.info(mensagem)
-        elif level == 'warning':
-            self.logger.warning(mensagem)
-        elif level == 'error':
-            self.logger.error(mensagem)
-        elif level == 'critical':
-            self.logger.critical(mensagem)
+        getattr(self.logger, level)(mensagem)
 
-    def debug(self, msg):
-        self._log('debug', msg)
-
-    def info(self, msg):
-        self._log('info', msg)
-
-    def warning(self, msg):
-        self._log('warning', msg)
-
-    def error(self, msg):
-        self._log('error', msg)
-
-    def critical(self, msg):
-        self._log('critical', msg)
+    def debug(self, msg): self._log('debug', msg)
+    def info(self, msg): self._log('info', msg)
+    def warning(self, msg): self._log('warning', msg)
+    def error(self, msg): self._log('error', msg)
+    def critical(self, msg): self._log('critical', msg)
