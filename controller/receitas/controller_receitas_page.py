@@ -69,12 +69,16 @@ class ReceitasPageController:
         self._bloco_component._handle_clique_bloco = callback
         self.log.debug("Callback de clique em bloco configurado")
 
-    def adicionar_receitas_view(self, receitas: dict):
-        """Adiciona um bloco de receita ao body"""
+    def adicionar_receitas_view(self, receitas_response: dict):
+        """Adiciona blocos de receita ao body a partir do dicionário completo da resposta"""
         try:
-            self.log.debug(f"Adicionando receita:{receitas}")
-            blocos = self._bloco_component.criar_bloco(receitas)
-            self.receitas_view.body.controls.append(blocos)
+            self.log.debug(f"Adicionando receitas: {receitas_response}")
+
+            receitas_lista = receitas_response.get('dados', [])
+            for receita in receitas_lista:
+                bloco = self._bloco_component.criar_bloco(receita)
+                self.receitas_view.body.controls.append(bloco)
+
             self.receitas_view.body.update()
 
         except Exception as e:

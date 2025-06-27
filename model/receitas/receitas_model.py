@@ -36,7 +36,11 @@ class ReceitasModel:
                     produtos.nome AS nome_produto,
                     receitas_produtos.quantidade,
                     produtos.preco_total,
-                    receitas_produtos.observacoes
+                    receitas_produtos.observacoes,
+                    receitas.modo_preparo AS modo_preparo_preparo_receita,
+                    receitas.tempo_de_preparo AS tempo_preparo_receita,
+                    receitas.rendimento AS rendimento_receita,
+                    receitas.descricao AS descricao_receita
                 FROM receitas_produtos
                 JOIN receitas ON receitas.id = receitas_produtos.receita_id
                 JOIN produtos ON produtos.id = receitas_produtos.produto_id
