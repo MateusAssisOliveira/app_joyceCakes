@@ -1,0 +1,102 @@
+# =========================
+# TODO LIST - Projeto Joyce Cakes
+# =========================
+
+## ✅ Funcionalidades já implementadas
+
+- **Sistema de Rotas (RouteController)**
+  - Gerenciamento centralizado das rotas da aplicação, permitindo navegação entre diferentes páginas e componentes.
+- **Página de Estoque**
+  - Estrutura modular composta por EstoquePage, EstoquePageView e EstoquePageController, seguindo o padrão MVC.
+- **Modelagem do Estoque (EstoqueModel)**
+  - Representação dos dados de produtos, com métodos para CRUD e integração com o banco de dados.
+- **Handlers Especializados**
+  - EstoqueDataHandler: Gerencia operações de listagem, paginação e cache dos produtos.
+  - EstoqueProductHandler: Gerencia seleção, adição, edição e exclusão de produtos.
+- **Cadastro, Edição e Exclusão de Produtos**
+  - Diálogos modais para adicionar e editar produtos, com feedback visual e atualização da tabela.
+- **Busca de Produtos**
+  - Busca por nome com atualização dinâmica da tabela e mensagens de erro amigáveis.
+- **Paginação**
+  - Controle de navegação entre páginas de produtos, com rodapé de paginação e atualização automática.
+- **Feedback Visual**
+  - Snackbars para informar sucesso ou erro nas operações.
+- **Logger**
+  - Registro detalhado de eventos, erros e operações importantes para auditoria e depuração.
+- **Conexão com Banco de Dados MySQL**
+  - Classe Database com suporte a context manager, autocommit, execução de scripts SQL e validação de credenciais.
+- **Interface Responsiva**
+  - Utilização do Flet para construção de UI moderna, responsiva e com separação clara entre controller, view e model.
+- **Controle de Cache**
+  - Cache de paginação para otimizar consultas, com métodos para limpeza após alterações.
+- **Estrutura Modular**
+  - Separação clara de responsabilidades, facilitando manutenção e expansão futura.
+
+---
+
+## 🟡 Melhorias, Bugs Conhecidos e Pontos de Atenção
+
+### Prioridade Alta
+
+- **[Performance]** Limpeza de cache de paginação
+  - Garantir que o cache seja sempre limpo após operações de adição, edição ou exclusão de produtos para evitar inconsistências na tabela.
+- **[Interface]** Validação de dados
+  - Implementar validação robusta nos formulários de cadastro/edição para evitar dados inválidos no banco.
+- **[Interface]** Confirmação antes de excluir
+  - Adicionar diálogo de confirmação antes de excluir produtos para evitar remoções acidentais.
+- **[Organização de Código]** Testes unitários
+  - Implementar testes unitários para handlers, controllers e models, garantindo maior confiabilidade do sistema.
+
+### Prioridade Média
+
+- **[Interface]** Ordenação e filtros avançados
+  - Permitir ordenação por colunas e filtros por tipo, faixa de preço, etc.
+- **[Interface]** Melhorias visuais e responsividade
+  - Refinar o layout da tabela, adicionar loading/spinner durante operações e melhorar experiência em dispositivos móveis.
+- **[Performance]** Otimização de consultas SQL
+  - Revisar queries para garantir eficiência, especialmente com grandes volumes de dados.
+- **[Organização de Código]** Refatoração de handlers
+  - Revisar e simplificar handlers, removendo duplicidades e melhorando a clareza do fluxo de dados.
+- **[Interface]** Mensagens de erro mais detalhadas
+  - Exibir mensagens de erro mais informativas para o usuário final, diferenciando erros de validação, conexão, etc.
+
+### Prioridade Baixa
+
+- **[Internacionalização]** Suporte a múltiplos idiomas (i18n)
+  - Preparar a aplicação para tradução, facilitando uso em outros idiomas.
+- **[Documentação]** Documentar endpoints, fluxos e principais decisões de arquitetura.
+- **[Segurança]** Logs de auditoria para alterações críticas.
+- **[Organização de Código]** Padronização de nomenclatura e comentários.
+- **[Interface]** Exportação de dados (CSV, PDF).
+- **[Segurança]** Suporte a múltiplos usuários e permissões.
+
+---
+
+## 🚀 Tarefas Futuras Sugeridas
+
+- **Implementar tela de login e autenticação de usuários**
+  - Controle de acesso e permissões para diferentes funcionalidades.
+- **Adicionar testes de integração**
+  - Simular fluxos completos do usuário, garantindo que todas as partes do sistema funcionam em conjunto.
+- **Melhorar arquitetura para facilitar manutenção**
+  - Avaliar uso de padrões como Repository, Service Layer, ou até migração para um framework web mais robusto se o projeto crescer.
+- **Automatizar deploy e backups**
+  - Scripts para deploy automatizado e rotinas de backup do banco de dados.
+- **Monitoramento e alertas**
+  - Implementar monitoramento de erros e alertas para falhas críticas.
+- **Aprimorar experiência do usuário**
+  - Pesquisar com usuários reais para identificar pontos de melhoria na navegação e usabilidade.
+- **Preparar para escalabilidade**
+  - Planejar estrutura para suportar aumento de dados e usuários, caso necessário.
+
+---
+
+## 📝 Observações Gerais
+
+- O projeto segue uma boa separação de responsabilidades (MVC), facilitando manutenção e testes.
+- O uso de cache para paginação é eficiente, mas requer atenção para ser invalidado corretamente após alterações.
+- O padrão de manter o produto selecionado no handler é adequado para a interface atual.
+- O uso de autocommit no banco está correto para o contexto, mas pode ser revisado se operações transacionais mais complexas forem necessárias.
+- O código está bem modularizado, mas pode se beneficiar de mais testes, documentação e padronização para facilitar a colaboração e evolução futura.
+
+---

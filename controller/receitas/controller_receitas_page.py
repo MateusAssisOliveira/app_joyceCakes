@@ -77,7 +77,7 @@ class ReceitasPageController:
             receitas_lista = receitas_response.get('dados', [])
             for receita in receitas_lista:
                 bloco = self._bloco_component.criar_bloco(receita)
-                self.receitas_view.body.controls.append(bloco)
+                self.receitas_view.columnbody.controls.append(bloco)
 
             self.receitas_view.body.update()
 

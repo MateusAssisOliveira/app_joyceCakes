@@ -1,4 +1,7 @@
 -- Tabelas básicas de suporte
+
+USE joyce_cakes;
+
 CREATE TABLE unidades_medida (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(50) NOT NULL,

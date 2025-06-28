@@ -27,12 +27,14 @@ class ReceitaBloco:
             self.log.debug(f"Criando bloco para receita: {receita.get('nome_receita', 'Desconhecida')}")
             
             return ft.Container(
+                key = 'bloco_receita_' + str(receita['id']), 
                 content=self._criar_conteudo_bloco(receita),
-                padding=ft.padding.symmetric(horizontal=20, vertical=15),
-                border=ft.border.all(1, ft.Colors.GREY_200),
+                padding=ft.padding.symmetric(horizontal=10, vertical=10),
+                border=ft.border.all(1, ft.Colors.BLACK),
                 border_radius=15,
                 bgcolor=self.theme['surface'],
                 width=420,
+                height=500,
                 shadow=ft.BoxShadow(
                     spread_radius=1,
                     blur_radius=15,
@@ -41,11 +43,13 @@ class ReceitaBloco:
                 ),
                 animate=ft.Animation(300, ft.AnimationCurve.EASE_OUT),
                 on_hover=self._handle_hover,
-                on_click=lambda e: self._handle_clique_bloco(e, receita['id'])
+                on_click=lambda e: self._handle_clique_bloco(e, receita['id']),
+                
             )
         except Exception as e:
             self.log.error(f"Erro ao criar bloco: {str(e)}")
             return ft.Container(
+                key='erro_bloco_receita',
                 content=ft.Text("Erro ao exibir receita"),
                 padding=10,
                 bgcolor=ft.Colors.RED_50,
@@ -57,6 +61,8 @@ class ReceitaBloco:
         ingredientes = receita.get('ingredientes', [])
         
         return ft.Column(
+            key='conteudo_bloco_receita',
+            expand=True,
             controls=[
                 self._criar_cabecalho(receita),
                 ft.Divider(height=10, color=ft.Colors.TRANSPARENT),
@@ -67,12 +73,13 @@ class ReceitaBloco:
                 self._criar_chips_ingredientes(ingredientes),
                 self._criar_botoes_acao(receita['id'])
             ],
-            spacing=8
+            spacing=2
         )
 
     def _criar_cabecalho(self, receita: Dict) -> ft.Row:
         """Cabeçalho moderno com nome da receita e badge de categoria"""
         return ft.Row(
+            key='cabecalho_receita',
             controls=[
                 ft.Text(
                     receita.get('nome_receita', 'Receita sem nome').title(),
@@ -82,6 +89,7 @@ class ReceitaBloco:
                     expand=True
                 ),
                 ft.Container(
+                    key='badge_categoria',
                     content=ft.Text(
                         receita.get('categoria_nome', 'Geral').upper(),
                         size=12,
@@ -141,6 +149,7 @@ class ReceitaBloco:
     def _criar_item_detalhe(self, icon: str, texto: str, cor: str) -> ft.Row:
         """Cria um item de detalhe padronizado"""
         return ft.Row(
+            key=f'detalhe_{icon}',
             controls=[
                 ft.Icon(icon, size=18, color=cor),
                 ft.Text(texto, size=14, color=self.theme['text'])
@@ -151,6 +160,7 @@ class ReceitaBloco:
     def _criar_secao(self, titulo: str, conteudo: str, **kwargs) -> ft.Column:
         """Cria uma seção padronizada com título e conteúdo"""
         return ft.Column(
+            key=f'secao_{titulo.lower().replace(" ", "_")}',
             controls=[
                 ft.Text(
                     titulo,
@@ -173,19 +183,25 @@ class ReceitaBloco:
         if not ingredientes:
             return ft.Column([ft.Text("Nenhum ingrediente informado", italic=True)])
         
-        return ft.Column(
-            controls=[
-                ft.Text("🍴 Ingredientes:", size=14, weight=ft.FontWeight.BOLD),
-                ft.Row(
-                    controls=[self._criar_chip(i) for i in ingredientes],
-                    wrap=True,
-                    spacing=8,
-                    run_spacing=8,
-                    width=400
-                )
-            ],
-            spacing=8
-        )
+        return ft.Container(
+            key='chips_ingredientes',
+            border=ft.border.all(1, ft.Colors.RED),
+            content=ft.Row(
+                key='coluna_chips_ingredientes',
+                expand=True,
+                scroll=ft.ScrollMode.AUTO,
+                controls=[
+                    self._criar_chip(ingrediente) for ingrediente in ingredientes
+                ],
+                spacing=6,
+                wrap=True,
+                alignment=ft.MainAxisAlignment.START
+            ),
+            padding=ft.padding.only(top=10),
+            bgcolor=self.theme['background'],
+            expand=True,
+            border_radius=10,
+            width=420)
 
     def _criar_chip(self, ingrediente: str) -> ft.Chip:
         """Cria um chip básico para ingrediente"""
@@ -194,6 +210,7 @@ class ReceitaBloco:
             bgcolor=ft.Colors.GREY_100,
             selected_color=self.theme['primary'],
             on_select=lambda e: self._handle_chip_select(e, ingrediente)
+            
         )
 
     def _criar_botoes_acao(self, receita_id: int) -> ft.Row:
@@ -262,3 +279,4 @@ class ReceitaBloco:
     def _handle_chip_select(self, e: ft.ControlEvent, ingrediente: str):
         """Seleciona/deseleciona chip de ingrediente"""
         self.log.info(f"Ingrediente selecionado: {ingrediente}")
+        e.control.selected = not e.control.selected

@@ -13,11 +13,28 @@ class ReceitasPageView:
         self._setup_ui_elements()
         self.log.info("ReceitasPageView inicializada")
 
+
+        
         # Corpo principal como Column para os blocos de receitas
-        self.body = ft.Column(
+        self.columnbody = ft.Row(
             scroll=ft.ScrollMode.AUTO,
+            key='body_receitas',
+            #alignment=ft.MainAxisAlignment.CENTER,
             spacing=10,
-            expand=True
+            controls=[],  # Inicializa com uma lista vazia de controles
+            wrap=True,
+            width=9000,  # Define a largura máxima para o corpo
+            expand=True,  # Permite que a coluna expanda para preencher o espaço disponível
+            alignment=ft.MainAxisAlignment.CENTER  # Centraliza os blocos dentro da coluna
+
+        )
+        
+        self.body = ft.Container(
+            content=self.columnbody,
+            expand=True,
+            key='body_receitas_scroll', 
+            alignment=ft.alignment.center,
+            width=9000
         )
 
     def _initialize_components(self):
@@ -76,15 +93,28 @@ class ReceitasPageView:
         try:
             self.log.debug("Construindo a view completa de receitas")
             return ft.Container(
-                content=ft.Column([
-                    self.navbar.build(),
-                    self.loading_indicator,
-                    self.error_message,
-                    self.busca_container,
-                    ft.Container(self.body, padding=10, expand=True),
-                    ft.Container(self.rodaPe.build(), margin=ft.margin.only(top=10))
-                ], expand=True),
-                expand=True
+                content=ft.Column(
+                    controls=[
+                        self.navbar.build(),
+                        self.loading_indicator,
+                        self.error_message,
+                        self.busca_container,
+                        ft.Container(
+                            content=self.body,
+                            width=9000,
+                            padding=5,
+                            expand=True,
+                        ),
+                        ft.Container(
+                            content=self.rodaPe.build(),
+                            margin=ft.margin.only(top=10),
+                        )
+                    ],
+                    expand=True,
+                    spacing=10  # Adiciona espaçamento entre os elementos
+                ),
+                expand=True,
+                padding=10  # Adiciona padding externo
             )
         except Exception as e:
             self.log.error(f"Erro criando view: {str(e)}")
