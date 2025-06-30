@@ -6,12 +6,12 @@ from controller.estoque.controller_estoque_product_handler import EstoqueProduct
 from logs.logger import Logger
 from model.estoque.estoque_model import EstoqueModel
 from view.estoque.estoque_page_view import EstoquePageView
-from components.dialog_produto import DialogProduto
+from components.dialogs.dialog_produto import DialogProduto
 
 class EstoquePageController:
     """Controlador principal da página de estoque, coordena view, dados e operações"""
     
-    def __init__(self, page: ft.Page, estoque_model: EstoqueModel, estoque_view: EstoquePageView):
+    def __init__(self, page: Optional[ft.Page] = None, estoque_model: Optional[EstoqueModel] = None, estoque_view: Optional[EstoquePageView] = None):
         self.page = page
         self.estoque_view = estoque_view
         self.estoque_model = estoque_model
@@ -188,3 +188,11 @@ class EstoquePageController:
         self.log.error(error_msg)
         self.estoque_view.error_message.value = error_msg
         self.page.update()
+    
+    def obter_todos_produtos(self):
+        """Carrega os dados do estoque para uma página específica"""
+        try:
+            resultado = self.data_handler._obter_todos_dados_prdoutos()  
+            return resultado          
+        except Exception as e:
+            self.log.info('Dados obtidos con suscesso')

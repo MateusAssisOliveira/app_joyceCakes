@@ -99,7 +99,47 @@ CREATE TABLE ingredientes_preparacao (
     FOREIGN KEY (produto_id) REFERENCES produtos(id)
 );
 
+-- movimentacoes_estoque (Essencial para rastreamento preciso)
 
+CREATE TABLE movimentacoes_estoque (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    produto_id INT NOT NULL,
+    quantidade DECIMAL(10,3) NOT NULL,
+    tipo ENUM('entrada', 'saida') NOT NULL,
+    origem ENUM('compra', 'producao', 'ajuste', 'venda', 'perda') NOT NULL,
+    origem_id INT NULL COMMENT 'ID da operação relacionada',
+    data_registro DATETIME DEFAULT CURRENT_TIMESTAMP,
+    custo_unitario DECIMAL(10,2) COMMENT 'Custo no momento da movimentação',
+    usuario_id INT NULL COMMENT 'Responsável pela movimentação',
+    observacoes TEXT,
+    FOREIGN KEY (produto_id) REFERENCES produtos(id)
+);
+
+
+-- compras (Para registrar entradas de estoque)
+CREATE TABLE itens_compra (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    compra_id INT NOT NULL,
+    produto_id INT NOT NULL,
+    quantidade DECIMAL(10,3) NOT NULL,
+    custo_unitario DECIMAL(10,2) NOT NULL,
+    unidade_medida_id INT NOT NULL,
+    FOREIGN KEY (compra_id) REFERENCES compras(id),
+    FOREIGN KEY (produto_id) REFERENCES produtos(id),
+    FOREIGN KEY (unidade_medida_id) REFERENCES unidades_medida(id)
+);
+
+-- itens_compra (Itens das compras)
+
+CREATE TABLE compras (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    fornecedor_id INT NULL,
+    data_compra DATE NOT NULL,
+    valor_total DECIMAL(12,2),
+    status ENUM('pendente', 'recebido', 'cancelado'),
+    data_registro DATETIME DEFAULT CURRENT_TIMESTAMP,
+    observacoes TEXT
+);
 -- Inserir unidades de medida
 INSERT INTO unidades_medida (nome, simbolo, tipo) VALUES
 ('grama', 'g', 'peso'),

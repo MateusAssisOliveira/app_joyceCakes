@@ -1,5 +1,7 @@
+import time
 import simplejson as json
 
+from components.dialogs.dialog_receita import DialogReceita
 from components.receita_bloco import ReceitaBloco
 from controller.receitas.controller_receitas_data_handler import ReceitasDataHandler
 from controller.receitas.controller_receitas_handler import ReceitastHandler
@@ -7,6 +9,7 @@ from logs.logger import Logger
 import flet as ft
 
 from model.receitas.receitas_model import ReceitasModel
+from services.ProdutoService import ProdutoService
 from view.receitas.receitas_page_view import ReceitasPageView
 
 class ReceitasPageController:
@@ -25,7 +28,7 @@ class ReceitasPageController:
         """Inicializa os handlers de dados e produtos"""
         try:
             self._receitas_Data_Handler = ReceitasDataHandler(self.receitas_model,self.log)
-            self.product_handler = ReceitastHandler(self.receitas_model, self.log)
+            self._receitas_handler = ReceitastHandler(self.receitas_model, self.log)
             self.log.info("Handlers inicializados com sucesso")
         except Exception as e:
             self._handle_error(f"Falha na inicialização: {e}")
@@ -118,11 +121,25 @@ class ReceitasPageController:
         except Exception as e:
             self.log.error(f"Erro ao paginar receitas na página {pagina}: {str(e)}")
 
-    def _handle_nova_receita(self, e):
+    def _handle_nova_receita(self):
         """Abre diálogo para nova receita"""
-        self.log.info("Ação de nova receita acionada")
-        # Implementar diálogo de criação
-        pass
+        """Abre diálogo para adicionar novo produto"""
+        lista_produtos = ProdutoService.listar_para_dropdown()
+        id_nome = [{'id': produto['id'], 'nome': produto['nome']} for produto in lista_produtos]
+
+        self.log.debug(f"\n\nTODOS OS PRODUTOS DO DB{id_nome}\n\n")
+
+        dialog = DialogReceita(self.page,id_nome)
+        
+        def on_salvar(dados):
+            success, message = self._receitas_handler.adicionar_receita(dados)
+            self._finalizar_operacao_receitas(success, message, dialog)
+            
+        dialog.abrir(
+            modo_edicao=False,
+            on_salvar=on_salvar,
+            #on_cancelar=lambda: self.log.debug("Adição cancelada")
+        )
 
     def _handle_editar_receita(self, e):
         """Abre diálogo para edição"""
@@ -147,3 +164,25 @@ class ReceitasPageController:
         self.log.debug("Exibindo view inicial de receitas")
         self.carregar_dados_receitas()
         return self.receitas_view.create_view()
+    
+    def _finalizar_operacao_receitas(self, success: bool, message: str, dialog=None):
+        """Finaliza operações comuns após adição/edição/exclusão"""
+        self._show_snackbar(message, success)
+        if success:
+            if dialog:
+                dialog.open = False
+                self.page.update()
+
+            self._receitas_Data_Handler.limpar_cache_paginacao()
+            time.sleep(0.3)  # Pequeno delay para visualização
+            self.carregar_dados_receitas()
+            
+    def _show_snackbar(self, message: str, success: bool):
+        """Exibe mensagem de feedback"""
+        self.page.snack_bar = ft.SnackBar(
+            content=ft.Text(message),
+            bgcolor=ft.Colors.GREEN_300 if success else ft.Colors.RED_300
+        )
+        self.page.snack_bar.open = True
+        self.page.open(self.page.snack_bar)
+        self.page.update()

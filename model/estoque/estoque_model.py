@@ -1,7 +1,7 @@
 from typing import Any, Dict
 from database.db import Database
 from logs.logger import Logger
-from model.estoque.produto_model import Produto
+from model.estoque.produto_model import ProdutoModel
 from math import ceil
 
 class EstoqueModel:
@@ -11,7 +11,7 @@ class EstoqueModel:
         self.log = Logger()
         self.log.info("EstoqueModel inicializado.")
 
-    def buscar_produtos(self):
+    def get_todos_produtos(self):
         query = "SELECT * FROM produtos"
         resultados = self.database.fetch_data(query)
         
@@ -19,21 +19,22 @@ class EstoqueModel:
             self.log.error("Erro ao buscar produtos.")
             return []
         
-        produtos = []
+        """ produtos = []
 
         for row in resultados:
+
             produtos.append(
-                Produto(
+                ProdutoModel(
                     id=row["id"],
                     nome=row["nome"],
-                    descricao=row["descricao"],
-                    preco=row["preco"],
-                    quantidade=row["quantidade"],
-                    tipo=row["tipo"]
+                    #descricao=row["descricao"],
+                    #preco=row["preco"],
+                    #quantidade=row["quantidade"],
+                    #tipo=row["tipo"]
                 )
-            )
+            ) """
 
-        return produtos
+        return resultados
 
     def get_colunas_produto(self):
         self.log.debug("Buscando colunas da tabela 'produto'.")
@@ -196,7 +197,8 @@ class EstoqueModel:
         except Exception as e:
             self.log.error(f"Erro ao excluir produto: {e}")
             return False
-    def buscar_por_id(self, id_produto: int) -> Produto:
+    
+    def buscar_por_id(self, id_produto: int) -> ProdutoModel:
         """Busca um produto pelo ID"""
         try:
             query = "SELECT * FROM produtos WHERE id = %s"
@@ -207,7 +209,7 @@ class EstoqueModel:
                 return None
             
             row = resultado[0]
-            produto = Produto(
+            produto = ProdutoModel(
                 id=row["id"],
                 nome=row["nome"],
                 descricao=row["descricao"],
@@ -241,7 +243,7 @@ class EstoqueModel:
 
             produtos = []
             for row in resultado:
-                produto = Produto(
+                produto = ProdutoModel(
                     id=row["id"],
                     nome=row["nome"],
                     descricao=row["descricao"],
@@ -262,8 +264,7 @@ class EstoqueModel:
         except Exception as e:
             self.log.error(f"Erro ao buscar produto por nome paginado: {e}")
             return {"dados": [], "pagina_atual": pagina, "por_pagina": por_pagina, "total_registros": 0}
-
-        
+       
     def buscar_por_tipo(self, tipo_produto: str) -> list:
         """Busca produtos pelo tipo"""
         try:
@@ -277,7 +278,7 @@ class EstoqueModel:
             produtos = []
             for row in resultados:
                 produtos.append(
-                    Produto(
+                    ProdutoModel(
                         id=row["id"],
                         nome=row["nome"],
                         descricao=row["descricao"],
@@ -306,7 +307,7 @@ class EstoqueModel:
             produtos = []
             for row in resultados:
                 produtos.append(
-                    Produto(
+                    ProdutoModel(
                         id=row["id"],
                         nome=row["nome"],
                         descricao=row["descricao"],
@@ -321,6 +322,7 @@ class EstoqueModel:
         except Exception as e:
             self.log.error(f"Erro ao buscar produtos por faixa de preço: {e}")
             return []
+    
     def buscar_por_quantidade(self, quantidade_min: int, quantidade_max: int) -> list:
         """Busca produtos por faixa de quantidade"""
         try:
@@ -334,7 +336,7 @@ class EstoqueModel:
             produtos = []
             for row in resultados:
                 produtos.append(
-                    Produto(
+                    ProdutoModel(
                         id=row["id"],
                         nome=row["nome"],
                         descricao=row["descricao"],
@@ -349,6 +351,7 @@ class EstoqueModel:
         except Exception as e:
             self.log.error(f"Erro ao buscar produtos por faixa de quantidade: {e}")
             return []
+    
     def buscar_por_filtros(self, filtros: Dict[str, Any]) -> list:
         """Busca produtos com base em múltiplos filtros"""
         try:
@@ -381,7 +384,7 @@ class EstoqueModel:
             produtos = []
             for row in resultados:
                 produtos.append(
-                    Produto(
+                    ProdutoModel(
                         id=row["id"],
                         nome=row["nome"],
                         descricao=row["descricao"],
@@ -396,6 +399,7 @@ class EstoqueModel:
         except Exception as e:
             self.log.error(f"Erro ao buscar produtos por filtros: {e}")
             return []
+    
     def commit(self):
         """Commit das alterações no banco de dados"""
         try:
@@ -405,6 +409,7 @@ class EstoqueModel:
         except Exception as e:
             self.log.error(f"Erro ao realizar commit: {e}")
             return False
+    
     def close(self):
         """Fecha a conexão com o banco de dados"""
         try:
@@ -412,6 +417,7 @@ class EstoqueModel:
             self.log.info("Conexão com o banco de dados fechada.")
         except Exception as e:
             self.log.error(f"Erro ao fechar a conexão: {e}")
+    
     def __del__(self):
         """Garante que a conexão seja fechada ao destruir o objeto"""
         try:

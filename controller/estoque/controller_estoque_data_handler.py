@@ -5,7 +5,7 @@ from model.estoque.estoque_model import EstoqueModel
 class EstoqueDataHandler:
     """Handler para operações de dados do estoque com suporte a paginação e cache"""
     
-    def __init__(self, estoque_model: EstoqueModel, logger: Logger):
+    def __init__(self, estoque_model: EstoqueModel, logger: Optional[Logger] = None):
         self.estoque_model = estoque_model
         self.log = logger
         self._cache_paginacao = {}
@@ -35,6 +35,9 @@ class EstoqueDataHandler:
             ordenar_por=kwargs.get('ordenar_por'),
             filtros=kwargs.get('filtros')
         )
+    def _obter_todos_dados_prdoutos(self):
+        """Obtém todos dados os dados dos produtos"""
+        return self.estoque_model.get_todos_produtos()
 
     def _gerar_chave_cache(self, pagina: int, params: dict) -> str:
         """Gera chave única para cache baseada nos parâmetros"""

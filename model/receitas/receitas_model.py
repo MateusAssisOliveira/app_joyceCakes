@@ -274,7 +274,7 @@ class ReceitasModel:
         # Implementação opcional para futuras versões
         return {}
 
-    def criar_receita(self, dados_receita: Dict) -> Union[int, None]:
+    def adicionar_receita(self, dados_receita: Dict) -> Union[int, None]:
         """Cria uma nova receita no banco de dados"""
         try:
             self.log.info("Iniciando criação de nova receita")

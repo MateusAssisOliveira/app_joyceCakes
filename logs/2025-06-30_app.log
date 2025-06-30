@@ -1,0 +1,2184 @@
+2025-06-30 07:13:18,704 - INFO - [ReceitasPage.__init__] Iniciando ReceitasPage... [_log | meu_logger]
+2025-06-30 07:13:18,706 - INFO - [ReceitasModel.__init__] ReceitasModel inicializado [_log | meu_logger]
+2025-06-30 07:13:18,707 - DEBUG - [RodapePaginacao.set_callback] Callback definido: None [_log | meu_logger]
+2025-06-30 07:13:18,707 - INFO - [RodapePaginacao.__init__] RodapePaginacao inicializado [_log | meu_logger]
+2025-06-30 07:13:18,708 - DEBUG - [ReceitasPageView._initialize_components] Componentes básicos da view inicializados [_log | meu_logger]
+2025-06-30 07:13:18,709 - DEBUG - [ReceitasPageView._setup_ui_elements] Elementos de busca configurados [_log | meu_logger]
+2025-06-30 07:13:18,709 - INFO - [ReceitasPageView.__init__] ReceitasPageView inicializada [_log | meu_logger]
+2025-06-30 07:13:18,711 - INFO - [ReceitaBloco.__init__] Componente ReceitaBloco inicializado [_log | meu_logger]
+2025-06-30 07:13:18,712 - INFO - [ReceitasPageController.__init__] Inicializando ReceitasPageController [_log | meu_logger]
+2025-06-30 07:13:18,712 - DEBUG - [ReceitasPageController._setup_callbacks] Configurando callbacks da view [_log | meu_logger]
+2025-06-30 07:13:18,713 - DEBUG - [ReceitasPageView.set_on_buscar] Callback de busca configurado [_log | meu_logger]
+2025-06-30 07:13:18,713 - DEBUG - [ReceitasPageView.definir_acoes_botoes_navBar] Callbacks definidos para navbar [_log | meu_logger]
+2025-06-30 07:13:18,713 - DEBUG - [RodapePaginacao.set_callback] Callback definido: <bound method ReceitasPageController._handle_paginacao_receitas of <controller.receitas.controller_receitas_page.ReceitasPageController object at 0x000002ACE2F0E420>> [_log | meu_logger]
+2025-06-30 07:13:18,713 - DEBUG - [ReceitasPageView.definir_acoes_botoes_rodape] Callback definido para rodapé [_log | meu_logger]
+2025-06-30 07:13:18,713 - INFO - [ReceitasPageController._initialize_handlers] Handlers inicializados com sucesso [_log | meu_logger]
+2025-06-30 07:13:18,713 - INFO - [ReceitasPage.__init__] ReceitasPageController criado com sucesso. [_log | meu_logger]
+2025-06-30 07:13:18,714 - DEBUG - [ReceitasPageController.exibir_view_receitas] Exibindo view inicial de receitas [_log | meu_logger]
+2025-06-30 07:13:19,026 - DEBUG - [ReceitasPageController.carregar_dados_receitas] {
+    "dados": [
+        {
+            "id": 1,
+            "nome_receita": "Bolo de Chocolate",
+            "descricao": "Bolo simples de chocolate",
+            "modo_preparo": "Misture todos os ingredientes secos. Adicione os líquidos e misture bem. Asse por 40 minutos.",
+            "tempo_preparo": 50,
+            "rendimento": 8.000,
+            "dificuldade": "fácil",
+            "custo_estimado": 1690.00,
+            "categoria": "Bolos",
+            "unidade_rendimento": "fatia",
+            "ingredientes": [
+                "Farinha de Trigo (300.000 g)",
+                "Leite (1.000 l)",
+                "Açúcar (200.000 g)",
+                "Chocolate em Pó (100.000 g)",
+                "Fermento em Pó (10.000 g)",
+                "Ovos (3.000 un)"
+            ]
+        },
+        {
+            "id": 4,
+            "nome_receita": "Brigadeiro",
+            "descricao": "Brigadeiro tradicional",
+            "modo_preparo": "Misture todos os ingredientes em uma panela e cozinhe em fogo baixo até desgrudar do fundo.",
+            "tempo_preparo": 25,
+            "rendimento": 30.000,
+            "dificuldade": "fácil",
+            "custo_estimado": 1545.80,
+            "categoria": "Sobremesas",
+            "unidade_rendimento": "un",
+            "ingredientes": [
+                "Leite (200.000 ml)",
+                "Chocolate em Pó (50.000 g)",
+                "Manteiga (20.000 g)"
+            ]
+        },
+        {
+            "id": 5,
+            "nome_receita": "Cookies",
+            "descricao": "Cookies de chocolate",
+            "modo_preparo": "Misture os ingredientes secos. Adicione manteiga e ovos. Forme bolinhas e asse por 15 minutos.",
+            "tempo_preparo": 30,
+            "rendimento": 24.000,
+            "dificuldade": "médio",
+            "custo_estimado": 1630.65,
+            "categoria": "Sobremesas",
+            "unidade_rendimento": "un",
+            "ingredientes": [
+                "Farinha de Trigo (300.000 g)",
+                "Manteiga (150.000 g)",
+                "Açúcar (150.000 g)",
+                "Ovos (2.000 un)",
+                "Chocolate em Pó (100.000 g)",
+                "Canela (5.000 g)"
+            ]
+        },
+        {
+            "id": 2,
+            "nome_receita": "Panquecas",
+            "descricao": "Panquecas americanas",
+            "modo_preparo": "Misture os ingredientes secos e líquidos separadamente. Combine e cozinhe em frigideira.",
+            "tempo_preparo": 30,
+            "rendimento": 12.000,
+            "dificuldade": "fácil",
+            "custo_estimado": null,
+            "categoria": "Salgados",
+            "unidade_rendimento": "un",
+            "ingredientes": []
+        },
+        {
+            "id": 3,
+            "nome_receita": "Pão de Ló",
+            "descricao": "Pão de ló simples",
+            "modo_preparo": "Bata os ovos com açúcar até dobrar de volume. Adicione farinha delicadamente. Asse por 30 minutos.",
+            "tempo_preparo": 45,
+            "rendimento": 10.000,
+            "dificuldade": "médio",
+            "custo_estimado": 327.50,
+            "categoria": "Pães e Massas",
+            "unidade_rendimento": "fatia",
+            "ingredientes": [
+                "Farinha de Trigo (250.000 g)",
+                "Ovos (4.000 un)",
+                "Açúcar (150.000 g)",
+                "Fermento em Pó (10.000 g)"
+            ]
+        }
+    ],
+    "pagina_atual": 1,
+    "por_pagina": 20,
+    "total_registros": 5,
+    "total_paginas": 1
+} [_log | meu_logger]
+2025-06-30 07:13:19,027 - DEBUG - [ReceitasPageController.adicionar_receitas_view] Adicionando receitas: {'dados': [{'id': 1, 'nome_receita': 'Bolo de Chocolate', 'descricao': 'Bolo simples de chocolate', 'modo_preparo': 'Misture todos os ingredientes secos. Adicione os líquidos e misture bem. Asse por 40 minutos.', 'tempo_preparo': 50, 'rendimento': Decimal('8.000'), 'dificuldade': 'fácil', 'custo_estimado': Decimal('1690.00'), 'categoria': 'Bolos', 'unidade_rendimento': 'fatia', 'ingredientes': ['Farinha de Trigo (300.000 g)', 'Leite (1.000 l)', 'Açúcar (200.000 g)', 'Chocolate em Pó (100.000 g)', 'Fermento em Pó (10.000 g)', 'Ovos (3.000 un)']}, {'id': 4, 'nome_receita': 'Brigadeiro', 'descricao': 'Brigadeiro tradicional', 'modo_preparo': 'Misture todos os ingredientes em uma panela e cozinhe em fogo baixo até desgrudar do fundo.', 'tempo_preparo': 25, 'rendimento': Decimal('30.000'), 'dificuldade': 'fácil', 'custo_estimado': Decimal('1545.80'), 'categoria': 'Sobremesas', 'unidade_rendimento': 'un', 'ingredientes': ['Leite (200.000 ml)', 'Chocolate em Pó (50.000 g)', 'Manteiga (20.000 g)']}, {'id': 5, 'nome_receita': 'Cookies', 'descricao': 'Cookies de chocolate', 'modo_preparo': 'Misture os ingredientes secos. Adicione manteiga e ovos. Forme bolinhas e asse por 15 minutos.', 'tempo_preparo': 30, 'rendimento': Decimal('24.000'), 'dificuldade': 'médio', 'custo_estimado': Decimal('1630.65'), 'categoria': 'Sobremesas', 'unidade_rendimento': 'un', 'ingredientes': ['Farinha de Trigo (300.000 g)', 'Manteiga (150.000 g)', 'Açúcar (150.000 g)', 'Ovos (2.000 un)', 'Chocolate em Pó (100.000 g)', 'Canela (5.000 g)']}, {'id': 2, 'nome_receita': 'Panquecas', 'descricao': 'Panquecas americanas', 'modo_preparo': 'Misture os ingredientes secos e líquidos separadamente. Combine e cozinhe em frigideira.', 'tempo_preparo': 30, 'rendimento': Decimal('12.000'), 'dificuldade': 'fácil', 'custo_estimado': None, 'categoria': 'Salgados', 'unidade_rendimento': 'un', 'ingredientes': []}, {'id': 3, 'nome_receita': 'Pão de Ló', 'descricao': 'Pão de ló simples', 'modo_preparo': 'Bata os ovos com açúcar até dobrar de volume. Adicione farinha delicadamente. Asse por 30 minutos.', 'tempo_preparo': 45, 'rendimento': Decimal('10.000'), 'dificuldade': 'médio', 'custo_estimado': Decimal('327.50'), 'categoria': 'Pães e Massas', 'unidade_rendimento': 'fatia', 'ingredientes': ['Farinha de Trigo (250.000 g)', 'Ovos (4.000 un)', 'Açúcar (150.000 g)', 'Fermento em Pó (10.000 g)']}], 'pagina_atual': 1, 'por_pagina': 20, 'total_registros': 5, 'total_paginas': 1} [_log | meu_logger]
+2025-06-30 07:13:19,028 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Bolo de Chocolate [_log | meu_logger]
+2025-06-30 07:13:19,032 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Brigadeiro [_log | meu_logger]
+2025-06-30 07:13:19,034 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Cookies [_log | meu_logger]
+2025-06-30 07:13:19,037 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Panquecas [_log | meu_logger]
+2025-06-30 07:13:19,039 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Pão de Ló [_log | meu_logger]
+2025-06-30 07:13:19,043 - ERROR - [ReceitasPageController.adicionar_receitas_view] Erro ao adicionar receita: Container Control must be added to the page first [_log | meu_logger]
+2025-06-30 07:13:19,044 - ERROR - [ReceitasPageController._handle_error] Erro atualizando view: 'NoneType' object has no attribute 'value' [_log | meu_logger]
+2025-06-30 07:13:19,045 - DEBUG - [ReceitasPageView.create_view] Construindo a view completa de receitas [_log | meu_logger]
+2025-06-30 09:45:10,703 - INFO - [ReceitasPage.__init__] Iniciando ReceitasPage... [_log | meu_logger]
+2025-06-30 09:45:10,708 - INFO - [ReceitasModel.__init__] ReceitasModel inicializado [_log | meu_logger]
+2025-06-30 09:45:10,708 - DEBUG - [RodapePaginacao.set_callback] Callback definido: None [_log | meu_logger]
+2025-06-30 09:45:10,708 - INFO - [RodapePaginacao.__init__] RodapePaginacao inicializado [_log | meu_logger]
+2025-06-30 09:45:10,709 - DEBUG - [ReceitasPageView._initialize_components] Componentes básicos da view inicializados [_log | meu_logger]
+2025-06-30 09:45:10,710 - DEBUG - [ReceitasPageView._setup_ui_elements] Elementos de busca configurados [_log | meu_logger]
+2025-06-30 09:45:10,710 - INFO - [ReceitasPageView.__init__] ReceitasPageView inicializada [_log | meu_logger]
+2025-06-30 09:45:10,711 - INFO - [ReceitaBloco.__init__] Componente ReceitaBloco inicializado [_log | meu_logger]
+2025-06-30 09:45:10,711 - INFO - [ReceitasPageController.__init__] Inicializando ReceitasPageController [_log | meu_logger]
+2025-06-30 09:45:10,711 - DEBUG - [ReceitasPageController._setup_callbacks] Configurando callbacks da view [_log | meu_logger]
+2025-06-30 09:45:10,712 - DEBUG - [ReceitasPageView.set_on_buscar] Callback de busca configurado [_log | meu_logger]
+2025-06-30 09:45:10,712 - DEBUG - [ReceitasPageView.definir_acoes_botoes_navBar] Callbacks definidos para navbar [_log | meu_logger]
+2025-06-30 09:45:10,712 - DEBUG - [RodapePaginacao.set_callback] Callback definido: <bound method ReceitasPageController._handle_paginacao_receitas of <controller.receitas.controller_receitas_page.ReceitasPageController object at 0x00000257D278D4C0>> [_log | meu_logger]
+2025-06-30 09:45:10,712 - DEBUG - [ReceitasPageView.definir_acoes_botoes_rodape] Callback definido para rodapé [_log | meu_logger]
+2025-06-30 09:45:10,713 - INFO - [ReceitasPageController._initialize_handlers] Handlers inicializados com sucesso [_log | meu_logger]
+2025-06-30 09:45:10,713 - INFO - [ReceitasPage.__init__] ReceitasPageController criado com sucesso. [_log | meu_logger]
+2025-06-30 09:45:10,713 - DEBUG - [ReceitasPageController.exibir_view_receitas] Exibindo view inicial de receitas [_log | meu_logger]
+2025-06-30 09:45:10,871 - DEBUG - [ReceitasPageController.carregar_dados_receitas] {
+    "dados": [
+        {
+            "id": 1,
+            "nome_receita": "Bolo de Chocolate",
+            "descricao": "Bolo simples de chocolate",
+            "modo_preparo": "Misture todos os ingredientes secos. Adicione os líquidos e misture bem. Asse por 40 minutos.",
+            "tempo_preparo": 50,
+            "rendimento": 8.000,
+            "dificuldade": "fácil",
+            "custo_estimado": 1690.00,
+            "categoria": "Bolos",
+            "unidade_rendimento": "fatia",
+            "ingredientes": [
+                "Farinha de Trigo (300.000 g)",
+                "Leite (1.000 l)",
+                "Açúcar (200.000 g)",
+                "Chocolate em Pó (100.000 g)",
+                "Fermento em Pó (10.000 g)",
+                "Ovos (3.000 un)"
+            ]
+        },
+        {
+            "id": 4,
+            "nome_receita": "Brigadeiro",
+            "descricao": "Brigadeiro tradicional",
+            "modo_preparo": "Misture todos os ingredientes em uma panela e cozinhe em fogo baixo até desgrudar do fundo.",
+            "tempo_preparo": 25,
+            "rendimento": 30.000,
+            "dificuldade": "fácil",
+            "custo_estimado": 1545.80,
+            "categoria": "Sobremesas",
+            "unidade_rendimento": "un",
+            "ingredientes": [
+                "Leite (200.000 ml)",
+                "Chocolate em Pó (50.000 g)",
+                "Manteiga (20.000 g)"
+            ]
+        },
+        {
+            "id": 5,
+            "nome_receita": "Cookies",
+            "descricao": "Cookies de chocolate",
+            "modo_preparo": "Misture os ingredientes secos. Adicione manteiga e ovos. Forme bolinhas e asse por 15 minutos.",
+            "tempo_preparo": 30,
+            "rendimento": 24.000,
+            "dificuldade": "médio",
+            "custo_estimado": 1630.65,
+            "categoria": "Sobremesas",
+            "unidade_rendimento": "un",
+            "ingredientes": [
+                "Farinha de Trigo (300.000 g)",
+                "Manteiga (150.000 g)",
+                "Açúcar (150.000 g)",
+                "Ovos (2.000 un)",
+                "Chocolate em Pó (100.000 g)",
+                "Canela (5.000 g)"
+            ]
+        },
+        {
+            "id": 2,
+            "nome_receita": "Panquecas",
+            "descricao": "Panquecas americanas",
+            "modo_preparo": "Misture os ingredientes secos e líquidos separadamente. Combine e cozinhe em frigideira.",
+            "tempo_preparo": 30,
+            "rendimento": 12.000,
+            "dificuldade": "fácil",
+            "custo_estimado": null,
+            "categoria": "Salgados",
+            "unidade_rendimento": "un",
+            "ingredientes": []
+        },
+        {
+            "id": 3,
+            "nome_receita": "Pão de Ló",
+            "descricao": "Pão de ló simples",
+            "modo_preparo": "Bata os ovos com açúcar até dobrar de volume. Adicione farinha delicadamente. Asse por 30 minutos.",
+            "tempo_preparo": 45,
+            "rendimento": 10.000,
+            "dificuldade": "médio",
+            "custo_estimado": 327.50,
+            "categoria": "Pães e Massas",
+            "unidade_rendimento": "fatia",
+            "ingredientes": [
+                "Farinha de Trigo (250.000 g)",
+                "Ovos (4.000 un)",
+                "Açúcar (150.000 g)",
+                "Fermento em Pó (10.000 g)"
+            ]
+        }
+    ],
+    "pagina_atual": 1,
+    "por_pagina": 20,
+    "total_registros": 5,
+    "total_paginas": 1
+} [_log | meu_logger]
+2025-06-30 09:45:10,872 - DEBUG - [ReceitasPageController.adicionar_receitas_view] Adicionando receitas: {'dados': [{'id': 1, 'nome_receita': 'Bolo de Chocolate', 'descricao': 'Bolo simples de chocolate', 'modo_preparo': 'Misture todos os ingredientes secos. Adicione os líquidos e misture bem. Asse por 40 minutos.', 'tempo_preparo': 50, 'rendimento': Decimal('8.000'), 'dificuldade': 'fácil', 'custo_estimado': Decimal('1690.00'), 'categoria': 'Bolos', 'unidade_rendimento': 'fatia', 'ingredientes': ['Farinha de Trigo (300.000 g)', 'Leite (1.000 l)', 'Açúcar (200.000 g)', 'Chocolate em Pó (100.000 g)', 'Fermento em Pó (10.000 g)', 'Ovos (3.000 un)']}, {'id': 4, 'nome_receita': 'Brigadeiro', 'descricao': 'Brigadeiro tradicional', 'modo_preparo': 'Misture todos os ingredientes em uma panela e cozinhe em fogo baixo até desgrudar do fundo.', 'tempo_preparo': 25, 'rendimento': Decimal('30.000'), 'dificuldade': 'fácil', 'custo_estimado': Decimal('1545.80'), 'categoria': 'Sobremesas', 'unidade_rendimento': 'un', 'ingredientes': ['Leite (200.000 ml)', 'Chocolate em Pó (50.000 g)', 'Manteiga (20.000 g)']}, {'id': 5, 'nome_receita': 'Cookies', 'descricao': 'Cookies de chocolate', 'modo_preparo': 'Misture os ingredientes secos. Adicione manteiga e ovos. Forme bolinhas e asse por 15 minutos.', 'tempo_preparo': 30, 'rendimento': Decimal('24.000'), 'dificuldade': 'médio', 'custo_estimado': Decimal('1630.65'), 'categoria': 'Sobremesas', 'unidade_rendimento': 'un', 'ingredientes': ['Farinha de Trigo (300.000 g)', 'Manteiga (150.000 g)', 'Açúcar (150.000 g)', 'Ovos (2.000 un)', 'Chocolate em Pó (100.000 g)', 'Canela (5.000 g)']}, {'id': 2, 'nome_receita': 'Panquecas', 'descricao': 'Panquecas americanas', 'modo_preparo': 'Misture os ingredientes secos e líquidos separadamente. Combine e cozinhe em frigideira.', 'tempo_preparo': 30, 'rendimento': Decimal('12.000'), 'dificuldade': 'fácil', 'custo_estimado': None, 'categoria': 'Salgados', 'unidade_rendimento': 'un', 'ingredientes': []}, {'id': 3, 'nome_receita': 'Pão de Ló', 'descricao': 'Pão de ló simples', 'modo_preparo': 'Bata os ovos com açúcar até dobrar de volume. Adicione farinha delicadamente. Asse por 30 minutos.', 'tempo_preparo': 45, 'rendimento': Decimal('10.000'), 'dificuldade': 'médio', 'custo_estimado': Decimal('327.50'), 'categoria': 'Pães e Massas', 'unidade_rendimento': 'fatia', 'ingredientes': ['Farinha de Trigo (250.000 g)', 'Ovos (4.000 un)', 'Açúcar (150.000 g)', 'Fermento em Pó (10.000 g)']}], 'pagina_atual': 1, 'por_pagina': 20, 'total_registros': 5, 'total_paginas': 1} [_log | meu_logger]
+2025-06-30 09:45:10,873 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Bolo de Chocolate [_log | meu_logger]
+2025-06-30 09:45:10,876 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Brigadeiro [_log | meu_logger]
+2025-06-30 09:45:10,880 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Cookies [_log | meu_logger]
+2025-06-30 09:45:10,884 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Panquecas [_log | meu_logger]
+2025-06-30 09:45:10,886 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Pão de Ló [_log | meu_logger]
+2025-06-30 09:45:10,889 - ERROR - [ReceitasPageController.adicionar_receitas_view] Erro ao adicionar receita: Container Control must be added to the page first [_log | meu_logger]
+2025-06-30 09:45:10,889 - ERROR - [ReceitasPageController._handle_error] Erro atualizando view: 'NoneType' object has no attribute 'value' [_log | meu_logger]
+2025-06-30 09:45:10,890 - DEBUG - [ReceitasPageView.create_view] Construindo a view completa de receitas [_log | meu_logger]
+2025-06-30 09:49:33,108 - INFO - [ReceitasPage.__init__] Iniciando ReceitasPage... [_log | meu_logger]
+2025-06-30 09:49:33,110 - INFO - [ReceitasModel.__init__] ReceitasModel inicializado [_log | meu_logger]
+2025-06-30 09:49:33,111 - DEBUG - [RodapePaginacao.set_callback] Callback definido: None [_log | meu_logger]
+2025-06-30 09:49:33,111 - INFO - [RodapePaginacao.__init__] RodapePaginacao inicializado [_log | meu_logger]
+2025-06-30 09:49:33,111 - DEBUG - [ReceitasPageView._initialize_components] Componentes básicos da view inicializados [_log | meu_logger]
+2025-06-30 09:49:33,112 - DEBUG - [ReceitasPageView._setup_ui_elements] Elementos de busca configurados [_log | meu_logger]
+2025-06-30 09:49:33,113 - INFO - [ReceitasPageView.__init__] ReceitasPageView inicializada [_log | meu_logger]
+2025-06-30 09:49:33,113 - INFO - [ReceitaBloco.__init__] Componente ReceitaBloco inicializado [_log | meu_logger]
+2025-06-30 09:49:33,113 - INFO - [ReceitasPageController.__init__] Inicializando ReceitasPageController [_log | meu_logger]
+2025-06-30 09:49:33,114 - DEBUG - [ReceitasPageController._setup_callbacks] Configurando callbacks da view [_log | meu_logger]
+2025-06-30 09:49:33,114 - DEBUG - [ReceitasPageView.set_on_buscar] Callback de busca configurado [_log | meu_logger]
+2025-06-30 09:49:33,115 - DEBUG - [ReceitasPageView.definir_acoes_botoes_navBar] Callbacks definidos para navbar [_log | meu_logger]
+2025-06-30 09:49:33,115 - DEBUG - [RodapePaginacao.set_callback] Callback definido: <bound method ReceitasPageController._handle_paginacao_receitas of <controller.receitas.controller_receitas_page.ReceitasPageController object at 0x000002088E729CD0>> [_log | meu_logger]
+2025-06-30 09:49:33,115 - DEBUG - [ReceitasPageView.definir_acoes_botoes_rodape] Callback definido para rodapé [_log | meu_logger]
+2025-06-30 09:49:33,115 - INFO - [ReceitasPageController._initialize_handlers] Handlers inicializados com sucesso [_log | meu_logger]
+2025-06-30 09:49:33,116 - INFO - [ReceitasPage.__init__] ReceitasPageController criado com sucesso. [_log | meu_logger]
+2025-06-30 09:49:33,116 - DEBUG - [ReceitasPageController.exibir_view_receitas] Exibindo view inicial de receitas [_log | meu_logger]
+2025-06-30 09:49:33,168 - DEBUG - [ReceitasPageController.carregar_dados_receitas] {
+    "dados": [
+        {
+            "id": 1,
+            "nome_receita": "Bolo de Chocolate",
+            "descricao": "Bolo simples de chocolate",
+            "modo_preparo": "Misture todos os ingredientes secos. Adicione os líquidos e misture bem. Asse por 40 minutos.",
+            "tempo_preparo": 50,
+            "rendimento": 8.000,
+            "dificuldade": "fácil",
+            "custo_estimado": 1690.00,
+            "categoria": "Bolos",
+            "unidade_rendimento": "fatia",
+            "ingredientes": [
+                "Farinha de Trigo (300.000 g)",
+                "Leite (1.000 l)",
+                "Açúcar (200.000 g)",
+                "Chocolate em Pó (100.000 g)",
+                "Fermento em Pó (10.000 g)",
+                "Ovos (3.000 un)"
+            ]
+        },
+        {
+            "id": 4,
+            "nome_receita": "Brigadeiro",
+            "descricao": "Brigadeiro tradicional",
+            "modo_preparo": "Misture todos os ingredientes em uma panela e cozinhe em fogo baixo até desgrudar do fundo.",
+            "tempo_preparo": 25,
+            "rendimento": 30.000,
+            "dificuldade": "fácil",
+            "custo_estimado": 1545.80,
+            "categoria": "Sobremesas",
+            "unidade_rendimento": "un",
+            "ingredientes": [
+                "Leite (200.000 ml)",
+                "Chocolate em Pó (50.000 g)",
+                "Manteiga (20.000 g)"
+            ]
+        },
+        {
+            "id": 5,
+            "nome_receita": "Cookies",
+            "descricao": "Cookies de chocolate",
+            "modo_preparo": "Misture os ingredientes secos. Adicione manteiga e ovos. Forme bolinhas e asse por 15 minutos.",
+            "tempo_preparo": 30,
+            "rendimento": 24.000,
+            "dificuldade": "médio",
+            "custo_estimado": 1630.65,
+            "categoria": "Sobremesas",
+            "unidade_rendimento": "un",
+            "ingredientes": [
+                "Farinha de Trigo (300.000 g)",
+                "Manteiga (150.000 g)",
+                "Açúcar (150.000 g)",
+                "Ovos (2.000 un)",
+                "Chocolate em Pó (100.000 g)",
+                "Canela (5.000 g)"
+            ]
+        },
+        {
+            "id": 2,
+            "nome_receita": "Panquecas",
+            "descricao": "Panquecas americanas",
+            "modo_preparo": "Misture os ingredientes secos e líquidos separadamente. Combine e cozinhe em frigideira.",
+            "tempo_preparo": 30,
+            "rendimento": 12.000,
+            "dificuldade": "fácil",
+            "custo_estimado": null,
+            "categoria": "Salgados",
+            "unidade_rendimento": "un",
+            "ingredientes": []
+        },
+        {
+            "id": 3,
+            "nome_receita": "Pão de Ló",
+            "descricao": "Pão de ló simples",
+            "modo_preparo": "Bata os ovos com açúcar até dobrar de volume. Adicione farinha delicadamente. Asse por 30 minutos.",
+            "tempo_preparo": 45,
+            "rendimento": 10.000,
+            "dificuldade": "médio",
+            "custo_estimado": 327.50,
+            "categoria": "Pães e Massas",
+            "unidade_rendimento": "fatia",
+            "ingredientes": [
+                "Farinha de Trigo (250.000 g)",
+                "Ovos (4.000 un)",
+                "Açúcar (150.000 g)",
+                "Fermento em Pó (10.000 g)"
+            ]
+        }
+    ],
+    "pagina_atual": 1,
+    "por_pagina": 20,
+    "total_registros": 5,
+    "total_paginas": 1
+} [_log | meu_logger]
+2025-06-30 09:49:33,168 - DEBUG - [ReceitasPageController.adicionar_receitas_view] Adicionando receitas: {'dados': [{'id': 1, 'nome_receita': 'Bolo de Chocolate', 'descricao': 'Bolo simples de chocolate', 'modo_preparo': 'Misture todos os ingredientes secos. Adicione os líquidos e misture bem. Asse por 40 minutos.', 'tempo_preparo': 50, 'rendimento': Decimal('8.000'), 'dificuldade': 'fácil', 'custo_estimado': Decimal('1690.00'), 'categoria': 'Bolos', 'unidade_rendimento': 'fatia', 'ingredientes': ['Farinha de Trigo (300.000 g)', 'Leite (1.000 l)', 'Açúcar (200.000 g)', 'Chocolate em Pó (100.000 g)', 'Fermento em Pó (10.000 g)', 'Ovos (3.000 un)']}, {'id': 4, 'nome_receita': 'Brigadeiro', 'descricao': 'Brigadeiro tradicional', 'modo_preparo': 'Misture todos os ingredientes em uma panela e cozinhe em fogo baixo até desgrudar do fundo.', 'tempo_preparo': 25, 'rendimento': Decimal('30.000'), 'dificuldade': 'fácil', 'custo_estimado': Decimal('1545.80'), 'categoria': 'Sobremesas', 'unidade_rendimento': 'un', 'ingredientes': ['Leite (200.000 ml)', 'Chocolate em Pó (50.000 g)', 'Manteiga (20.000 g)']}, {'id': 5, 'nome_receita': 'Cookies', 'descricao': 'Cookies de chocolate', 'modo_preparo': 'Misture os ingredientes secos. Adicione manteiga e ovos. Forme bolinhas e asse por 15 minutos.', 'tempo_preparo': 30, 'rendimento': Decimal('24.000'), 'dificuldade': 'médio', 'custo_estimado': Decimal('1630.65'), 'categoria': 'Sobremesas', 'unidade_rendimento': 'un', 'ingredientes': ['Farinha de Trigo (300.000 g)', 'Manteiga (150.000 g)', 'Açúcar (150.000 g)', 'Ovos (2.000 un)', 'Chocolate em Pó (100.000 g)', 'Canela (5.000 g)']}, {'id': 2, 'nome_receita': 'Panquecas', 'descricao': 'Panquecas americanas', 'modo_preparo': 'Misture os ingredientes secos e líquidos separadamente. Combine e cozinhe em frigideira.', 'tempo_preparo': 30, 'rendimento': Decimal('12.000'), 'dificuldade': 'fácil', 'custo_estimado': None, 'categoria': 'Salgados', 'unidade_rendimento': 'un', 'ingredientes': []}, {'id': 3, 'nome_receita': 'Pão de Ló', 'descricao': 'Pão de ló simples', 'modo_preparo': 'Bata os ovos com açúcar até dobrar de volume. Adicione farinha delicadamente. Asse por 30 minutos.', 'tempo_preparo': 45, 'rendimento': Decimal('10.000'), 'dificuldade': 'médio', 'custo_estimado': Decimal('327.50'), 'categoria': 'Pães e Massas', 'unidade_rendimento': 'fatia', 'ingredientes': ['Farinha de Trigo (250.000 g)', 'Ovos (4.000 un)', 'Açúcar (150.000 g)', 'Fermento em Pó (10.000 g)']}], 'pagina_atual': 1, 'por_pagina': 20, 'total_registros': 5, 'total_paginas': 1} [_log | meu_logger]
+2025-06-30 09:49:33,169 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Bolo de Chocolate [_log | meu_logger]
+2025-06-30 09:49:33,172 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Brigadeiro [_log | meu_logger]
+2025-06-30 09:49:33,176 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Cookies [_log | meu_logger]
+2025-06-30 09:49:33,180 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Panquecas [_log | meu_logger]
+2025-06-30 09:49:33,182 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Pão de Ló [_log | meu_logger]
+2025-06-30 09:49:33,185 - ERROR - [ReceitasPageController.adicionar_receitas_view] Erro ao adicionar receita: Container Control must be added to the page first [_log | meu_logger]
+2025-06-30 09:49:33,185 - ERROR - [ReceitasPageController._handle_error] Erro atualizando view: 'NoneType' object has no attribute 'value' [_log | meu_logger]
+2025-06-30 09:49:33,190 - DEBUG - [ReceitasPageView.create_view] Construindo a view completa de receitas [_log | meu_logger]
+2025-06-30 09:50:25,348 - INFO - [ReceitasPage.__init__] Iniciando ReceitasPage... [_log | meu_logger]
+2025-06-30 09:50:25,351 - INFO - [ReceitasModel.__init__] ReceitasModel inicializado [_log | meu_logger]
+2025-06-30 09:50:25,351 - DEBUG - [RodapePaginacao.set_callback] Callback definido: None [_log | meu_logger]
+2025-06-30 09:50:25,352 - INFO - [RodapePaginacao.__init__] RodapePaginacao inicializado [_log | meu_logger]
+2025-06-30 09:50:25,353 - DEBUG - [ReceitasPageView._initialize_components] Componentes básicos da view inicializados [_log | meu_logger]
+2025-06-30 09:50:25,354 - DEBUG - [ReceitasPageView._setup_ui_elements] Elementos de busca configurados [_log | meu_logger]
+2025-06-30 09:50:25,354 - INFO - [ReceitasPageView.__init__] ReceitasPageView inicializada [_log | meu_logger]
+2025-06-30 09:50:25,355 - INFO - [ReceitaBloco.__init__] Componente ReceitaBloco inicializado [_log | meu_logger]
+2025-06-30 09:50:25,356 - INFO - [ReceitasPageController.__init__] Inicializando ReceitasPageController [_log | meu_logger]
+2025-06-30 09:50:25,356 - DEBUG - [ReceitasPageController._setup_callbacks] Configurando callbacks da view [_log | meu_logger]
+2025-06-30 09:50:25,357 - DEBUG - [ReceitasPageView.set_on_buscar] Callback de busca configurado [_log | meu_logger]
+2025-06-30 09:50:25,357 - DEBUG - [ReceitasPageView.definir_acoes_botoes_navBar] Callbacks definidos para navbar [_log | meu_logger]
+2025-06-30 09:50:25,357 - DEBUG - [RodapePaginacao.set_callback] Callback definido: <bound method ReceitasPageController._handle_paginacao_receitas of <controller.receitas.controller_receitas_page.ReceitasPageController object at 0x000002748A3658B0>> [_log | meu_logger]
+2025-06-30 09:50:25,357 - DEBUG - [ReceitasPageView.definir_acoes_botoes_rodape] Callback definido para rodapé [_log | meu_logger]
+2025-06-30 09:50:25,358 - INFO - [ReceitasPageController._initialize_handlers] Handlers inicializados com sucesso [_log | meu_logger]
+2025-06-30 09:50:25,358 - INFO - [ReceitasPage.__init__] ReceitasPageController criado com sucesso. [_log | meu_logger]
+2025-06-30 09:50:25,358 - DEBUG - [ReceitasPageController.exibir_view_receitas] Exibindo view inicial de receitas [_log | meu_logger]
+2025-06-30 09:50:25,939 - DEBUG - [ReceitasPageController.carregar_dados_receitas] {
+    "dados": [
+        {
+            "id": 1,
+            "nome_receita": "Bolo de Chocolate",
+            "descricao": "Bolo simples de chocolate",
+            "modo_preparo": "Misture todos os ingredientes secos. Adicione os líquidos e misture bem. Asse por 40 minutos.",
+            "tempo_preparo": 50,
+            "rendimento": 8.000,
+            "dificuldade": "fácil",
+            "custo_estimado": 1690.00,
+            "categoria": "Bolos",
+            "unidade_rendimento": "fatia",
+            "ingredientes": [
+                "Farinha de Trigo (300.000 g)",
+                "Leite (1.000 l)",
+                "Açúcar (200.000 g)",
+                "Chocolate em Pó (100.000 g)",
+                "Fermento em Pó (10.000 g)",
+                "Ovos (3.000 un)"
+            ]
+        },
+        {
+            "id": 4,
+            "nome_receita": "Brigadeiro",
+            "descricao": "Brigadeiro tradicional",
+            "modo_preparo": "Misture todos os ingredientes em uma panela e cozinhe em fogo baixo até desgrudar do fundo.",
+            "tempo_preparo": 25,
+            "rendimento": 30.000,
+            "dificuldade": "fácil",
+            "custo_estimado": 1545.80,
+            "categoria": "Sobremesas",
+            "unidade_rendimento": "un",
+            "ingredientes": [
+                "Leite (200.000 ml)",
+                "Chocolate em Pó (50.000 g)",
+                "Manteiga (20.000 g)"
+            ]
+        },
+        {
+            "id": 5,
+            "nome_receita": "Cookies",
+            "descricao": "Cookies de chocolate",
+            "modo_preparo": "Misture os ingredientes secos. Adicione manteiga e ovos. Forme bolinhas e asse por 15 minutos.",
+            "tempo_preparo": 30,
+            "rendimento": 24.000,
+            "dificuldade": "médio",
+            "custo_estimado": 1630.65,
+            "categoria": "Sobremesas",
+            "unidade_rendimento": "un",
+            "ingredientes": [
+                "Farinha de Trigo (300.000 g)",
+                "Manteiga (150.000 g)",
+                "Açúcar (150.000 g)",
+                "Ovos (2.000 un)",
+                "Chocolate em Pó (100.000 g)",
+                "Canela (5.000 g)"
+            ]
+        },
+        {
+            "id": 2,
+            "nome_receita": "Panquecas",
+            "descricao": "Panquecas americanas",
+            "modo_preparo": "Misture os ingredientes secos e líquidos separadamente. Combine e cozinhe em frigideira.",
+            "tempo_preparo": 30,
+            "rendimento": 12.000,
+            "dificuldade": "fácil",
+            "custo_estimado": null,
+            "categoria": "Salgados",
+            "unidade_rendimento": "un",
+            "ingredientes": []
+        },
+        {
+            "id": 3,
+            "nome_receita": "Pão de Ló",
+            "descricao": "Pão de ló simples",
+            "modo_preparo": "Bata os ovos com açúcar até dobrar de volume. Adicione farinha delicadamente. Asse por 30 minutos.",
+            "tempo_preparo": 45,
+            "rendimento": 10.000,
+            "dificuldade": "médio",
+            "custo_estimado": 327.50,
+            "categoria": "Pães e Massas",
+            "unidade_rendimento": "fatia",
+            "ingredientes": [
+                "Farinha de Trigo (250.000 g)",
+                "Ovos (4.000 un)",
+                "Açúcar (150.000 g)",
+                "Fermento em Pó (10.000 g)"
+            ]
+        }
+    ],
+    "pagina_atual": 1,
+    "por_pagina": 20,
+    "total_registros": 5,
+    "total_paginas": 1
+} [_log | meu_logger]
+2025-06-30 09:50:25,940 - DEBUG - [ReceitasPageController.adicionar_receitas_view] Adicionando receitas: {'dados': [{'id': 1, 'nome_receita': 'Bolo de Chocolate', 'descricao': 'Bolo simples de chocolate', 'modo_preparo': 'Misture todos os ingredientes secos. Adicione os líquidos e misture bem. Asse por 40 minutos.', 'tempo_preparo': 50, 'rendimento': Decimal('8.000'), 'dificuldade': 'fácil', 'custo_estimado': Decimal('1690.00'), 'categoria': 'Bolos', 'unidade_rendimento': 'fatia', 'ingredientes': ['Farinha de Trigo (300.000 g)', 'Leite (1.000 l)', 'Açúcar (200.000 g)', 'Chocolate em Pó (100.000 g)', 'Fermento em Pó (10.000 g)', 'Ovos (3.000 un)']}, {'id': 4, 'nome_receita': 'Brigadeiro', 'descricao': 'Brigadeiro tradicional', 'modo_preparo': 'Misture todos os ingredientes em uma panela e cozinhe em fogo baixo até desgrudar do fundo.', 'tempo_preparo': 25, 'rendimento': Decimal('30.000'), 'dificuldade': 'fácil', 'custo_estimado': Decimal('1545.80'), 'categoria': 'Sobremesas', 'unidade_rendimento': 'un', 'ingredientes': ['Leite (200.000 ml)', 'Chocolate em Pó (50.000 g)', 'Manteiga (20.000 g)']}, {'id': 5, 'nome_receita': 'Cookies', 'descricao': 'Cookies de chocolate', 'modo_preparo': 'Misture os ingredientes secos. Adicione manteiga e ovos. Forme bolinhas e asse por 15 minutos.', 'tempo_preparo': 30, 'rendimento': Decimal('24.000'), 'dificuldade': 'médio', 'custo_estimado': Decimal('1630.65'), 'categoria': 'Sobremesas', 'unidade_rendimento': 'un', 'ingredientes': ['Farinha de Trigo (300.000 g)', 'Manteiga (150.000 g)', 'Açúcar (150.000 g)', 'Ovos (2.000 un)', 'Chocolate em Pó (100.000 g)', 'Canela (5.000 g)']}, {'id': 2, 'nome_receita': 'Panquecas', 'descricao': 'Panquecas americanas', 'modo_preparo': 'Misture os ingredientes secos e líquidos separadamente. Combine e cozinhe em frigideira.', 'tempo_preparo': 30, 'rendimento': Decimal('12.000'), 'dificuldade': 'fácil', 'custo_estimado': None, 'categoria': 'Salgados', 'unidade_rendimento': 'un', 'ingredientes': []}, {'id': 3, 'nome_receita': 'Pão de Ló', 'descricao': 'Pão de ló simples', 'modo_preparo': 'Bata os ovos com açúcar até dobrar de volume. Adicione farinha delicadamente. Asse por 30 minutos.', 'tempo_preparo': 45, 'rendimento': Decimal('10.000'), 'dificuldade': 'médio', 'custo_estimado': Decimal('327.50'), 'categoria': 'Pães e Massas', 'unidade_rendimento': 'fatia', 'ingredientes': ['Farinha de Trigo (250.000 g)', 'Ovos (4.000 un)', 'Açúcar (150.000 g)', 'Fermento em Pó (10.000 g)']}], 'pagina_atual': 1, 'por_pagina': 20, 'total_registros': 5, 'total_paginas': 1} [_log | meu_logger]
+2025-06-30 09:50:25,941 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Bolo de Chocolate [_log | meu_logger]
+2025-06-30 09:50:25,947 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Brigadeiro [_log | meu_logger]
+2025-06-30 09:50:25,951 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Cookies [_log | meu_logger]
+2025-06-30 09:50:25,957 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Panquecas [_log | meu_logger]
+2025-06-30 09:50:25,960 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Pão de Ló [_log | meu_logger]
+2025-06-30 09:50:25,965 - ERROR - [ReceitasPageController.adicionar_receitas_view] Erro ao adicionar receita: Container Control must be added to the page first [_log | meu_logger]
+2025-06-30 09:50:25,965 - ERROR - [ReceitasPageController._handle_error] Erro atualizando view: 'NoneType' object has no attribute 'value' [_log | meu_logger]
+2025-06-30 09:50:25,967 - DEBUG - [ReceitasPageView.create_view] Construindo a view completa de receitas [_log | meu_logger]
+2025-06-30 09:51:50,627 - INFO - [ReceitasPage.__init__] Iniciando ReceitasPage... [_log | meu_logger]
+2025-06-30 09:51:50,629 - INFO - [ReceitasModel.__init__] ReceitasModel inicializado [_log | meu_logger]
+2025-06-30 09:51:50,630 - DEBUG - [RodapePaginacao.set_callback] Callback definido: None [_log | meu_logger]
+2025-06-30 09:51:50,630 - INFO - [RodapePaginacao.__init__] RodapePaginacao inicializado [_log | meu_logger]
+2025-06-30 09:51:50,630 - DEBUG - [ReceitasPageView._initialize_components] Componentes básicos da view inicializados [_log | meu_logger]
+2025-06-30 09:51:50,631 - DEBUG - [ReceitasPageView._setup_ui_elements] Elementos de busca configurados [_log | meu_logger]
+2025-06-30 09:51:50,631 - INFO - [ReceitasPageView.__init__] ReceitasPageView inicializada [_log | meu_logger]
+2025-06-30 09:51:50,633 - INFO - [ReceitaBloco.__init__] Componente ReceitaBloco inicializado [_log | meu_logger]
+2025-06-30 09:51:50,633 - INFO - [ReceitasPageController.__init__] Inicializando ReceitasPageController [_log | meu_logger]
+2025-06-30 09:51:50,634 - DEBUG - [ReceitasPageController._setup_callbacks] Configurando callbacks da view [_log | meu_logger]
+2025-06-30 09:51:50,635 - DEBUG - [ReceitasPageView.set_on_buscar] Callback de busca configurado [_log | meu_logger]
+2025-06-30 09:51:50,635 - DEBUG - [ReceitasPageView.definir_acoes_botoes_navBar] Callbacks definidos para navbar [_log | meu_logger]
+2025-06-30 09:51:50,635 - DEBUG - [RodapePaginacao.set_callback] Callback definido: <bound method ReceitasPageController._handle_paginacao_receitas of <controller.receitas.controller_receitas_page.ReceitasPageController object at 0x0000015B017104A0>> [_log | meu_logger]
+2025-06-30 09:51:50,636 - DEBUG - [ReceitasPageView.definir_acoes_botoes_rodape] Callback definido para rodapé [_log | meu_logger]
+2025-06-30 09:51:50,636 - INFO - [ReceitasPageController._initialize_handlers] Handlers inicializados com sucesso [_log | meu_logger]
+2025-06-30 09:51:50,636 - INFO - [ReceitasPage.__init__] ReceitasPageController criado com sucesso. [_log | meu_logger]
+2025-06-30 09:51:50,637 - DEBUG - [ReceitasPageController.exibir_view_receitas] Exibindo view inicial de receitas [_log | meu_logger]
+2025-06-30 09:51:50,680 - DEBUG - [ReceitasPageController.carregar_dados_receitas] {
+    "dados": [
+        {
+            "id": 1,
+            "nome_receita": "Bolo de Chocolate",
+            "descricao": "Bolo simples de chocolate",
+            "modo_preparo": "Misture todos os ingredientes secos. Adicione os líquidos e misture bem. Asse por 40 minutos.",
+            "tempo_preparo": 50,
+            "rendimento": 8.000,
+            "dificuldade": "fácil",
+            "custo_estimado": 1690.00,
+            "categoria": "Bolos",
+            "unidade_rendimento": "fatia",
+            "ingredientes": [
+                "Farinha de Trigo (300.000 g)",
+                "Leite (1.000 l)",
+                "Açúcar (200.000 g)",
+                "Chocolate em Pó (100.000 g)",
+                "Fermento em Pó (10.000 g)",
+                "Ovos (3.000 un)"
+            ]
+        },
+        {
+            "id": 4,
+            "nome_receita": "Brigadeiro",
+            "descricao": "Brigadeiro tradicional",
+            "modo_preparo": "Misture todos os ingredientes em uma panela e cozinhe em fogo baixo até desgrudar do fundo.",
+            "tempo_preparo": 25,
+            "rendimento": 30.000,
+            "dificuldade": "fácil",
+            "custo_estimado": 1545.80,
+            "categoria": "Sobremesas",
+            "unidade_rendimento": "un",
+            "ingredientes": [
+                "Leite (200.000 ml)",
+                "Chocolate em Pó (50.000 g)",
+                "Manteiga (20.000 g)"
+            ]
+        },
+        {
+            "id": 5,
+            "nome_receita": "Cookies",
+            "descricao": "Cookies de chocolate",
+            "modo_preparo": "Misture os ingredientes secos. Adicione manteiga e ovos. Forme bolinhas e asse por 15 minutos.",
+            "tempo_preparo": 30,
+            "rendimento": 24.000,
+            "dificuldade": "médio",
+            "custo_estimado": 1630.65,
+            "categoria": "Sobremesas",
+            "unidade_rendimento": "un",
+            "ingredientes": [
+                "Farinha de Trigo (300.000 g)",
+                "Manteiga (150.000 g)",
+                "Açúcar (150.000 g)",
+                "Ovos (2.000 un)",
+                "Chocolate em Pó (100.000 g)",
+                "Canela (5.000 g)"
+            ]
+        },
+        {
+            "id": 2,
+            "nome_receita": "Panquecas",
+            "descricao": "Panquecas americanas",
+            "modo_preparo": "Misture os ingredientes secos e líquidos separadamente. Combine e cozinhe em frigideira.",
+            "tempo_preparo": 30,
+            "rendimento": 12.000,
+            "dificuldade": "fácil",
+            "custo_estimado": null,
+            "categoria": "Salgados",
+            "unidade_rendimento": "un",
+            "ingredientes": []
+        },
+        {
+            "id": 3,
+            "nome_receita": "Pão de Ló",
+            "descricao": "Pão de ló simples",
+            "modo_preparo": "Bata os ovos com açúcar até dobrar de volume. Adicione farinha delicadamente. Asse por 30 minutos.",
+            "tempo_preparo": 45,
+            "rendimento": 10.000,
+            "dificuldade": "médio",
+            "custo_estimado": 327.50,
+            "categoria": "Pães e Massas",
+            "unidade_rendimento": "fatia",
+            "ingredientes": [
+                "Farinha de Trigo (250.000 g)",
+                "Ovos (4.000 un)",
+                "Açúcar (150.000 g)",
+                "Fermento em Pó (10.000 g)"
+            ]
+        }
+    ],
+    "pagina_atual": 1,
+    "por_pagina": 20,
+    "total_registros": 5,
+    "total_paginas": 1
+} [_log | meu_logger]
+2025-06-30 09:51:50,682 - DEBUG - [ReceitasPageController.adicionar_receitas_view] Adicionando receitas: {'dados': [{'id': 1, 'nome_receita': 'Bolo de Chocolate', 'descricao': 'Bolo simples de chocolate', 'modo_preparo': 'Misture todos os ingredientes secos. Adicione os líquidos e misture bem. Asse por 40 minutos.', 'tempo_preparo': 50, 'rendimento': Decimal('8.000'), 'dificuldade': 'fácil', 'custo_estimado': Decimal('1690.00'), 'categoria': 'Bolos', 'unidade_rendimento': 'fatia', 'ingredientes': ['Farinha de Trigo (300.000 g)', 'Leite (1.000 l)', 'Açúcar (200.000 g)', 'Chocolate em Pó (100.000 g)', 'Fermento em Pó (10.000 g)', 'Ovos (3.000 un)']}, {'id': 4, 'nome_receita': 'Brigadeiro', 'descricao': 'Brigadeiro tradicional', 'modo_preparo': 'Misture todos os ingredientes em uma panela e cozinhe em fogo baixo até desgrudar do fundo.', 'tempo_preparo': 25, 'rendimento': Decimal('30.000'), 'dificuldade': 'fácil', 'custo_estimado': Decimal('1545.80'), 'categoria': 'Sobremesas', 'unidade_rendimento': 'un', 'ingredientes': ['Leite (200.000 ml)', 'Chocolate em Pó (50.000 g)', 'Manteiga (20.000 g)']}, {'id': 5, 'nome_receita': 'Cookies', 'descricao': 'Cookies de chocolate', 'modo_preparo': 'Misture os ingredientes secos. Adicione manteiga e ovos. Forme bolinhas e asse por 15 minutos.', 'tempo_preparo': 30, 'rendimento': Decimal('24.000'), 'dificuldade': 'médio', 'custo_estimado': Decimal('1630.65'), 'categoria': 'Sobremesas', 'unidade_rendimento': 'un', 'ingredientes': ['Farinha de Trigo (300.000 g)', 'Manteiga (150.000 g)', 'Açúcar (150.000 g)', 'Ovos (2.000 un)', 'Chocolate em Pó (100.000 g)', 'Canela (5.000 g)']}, {'id': 2, 'nome_receita': 'Panquecas', 'descricao': 'Panquecas americanas', 'modo_preparo': 'Misture os ingredientes secos e líquidos separadamente. Combine e cozinhe em frigideira.', 'tempo_preparo': 30, 'rendimento': Decimal('12.000'), 'dificuldade': 'fácil', 'custo_estimado': None, 'categoria': 'Salgados', 'unidade_rendimento': 'un', 'ingredientes': []}, {'id': 3, 'nome_receita': 'Pão de Ló', 'descricao': 'Pão de ló simples', 'modo_preparo': 'Bata os ovos com açúcar até dobrar de volume. Adicione farinha delicadamente. Asse por 30 minutos.', 'tempo_preparo': 45, 'rendimento': Decimal('10.000'), 'dificuldade': 'médio', 'custo_estimado': Decimal('327.50'), 'categoria': 'Pães e Massas', 'unidade_rendimento': 'fatia', 'ingredientes': ['Farinha de Trigo (250.000 g)', 'Ovos (4.000 un)', 'Açúcar (150.000 g)', 'Fermento em Pó (10.000 g)']}], 'pagina_atual': 1, 'por_pagina': 20, 'total_registros': 5, 'total_paginas': 1} [_log | meu_logger]
+2025-06-30 09:51:50,683 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Bolo de Chocolate [_log | meu_logger]
+2025-06-30 09:51:50,688 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Brigadeiro [_log | meu_logger]
+2025-06-30 09:51:50,692 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Cookies [_log | meu_logger]
+2025-06-30 09:51:50,695 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Panquecas [_log | meu_logger]
+2025-06-30 09:51:50,697 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Pão de Ló [_log | meu_logger]
+2025-06-30 09:51:50,706 - ERROR - [ReceitasPageController.adicionar_receitas_view] Erro ao adicionar receita: Container Control must be added to the page first [_log | meu_logger]
+2025-06-30 09:51:50,707 - ERROR - [ReceitasPageController._handle_error] Erro atualizando view: 'NoneType' object has no attribute 'value' [_log | meu_logger]
+2025-06-30 09:51:50,709 - DEBUG - [ReceitasPageView.create_view] Construindo a view completa de receitas [_log | meu_logger]
+2025-06-30 09:51:54,828 - INFO - [EstoqueModel.__init__] EstoqueModel inicializado. [_log | meu_logger]
+2025-06-30 09:51:54,828 - INFO - [EstoquePageController._initialize_handlers] Handlers inicializados com sucesso [_log | meu_logger]
+2025-06-30 09:51:54,828 - ERROR - [EstoquePageController._handle_error] Erro configurando callbacks: 'NoneType' object has no attribute 'set_on_buscar' [_log | meu_logger]
+2025-06-30 09:51:54,838 - INFO - [EstoqueModel.close] Conexão com o banco de dados fechada. [_log | meu_logger]
+2025-06-30 09:51:54,838 - INFO - [EstoqueModel.__del__] EstoqueModel destruído e conexão fechada. [_log | meu_logger]
+2025-06-30 09:52:11,563 - INFO - [EstoqueModel.__init__] EstoqueModel inicializado. [_log | meu_logger]
+2025-06-30 09:52:11,563 - INFO - [EstoquePageController._initialize_handlers] Handlers inicializados com sucesso [_log | meu_logger]
+2025-06-30 09:52:11,564 - ERROR - [EstoquePageController._handle_error] Erro configurando callbacks: 'NoneType' object has no attribute 'set_on_buscar' [_log | meu_logger]
+2025-06-30 09:52:11,569 - INFO - [EstoqueModel.close] Conexão com o banco de dados fechada. [_log | meu_logger]
+2025-06-30 09:52:11,570 - INFO - [EstoqueModel.__del__] EstoqueModel destruído e conexão fechada. [_log | meu_logger]
+2025-06-30 09:57:48,752 - INFO - [ReceitasPage.__init__] Iniciando ReceitasPage... [_log | meu_logger]
+2025-06-30 09:57:48,755 - INFO - [ReceitasModel.__init__] ReceitasModel inicializado [_log | meu_logger]
+2025-06-30 09:57:48,755 - DEBUG - [RodapePaginacao.set_callback] Callback definido: None [_log | meu_logger]
+2025-06-30 09:57:48,755 - INFO - [RodapePaginacao.__init__] RodapePaginacao inicializado [_log | meu_logger]
+2025-06-30 09:57:48,756 - DEBUG - [ReceitasPageView._initialize_components] Componentes básicos da view inicializados [_log | meu_logger]
+2025-06-30 09:57:48,757 - DEBUG - [ReceitasPageView._setup_ui_elements] Elementos de busca configurados [_log | meu_logger]
+2025-06-30 09:57:48,757 - INFO - [ReceitasPageView.__init__] ReceitasPageView inicializada [_log | meu_logger]
+2025-06-30 09:57:48,757 - INFO - [ReceitaBloco.__init__] Componente ReceitaBloco inicializado [_log | meu_logger]
+2025-06-30 09:57:48,758 - INFO - [ReceitasPageController.__init__] Inicializando ReceitasPageController [_log | meu_logger]
+2025-06-30 09:57:48,758 - DEBUG - [ReceitasPageController._setup_callbacks] Configurando callbacks da view [_log | meu_logger]
+2025-06-30 09:57:48,758 - DEBUG - [ReceitasPageView.set_on_buscar] Callback de busca configurado [_log | meu_logger]
+2025-06-30 09:57:48,759 - DEBUG - [ReceitasPageView.definir_acoes_botoes_navBar] Callbacks definidos para navbar [_log | meu_logger]
+2025-06-30 09:57:48,759 - DEBUG - [RodapePaginacao.set_callback] Callback definido: <bound method ReceitasPageController._handle_paginacao_receitas of <controller.receitas.controller_receitas_page.ReceitasPageController object at 0x0000021B36395FD0>> [_log | meu_logger]
+2025-06-30 09:57:48,759 - DEBUG - [ReceitasPageView.definir_acoes_botoes_rodape] Callback definido para rodapé [_log | meu_logger]
+2025-06-30 09:57:48,759 - INFO - [ReceitasPageController._initialize_handlers] Handlers inicializados com sucesso [_log | meu_logger]
+2025-06-30 09:57:48,759 - INFO - [ReceitasPage.__init__] ReceitasPageController criado com sucesso. [_log | meu_logger]
+2025-06-30 09:57:48,760 - DEBUG - [ReceitasPageController.exibir_view_receitas] Exibindo view inicial de receitas [_log | meu_logger]
+2025-06-30 09:57:48,780 - DEBUG - [ReceitasPageController.carregar_dados_receitas] {
+    "dados": [
+        {
+            "id": 1,
+            "nome_receita": "Bolo de Chocolate",
+            "descricao": "Bolo simples de chocolate",
+            "modo_preparo": "Misture todos os ingredientes secos. Adicione os líquidos e misture bem. Asse por 40 minutos.",
+            "tempo_preparo": 50,
+            "rendimento": 8.000,
+            "dificuldade": "fácil",
+            "custo_estimado": 1690.00,
+            "categoria": "Bolos",
+            "unidade_rendimento": "fatia",
+            "ingredientes": [
+                "Farinha de Trigo (300.000 g)",
+                "Leite (1.000 l)",
+                "Açúcar (200.000 g)",
+                "Chocolate em Pó (100.000 g)",
+                "Fermento em Pó (10.000 g)",
+                "Ovos (3.000 un)"
+            ]
+        },
+        {
+            "id": 4,
+            "nome_receita": "Brigadeiro",
+            "descricao": "Brigadeiro tradicional",
+            "modo_preparo": "Misture todos os ingredientes em uma panela e cozinhe em fogo baixo até desgrudar do fundo.",
+            "tempo_preparo": 25,
+            "rendimento": 30.000,
+            "dificuldade": "fácil",
+            "custo_estimado": 1545.80,
+            "categoria": "Sobremesas",
+            "unidade_rendimento": "un",
+            "ingredientes": [
+                "Leite (200.000 ml)",
+                "Chocolate em Pó (50.000 g)",
+                "Manteiga (20.000 g)"
+            ]
+        },
+        {
+            "id": 5,
+            "nome_receita": "Cookies",
+            "descricao": "Cookies de chocolate",
+            "modo_preparo": "Misture os ingredientes secos. Adicione manteiga e ovos. Forme bolinhas e asse por 15 minutos.",
+            "tempo_preparo": 30,
+            "rendimento": 24.000,
+            "dificuldade": "médio",
+            "custo_estimado": 1630.65,
+            "categoria": "Sobremesas",
+            "unidade_rendimento": "un",
+            "ingredientes": [
+                "Farinha de Trigo (300.000 g)",
+                "Manteiga (150.000 g)",
+                "Açúcar (150.000 g)",
+                "Ovos (2.000 un)",
+                "Chocolate em Pó (100.000 g)",
+                "Canela (5.000 g)"
+            ]
+        },
+        {
+            "id": 2,
+            "nome_receita": "Panquecas",
+            "descricao": "Panquecas americanas",
+            "modo_preparo": "Misture os ingredientes secos e líquidos separadamente. Combine e cozinhe em frigideira.",
+            "tempo_preparo": 30,
+            "rendimento": 12.000,
+            "dificuldade": "fácil",
+            "custo_estimado": null,
+            "categoria": "Salgados",
+            "unidade_rendimento": "un",
+            "ingredientes": []
+        },
+        {
+            "id": 3,
+            "nome_receita": "Pão de Ló",
+            "descricao": "Pão de ló simples",
+            "modo_preparo": "Bata os ovos com açúcar até dobrar de volume. Adicione farinha delicadamente. Asse por 30 minutos.",
+            "tempo_preparo": 45,
+            "rendimento": 10.000,
+            "dificuldade": "médio",
+            "custo_estimado": 327.50,
+            "categoria": "Pães e Massas",
+            "unidade_rendimento": "fatia",
+            "ingredientes": [
+                "Farinha de Trigo (250.000 g)",
+                "Ovos (4.000 un)",
+                "Açúcar (150.000 g)",
+                "Fermento em Pó (10.000 g)"
+            ]
+        }
+    ],
+    "pagina_atual": 1,
+    "por_pagina": 20,
+    "total_registros": 5,
+    "total_paginas": 1
+} [_log | meu_logger]
+2025-06-30 09:57:48,781 - DEBUG - [ReceitasPageController.adicionar_receitas_view] Adicionando receitas: {'dados': [{'id': 1, 'nome_receita': 'Bolo de Chocolate', 'descricao': 'Bolo simples de chocolate', 'modo_preparo': 'Misture todos os ingredientes secos. Adicione os líquidos e misture bem. Asse por 40 minutos.', 'tempo_preparo': 50, 'rendimento': Decimal('8.000'), 'dificuldade': 'fácil', 'custo_estimado': Decimal('1690.00'), 'categoria': 'Bolos', 'unidade_rendimento': 'fatia', 'ingredientes': ['Farinha de Trigo (300.000 g)', 'Leite (1.000 l)', 'Açúcar (200.000 g)', 'Chocolate em Pó (100.000 g)', 'Fermento em Pó (10.000 g)', 'Ovos (3.000 un)']}, {'id': 4, 'nome_receita': 'Brigadeiro', 'descricao': 'Brigadeiro tradicional', 'modo_preparo': 'Misture todos os ingredientes em uma panela e cozinhe em fogo baixo até desgrudar do fundo.', 'tempo_preparo': 25, 'rendimento': Decimal('30.000'), 'dificuldade': 'fácil', 'custo_estimado': Decimal('1545.80'), 'categoria': 'Sobremesas', 'unidade_rendimento': 'un', 'ingredientes': ['Leite (200.000 ml)', 'Chocolate em Pó (50.000 g)', 'Manteiga (20.000 g)']}, {'id': 5, 'nome_receita': 'Cookies', 'descricao': 'Cookies de chocolate', 'modo_preparo': 'Misture os ingredientes secos. Adicione manteiga e ovos. Forme bolinhas e asse por 15 minutos.', 'tempo_preparo': 30, 'rendimento': Decimal('24.000'), 'dificuldade': 'médio', 'custo_estimado': Decimal('1630.65'), 'categoria': 'Sobremesas', 'unidade_rendimento': 'un', 'ingredientes': ['Farinha de Trigo (300.000 g)', 'Manteiga (150.000 g)', 'Açúcar (150.000 g)', 'Ovos (2.000 un)', 'Chocolate em Pó (100.000 g)', 'Canela (5.000 g)']}, {'id': 2, 'nome_receita': 'Panquecas', 'descricao': 'Panquecas americanas', 'modo_preparo': 'Misture os ingredientes secos e líquidos separadamente. Combine e cozinhe em frigideira.', 'tempo_preparo': 30, 'rendimento': Decimal('12.000'), 'dificuldade': 'fácil', 'custo_estimado': None, 'categoria': 'Salgados', 'unidade_rendimento': 'un', 'ingredientes': []}, {'id': 3, 'nome_receita': 'Pão de Ló', 'descricao': 'Pão de ló simples', 'modo_preparo': 'Bata os ovos com açúcar até dobrar de volume. Adicione farinha delicadamente. Asse por 30 minutos.', 'tempo_preparo': 45, 'rendimento': Decimal('10.000'), 'dificuldade': 'médio', 'custo_estimado': Decimal('327.50'), 'categoria': 'Pães e Massas', 'unidade_rendimento': 'fatia', 'ingredientes': ['Farinha de Trigo (250.000 g)', 'Ovos (4.000 un)', 'Açúcar (150.000 g)', 'Fermento em Pó (10.000 g)']}], 'pagina_atual': 1, 'por_pagina': 20, 'total_registros': 5, 'total_paginas': 1} [_log | meu_logger]
+2025-06-30 09:57:48,782 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Bolo de Chocolate [_log | meu_logger]
+2025-06-30 09:57:48,788 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Brigadeiro [_log | meu_logger]
+2025-06-30 09:57:48,791 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Cookies [_log | meu_logger]
+2025-06-30 09:57:48,796 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Panquecas [_log | meu_logger]
+2025-06-30 09:57:48,798 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Pão de Ló [_log | meu_logger]
+2025-06-30 09:57:48,803 - ERROR - [ReceitasPageController.adicionar_receitas_view] Erro ao adicionar receita: Container Control must be added to the page first [_log | meu_logger]
+2025-06-30 09:57:48,804 - ERROR - [ReceitasPageController._handle_error] Erro atualizando view: 'NoneType' object has no attribute 'value' [_log | meu_logger]
+2025-06-30 09:57:48,806 - DEBUG - [ReceitasPageView.create_view] Construindo a view completa de receitas [_log | meu_logger]
+2025-06-30 09:57:50,929 - INFO - [EstoqueModel.__init__] EstoqueModel inicializado. [_log | meu_logger]
+2025-06-30 09:57:50,930 - INFO - [EstoqueModel.close] Conexão com o banco de dados fechada. [_log | meu_logger]
+2025-06-30 09:57:50,930 - INFO - [EstoqueModel.__del__] EstoqueModel destruído e conexão fechada. [_log | meu_logger]
+2025-06-30 09:57:54,745 - INFO - [EstoqueModel.__init__] EstoqueModel inicializado. [_log | meu_logger]
+2025-06-30 09:57:54,745 - INFO - [EstoqueModel.close] Conexão com o banco de dados fechada. [_log | meu_logger]
+2025-06-30 09:57:54,746 - INFO - [EstoqueModel.__del__] EstoqueModel destruído e conexão fechada. [_log | meu_logger]
+2025-06-30 09:58:46,728 - INFO - [ReceitasPage.__init__] Iniciando ReceitasPage... [_log | meu_logger]
+2025-06-30 09:58:46,730 - INFO - [ReceitasModel.__init__] ReceitasModel inicializado [_log | meu_logger]
+2025-06-30 09:58:46,730 - DEBUG - [RodapePaginacao.set_callback] Callback definido: None [_log | meu_logger]
+2025-06-30 09:58:46,730 - INFO - [RodapePaginacao.__init__] RodapePaginacao inicializado [_log | meu_logger]
+2025-06-30 09:58:46,731 - DEBUG - [ReceitasPageView._initialize_components] Componentes básicos da view inicializados [_log | meu_logger]
+2025-06-30 09:58:46,732 - DEBUG - [ReceitasPageView._setup_ui_elements] Elementos de busca configurados [_log | meu_logger]
+2025-06-30 09:58:46,732 - INFO - [ReceitasPageView.__init__] ReceitasPageView inicializada [_log | meu_logger]
+2025-06-30 09:58:46,733 - INFO - [ReceitaBloco.__init__] Componente ReceitaBloco inicializado [_log | meu_logger]
+2025-06-30 09:58:46,735 - INFO - [ReceitasPageController.__init__] Inicializando ReceitasPageController [_log | meu_logger]
+2025-06-30 09:58:46,736 - DEBUG - [ReceitasPageController._setup_callbacks] Configurando callbacks da view [_log | meu_logger]
+2025-06-30 09:58:46,736 - DEBUG - [ReceitasPageView.set_on_buscar] Callback de busca configurado [_log | meu_logger]
+2025-06-30 09:58:46,737 - DEBUG - [ReceitasPageView.definir_acoes_botoes_navBar] Callbacks definidos para navbar [_log | meu_logger]
+2025-06-30 09:58:46,737 - DEBUG - [RodapePaginacao.set_callback] Callback definido: <bound method ReceitasPageController._handle_paginacao_receitas of <controller.receitas.controller_receitas_page.ReceitasPageController object at 0x000001C81F7184A0>> [_log | meu_logger]
+2025-06-30 09:58:46,737 - DEBUG - [ReceitasPageView.definir_acoes_botoes_rodape] Callback definido para rodapé [_log | meu_logger]
+2025-06-30 09:58:46,738 - INFO - [ReceitasPageController._initialize_handlers] Handlers inicializados com sucesso [_log | meu_logger]
+2025-06-30 09:58:46,738 - INFO - [ReceitasPage.__init__] ReceitasPageController criado com sucesso. [_log | meu_logger]
+2025-06-30 09:58:46,739 - DEBUG - [ReceitasPageController.exibir_view_receitas] Exibindo view inicial de receitas [_log | meu_logger]
+2025-06-30 09:58:46,954 - DEBUG - [ReceitasPageController.carregar_dados_receitas] {
+    "dados": [
+        {
+            "id": 1,
+            "nome_receita": "Bolo de Chocolate",
+            "descricao": "Bolo simples de chocolate",
+            "modo_preparo": "Misture todos os ingredientes secos. Adicione os líquidos e misture bem. Asse por 40 minutos.",
+            "tempo_preparo": 50,
+            "rendimento": 8.000,
+            "dificuldade": "fácil",
+            "custo_estimado": 1690.00,
+            "categoria": "Bolos",
+            "unidade_rendimento": "fatia",
+            "ingredientes": [
+                "Farinha de Trigo (300.000 g)",
+                "Leite (1.000 l)",
+                "Açúcar (200.000 g)",
+                "Chocolate em Pó (100.000 g)",
+                "Fermento em Pó (10.000 g)",
+                "Ovos (3.000 un)"
+            ]
+        },
+        {
+            "id": 4,
+            "nome_receita": "Brigadeiro",
+            "descricao": "Brigadeiro tradicional",
+            "modo_preparo": "Misture todos os ingredientes em uma panela e cozinhe em fogo baixo até desgrudar do fundo.",
+            "tempo_preparo": 25,
+            "rendimento": 30.000,
+            "dificuldade": "fácil",
+            "custo_estimado": 1545.80,
+            "categoria": "Sobremesas",
+            "unidade_rendimento": "un",
+            "ingredientes": [
+                "Leite (200.000 ml)",
+                "Chocolate em Pó (50.000 g)",
+                "Manteiga (20.000 g)"
+            ]
+        },
+        {
+            "id": 5,
+            "nome_receita": "Cookies",
+            "descricao": "Cookies de chocolate",
+            "modo_preparo": "Misture os ingredientes secos. Adicione manteiga e ovos. Forme bolinhas e asse por 15 minutos.",
+            "tempo_preparo": 30,
+            "rendimento": 24.000,
+            "dificuldade": "médio",
+            "custo_estimado": 1630.65,
+            "categoria": "Sobremesas",
+            "unidade_rendimento": "un",
+            "ingredientes": [
+                "Farinha de Trigo (300.000 g)",
+                "Manteiga (150.000 g)",
+                "Açúcar (150.000 g)",
+                "Ovos (2.000 un)",
+                "Chocolate em Pó (100.000 g)",
+                "Canela (5.000 g)"
+            ]
+        },
+        {
+            "id": 2,
+            "nome_receita": "Panquecas",
+            "descricao": "Panquecas americanas",
+            "modo_preparo": "Misture os ingredientes secos e líquidos separadamente. Combine e cozinhe em frigideira.",
+            "tempo_preparo": 30,
+            "rendimento": 12.000,
+            "dificuldade": "fácil",
+            "custo_estimado": null,
+            "categoria": "Salgados",
+            "unidade_rendimento": "un",
+            "ingredientes": []
+        },
+        {
+            "id": 3,
+            "nome_receita": "Pão de Ló",
+            "descricao": "Pão de ló simples",
+            "modo_preparo": "Bata os ovos com açúcar até dobrar de volume. Adicione farinha delicadamente. Asse por 30 minutos.",
+            "tempo_preparo": 45,
+            "rendimento": 10.000,
+            "dificuldade": "médio",
+            "custo_estimado": 327.50,
+            "categoria": "Pães e Massas",
+            "unidade_rendimento": "fatia",
+            "ingredientes": [
+                "Farinha de Trigo (250.000 g)",
+                "Ovos (4.000 un)",
+                "Açúcar (150.000 g)",
+                "Fermento em Pó (10.000 g)"
+            ]
+        }
+    ],
+    "pagina_atual": 1,
+    "por_pagina": 20,
+    "total_registros": 5,
+    "total_paginas": 1
+} [_log | meu_logger]
+2025-06-30 09:58:46,955 - DEBUG - [ReceitasPageController.adicionar_receitas_view] Adicionando receitas: {'dados': [{'id': 1, 'nome_receita': 'Bolo de Chocolate', 'descricao': 'Bolo simples de chocolate', 'modo_preparo': 'Misture todos os ingredientes secos. Adicione os líquidos e misture bem. Asse por 40 minutos.', 'tempo_preparo': 50, 'rendimento': Decimal('8.000'), 'dificuldade': 'fácil', 'custo_estimado': Decimal('1690.00'), 'categoria': 'Bolos', 'unidade_rendimento': 'fatia', 'ingredientes': ['Farinha de Trigo (300.000 g)', 'Leite (1.000 l)', 'Açúcar (200.000 g)', 'Chocolate em Pó (100.000 g)', 'Fermento em Pó (10.000 g)', 'Ovos (3.000 un)']}, {'id': 4, 'nome_receita': 'Brigadeiro', 'descricao': 'Brigadeiro tradicional', 'modo_preparo': 'Misture todos os ingredientes em uma panela e cozinhe em fogo baixo até desgrudar do fundo.', 'tempo_preparo': 25, 'rendimento': Decimal('30.000'), 'dificuldade': 'fácil', 'custo_estimado': Decimal('1545.80'), 'categoria': 'Sobremesas', 'unidade_rendimento': 'un', 'ingredientes': ['Leite (200.000 ml)', 'Chocolate em Pó (50.000 g)', 'Manteiga (20.000 g)']}, {'id': 5, 'nome_receita': 'Cookies', 'descricao': 'Cookies de chocolate', 'modo_preparo': 'Misture os ingredientes secos. Adicione manteiga e ovos. Forme bolinhas e asse por 15 minutos.', 'tempo_preparo': 30, 'rendimento': Decimal('24.000'), 'dificuldade': 'médio', 'custo_estimado': Decimal('1630.65'), 'categoria': 'Sobremesas', 'unidade_rendimento': 'un', 'ingredientes': ['Farinha de Trigo (300.000 g)', 'Manteiga (150.000 g)', 'Açúcar (150.000 g)', 'Ovos (2.000 un)', 'Chocolate em Pó (100.000 g)', 'Canela (5.000 g)']}, {'id': 2, 'nome_receita': 'Panquecas', 'descricao': 'Panquecas americanas', 'modo_preparo': 'Misture os ingredientes secos e líquidos separadamente. Combine e cozinhe em frigideira.', 'tempo_preparo': 30, 'rendimento': Decimal('12.000'), 'dificuldade': 'fácil', 'custo_estimado': None, 'categoria': 'Salgados', 'unidade_rendimento': 'un', 'ingredientes': []}, {'id': 3, 'nome_receita': 'Pão de Ló', 'descricao': 'Pão de ló simples', 'modo_preparo': 'Bata os ovos com açúcar até dobrar de volume. Adicione farinha delicadamente. Asse por 30 minutos.', 'tempo_preparo': 45, 'rendimento': Decimal('10.000'), 'dificuldade': 'médio', 'custo_estimado': Decimal('327.50'), 'categoria': 'Pães e Massas', 'unidade_rendimento': 'fatia', 'ingredientes': ['Farinha de Trigo (250.000 g)', 'Ovos (4.000 un)', 'Açúcar (150.000 g)', 'Fermento em Pó (10.000 g)']}], 'pagina_atual': 1, 'por_pagina': 20, 'total_registros': 5, 'total_paginas': 1} [_log | meu_logger]
+2025-06-30 09:58:46,955 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Bolo de Chocolate [_log | meu_logger]
+2025-06-30 09:58:46,958 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Brigadeiro [_log | meu_logger]
+2025-06-30 09:58:46,960 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Cookies [_log | meu_logger]
+2025-06-30 09:58:46,962 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Panquecas [_log | meu_logger]
+2025-06-30 09:58:46,964 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Pão de Ló [_log | meu_logger]
+2025-06-30 09:58:46,967 - ERROR - [ReceitasPageController.adicionar_receitas_view] Erro ao adicionar receita: Container Control must be added to the page first [_log | meu_logger]
+2025-06-30 09:58:46,967 - ERROR - [ReceitasPageController._handle_error] Erro atualizando view: 'NoneType' object has no attribute 'value' [_log | meu_logger]
+2025-06-30 09:58:46,968 - DEBUG - [ReceitasPageView.create_view] Construindo a view completa de receitas [_log | meu_logger]
+2025-06-30 09:58:49,984 - INFO - [EstoqueModel.__init__] EstoqueModel inicializado. [_log | meu_logger]
+2025-06-30 09:58:50,017 - INFO - [EstoqueModel.close] Conexão com o banco de dados fechada. [_log | meu_logger]
+2025-06-30 09:58:50,018 - INFO - [EstoqueModel.__del__] EstoqueModel destruído e conexão fechada. [_log | meu_logger]
+2025-06-30 10:29:02,614 - INFO - [ReceitasPage.__init__] Iniciando ReceitasPage... [_log | meu_logger]
+2025-06-30 10:29:02,619 - INFO - [ReceitasModel.__init__] ReceitasModel inicializado [_log | meu_logger]
+2025-06-30 10:29:02,619 - DEBUG - [RodapePaginacao.set_callback] Callback definido: None [_log | meu_logger]
+2025-06-30 10:29:02,619 - INFO - [RodapePaginacao.__init__] RodapePaginacao inicializado [_log | meu_logger]
+2025-06-30 10:29:02,620 - DEBUG - [ReceitasPageView._initialize_components] Componentes básicos da view inicializados [_log | meu_logger]
+2025-06-30 10:29:02,621 - DEBUG - [ReceitasPageView._setup_ui_elements] Elementos de busca configurados [_log | meu_logger]
+2025-06-30 10:29:02,621 - INFO - [ReceitasPageView.__init__] ReceitasPageView inicializada [_log | meu_logger]
+2025-06-30 10:29:02,625 - INFO - [ReceitaBloco.__init__] Componente ReceitaBloco inicializado [_log | meu_logger]
+2025-06-30 10:29:02,626 - INFO - [ReceitasPageController.__init__] Inicializando ReceitasPageController [_log | meu_logger]
+2025-06-30 10:29:02,626 - DEBUG - [ReceitasPageController._setup_callbacks] Configurando callbacks da view [_log | meu_logger]
+2025-06-30 10:29:02,626 - DEBUG - [ReceitasPageView.set_on_buscar] Callback de busca configurado [_log | meu_logger]
+2025-06-30 10:29:02,626 - DEBUG - [ReceitasPageView.definir_acoes_botoes_navBar] Callbacks definidos para navbar [_log | meu_logger]
+2025-06-30 10:29:02,627 - DEBUG - [RodapePaginacao.set_callback] Callback definido: <bound method ReceitasPageController._handle_paginacao_receitas of <controller.receitas.controller_receitas_page.ReceitasPageController object at 0x000001CB5DBD04A0>> [_log | meu_logger]
+2025-06-30 10:29:02,627 - DEBUG - [ReceitasPageView.definir_acoes_botoes_rodape] Callback definido para rodapé [_log | meu_logger]
+2025-06-30 10:29:02,627 - INFO - [ReceitasPageController._initialize_handlers] Handlers inicializados com sucesso [_log | meu_logger]
+2025-06-30 10:29:02,627 - INFO - [ReceitasPage.__init__] ReceitasPageController criado com sucesso. [_log | meu_logger]
+2025-06-30 10:29:02,628 - DEBUG - [ReceitasPageController.exibir_view_receitas] Exibindo view inicial de receitas [_log | meu_logger]
+2025-06-30 10:29:02,726 - DEBUG - [ReceitasPageController.carregar_dados_receitas] {
+    "dados": [
+        {
+            "id": 1,
+            "nome_receita": "Bolo de Chocolate",
+            "descricao": "Bolo simples de chocolate",
+            "modo_preparo": "Misture todos os ingredientes secos. Adicione os líquidos e misture bem. Asse por 40 minutos.",
+            "tempo_preparo": 50,
+            "rendimento": 8.000,
+            "dificuldade": "fácil",
+            "custo_estimado": 1690.00,
+            "categoria": "Bolos",
+            "unidade_rendimento": "fatia",
+            "ingredientes": [
+                "Farinha de Trigo (300.000 g)",
+                "Leite (1.000 l)",
+                "Açúcar (200.000 g)",
+                "Chocolate em Pó (100.000 g)",
+                "Fermento em Pó (10.000 g)",
+                "Ovos (3.000 un)"
+            ]
+        },
+        {
+            "id": 4,
+            "nome_receita": "Brigadeiro",
+            "descricao": "Brigadeiro tradicional",
+            "modo_preparo": "Misture todos os ingredientes em uma panela e cozinhe em fogo baixo até desgrudar do fundo.",
+            "tempo_preparo": 25,
+            "rendimento": 30.000,
+            "dificuldade": "fácil",
+            "custo_estimado": 1545.80,
+            "categoria": "Sobremesas",
+            "unidade_rendimento": "un",
+            "ingredientes": [
+                "Leite (200.000 ml)",
+                "Chocolate em Pó (50.000 g)",
+                "Manteiga (20.000 g)"
+            ]
+        },
+        {
+            "id": 5,
+            "nome_receita": "Cookies",
+            "descricao": "Cookies de chocolate",
+            "modo_preparo": "Misture os ingredientes secos. Adicione manteiga e ovos. Forme bolinhas e asse por 15 minutos.",
+            "tempo_preparo": 30,
+            "rendimento": 24.000,
+            "dificuldade": "médio",
+            "custo_estimado": 1630.65,
+            "categoria": "Sobremesas",
+            "unidade_rendimento": "un",
+            "ingredientes": [
+                "Farinha de Trigo (300.000 g)",
+                "Manteiga (150.000 g)",
+                "Açúcar (150.000 g)",
+                "Ovos (2.000 un)",
+                "Chocolate em Pó (100.000 g)",
+                "Canela (5.000 g)"
+            ]
+        },
+        {
+            "id": 2,
+            "nome_receita": "Panquecas",
+            "descricao": "Panquecas americanas",
+            "modo_preparo": "Misture os ingredientes secos e líquidos separadamente. Combine e cozinhe em frigideira.",
+            "tempo_preparo": 30,
+            "rendimento": 12.000,
+            "dificuldade": "fácil",
+            "custo_estimado": null,
+            "categoria": "Salgados",
+            "unidade_rendimento": "un",
+            "ingredientes": []
+        },
+        {
+            "id": 3,
+            "nome_receita": "Pão de Ló",
+            "descricao": "Pão de ló simples",
+            "modo_preparo": "Bata os ovos com açúcar até dobrar de volume. Adicione farinha delicadamente. Asse por 30 minutos.",
+            "tempo_preparo": 45,
+            "rendimento": 10.000,
+            "dificuldade": "médio",
+            "custo_estimado": 327.50,
+            "categoria": "Pães e Massas",
+            "unidade_rendimento": "fatia",
+            "ingredientes": [
+                "Farinha de Trigo (250.000 g)",
+                "Ovos (4.000 un)",
+                "Açúcar (150.000 g)",
+                "Fermento em Pó (10.000 g)"
+            ]
+        }
+    ],
+    "pagina_atual": 1,
+    "por_pagina": 20,
+    "total_registros": 5,
+    "total_paginas": 1
+} [_log | meu_logger]
+2025-06-30 10:29:02,727 - DEBUG - [ReceitasPageController.adicionar_receitas_view] Adicionando receitas: {'dados': [{'id': 1, 'nome_receita': 'Bolo de Chocolate', 'descricao': 'Bolo simples de chocolate', 'modo_preparo': 'Misture todos os ingredientes secos. Adicione os líquidos e misture bem. Asse por 40 minutos.', 'tempo_preparo': 50, 'rendimento': Decimal('8.000'), 'dificuldade': 'fácil', 'custo_estimado': Decimal('1690.00'), 'categoria': 'Bolos', 'unidade_rendimento': 'fatia', 'ingredientes': ['Farinha de Trigo (300.000 g)', 'Leite (1.000 l)', 'Açúcar (200.000 g)', 'Chocolate em Pó (100.000 g)', 'Fermento em Pó (10.000 g)', 'Ovos (3.000 un)']}, {'id': 4, 'nome_receita': 'Brigadeiro', 'descricao': 'Brigadeiro tradicional', 'modo_preparo': 'Misture todos os ingredientes em uma panela e cozinhe em fogo baixo até desgrudar do fundo.', 'tempo_preparo': 25, 'rendimento': Decimal('30.000'), 'dificuldade': 'fácil', 'custo_estimado': Decimal('1545.80'), 'categoria': 'Sobremesas', 'unidade_rendimento': 'un', 'ingredientes': ['Leite (200.000 ml)', 'Chocolate em Pó (50.000 g)', 'Manteiga (20.000 g)']}, {'id': 5, 'nome_receita': 'Cookies', 'descricao': 'Cookies de chocolate', 'modo_preparo': 'Misture os ingredientes secos. Adicione manteiga e ovos. Forme bolinhas e asse por 15 minutos.', 'tempo_preparo': 30, 'rendimento': Decimal('24.000'), 'dificuldade': 'médio', 'custo_estimado': Decimal('1630.65'), 'categoria': 'Sobremesas', 'unidade_rendimento': 'un', 'ingredientes': ['Farinha de Trigo (300.000 g)', 'Manteiga (150.000 g)', 'Açúcar (150.000 g)', 'Ovos (2.000 un)', 'Chocolate em Pó (100.000 g)', 'Canela (5.000 g)']}, {'id': 2, 'nome_receita': 'Panquecas', 'descricao': 'Panquecas americanas', 'modo_preparo': 'Misture os ingredientes secos e líquidos separadamente. Combine e cozinhe em frigideira.', 'tempo_preparo': 30, 'rendimento': Decimal('12.000'), 'dificuldade': 'fácil', 'custo_estimado': None, 'categoria': 'Salgados', 'unidade_rendimento': 'un', 'ingredientes': []}, {'id': 3, 'nome_receita': 'Pão de Ló', 'descricao': 'Pão de ló simples', 'modo_preparo': 'Bata os ovos com açúcar até dobrar de volume. Adicione farinha delicadamente. Asse por 30 minutos.', 'tempo_preparo': 45, 'rendimento': Decimal('10.000'), 'dificuldade': 'médio', 'custo_estimado': Decimal('327.50'), 'categoria': 'Pães e Massas', 'unidade_rendimento': 'fatia', 'ingredientes': ['Farinha de Trigo (250.000 g)', 'Ovos (4.000 un)', 'Açúcar (150.000 g)', 'Fermento em Pó (10.000 g)']}], 'pagina_atual': 1, 'por_pagina': 20, 'total_registros': 5, 'total_paginas': 1} [_log | meu_logger]
+2025-06-30 10:29:02,727 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Bolo de Chocolate [_log | meu_logger]
+2025-06-30 10:29:02,731 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Brigadeiro [_log | meu_logger]
+2025-06-30 10:29:02,733 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Cookies [_log | meu_logger]
+2025-06-30 10:29:02,736 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Panquecas [_log | meu_logger]
+2025-06-30 10:29:02,738 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Pão de Ló [_log | meu_logger]
+2025-06-30 10:29:02,742 - ERROR - [ReceitasPageController.adicionar_receitas_view] Erro ao adicionar receita: Container Control must be added to the page first [_log | meu_logger]
+2025-06-30 10:29:02,743 - ERROR - [ReceitasPageController._handle_error] Erro atualizando view: 'NoneType' object has no attribute 'value' [_log | meu_logger]
+2025-06-30 10:29:02,744 - DEBUG - [ReceitasPageView.create_view] Construindo a view completa de receitas [_log | meu_logger]
+2025-06-30 10:29:15,267 - INFO - [EstoqueModel.__init__] EstoqueModel inicializado. [_log | meu_logger]
+2025-06-30 10:29:15,308 - INFO - [EstoqueModel.close] Conexão com o banco de dados fechada. [_log | meu_logger]
+2025-06-30 10:29:15,309 - INFO - [EstoqueModel.__del__] EstoqueModel destruído e conexão fechada. [_log | meu_logger]
+2025-06-30 10:31:56,129 - INFO - [ReceitasPage.__init__] Iniciando ReceitasPage... [_log | meu_logger]
+2025-06-30 10:31:56,131 - INFO - [ReceitasModel.__init__] ReceitasModel inicializado [_log | meu_logger]
+2025-06-30 10:31:56,132 - DEBUG - [RodapePaginacao.set_callback] Callback definido: None [_log | meu_logger]
+2025-06-30 10:31:56,132 - INFO - [RodapePaginacao.__init__] RodapePaginacao inicializado [_log | meu_logger]
+2025-06-30 10:31:56,133 - DEBUG - [ReceitasPageView._initialize_components] Componentes básicos da view inicializados [_log | meu_logger]
+2025-06-30 10:31:56,134 - DEBUG - [ReceitasPageView._setup_ui_elements] Elementos de busca configurados [_log | meu_logger]
+2025-06-30 10:31:56,134 - INFO - [ReceitasPageView.__init__] ReceitasPageView inicializada [_log | meu_logger]
+2025-06-30 10:31:56,134 - INFO - [ReceitaBloco.__init__] Componente ReceitaBloco inicializado [_log | meu_logger]
+2025-06-30 10:31:56,135 - INFO - [ReceitasPageController.__init__] Inicializando ReceitasPageController [_log | meu_logger]
+2025-06-30 10:31:56,136 - DEBUG - [ReceitasPageController._setup_callbacks] Configurando callbacks da view [_log | meu_logger]
+2025-06-30 10:31:56,136 - DEBUG - [ReceitasPageView.set_on_buscar] Callback de busca configurado [_log | meu_logger]
+2025-06-30 10:31:56,136 - DEBUG - [ReceitasPageView.definir_acoes_botoes_navBar] Callbacks definidos para navbar [_log | meu_logger]
+2025-06-30 10:31:56,137 - DEBUG - [RodapePaginacao.set_callback] Callback definido: <bound method ReceitasPageController._handle_paginacao_receitas of <controller.receitas.controller_receitas_page.ReceitasPageController object at 0x000001D493AFD3A0>> [_log | meu_logger]
+2025-06-30 10:31:56,137 - DEBUG - [ReceitasPageView.definir_acoes_botoes_rodape] Callback definido para rodapé [_log | meu_logger]
+2025-06-30 10:31:56,137 - INFO - [ReceitasPageController._initialize_handlers] Handlers inicializados com sucesso [_log | meu_logger]
+2025-06-30 10:31:56,138 - INFO - [ReceitasPage.__init__] ReceitasPageController criado com sucesso. [_log | meu_logger]
+2025-06-30 10:31:56,138 - DEBUG - [ReceitasPageController.exibir_view_receitas] Exibindo view inicial de receitas [_log | meu_logger]
+2025-06-30 10:31:56,180 - DEBUG - [ReceitasPageController.carregar_dados_receitas] {
+    "dados": [
+        {
+            "id": 1,
+            "nome_receita": "Bolo de Chocolate",
+            "descricao": "Bolo simples de chocolate",
+            "modo_preparo": "Misture todos os ingredientes secos. Adicione os líquidos e misture bem. Asse por 40 minutos.",
+            "tempo_preparo": 50,
+            "rendimento": 8.000,
+            "dificuldade": "fácil",
+            "custo_estimado": 1690.00,
+            "categoria": "Bolos",
+            "unidade_rendimento": "fatia",
+            "ingredientes": [
+                "Farinha de Trigo (300.000 g)",
+                "Leite (1.000 l)",
+                "Açúcar (200.000 g)",
+                "Chocolate em Pó (100.000 g)",
+                "Fermento em Pó (10.000 g)",
+                "Ovos (3.000 un)"
+            ]
+        },
+        {
+            "id": 4,
+            "nome_receita": "Brigadeiro",
+            "descricao": "Brigadeiro tradicional",
+            "modo_preparo": "Misture todos os ingredientes em uma panela e cozinhe em fogo baixo até desgrudar do fundo.",
+            "tempo_preparo": 25,
+            "rendimento": 30.000,
+            "dificuldade": "fácil",
+            "custo_estimado": 1545.80,
+            "categoria": "Sobremesas",
+            "unidade_rendimento": "un",
+            "ingredientes": [
+                "Leite (200.000 ml)",
+                "Chocolate em Pó (50.000 g)",
+                "Manteiga (20.000 g)"
+            ]
+        },
+        {
+            "id": 5,
+            "nome_receita": "Cookies",
+            "descricao": "Cookies de chocolate",
+            "modo_preparo": "Misture os ingredientes secos. Adicione manteiga e ovos. Forme bolinhas e asse por 15 minutos.",
+            "tempo_preparo": 30,
+            "rendimento": 24.000,
+            "dificuldade": "médio",
+            "custo_estimado": 1630.65,
+            "categoria": "Sobremesas",
+            "unidade_rendimento": "un",
+            "ingredientes": [
+                "Farinha de Trigo (300.000 g)",
+                "Manteiga (150.000 g)",
+                "Açúcar (150.000 g)",
+                "Ovos (2.000 un)",
+                "Chocolate em Pó (100.000 g)",
+                "Canela (5.000 g)"
+            ]
+        },
+        {
+            "id": 2,
+            "nome_receita": "Panquecas",
+            "descricao": "Panquecas americanas",
+            "modo_preparo": "Misture os ingredientes secos e líquidos separadamente. Combine e cozinhe em frigideira.",
+            "tempo_preparo": 30,
+            "rendimento": 12.000,
+            "dificuldade": "fácil",
+            "custo_estimado": null,
+            "categoria": "Salgados",
+            "unidade_rendimento": "un",
+            "ingredientes": []
+        },
+        {
+            "id": 3,
+            "nome_receita": "Pão de Ló",
+            "descricao": "Pão de ló simples",
+            "modo_preparo": "Bata os ovos com açúcar até dobrar de volume. Adicione farinha delicadamente. Asse por 30 minutos.",
+            "tempo_preparo": 45,
+            "rendimento": 10.000,
+            "dificuldade": "médio",
+            "custo_estimado": 327.50,
+            "categoria": "Pães e Massas",
+            "unidade_rendimento": "fatia",
+            "ingredientes": [
+                "Farinha de Trigo (250.000 g)",
+                "Ovos (4.000 un)",
+                "Açúcar (150.000 g)",
+                "Fermento em Pó (10.000 g)"
+            ]
+        }
+    ],
+    "pagina_atual": 1,
+    "por_pagina": 20,
+    "total_registros": 5,
+    "total_paginas": 1
+} [_log | meu_logger]
+2025-06-30 10:31:56,181 - DEBUG - [ReceitasPageController.adicionar_receitas_view] Adicionando receitas: {'dados': [{'id': 1, 'nome_receita': 'Bolo de Chocolate', 'descricao': 'Bolo simples de chocolate', 'modo_preparo': 'Misture todos os ingredientes secos. Adicione os líquidos e misture bem. Asse por 40 minutos.', 'tempo_preparo': 50, 'rendimento': Decimal('8.000'), 'dificuldade': 'fácil', 'custo_estimado': Decimal('1690.00'), 'categoria': 'Bolos', 'unidade_rendimento': 'fatia', 'ingredientes': ['Farinha de Trigo (300.000 g)', 'Leite (1.000 l)', 'Açúcar (200.000 g)', 'Chocolate em Pó (100.000 g)', 'Fermento em Pó (10.000 g)', 'Ovos (3.000 un)']}, {'id': 4, 'nome_receita': 'Brigadeiro', 'descricao': 'Brigadeiro tradicional', 'modo_preparo': 'Misture todos os ingredientes em uma panela e cozinhe em fogo baixo até desgrudar do fundo.', 'tempo_preparo': 25, 'rendimento': Decimal('30.000'), 'dificuldade': 'fácil', 'custo_estimado': Decimal('1545.80'), 'categoria': 'Sobremesas', 'unidade_rendimento': 'un', 'ingredientes': ['Leite (200.000 ml)', 'Chocolate em Pó (50.000 g)', 'Manteiga (20.000 g)']}, {'id': 5, 'nome_receita': 'Cookies', 'descricao': 'Cookies de chocolate', 'modo_preparo': 'Misture os ingredientes secos. Adicione manteiga e ovos. Forme bolinhas e asse por 15 minutos.', 'tempo_preparo': 30, 'rendimento': Decimal('24.000'), 'dificuldade': 'médio', 'custo_estimado': Decimal('1630.65'), 'categoria': 'Sobremesas', 'unidade_rendimento': 'un', 'ingredientes': ['Farinha de Trigo (300.000 g)', 'Manteiga (150.000 g)', 'Açúcar (150.000 g)', 'Ovos (2.000 un)', 'Chocolate em Pó (100.000 g)', 'Canela (5.000 g)']}, {'id': 2, 'nome_receita': 'Panquecas', 'descricao': 'Panquecas americanas', 'modo_preparo': 'Misture os ingredientes secos e líquidos separadamente. Combine e cozinhe em frigideira.', 'tempo_preparo': 30, 'rendimento': Decimal('12.000'), 'dificuldade': 'fácil', 'custo_estimado': None, 'categoria': 'Salgados', 'unidade_rendimento': 'un', 'ingredientes': []}, {'id': 3, 'nome_receita': 'Pão de Ló', 'descricao': 'Pão de ló simples', 'modo_preparo': 'Bata os ovos com açúcar até dobrar de volume. Adicione farinha delicadamente. Asse por 30 minutos.', 'tempo_preparo': 45, 'rendimento': Decimal('10.000'), 'dificuldade': 'médio', 'custo_estimado': Decimal('327.50'), 'categoria': 'Pães e Massas', 'unidade_rendimento': 'fatia', 'ingredientes': ['Farinha de Trigo (250.000 g)', 'Ovos (4.000 un)', 'Açúcar (150.000 g)', 'Fermento em Pó (10.000 g)']}], 'pagina_atual': 1, 'por_pagina': 20, 'total_registros': 5, 'total_paginas': 1} [_log | meu_logger]
+2025-06-30 10:31:56,182 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Bolo de Chocolate [_log | meu_logger]
+2025-06-30 10:31:56,187 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Brigadeiro [_log | meu_logger]
+2025-06-30 10:31:56,190 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Cookies [_log | meu_logger]
+2025-06-30 10:31:56,193 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Panquecas [_log | meu_logger]
+2025-06-30 10:31:56,195 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Pão de Ló [_log | meu_logger]
+2025-06-30 10:31:56,198 - ERROR - [ReceitasPageController.adicionar_receitas_view] Erro ao adicionar receita: Container Control must be added to the page first [_log | meu_logger]
+2025-06-30 10:31:56,200 - ERROR - [ReceitasPageController._handle_error] Erro atualizando view: 'NoneType' object has no attribute 'value' [_log | meu_logger]
+2025-06-30 10:31:56,203 - DEBUG - [ReceitasPageView.create_view] Construindo a view completa de receitas [_log | meu_logger]
+2025-06-30 10:32:01,177 - INFO - [EstoqueModel.__init__] EstoqueModel inicializado. [_log | meu_logger]
+2025-06-30 10:32:01,200 - INFO - [EstoqueModel.close] Conexão com o banco de dados fechada. [_log | meu_logger]
+2025-06-30 10:32:01,201 - INFO - [EstoqueModel.__del__] EstoqueModel destruído e conexão fechada. [_log | meu_logger]
+2025-06-30 10:47:38,630 - INFO - [ReceitasPage.__init__] Iniciando ReceitasPage... [_log | meu_logger]
+2025-06-30 10:47:38,639 - INFO - [ReceitasModel.__init__] ReceitasModel inicializado [_log | meu_logger]
+2025-06-30 10:47:38,639 - DEBUG - [RodapePaginacao.set_callback] Callback definido: None [_log | meu_logger]
+2025-06-30 10:47:38,639 - INFO - [RodapePaginacao.__init__] RodapePaginacao inicializado [_log | meu_logger]
+2025-06-30 10:47:38,641 - DEBUG - [ReceitasPageView._initialize_components] Componentes básicos da view inicializados [_log | meu_logger]
+2025-06-30 10:47:38,642 - DEBUG - [ReceitasPageView._setup_ui_elements] Elementos de busca configurados [_log | meu_logger]
+2025-06-30 10:47:38,643 - INFO - [ReceitasPageView.__init__] ReceitasPageView inicializada [_log | meu_logger]
+2025-06-30 10:47:38,643 - INFO - [ReceitaBloco.__init__] Componente ReceitaBloco inicializado [_log | meu_logger]
+2025-06-30 10:47:38,644 - INFO - [ReceitasPageController.__init__] Inicializando ReceitasPageController [_log | meu_logger]
+2025-06-30 10:47:38,644 - DEBUG - [ReceitasPageController._setup_callbacks] Configurando callbacks da view [_log | meu_logger]
+2025-06-30 10:47:38,644 - DEBUG - [ReceitasPageView.set_on_buscar] Callback de busca configurado [_log | meu_logger]
+2025-06-30 10:47:38,644 - DEBUG - [ReceitasPageView.definir_acoes_botoes_navBar] Callbacks definidos para navbar [_log | meu_logger]
+2025-06-30 10:47:38,645 - DEBUG - [RodapePaginacao.set_callback] Callback definido: <bound method ReceitasPageController._handle_paginacao_receitas of <controller.receitas.controller_receitas_page.ReceitasPageController object at 0x000001C1D5DD0E00>> [_log | meu_logger]
+2025-06-30 10:47:38,645 - DEBUG - [ReceitasPageView.definir_acoes_botoes_rodape] Callback definido para rodapé [_log | meu_logger]
+2025-06-30 10:47:38,645 - INFO - [ReceitasPageController._initialize_handlers] Handlers inicializados com sucesso [_log | meu_logger]
+2025-06-30 10:47:38,646 - INFO - [ReceitasPage.__init__] ReceitasPageController criado com sucesso. [_log | meu_logger]
+2025-06-30 10:47:38,647 - DEBUG - [ReceitasPageController.exibir_view_receitas] Exibindo view inicial de receitas [_log | meu_logger]
+2025-06-30 10:47:38,864 - DEBUG - [ReceitasPageController.carregar_dados_receitas] {
+    "dados": [
+        {
+            "id": 1,
+            "nome_receita": "Bolo de Chocolate",
+            "descricao": "Bolo simples de chocolate",
+            "modo_preparo": "Misture todos os ingredientes secos. Adicione os líquidos e misture bem. Asse por 40 minutos.",
+            "tempo_preparo": 50,
+            "rendimento": 8.000,
+            "dificuldade": "fácil",
+            "custo_estimado": 1690.00,
+            "categoria": "Bolos",
+            "unidade_rendimento": "fatia",
+            "ingredientes": [
+                "Farinha de Trigo (300.000 g)",
+                "Leite (1.000 l)",
+                "Açúcar (200.000 g)",
+                "Chocolate em Pó (100.000 g)",
+                "Fermento em Pó (10.000 g)",
+                "Ovos (3.000 un)"
+            ]
+        },
+        {
+            "id": 4,
+            "nome_receita": "Brigadeiro",
+            "descricao": "Brigadeiro tradicional",
+            "modo_preparo": "Misture todos os ingredientes em uma panela e cozinhe em fogo baixo até desgrudar do fundo.",
+            "tempo_preparo": 25,
+            "rendimento": 30.000,
+            "dificuldade": "fácil",
+            "custo_estimado": 1545.80,
+            "categoria": "Sobremesas",
+            "unidade_rendimento": "un",
+            "ingredientes": [
+                "Leite (200.000 ml)",
+                "Chocolate em Pó (50.000 g)",
+                "Manteiga (20.000 g)"
+            ]
+        },
+        {
+            "id": 5,
+            "nome_receita": "Cookies",
+            "descricao": "Cookies de chocolate",
+            "modo_preparo": "Misture os ingredientes secos. Adicione manteiga e ovos. Forme bolinhas e asse por 15 minutos.",
+            "tempo_preparo": 30,
+            "rendimento": 24.000,
+            "dificuldade": "médio",
+            "custo_estimado": 1630.65,
+            "categoria": "Sobremesas",
+            "unidade_rendimento": "un",
+            "ingredientes": [
+                "Farinha de Trigo (300.000 g)",
+                "Manteiga (150.000 g)",
+                "Açúcar (150.000 g)",
+                "Ovos (2.000 un)",
+                "Chocolate em Pó (100.000 g)",
+                "Canela (5.000 g)"
+            ]
+        },
+        {
+            "id": 2,
+            "nome_receita": "Panquecas",
+            "descricao": "Panquecas americanas",
+            "modo_preparo": "Misture os ingredientes secos e líquidos separadamente. Combine e cozinhe em frigideira.",
+            "tempo_preparo": 30,
+            "rendimento": 12.000,
+            "dificuldade": "fácil",
+            "custo_estimado": null,
+            "categoria": "Salgados",
+            "unidade_rendimento": "un",
+            "ingredientes": []
+        },
+        {
+            "id": 3,
+            "nome_receita": "Pão de Ló",
+            "descricao": "Pão de ló simples",
+            "modo_preparo": "Bata os ovos com açúcar até dobrar de volume. Adicione farinha delicadamente. Asse por 30 minutos.",
+            "tempo_preparo": 45,
+            "rendimento": 10.000,
+            "dificuldade": "médio",
+            "custo_estimado": 327.50,
+            "categoria": "Pães e Massas",
+            "unidade_rendimento": "fatia",
+            "ingredientes": [
+                "Farinha de Trigo (250.000 g)",
+                "Ovos (4.000 un)",
+                "Açúcar (150.000 g)",
+                "Fermento em Pó (10.000 g)"
+            ]
+        }
+    ],
+    "pagina_atual": 1,
+    "por_pagina": 20,
+    "total_registros": 5,
+    "total_paginas": 1
+} [_log | meu_logger]
+2025-06-30 10:47:38,865 - DEBUG - [ReceitasPageController.adicionar_receitas_view] Adicionando receitas: {'dados': [{'id': 1, 'nome_receita': 'Bolo de Chocolate', 'descricao': 'Bolo simples de chocolate', 'modo_preparo': 'Misture todos os ingredientes secos. Adicione os líquidos e misture bem. Asse por 40 minutos.', 'tempo_preparo': 50, 'rendimento': Decimal('8.000'), 'dificuldade': 'fácil', 'custo_estimado': Decimal('1690.00'), 'categoria': 'Bolos', 'unidade_rendimento': 'fatia', 'ingredientes': ['Farinha de Trigo (300.000 g)', 'Leite (1.000 l)', 'Açúcar (200.000 g)', 'Chocolate em Pó (100.000 g)', 'Fermento em Pó (10.000 g)', 'Ovos (3.000 un)']}, {'id': 4, 'nome_receita': 'Brigadeiro', 'descricao': 'Brigadeiro tradicional', 'modo_preparo': 'Misture todos os ingredientes em uma panela e cozinhe em fogo baixo até desgrudar do fundo.', 'tempo_preparo': 25, 'rendimento': Decimal('30.000'), 'dificuldade': 'fácil', 'custo_estimado': Decimal('1545.80'), 'categoria': 'Sobremesas', 'unidade_rendimento': 'un', 'ingredientes': ['Leite (200.000 ml)', 'Chocolate em Pó (50.000 g)', 'Manteiga (20.000 g)']}, {'id': 5, 'nome_receita': 'Cookies', 'descricao': 'Cookies de chocolate', 'modo_preparo': 'Misture os ingredientes secos. Adicione manteiga e ovos. Forme bolinhas e asse por 15 minutos.', 'tempo_preparo': 30, 'rendimento': Decimal('24.000'), 'dificuldade': 'médio', 'custo_estimado': Decimal('1630.65'), 'categoria': 'Sobremesas', 'unidade_rendimento': 'un', 'ingredientes': ['Farinha de Trigo (300.000 g)', 'Manteiga (150.000 g)', 'Açúcar (150.000 g)', 'Ovos (2.000 un)', 'Chocolate em Pó (100.000 g)', 'Canela (5.000 g)']}, {'id': 2, 'nome_receita': 'Panquecas', 'descricao': 'Panquecas americanas', 'modo_preparo': 'Misture os ingredientes secos e líquidos separadamente. Combine e cozinhe em frigideira.', 'tempo_preparo': 30, 'rendimento': Decimal('12.000'), 'dificuldade': 'fácil', 'custo_estimado': None, 'categoria': 'Salgados', 'unidade_rendimento': 'un', 'ingredientes': []}, {'id': 3, 'nome_receita': 'Pão de Ló', 'descricao': 'Pão de ló simples', 'modo_preparo': 'Bata os ovos com açúcar até dobrar de volume. Adicione farinha delicadamente. Asse por 30 minutos.', 'tempo_preparo': 45, 'rendimento': Decimal('10.000'), 'dificuldade': 'médio', 'custo_estimado': Decimal('327.50'), 'categoria': 'Pães e Massas', 'unidade_rendimento': 'fatia', 'ingredientes': ['Farinha de Trigo (250.000 g)', 'Ovos (4.000 un)', 'Açúcar (150.000 g)', 'Fermento em Pó (10.000 g)']}], 'pagina_atual': 1, 'por_pagina': 20, 'total_registros': 5, 'total_paginas': 1} [_log | meu_logger]
+2025-06-30 10:47:38,866 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Bolo de Chocolate [_log | meu_logger]
+2025-06-30 10:47:38,869 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Brigadeiro [_log | meu_logger]
+2025-06-30 10:47:38,871 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Cookies [_log | meu_logger]
+2025-06-30 10:47:38,874 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Panquecas [_log | meu_logger]
+2025-06-30 10:47:38,876 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Pão de Ló [_log | meu_logger]
+2025-06-30 10:47:38,878 - ERROR - [ReceitasPageController.adicionar_receitas_view] Erro ao adicionar receita: Container Control must be added to the page first [_log | meu_logger]
+2025-06-30 10:47:38,878 - ERROR - [ReceitasPageController._handle_error] Erro atualizando view: 'NoneType' object has no attribute 'value' [_log | meu_logger]
+2025-06-30 10:47:38,879 - DEBUG - [ReceitasPageView.create_view] Construindo a view completa de receitas [_log | meu_logger]
+2025-06-30 10:47:44,954 - INFO - [EstoqueModel.__init__] EstoqueModel inicializado. [_log | meu_logger]
+2025-06-30 10:47:45,034 - INFO - [EstoqueModel.close] Conexão com o banco de dados fechada. [_log | meu_logger]
+2025-06-30 10:47:45,034 - INFO - [EstoqueModel.__del__] EstoqueModel destruído e conexão fechada. [_log | meu_logger]
+2025-06-30 10:50:53,280 - INFO - [ReceitasPage.__init__] Iniciando ReceitasPage... [_log | meu_logger]
+2025-06-30 10:50:53,283 - INFO - [ReceitasModel.__init__] ReceitasModel inicializado [_log | meu_logger]
+2025-06-30 10:50:53,284 - DEBUG - [RodapePaginacao.set_callback] Callback definido: None [_log | meu_logger]
+2025-06-30 10:50:53,284 - INFO - [RodapePaginacao.__init__] RodapePaginacao inicializado [_log | meu_logger]
+2025-06-30 10:50:53,285 - DEBUG - [ReceitasPageView._initialize_components] Componentes básicos da view inicializados [_log | meu_logger]
+2025-06-30 10:50:53,286 - DEBUG - [ReceitasPageView._setup_ui_elements] Elementos de busca configurados [_log | meu_logger]
+2025-06-30 10:50:53,286 - INFO - [ReceitasPageView.__init__] ReceitasPageView inicializada [_log | meu_logger]
+2025-06-30 10:50:53,287 - INFO - [ReceitaBloco.__init__] Componente ReceitaBloco inicializado [_log | meu_logger]
+2025-06-30 10:50:53,287 - INFO - [ReceitasPageController.__init__] Inicializando ReceitasPageController [_log | meu_logger]
+2025-06-30 10:50:53,287 - DEBUG - [ReceitasPageController._setup_callbacks] Configurando callbacks da view [_log | meu_logger]
+2025-06-30 10:50:53,288 - DEBUG - [ReceitasPageView.set_on_buscar] Callback de busca configurado [_log | meu_logger]
+2025-06-30 10:50:53,288 - DEBUG - [ReceitasPageView.definir_acoes_botoes_navBar] Callbacks definidos para navbar [_log | meu_logger]
+2025-06-30 10:50:53,289 - DEBUG - [RodapePaginacao.set_callback] Callback definido: <bound method ReceitasPageController._handle_paginacao_receitas of <controller.receitas.controller_receitas_page.ReceitasPageController object at 0x00000162AD1784A0>> [_log | meu_logger]
+2025-06-30 10:50:53,290 - DEBUG - [ReceitasPageView.definir_acoes_botoes_rodape] Callback definido para rodapé [_log | meu_logger]
+2025-06-30 10:50:53,290 - INFO - [ReceitasPageController._initialize_handlers] Handlers inicializados com sucesso [_log | meu_logger]
+2025-06-30 10:50:53,291 - INFO - [ReceitasPage.__init__] ReceitasPageController criado com sucesso. [_log | meu_logger]
+2025-06-30 10:50:53,292 - DEBUG - [ReceitasPageController.exibir_view_receitas] Exibindo view inicial de receitas [_log | meu_logger]
+2025-06-30 10:50:53,316 - DEBUG - [ReceitasPageController.carregar_dados_receitas] {
+    "dados": [
+        {
+            "id": 1,
+            "nome_receita": "Bolo de Chocolate",
+            "descricao": "Bolo simples de chocolate",
+            "modo_preparo": "Misture todos os ingredientes secos. Adicione os líquidos e misture bem. Asse por 40 minutos.",
+            "tempo_preparo": 50,
+            "rendimento": 8.000,
+            "dificuldade": "fácil",
+            "custo_estimado": 1690.00,
+            "categoria": "Bolos",
+            "unidade_rendimento": "fatia",
+            "ingredientes": [
+                "Farinha de Trigo (300.000 g)",
+                "Leite (1.000 l)",
+                "Açúcar (200.000 g)",
+                "Chocolate em Pó (100.000 g)",
+                "Fermento em Pó (10.000 g)",
+                "Ovos (3.000 un)"
+            ]
+        },
+        {
+            "id": 4,
+            "nome_receita": "Brigadeiro",
+            "descricao": "Brigadeiro tradicional",
+            "modo_preparo": "Misture todos os ingredientes em uma panela e cozinhe em fogo baixo até desgrudar do fundo.",
+            "tempo_preparo": 25,
+            "rendimento": 30.000,
+            "dificuldade": "fácil",
+            "custo_estimado": 1545.80,
+            "categoria": "Sobremesas",
+            "unidade_rendimento": "un",
+            "ingredientes": [
+                "Leite (200.000 ml)",
+                "Chocolate em Pó (50.000 g)",
+                "Manteiga (20.000 g)"
+            ]
+        },
+        {
+            "id": 5,
+            "nome_receita": "Cookies",
+            "descricao": "Cookies de chocolate",
+            "modo_preparo": "Misture os ingredientes secos. Adicione manteiga e ovos. Forme bolinhas e asse por 15 minutos.",
+            "tempo_preparo": 30,
+            "rendimento": 24.000,
+            "dificuldade": "médio",
+            "custo_estimado": 1630.65,
+            "categoria": "Sobremesas",
+            "unidade_rendimento": "un",
+            "ingredientes": [
+                "Farinha de Trigo (300.000 g)",
+                "Manteiga (150.000 g)",
+                "Açúcar (150.000 g)",
+                "Ovos (2.000 un)",
+                "Chocolate em Pó (100.000 g)",
+                "Canela (5.000 g)"
+            ]
+        },
+        {
+            "id": 2,
+            "nome_receita": "Panquecas",
+            "descricao": "Panquecas americanas",
+            "modo_preparo": "Misture os ingredientes secos e líquidos separadamente. Combine e cozinhe em frigideira.",
+            "tempo_preparo": 30,
+            "rendimento": 12.000,
+            "dificuldade": "fácil",
+            "custo_estimado": null,
+            "categoria": "Salgados",
+            "unidade_rendimento": "un",
+            "ingredientes": []
+        },
+        {
+            "id": 3,
+            "nome_receita": "Pão de Ló",
+            "descricao": "Pão de ló simples",
+            "modo_preparo": "Bata os ovos com açúcar até dobrar de volume. Adicione farinha delicadamente. Asse por 30 minutos.",
+            "tempo_preparo": 45,
+            "rendimento": 10.000,
+            "dificuldade": "médio",
+            "custo_estimado": 327.50,
+            "categoria": "Pães e Massas",
+            "unidade_rendimento": "fatia",
+            "ingredientes": [
+                "Farinha de Trigo (250.000 g)",
+                "Ovos (4.000 un)",
+                "Açúcar (150.000 g)",
+                "Fermento em Pó (10.000 g)"
+            ]
+        }
+    ],
+    "pagina_atual": 1,
+    "por_pagina": 20,
+    "total_registros": 5,
+    "total_paginas": 1
+} [_log | meu_logger]
+2025-06-30 10:50:53,317 - DEBUG - [ReceitasPageController.adicionar_receitas_view] Adicionando receitas: {'dados': [{'id': 1, 'nome_receita': 'Bolo de Chocolate', 'descricao': 'Bolo simples de chocolate', 'modo_preparo': 'Misture todos os ingredientes secos. Adicione os líquidos e misture bem. Asse por 40 minutos.', 'tempo_preparo': 50, 'rendimento': Decimal('8.000'), 'dificuldade': 'fácil', 'custo_estimado': Decimal('1690.00'), 'categoria': 'Bolos', 'unidade_rendimento': 'fatia', 'ingredientes': ['Farinha de Trigo (300.000 g)', 'Leite (1.000 l)', 'Açúcar (200.000 g)', 'Chocolate em Pó (100.000 g)', 'Fermento em Pó (10.000 g)', 'Ovos (3.000 un)']}, {'id': 4, 'nome_receita': 'Brigadeiro', 'descricao': 'Brigadeiro tradicional', 'modo_preparo': 'Misture todos os ingredientes em uma panela e cozinhe em fogo baixo até desgrudar do fundo.', 'tempo_preparo': 25, 'rendimento': Decimal('30.000'), 'dificuldade': 'fácil', 'custo_estimado': Decimal('1545.80'), 'categoria': 'Sobremesas', 'unidade_rendimento': 'un', 'ingredientes': ['Leite (200.000 ml)', 'Chocolate em Pó (50.000 g)', 'Manteiga (20.000 g)']}, {'id': 5, 'nome_receita': 'Cookies', 'descricao': 'Cookies de chocolate', 'modo_preparo': 'Misture os ingredientes secos. Adicione manteiga e ovos. Forme bolinhas e asse por 15 minutos.', 'tempo_preparo': 30, 'rendimento': Decimal('24.000'), 'dificuldade': 'médio', 'custo_estimado': Decimal('1630.65'), 'categoria': 'Sobremesas', 'unidade_rendimento': 'un', 'ingredientes': ['Farinha de Trigo (300.000 g)', 'Manteiga (150.000 g)', 'Açúcar (150.000 g)', 'Ovos (2.000 un)', 'Chocolate em Pó (100.000 g)', 'Canela (5.000 g)']}, {'id': 2, 'nome_receita': 'Panquecas', 'descricao': 'Panquecas americanas', 'modo_preparo': 'Misture os ingredientes secos e líquidos separadamente. Combine e cozinhe em frigideira.', 'tempo_preparo': 30, 'rendimento': Decimal('12.000'), 'dificuldade': 'fácil', 'custo_estimado': None, 'categoria': 'Salgados', 'unidade_rendimento': 'un', 'ingredientes': []}, {'id': 3, 'nome_receita': 'Pão de Ló', 'descricao': 'Pão de ló simples', 'modo_preparo': 'Bata os ovos com açúcar até dobrar de volume. Adicione farinha delicadamente. Asse por 30 minutos.', 'tempo_preparo': 45, 'rendimento': Decimal('10.000'), 'dificuldade': 'médio', 'custo_estimado': Decimal('327.50'), 'categoria': 'Pães e Massas', 'unidade_rendimento': 'fatia', 'ingredientes': ['Farinha de Trigo (250.000 g)', 'Ovos (4.000 un)', 'Açúcar (150.000 g)', 'Fermento em Pó (10.000 g)']}], 'pagina_atual': 1, 'por_pagina': 20, 'total_registros': 5, 'total_paginas': 1} [_log | meu_logger]
+2025-06-30 10:50:53,318 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Bolo de Chocolate [_log | meu_logger]
+2025-06-30 10:50:53,321 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Brigadeiro [_log | meu_logger]
+2025-06-30 10:50:53,324 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Cookies [_log | meu_logger]
+2025-06-30 10:50:53,328 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Panquecas [_log | meu_logger]
+2025-06-30 10:50:53,330 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Pão de Ló [_log | meu_logger]
+2025-06-30 10:50:53,334 - ERROR - [ReceitasPageController.adicionar_receitas_view] Erro ao adicionar receita: Container Control must be added to the page first [_log | meu_logger]
+2025-06-30 10:50:53,334 - ERROR - [ReceitasPageController._handle_error] Erro atualizando view: 'NoneType' object has no attribute 'value' [_log | meu_logger]
+2025-06-30 10:50:53,336 - DEBUG - [ReceitasPageView.create_view] Construindo a view completa de receitas [_log | meu_logger]
+2025-06-30 10:50:55,529 - INFO - [EstoqueModel.__init__] EstoqueModel inicializado. [_log | meu_logger]
+2025-06-30 10:50:55,558 - INFO - [EstoqueModel.close] Conexão com o banco de dados fechada. [_log | meu_logger]
+2025-06-30 10:50:55,558 - INFO - [EstoqueModel.__del__] EstoqueModel destruído e conexão fechada. [_log | meu_logger]
+2025-06-30 10:54:53,528 - INFO - [ReceitasPage.__init__] Iniciando ReceitasPage... [_log | meu_logger]
+2025-06-30 10:54:53,530 - INFO - [ReceitasModel.__init__] ReceitasModel inicializado [_log | meu_logger]
+2025-06-30 10:54:53,530 - DEBUG - [RodapePaginacao.set_callback] Callback definido: None [_log | meu_logger]
+2025-06-30 10:54:53,531 - INFO - [RodapePaginacao.__init__] RodapePaginacao inicializado [_log | meu_logger]
+2025-06-30 10:54:53,531 - DEBUG - [ReceitasPageView._initialize_components] Componentes básicos da view inicializados [_log | meu_logger]
+2025-06-30 10:54:53,532 - DEBUG - [ReceitasPageView._setup_ui_elements] Elementos de busca configurados [_log | meu_logger]
+2025-06-30 10:54:53,532 - INFO - [ReceitasPageView.__init__] ReceitasPageView inicializada [_log | meu_logger]
+2025-06-30 10:54:53,533 - INFO - [ReceitaBloco.__init__] Componente ReceitaBloco inicializado [_log | meu_logger]
+2025-06-30 10:54:53,534 - INFO - [ReceitasPageController.__init__] Inicializando ReceitasPageController [_log | meu_logger]
+2025-06-30 10:54:53,535 - DEBUG - [ReceitasPageController._setup_callbacks] Configurando callbacks da view [_log | meu_logger]
+2025-06-30 10:54:53,536 - DEBUG - [ReceitasPageView.set_on_buscar] Callback de busca configurado [_log | meu_logger]
+2025-06-30 10:54:53,537 - DEBUG - [ReceitasPageView.definir_acoes_botoes_navBar] Callbacks definidos para navbar [_log | meu_logger]
+2025-06-30 10:54:53,537 - DEBUG - [RodapePaginacao.set_callback] Callback definido: <bound method ReceitasPageController._handle_paginacao_receitas of <controller.receitas.controller_receitas_page.ReceitasPageController object at 0x0000019BAADD5DC0>> [_log | meu_logger]
+2025-06-30 10:54:53,537 - DEBUG - [ReceitasPageView.definir_acoes_botoes_rodape] Callback definido para rodapé [_log | meu_logger]
+2025-06-30 10:54:53,538 - INFO - [ReceitasPageController._initialize_handlers] Handlers inicializados com sucesso [_log | meu_logger]
+2025-06-30 10:54:53,538 - INFO - [ReceitasPage.__init__] ReceitasPageController criado com sucesso. [_log | meu_logger]
+2025-06-30 10:54:53,538 - DEBUG - [ReceitasPageController.exibir_view_receitas] Exibindo view inicial de receitas [_log | meu_logger]
+2025-06-30 10:54:53,589 - DEBUG - [ReceitasPageController.carregar_dados_receitas] {
+    "dados": [
+        {
+            "id": 1,
+            "nome_receita": "Bolo de Chocolate",
+            "descricao": "Bolo simples de chocolate",
+            "modo_preparo": "Misture todos os ingredientes secos. Adicione os líquidos e misture bem. Asse por 40 minutos.",
+            "tempo_preparo": 50,
+            "rendimento": 8.000,
+            "dificuldade": "fácil",
+            "custo_estimado": 1690.00,
+            "categoria": "Bolos",
+            "unidade_rendimento": "fatia",
+            "ingredientes": [
+                "Farinha de Trigo (300.000 g)",
+                "Leite (1.000 l)",
+                "Açúcar (200.000 g)",
+                "Chocolate em Pó (100.000 g)",
+                "Fermento em Pó (10.000 g)",
+                "Ovos (3.000 un)"
+            ]
+        },
+        {
+            "id": 4,
+            "nome_receita": "Brigadeiro",
+            "descricao": "Brigadeiro tradicional",
+            "modo_preparo": "Misture todos os ingredientes em uma panela e cozinhe em fogo baixo até desgrudar do fundo.",
+            "tempo_preparo": 25,
+            "rendimento": 30.000,
+            "dificuldade": "fácil",
+            "custo_estimado": 1545.80,
+            "categoria": "Sobremesas",
+            "unidade_rendimento": "un",
+            "ingredientes": [
+                "Leite (200.000 ml)",
+                "Chocolate em Pó (50.000 g)",
+                "Manteiga (20.000 g)"
+            ]
+        },
+        {
+            "id": 5,
+            "nome_receita": "Cookies",
+            "descricao": "Cookies de chocolate",
+            "modo_preparo": "Misture os ingredientes secos. Adicione manteiga e ovos. Forme bolinhas e asse por 15 minutos.",
+            "tempo_preparo": 30,
+            "rendimento": 24.000,
+            "dificuldade": "médio",
+            "custo_estimado": 1630.65,
+            "categoria": "Sobremesas",
+            "unidade_rendimento": "un",
+            "ingredientes": [
+                "Farinha de Trigo (300.000 g)",
+                "Manteiga (150.000 g)",
+                "Açúcar (150.000 g)",
+                "Ovos (2.000 un)",
+                "Chocolate em Pó (100.000 g)",
+                "Canela (5.000 g)"
+            ]
+        },
+        {
+            "id": 2,
+            "nome_receita": "Panquecas",
+            "descricao": "Panquecas americanas",
+            "modo_preparo": "Misture os ingredientes secos e líquidos separadamente. Combine e cozinhe em frigideira.",
+            "tempo_preparo": 30,
+            "rendimento": 12.000,
+            "dificuldade": "fácil",
+            "custo_estimado": null,
+            "categoria": "Salgados",
+            "unidade_rendimento": "un",
+            "ingredientes": []
+        },
+        {
+            "id": 3,
+            "nome_receita": "Pão de Ló",
+            "descricao": "Pão de ló simples",
+            "modo_preparo": "Bata os ovos com açúcar até dobrar de volume. Adicione farinha delicadamente. Asse por 30 minutos.",
+            "tempo_preparo": 45,
+            "rendimento": 10.000,
+            "dificuldade": "médio",
+            "custo_estimado": 327.50,
+            "categoria": "Pães e Massas",
+            "unidade_rendimento": "fatia",
+            "ingredientes": [
+                "Farinha de Trigo (250.000 g)",
+                "Ovos (4.000 un)",
+                "Açúcar (150.000 g)",
+                "Fermento em Pó (10.000 g)"
+            ]
+        }
+    ],
+    "pagina_atual": 1,
+    "por_pagina": 20,
+    "total_registros": 5,
+    "total_paginas": 1
+} [_log | meu_logger]
+2025-06-30 10:54:53,590 - DEBUG - [ReceitasPageController.adicionar_receitas_view] Adicionando receitas: {'dados': [{'id': 1, 'nome_receita': 'Bolo de Chocolate', 'descricao': 'Bolo simples de chocolate', 'modo_preparo': 'Misture todos os ingredientes secos. Adicione os líquidos e misture bem. Asse por 40 minutos.', 'tempo_preparo': 50, 'rendimento': Decimal('8.000'), 'dificuldade': 'fácil', 'custo_estimado': Decimal('1690.00'), 'categoria': 'Bolos', 'unidade_rendimento': 'fatia', 'ingredientes': ['Farinha de Trigo (300.000 g)', 'Leite (1.000 l)', 'Açúcar (200.000 g)', 'Chocolate em Pó (100.000 g)', 'Fermento em Pó (10.000 g)', 'Ovos (3.000 un)']}, {'id': 4, 'nome_receita': 'Brigadeiro', 'descricao': 'Brigadeiro tradicional', 'modo_preparo': 'Misture todos os ingredientes em uma panela e cozinhe em fogo baixo até desgrudar do fundo.', 'tempo_preparo': 25, 'rendimento': Decimal('30.000'), 'dificuldade': 'fácil', 'custo_estimado': Decimal('1545.80'), 'categoria': 'Sobremesas', 'unidade_rendimento': 'un', 'ingredientes': ['Leite (200.000 ml)', 'Chocolate em Pó (50.000 g)', 'Manteiga (20.000 g)']}, {'id': 5, 'nome_receita': 'Cookies', 'descricao': 'Cookies de chocolate', 'modo_preparo': 'Misture os ingredientes secos. Adicione manteiga e ovos. Forme bolinhas e asse por 15 minutos.', 'tempo_preparo': 30, 'rendimento': Decimal('24.000'), 'dificuldade': 'médio', 'custo_estimado': Decimal('1630.65'), 'categoria': 'Sobremesas', 'unidade_rendimento': 'un', 'ingredientes': ['Farinha de Trigo (300.000 g)', 'Manteiga (150.000 g)', 'Açúcar (150.000 g)', 'Ovos (2.000 un)', 'Chocolate em Pó (100.000 g)', 'Canela (5.000 g)']}, {'id': 2, 'nome_receita': 'Panquecas', 'descricao': 'Panquecas americanas', 'modo_preparo': 'Misture os ingredientes secos e líquidos separadamente. Combine e cozinhe em frigideira.', 'tempo_preparo': 30, 'rendimento': Decimal('12.000'), 'dificuldade': 'fácil', 'custo_estimado': None, 'categoria': 'Salgados', 'unidade_rendimento': 'un', 'ingredientes': []}, {'id': 3, 'nome_receita': 'Pão de Ló', 'descricao': 'Pão de ló simples', 'modo_preparo': 'Bata os ovos com açúcar até dobrar de volume. Adicione farinha delicadamente. Asse por 30 minutos.', 'tempo_preparo': 45, 'rendimento': Decimal('10.000'), 'dificuldade': 'médio', 'custo_estimado': Decimal('327.50'), 'categoria': 'Pães e Massas', 'unidade_rendimento': 'fatia', 'ingredientes': ['Farinha de Trigo (250.000 g)', 'Ovos (4.000 un)', 'Açúcar (150.000 g)', 'Fermento em Pó (10.000 g)']}], 'pagina_atual': 1, 'por_pagina': 20, 'total_registros': 5, 'total_paginas': 1} [_log | meu_logger]
+2025-06-30 10:54:53,590 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Bolo de Chocolate [_log | meu_logger]
+2025-06-30 10:54:53,593 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Brigadeiro [_log | meu_logger]
+2025-06-30 10:54:53,596 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Cookies [_log | meu_logger]
+2025-06-30 10:54:53,599 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Panquecas [_log | meu_logger]
+2025-06-30 10:54:53,603 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Pão de Ló [_log | meu_logger]
+2025-06-30 10:54:53,606 - ERROR - [ReceitasPageController.adicionar_receitas_view] Erro ao adicionar receita: Container Control must be added to the page first [_log | meu_logger]
+2025-06-30 10:54:53,607 - ERROR - [ReceitasPageController._handle_error] Erro atualizando view: 'NoneType' object has no attribute 'value' [_log | meu_logger]
+2025-06-30 10:54:53,608 - DEBUG - [ReceitasPageView.create_view] Construindo a view completa de receitas [_log | meu_logger]
+2025-06-30 10:55:11,271 - INFO - [EstoqueModel.__init__] EstoqueModel inicializado. [_log | meu_logger]
+2025-06-30 10:55:11,279 - INFO - [EstoqueModel.close] Conexão com o banco de dados fechada. [_log | meu_logger]
+2025-06-30 10:55:11,279 - INFO - [EstoqueModel.__del__] EstoqueModel destruído e conexão fechada. [_log | meu_logger]
+2025-06-30 10:55:11,279 - DEBUG - [ReceitasPageController._handle_nova_receita] 
+
+TODOS OS PRODUTOS DO DB[Produto(id=1, nome='Farinha de Trigo', custo_unitario=0.0, unidade='None'), Produto(id=2, nome='Ovos', custo_unitario=0.0, unidade='None'), Produto(id=3, nome='Leite', custo_unitario=0.0, unidade='None'), Produto(id=4, nome='Manteiga', custo_unitario=0.0, unidade='None'), Produto(id=5, nome='Açúcar', custo_unitario=0.0, unidade='None'), Produto(id=6, nome='Chocolate em Pó', custo_unitario=0.0, unidade='None'), Produto(id=7, nome='Fermento em Pó', custo_unitario=0.0, unidade='None'), Produto(id=8, nome='Sal', custo_unitario=0.0, unidade='None'), Produto(id=9, nome='Óleo', custo_unitario=0.0, unidade='None'), Produto(id=10, nome='Canela', custo_unitario=0.0, unidade='None')]
+
+ [_log | meu_logger]
+2025-06-30 11:08:23,618 - INFO - [ReceitasPage.__init__] Iniciando ReceitasPage... [_log | meu_logger]
+2025-06-30 11:08:23,640 - INFO - [ReceitasModel.__init__] ReceitasModel inicializado [_log | meu_logger]
+2025-06-30 11:08:23,641 - DEBUG - [RodapePaginacao.set_callback] Callback definido: None [_log | meu_logger]
+2025-06-30 11:08:23,642 - INFO - [RodapePaginacao.__init__] RodapePaginacao inicializado [_log | meu_logger]
+2025-06-30 11:08:23,652 - DEBUG - [ReceitasPageView._initialize_components] Componentes básicos da view inicializados [_log | meu_logger]
+2025-06-30 11:08:23,652 - DEBUG - [ReceitasPageView._setup_ui_elements] Elementos de busca configurados [_log | meu_logger]
+2025-06-30 11:08:23,653 - INFO - [ReceitasPageView.__init__] ReceitasPageView inicializada [_log | meu_logger]
+2025-06-30 11:08:23,654 - INFO - [ReceitaBloco.__init__] Componente ReceitaBloco inicializado [_log | meu_logger]
+2025-06-30 11:08:23,654 - INFO - [ReceitasPageController.__init__] Inicializando ReceitasPageController [_log | meu_logger]
+2025-06-30 11:08:23,655 - DEBUG - [ReceitasPageController._setup_callbacks] Configurando callbacks da view [_log | meu_logger]
+2025-06-30 11:08:23,655 - DEBUG - [ReceitasPageView.set_on_buscar] Callback de busca configurado [_log | meu_logger]
+2025-06-30 11:08:23,655 - DEBUG - [ReceitasPageView.definir_acoes_botoes_navBar] Callbacks definidos para navbar [_log | meu_logger]
+2025-06-30 11:08:23,656 - DEBUG - [RodapePaginacao.set_callback] Callback definido: <bound method ReceitasPageController._handle_paginacao_receitas of <controller.receitas.controller_receitas_page.ReceitasPageController object at 0x000002B022E60F20>> [_log | meu_logger]
+2025-06-30 11:08:23,656 - DEBUG - [ReceitasPageView.definir_acoes_botoes_rodape] Callback definido para rodapé [_log | meu_logger]
+2025-06-30 11:08:23,656 - INFO - [ReceitasPageController._initialize_handlers] Handlers inicializados com sucesso [_log | meu_logger]
+2025-06-30 11:08:23,657 - INFO - [ReceitasPage.__init__] ReceitasPageController criado com sucesso. [_log | meu_logger]
+2025-06-30 11:08:23,657 - DEBUG - [ReceitasPageController.exibir_view_receitas] Exibindo view inicial de receitas [_log | meu_logger]
+2025-06-30 11:08:23,925 - DEBUG - [ReceitasPageController.carregar_dados_receitas] {
+    "dados": [
+        {
+            "id": 1,
+            "nome_receita": "Bolo de Chocolate",
+            "descricao": "Bolo simples de chocolate",
+            "modo_preparo": "Misture todos os ingredientes secos. Adicione os líquidos e misture bem. Asse por 40 minutos.",
+            "tempo_preparo": 50,
+            "rendimento": 8.000,
+            "dificuldade": "fácil",
+            "custo_estimado": 1690.00,
+            "categoria": "Bolos",
+            "unidade_rendimento": "fatia",
+            "ingredientes": [
+                "Farinha de Trigo (300.000 g)",
+                "Leite (1.000 l)",
+                "Açúcar (200.000 g)",
+                "Chocolate em Pó (100.000 g)",
+                "Fermento em Pó (10.000 g)",
+                "Ovos (3.000 un)"
+            ]
+        },
+        {
+            "id": 4,
+            "nome_receita": "Brigadeiro",
+            "descricao": "Brigadeiro tradicional",
+            "modo_preparo": "Misture todos os ingredientes em uma panela e cozinhe em fogo baixo até desgrudar do fundo.",
+            "tempo_preparo": 25,
+            "rendimento": 30.000,
+            "dificuldade": "fácil",
+            "custo_estimado": 1545.80,
+            "categoria": "Sobremesas",
+            "unidade_rendimento": "un",
+            "ingredientes": [
+                "Leite (200.000 ml)",
+                "Chocolate em Pó (50.000 g)",
+                "Manteiga (20.000 g)"
+            ]
+        },
+        {
+            "id": 5,
+            "nome_receita": "Cookies",
+            "descricao": "Cookies de chocolate",
+            "modo_preparo": "Misture os ingredientes secos. Adicione manteiga e ovos. Forme bolinhas e asse por 15 minutos.",
+            "tempo_preparo": 30,
+            "rendimento": 24.000,
+            "dificuldade": "médio",
+            "custo_estimado": 1630.65,
+            "categoria": "Sobremesas",
+            "unidade_rendimento": "un",
+            "ingredientes": [
+                "Farinha de Trigo (300.000 g)",
+                "Manteiga (150.000 g)",
+                "Açúcar (150.000 g)",
+                "Ovos (2.000 un)",
+                "Chocolate em Pó (100.000 g)",
+                "Canela (5.000 g)"
+            ]
+        },
+        {
+            "id": 2,
+            "nome_receita": "Panquecas",
+            "descricao": "Panquecas americanas",
+            "modo_preparo": "Misture os ingredientes secos e líquidos separadamente. Combine e cozinhe em frigideira.",
+            "tempo_preparo": 30,
+            "rendimento": 12.000,
+            "dificuldade": "fácil",
+            "custo_estimado": null,
+            "categoria": "Salgados",
+            "unidade_rendimento": "un",
+            "ingredientes": []
+        },
+        {
+            "id": 3,
+            "nome_receita": "Pão de Ló",
+            "descricao": "Pão de ló simples",
+            "modo_preparo": "Bata os ovos com açúcar até dobrar de volume. Adicione farinha delicadamente. Asse por 30 minutos.",
+            "tempo_preparo": 45,
+            "rendimento": 10.000,
+            "dificuldade": "médio",
+            "custo_estimado": 327.50,
+            "categoria": "Pães e Massas",
+            "unidade_rendimento": "fatia",
+            "ingredientes": [
+                "Farinha de Trigo (250.000 g)",
+                "Ovos (4.000 un)",
+                "Açúcar (150.000 g)",
+                "Fermento em Pó (10.000 g)"
+            ]
+        }
+    ],
+    "pagina_atual": 1,
+    "por_pagina": 20,
+    "total_registros": 5,
+    "total_paginas": 1
+} [_log | meu_logger]
+2025-06-30 11:08:23,926 - DEBUG - [ReceitasPageController.adicionar_receitas_view] Adicionando receitas: {'dados': [{'id': 1, 'nome_receita': 'Bolo de Chocolate', 'descricao': 'Bolo simples de chocolate', 'modo_preparo': 'Misture todos os ingredientes secos. Adicione os líquidos e misture bem. Asse por 40 minutos.', 'tempo_preparo': 50, 'rendimento': Decimal('8.000'), 'dificuldade': 'fácil', 'custo_estimado': Decimal('1690.00'), 'categoria': 'Bolos', 'unidade_rendimento': 'fatia', 'ingredientes': ['Farinha de Trigo (300.000 g)', 'Leite (1.000 l)', 'Açúcar (200.000 g)', 'Chocolate em Pó (100.000 g)', 'Fermento em Pó (10.000 g)', 'Ovos (3.000 un)']}, {'id': 4, 'nome_receita': 'Brigadeiro', 'descricao': 'Brigadeiro tradicional', 'modo_preparo': 'Misture todos os ingredientes em uma panela e cozinhe em fogo baixo até desgrudar do fundo.', 'tempo_preparo': 25, 'rendimento': Decimal('30.000'), 'dificuldade': 'fácil', 'custo_estimado': Decimal('1545.80'), 'categoria': 'Sobremesas', 'unidade_rendimento': 'un', 'ingredientes': ['Leite (200.000 ml)', 'Chocolate em Pó (50.000 g)', 'Manteiga (20.000 g)']}, {'id': 5, 'nome_receita': 'Cookies', 'descricao': 'Cookies de chocolate', 'modo_preparo': 'Misture os ingredientes secos. Adicione manteiga e ovos. Forme bolinhas e asse por 15 minutos.', 'tempo_preparo': 30, 'rendimento': Decimal('24.000'), 'dificuldade': 'médio', 'custo_estimado': Decimal('1630.65'), 'categoria': 'Sobremesas', 'unidade_rendimento': 'un', 'ingredientes': ['Farinha de Trigo (300.000 g)', 'Manteiga (150.000 g)', 'Açúcar (150.000 g)', 'Ovos (2.000 un)', 'Chocolate em Pó (100.000 g)', 'Canela (5.000 g)']}, {'id': 2, 'nome_receita': 'Panquecas', 'descricao': 'Panquecas americanas', 'modo_preparo': 'Misture os ingredientes secos e líquidos separadamente. Combine e cozinhe em frigideira.', 'tempo_preparo': 30, 'rendimento': Decimal('12.000'), 'dificuldade': 'fácil', 'custo_estimado': None, 'categoria': 'Salgados', 'unidade_rendimento': 'un', 'ingredientes': []}, {'id': 3, 'nome_receita': 'Pão de Ló', 'descricao': 'Pão de ló simples', 'modo_preparo': 'Bata os ovos com açúcar até dobrar de volume. Adicione farinha delicadamente. Asse por 30 minutos.', 'tempo_preparo': 45, 'rendimento': Decimal('10.000'), 'dificuldade': 'médio', 'custo_estimado': Decimal('327.50'), 'categoria': 'Pães e Massas', 'unidade_rendimento': 'fatia', 'ingredientes': ['Farinha de Trigo (250.000 g)', 'Ovos (4.000 un)', 'Açúcar (150.000 g)', 'Fermento em Pó (10.000 g)']}], 'pagina_atual': 1, 'por_pagina': 20, 'total_registros': 5, 'total_paginas': 1} [_log | meu_logger]
+2025-06-30 11:08:23,927 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Bolo de Chocolate [_log | meu_logger]
+2025-06-30 11:08:23,930 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Brigadeiro [_log | meu_logger]
+2025-06-30 11:08:23,933 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Cookies [_log | meu_logger]
+2025-06-30 11:08:23,937 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Panquecas [_log | meu_logger]
+2025-06-30 11:08:23,940 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Pão de Ló [_log | meu_logger]
+2025-06-30 11:08:23,942 - ERROR - [ReceitasPageController.adicionar_receitas_view] Erro ao adicionar receita: Container Control must be added to the page first [_log | meu_logger]
+2025-06-30 11:08:23,942 - ERROR - [ReceitasPageController._handle_error] Erro atualizando view: 'NoneType' object has no attribute 'value' [_log | meu_logger]
+2025-06-30 11:08:23,943 - DEBUG - [ReceitasPageView.create_view] Construindo a view completa de receitas [_log | meu_logger]
+2025-06-30 11:08:26,890 - INFO - [EstoqueModel.__init__] EstoqueModel inicializado. [_log | meu_logger]
+2025-06-30 11:08:26,919 - INFO - [EstoqueModel.close] Conexão com o banco de dados fechada. [_log | meu_logger]
+2025-06-30 11:08:26,919 - INFO - [EstoqueModel.__del__] EstoqueModel destruído e conexão fechada. [_log | meu_logger]
+2025-06-30 11:08:26,920 - DEBUG - [ReceitasPageController._handle_nova_receita] 
+
+TODOS OS PRODUTOS DO DB[{'id': 1, 'nome': 'Farinha de Trigo', 'descricao': 'Farinha de trigo especial', 'codigo_barras': None, 'categoria_id': 1, 'unidade_medida_id': 1, 'custo_unitario': Decimal('0.85'), 'estoque_minimo': None, 'data_cadastro': datetime.datetime(2025, 6, 27, 15, 49, 40), 'ativo': 1}, {'id': 2, 'nome': 'Ovos', 'descricao': 'Ovos brancos tamanho grande', 'codigo_barras': None, 'categoria_id': 5, 'unidade_medida_id': 5, 'custo_unitario': Decimal('0.50'), 'estoque_minimo': None, 'data_cadastro': datetime.datetime(2025, 6, 27, 15, 49, 40), 'ativo': 1}, {'id': 3, 'nome': 'Leite', 'descricao': 'Leite integral 1L', 'codigo_barras': None, 'categoria_id': 2, 'unidade_medida_id': 4, 'custo_unitario': Decimal('4.50'), 'estoque_minimo': None, 'data_cadastro': datetime.datetime(2025, 6, 27, 15, 49, 40), 'ativo': 1}, {'id': 4, 'nome': 'Manteiga', 'descricao': 'Manteiga sem sal', 'codigo_barras': None, 'categoria_id': 2, 'unidade_medida_id': 1, 'custo_unitario': Decimal('0.04'), 'estoque_minimo': None, 'data_cadastro': datetime.datetime(2025, 6, 27, 15, 49, 40), 'ativo': 1}, {'id': 5, 'nome': 'Açúcar', 'descricao': 'Açúcar refinado', 'codigo_barras': None, 'categoria_id': 5, 'unidade_medida_id': 1, 'custo_unitario': Decimal('0.52'), 'estoque_minimo': None, 'data_cadastro': datetime.datetime(2025, 6, 27, 15, 49, 40), 'ativo': 1}, {'id': 6, 'nome': 'Chocolate em Pó', 'descricao': 'Chocolate 50% cacau', 'codigo_barras': None, 'categoria_id': 3, 'unidade_medida_id': 1, 'custo_unitario': Decimal('12.90'), 'estoque_minimo': None, 'data_cadastro': datetime.datetime(2025, 6, 27, 15, 49, 40), 'ativo': 1}, {'id': 7, 'nome': 'Fermento em Pó', 'descricao': 'Fermento químico', 'codigo_barras': None, 'categoria_id': 5, 'unidade_medida_id': 1, 'custo_unitario': Decimal('3.50'), 'estoque_minimo': None, 'data_cadastro': datetime.datetime(2025, 6, 27, 15, 49, 40), 'ativo': 1}, {'id': 8, 'nome': 'Sal', 'descricao': 'Sal refinado', 'codigo_barras': None, 'categoria_id': 5, 'unidade_medida_id': 1, 'custo_unitario': Decimal('0.23'), 'estoque_minimo': None, 'data_cadastro': datetime.datetime(2025, 6, 27, 15, 49, 40), 'ativo': 1}, {'id': 9, 'nome': 'Óleo', 'descricao': 'Óleo de soja', 'codigo_barras': None, 'categoria_id': 5, 'unidade_medida_id': 4, 'custo_unitario': Decimal('8.90'), 'estoque_minimo': None, 'data_cadastro': datetime.datetime(2025, 6, 27, 15, 49, 40), 'ativo': 1}, {'id': 10, 'nome': 'Canela', 'descricao': 'Canela em pó', 'codigo_barras': None, 'categoria_id': 4, 'unidade_medida_id': 1, 'custo_unitario': Decimal('0.13'), 'estoque_minimo': None, 'data_cadastro': datetime.datetime(2025, 6, 27, 15, 49, 40), 'ativo': 1}]
+
+ [_log | meu_logger]
+2025-06-30 11:11:14,160 - INFO - [ReceitasPage.__init__] Iniciando ReceitasPage... [_log | meu_logger]
+2025-06-30 11:11:14,164 - INFO - [ReceitasModel.__init__] ReceitasModel inicializado [_log | meu_logger]
+2025-06-30 11:11:14,164 - DEBUG - [RodapePaginacao.set_callback] Callback definido: None [_log | meu_logger]
+2025-06-30 11:11:14,164 - INFO - [RodapePaginacao.__init__] RodapePaginacao inicializado [_log | meu_logger]
+2025-06-30 11:11:14,165 - DEBUG - [ReceitasPageView._initialize_components] Componentes básicos da view inicializados [_log | meu_logger]
+2025-06-30 11:11:14,166 - DEBUG - [ReceitasPageView._setup_ui_elements] Elementos de busca configurados [_log | meu_logger]
+2025-06-30 11:11:14,166 - INFO - [ReceitasPageView.__init__] ReceitasPageView inicializada [_log | meu_logger]
+2025-06-30 11:11:14,167 - INFO - [ReceitaBloco.__init__] Componente ReceitaBloco inicializado [_log | meu_logger]
+2025-06-30 11:11:14,167 - INFO - [ReceitasPageController.__init__] Inicializando ReceitasPageController [_log | meu_logger]
+2025-06-30 11:11:14,167 - DEBUG - [ReceitasPageController._setup_callbacks] Configurando callbacks da view [_log | meu_logger]
+2025-06-30 11:11:14,168 - DEBUG - [ReceitasPageView.set_on_buscar] Callback de busca configurado [_log | meu_logger]
+2025-06-30 11:11:14,168 - DEBUG - [ReceitasPageView.definir_acoes_botoes_navBar] Callbacks definidos para navbar [_log | meu_logger]
+2025-06-30 11:11:14,169 - DEBUG - [RodapePaginacao.set_callback] Callback definido: <bound method ReceitasPageController._handle_paginacao_receitas of <controller.receitas.controller_receitas_page.ReceitasPageController object at 0x00000165AAC9D7F0>> [_log | meu_logger]
+2025-06-30 11:11:14,169 - DEBUG - [ReceitasPageView.definir_acoes_botoes_rodape] Callback definido para rodapé [_log | meu_logger]
+2025-06-30 11:11:14,169 - INFO - [ReceitasPageController._initialize_handlers] Handlers inicializados com sucesso [_log | meu_logger]
+2025-06-30 11:11:14,173 - INFO - [ReceitasPage.__init__] ReceitasPageController criado com sucesso. [_log | meu_logger]
+2025-06-30 11:11:14,173 - DEBUG - [ReceitasPageController.exibir_view_receitas] Exibindo view inicial de receitas [_log | meu_logger]
+2025-06-30 11:11:14,204 - DEBUG - [ReceitasPageController.carregar_dados_receitas] {
+    "dados": [
+        {
+            "id": 1,
+            "nome_receita": "Bolo de Chocolate",
+            "descricao": "Bolo simples de chocolate",
+            "modo_preparo": "Misture todos os ingredientes secos. Adicione os líquidos e misture bem. Asse por 40 minutos.",
+            "tempo_preparo": 50,
+            "rendimento": 8.000,
+            "dificuldade": "fácil",
+            "custo_estimado": 1690.00,
+            "categoria": "Bolos",
+            "unidade_rendimento": "fatia",
+            "ingredientes": [
+                "Farinha de Trigo (300.000 g)",
+                "Leite (1.000 l)",
+                "Açúcar (200.000 g)",
+                "Chocolate em Pó (100.000 g)",
+                "Fermento em Pó (10.000 g)",
+                "Ovos (3.000 un)"
+            ]
+        },
+        {
+            "id": 4,
+            "nome_receita": "Brigadeiro",
+            "descricao": "Brigadeiro tradicional",
+            "modo_preparo": "Misture todos os ingredientes em uma panela e cozinhe em fogo baixo até desgrudar do fundo.",
+            "tempo_preparo": 25,
+            "rendimento": 30.000,
+            "dificuldade": "fácil",
+            "custo_estimado": 1545.80,
+            "categoria": "Sobremesas",
+            "unidade_rendimento": "un",
+            "ingredientes": [
+                "Leite (200.000 ml)",
+                "Chocolate em Pó (50.000 g)",
+                "Manteiga (20.000 g)"
+            ]
+        },
+        {
+            "id": 5,
+            "nome_receita": "Cookies",
+            "descricao": "Cookies de chocolate",
+            "modo_preparo": "Misture os ingredientes secos. Adicione manteiga e ovos. Forme bolinhas e asse por 15 minutos.",
+            "tempo_preparo": 30,
+            "rendimento": 24.000,
+            "dificuldade": "médio",
+            "custo_estimado": 1630.65,
+            "categoria": "Sobremesas",
+            "unidade_rendimento": "un",
+            "ingredientes": [
+                "Farinha de Trigo (300.000 g)",
+                "Manteiga (150.000 g)",
+                "Açúcar (150.000 g)",
+                "Ovos (2.000 un)",
+                "Chocolate em Pó (100.000 g)",
+                "Canela (5.000 g)"
+            ]
+        },
+        {
+            "id": 2,
+            "nome_receita": "Panquecas",
+            "descricao": "Panquecas americanas",
+            "modo_preparo": "Misture os ingredientes secos e líquidos separadamente. Combine e cozinhe em frigideira.",
+            "tempo_preparo": 30,
+            "rendimento": 12.000,
+            "dificuldade": "fácil",
+            "custo_estimado": null,
+            "categoria": "Salgados",
+            "unidade_rendimento": "un",
+            "ingredientes": []
+        },
+        {
+            "id": 3,
+            "nome_receita": "Pão de Ló",
+            "descricao": "Pão de ló simples",
+            "modo_preparo": "Bata os ovos com açúcar até dobrar de volume. Adicione farinha delicadamente. Asse por 30 minutos.",
+            "tempo_preparo": 45,
+            "rendimento": 10.000,
+            "dificuldade": "médio",
+            "custo_estimado": 327.50,
+            "categoria": "Pães e Massas",
+            "unidade_rendimento": "fatia",
+            "ingredientes": [
+                "Farinha de Trigo (250.000 g)",
+                "Ovos (4.000 un)",
+                "Açúcar (150.000 g)",
+                "Fermento em Pó (10.000 g)"
+            ]
+        }
+    ],
+    "pagina_atual": 1,
+    "por_pagina": 20,
+    "total_registros": 5,
+    "total_paginas": 1
+} [_log | meu_logger]
+2025-06-30 11:11:14,205 - DEBUG - [ReceitasPageController.adicionar_receitas_view] Adicionando receitas: {'dados': [{'id': 1, 'nome_receita': 'Bolo de Chocolate', 'descricao': 'Bolo simples de chocolate', 'modo_preparo': 'Misture todos os ingredientes secos. Adicione os líquidos e misture bem. Asse por 40 minutos.', 'tempo_preparo': 50, 'rendimento': Decimal('8.000'), 'dificuldade': 'fácil', 'custo_estimado': Decimal('1690.00'), 'categoria': 'Bolos', 'unidade_rendimento': 'fatia', 'ingredientes': ['Farinha de Trigo (300.000 g)', 'Leite (1.000 l)', 'Açúcar (200.000 g)', 'Chocolate em Pó (100.000 g)', 'Fermento em Pó (10.000 g)', 'Ovos (3.000 un)']}, {'id': 4, 'nome_receita': 'Brigadeiro', 'descricao': 'Brigadeiro tradicional', 'modo_preparo': 'Misture todos os ingredientes em uma panela e cozinhe em fogo baixo até desgrudar do fundo.', 'tempo_preparo': 25, 'rendimento': Decimal('30.000'), 'dificuldade': 'fácil', 'custo_estimado': Decimal('1545.80'), 'categoria': 'Sobremesas', 'unidade_rendimento': 'un', 'ingredientes': ['Leite (200.000 ml)', 'Chocolate em Pó (50.000 g)', 'Manteiga (20.000 g)']}, {'id': 5, 'nome_receita': 'Cookies', 'descricao': 'Cookies de chocolate', 'modo_preparo': 'Misture os ingredientes secos. Adicione manteiga e ovos. Forme bolinhas e asse por 15 minutos.', 'tempo_preparo': 30, 'rendimento': Decimal('24.000'), 'dificuldade': 'médio', 'custo_estimado': Decimal('1630.65'), 'categoria': 'Sobremesas', 'unidade_rendimento': 'un', 'ingredientes': ['Farinha de Trigo (300.000 g)', 'Manteiga (150.000 g)', 'Açúcar (150.000 g)', 'Ovos (2.000 un)', 'Chocolate em Pó (100.000 g)', 'Canela (5.000 g)']}, {'id': 2, 'nome_receita': 'Panquecas', 'descricao': 'Panquecas americanas', 'modo_preparo': 'Misture os ingredientes secos e líquidos separadamente. Combine e cozinhe em frigideira.', 'tempo_preparo': 30, 'rendimento': Decimal('12.000'), 'dificuldade': 'fácil', 'custo_estimado': None, 'categoria': 'Salgados', 'unidade_rendimento': 'un', 'ingredientes': []}, {'id': 3, 'nome_receita': 'Pão de Ló', 'descricao': 'Pão de ló simples', 'modo_preparo': 'Bata os ovos com açúcar até dobrar de volume. Adicione farinha delicadamente. Asse por 30 minutos.', 'tempo_preparo': 45, 'rendimento': Decimal('10.000'), 'dificuldade': 'médio', 'custo_estimado': Decimal('327.50'), 'categoria': 'Pães e Massas', 'unidade_rendimento': 'fatia', 'ingredientes': ['Farinha de Trigo (250.000 g)', 'Ovos (4.000 un)', 'Açúcar (150.000 g)', 'Fermento em Pó (10.000 g)']}], 'pagina_atual': 1, 'por_pagina': 20, 'total_registros': 5, 'total_paginas': 1} [_log | meu_logger]
+2025-06-30 11:11:14,205 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Bolo de Chocolate [_log | meu_logger]
+2025-06-30 11:11:14,209 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Brigadeiro [_log | meu_logger]
+2025-06-30 11:11:14,212 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Cookies [_log | meu_logger]
+2025-06-30 11:11:14,216 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Panquecas [_log | meu_logger]
+2025-06-30 11:11:14,219 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Pão de Ló [_log | meu_logger]
+2025-06-30 11:11:14,222 - ERROR - [ReceitasPageController.adicionar_receitas_view] Erro ao adicionar receita: Container Control must be added to the page first [_log | meu_logger]
+2025-06-30 11:11:14,223 - ERROR - [ReceitasPageController._handle_error] Erro atualizando view: 'NoneType' object has no attribute 'value' [_log | meu_logger]
+2025-06-30 11:11:14,225 - DEBUG - [ReceitasPageView.create_view] Construindo a view completa de receitas [_log | meu_logger]
+2025-06-30 11:11:18,672 - INFO - [EstoqueModel.__init__] EstoqueModel inicializado. [_log | meu_logger]
+2025-06-30 11:11:18,689 - INFO - [EstoqueModel.close] Conexão com o banco de dados fechada. [_log | meu_logger]
+2025-06-30 11:11:18,689 - INFO - [EstoqueModel.__del__] EstoqueModel destruído e conexão fechada. [_log | meu_logger]
+2025-06-30 11:11:18,690 - DEBUG - [ReceitasPageController._handle_nova_receita] 
+
+TODOS OS PRODUTOS DO DB['Farinha de Trigo', 'Ovos', 'Leite', 'Manteiga', 'Açúcar', 'Chocolate em Pó', 'Fermento em Pó', 'Sal', 'Óleo', 'Canela']
+
+ [_log | meu_logger]
+2025-06-30 11:11:18,690 - INFO - [DialogReceita.__init__] Inicializando DialogReceita [_log | meu_logger]
+2025-06-30 11:16:13,542 - INFO - [ReceitasPage.__init__] Iniciando ReceitasPage... [_log | meu_logger]
+2025-06-30 11:16:13,545 - INFO - [ReceitasModel.__init__] ReceitasModel inicializado [_log | meu_logger]
+2025-06-30 11:16:13,546 - DEBUG - [RodapePaginacao.set_callback] Callback definido: None [_log | meu_logger]
+2025-06-30 11:16:13,546 - INFO - [RodapePaginacao.__init__] RodapePaginacao inicializado [_log | meu_logger]
+2025-06-30 11:16:13,546 - DEBUG - [ReceitasPageView._initialize_components] Componentes básicos da view inicializados [_log | meu_logger]
+2025-06-30 11:16:13,547 - DEBUG - [ReceitasPageView._setup_ui_elements] Elementos de busca configurados [_log | meu_logger]
+2025-06-30 11:16:13,547 - INFO - [ReceitasPageView.__init__] ReceitasPageView inicializada [_log | meu_logger]
+2025-06-30 11:16:13,548 - INFO - [ReceitaBloco.__init__] Componente ReceitaBloco inicializado [_log | meu_logger]
+2025-06-30 11:16:13,548 - INFO - [ReceitasPageController.__init__] Inicializando ReceitasPageController [_log | meu_logger]
+2025-06-30 11:16:13,549 - DEBUG - [ReceitasPageController._setup_callbacks] Configurando callbacks da view [_log | meu_logger]
+2025-06-30 11:16:13,549 - DEBUG - [ReceitasPageView.set_on_buscar] Callback de busca configurado [_log | meu_logger]
+2025-06-30 11:16:13,549 - DEBUG - [ReceitasPageView.definir_acoes_botoes_navBar] Callbacks definidos para navbar [_log | meu_logger]
+2025-06-30 11:16:13,549 - DEBUG - [RodapePaginacao.set_callback] Callback definido: <bound method ReceitasPageController._handle_paginacao_receitas of <controller.receitas.controller_receitas_page.ReceitasPageController object at 0x0000017EA50318E0>> [_log | meu_logger]
+2025-06-30 11:16:13,550 - DEBUG - [ReceitasPageView.definir_acoes_botoes_rodape] Callback definido para rodapé [_log | meu_logger]
+2025-06-30 11:16:13,550 - INFO - [ReceitasPageController._initialize_handlers] Handlers inicializados com sucesso [_log | meu_logger]
+2025-06-30 11:16:13,550 - INFO - [ReceitasPage.__init__] ReceitasPageController criado com sucesso. [_log | meu_logger]
+2025-06-30 11:16:13,551 - DEBUG - [ReceitasPageController.exibir_view_receitas] Exibindo view inicial de receitas [_log | meu_logger]
+2025-06-30 11:16:13,583 - DEBUG - [ReceitasPageController.carregar_dados_receitas] {
+    "dados": [
+        {
+            "id": 1,
+            "nome_receita": "Bolo de Chocolate",
+            "descricao": "Bolo simples de chocolate",
+            "modo_preparo": "Misture todos os ingredientes secos. Adicione os líquidos e misture bem. Asse por 40 minutos.",
+            "tempo_preparo": 50,
+            "rendimento": 8.000,
+            "dificuldade": "fácil",
+            "custo_estimado": 1690.00,
+            "categoria": "Bolos",
+            "unidade_rendimento": "fatia",
+            "ingredientes": [
+                "Farinha de Trigo (300.000 g)",
+                "Leite (1.000 l)",
+                "Açúcar (200.000 g)",
+                "Chocolate em Pó (100.000 g)",
+                "Fermento em Pó (10.000 g)",
+                "Ovos (3.000 un)"
+            ]
+        },
+        {
+            "id": 4,
+            "nome_receita": "Brigadeiro",
+            "descricao": "Brigadeiro tradicional",
+            "modo_preparo": "Misture todos os ingredientes em uma panela e cozinhe em fogo baixo até desgrudar do fundo.",
+            "tempo_preparo": 25,
+            "rendimento": 30.000,
+            "dificuldade": "fácil",
+            "custo_estimado": 1545.80,
+            "categoria": "Sobremesas",
+            "unidade_rendimento": "un",
+            "ingredientes": [
+                "Leite (200.000 ml)",
+                "Chocolate em Pó (50.000 g)",
+                "Manteiga (20.000 g)"
+            ]
+        },
+        {
+            "id": 5,
+            "nome_receita": "Cookies",
+            "descricao": "Cookies de chocolate",
+            "modo_preparo": "Misture os ingredientes secos. Adicione manteiga e ovos. Forme bolinhas e asse por 15 minutos.",
+            "tempo_preparo": 30,
+            "rendimento": 24.000,
+            "dificuldade": "médio",
+            "custo_estimado": 1630.65,
+            "categoria": "Sobremesas",
+            "unidade_rendimento": "un",
+            "ingredientes": [
+                "Farinha de Trigo (300.000 g)",
+                "Manteiga (150.000 g)",
+                "Açúcar (150.000 g)",
+                "Ovos (2.000 un)",
+                "Chocolate em Pó (100.000 g)",
+                "Canela (5.000 g)"
+            ]
+        },
+        {
+            "id": 2,
+            "nome_receita": "Panquecas",
+            "descricao": "Panquecas americanas",
+            "modo_preparo": "Misture os ingredientes secos e líquidos separadamente. Combine e cozinhe em frigideira.",
+            "tempo_preparo": 30,
+            "rendimento": 12.000,
+            "dificuldade": "fácil",
+            "custo_estimado": null,
+            "categoria": "Salgados",
+            "unidade_rendimento": "un",
+            "ingredientes": []
+        },
+        {
+            "id": 3,
+            "nome_receita": "Pão de Ló",
+            "descricao": "Pão de ló simples",
+            "modo_preparo": "Bata os ovos com açúcar até dobrar de volume. Adicione farinha delicadamente. Asse por 30 minutos.",
+            "tempo_preparo": 45,
+            "rendimento": 10.000,
+            "dificuldade": "médio",
+            "custo_estimado": 327.50,
+            "categoria": "Pães e Massas",
+            "unidade_rendimento": "fatia",
+            "ingredientes": [
+                "Farinha de Trigo (250.000 g)",
+                "Ovos (4.000 un)",
+                "Açúcar (150.000 g)",
+                "Fermento em Pó (10.000 g)"
+            ]
+        }
+    ],
+    "pagina_atual": 1,
+    "por_pagina": 20,
+    "total_registros": 5,
+    "total_paginas": 1
+} [_log | meu_logger]
+2025-06-30 11:16:13,584 - DEBUG - [ReceitasPageController.adicionar_receitas_view] Adicionando receitas: {'dados': [{'id': 1, 'nome_receita': 'Bolo de Chocolate', 'descricao': 'Bolo simples de chocolate', 'modo_preparo': 'Misture todos os ingredientes secos. Adicione os líquidos e misture bem. Asse por 40 minutos.', 'tempo_preparo': 50, 'rendimento': Decimal('8.000'), 'dificuldade': 'fácil', 'custo_estimado': Decimal('1690.00'), 'categoria': 'Bolos', 'unidade_rendimento': 'fatia', 'ingredientes': ['Farinha de Trigo (300.000 g)', 'Leite (1.000 l)', 'Açúcar (200.000 g)', 'Chocolate em Pó (100.000 g)', 'Fermento em Pó (10.000 g)', 'Ovos (3.000 un)']}, {'id': 4, 'nome_receita': 'Brigadeiro', 'descricao': 'Brigadeiro tradicional', 'modo_preparo': 'Misture todos os ingredientes em uma panela e cozinhe em fogo baixo até desgrudar do fundo.', 'tempo_preparo': 25, 'rendimento': Decimal('30.000'), 'dificuldade': 'fácil', 'custo_estimado': Decimal('1545.80'), 'categoria': 'Sobremesas', 'unidade_rendimento': 'un', 'ingredientes': ['Leite (200.000 ml)', 'Chocolate em Pó (50.000 g)', 'Manteiga (20.000 g)']}, {'id': 5, 'nome_receita': 'Cookies', 'descricao': 'Cookies de chocolate', 'modo_preparo': 'Misture os ingredientes secos. Adicione manteiga e ovos. Forme bolinhas e asse por 15 minutos.', 'tempo_preparo': 30, 'rendimento': Decimal('24.000'), 'dificuldade': 'médio', 'custo_estimado': Decimal('1630.65'), 'categoria': 'Sobremesas', 'unidade_rendimento': 'un', 'ingredientes': ['Farinha de Trigo (300.000 g)', 'Manteiga (150.000 g)', 'Açúcar (150.000 g)', 'Ovos (2.000 un)', 'Chocolate em Pó (100.000 g)', 'Canela (5.000 g)']}, {'id': 2, 'nome_receita': 'Panquecas', 'descricao': 'Panquecas americanas', 'modo_preparo': 'Misture os ingredientes secos e líquidos separadamente. Combine e cozinhe em frigideira.', 'tempo_preparo': 30, 'rendimento': Decimal('12.000'), 'dificuldade': 'fácil', 'custo_estimado': None, 'categoria': 'Salgados', 'unidade_rendimento': 'un', 'ingredientes': []}, {'id': 3, 'nome_receita': 'Pão de Ló', 'descricao': 'Pão de ló simples', 'modo_preparo': 'Bata os ovos com açúcar até dobrar de volume. Adicione farinha delicadamente. Asse por 30 minutos.', 'tempo_preparo': 45, 'rendimento': Decimal('10.000'), 'dificuldade': 'médio', 'custo_estimado': Decimal('327.50'), 'categoria': 'Pães e Massas', 'unidade_rendimento': 'fatia', 'ingredientes': ['Farinha de Trigo (250.000 g)', 'Ovos (4.000 un)', 'Açúcar (150.000 g)', 'Fermento em Pó (10.000 g)']}], 'pagina_atual': 1, 'por_pagina': 20, 'total_registros': 5, 'total_paginas': 1} [_log | meu_logger]
+2025-06-30 11:16:13,585 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Bolo de Chocolate [_log | meu_logger]
+2025-06-30 11:16:13,588 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Brigadeiro [_log | meu_logger]
+2025-06-30 11:16:13,591 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Cookies [_log | meu_logger]
+2025-06-30 11:16:13,594 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Panquecas [_log | meu_logger]
+2025-06-30 11:16:13,598 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Pão de Ló [_log | meu_logger]
+2025-06-30 11:16:13,606 - ERROR - [ReceitasPageController.adicionar_receitas_view] Erro ao adicionar receita: Container Control must be added to the page first [_log | meu_logger]
+2025-06-30 11:16:13,608 - ERROR - [ReceitasPageController._handle_error] Erro atualizando view: 'NoneType' object has no attribute 'value' [_log | meu_logger]
+2025-06-30 11:16:13,609 - DEBUG - [ReceitasPageView.create_view] Construindo a view completa de receitas [_log | meu_logger]
+2025-06-30 11:16:17,190 - INFO - [EstoqueModel.__init__] EstoqueModel inicializado. [_log | meu_logger]
+2025-06-30 11:16:17,199 - INFO - [EstoqueModel.close] Conexão com o banco de dados fechada. [_log | meu_logger]
+2025-06-30 11:16:17,199 - INFO - [EstoqueModel.__del__] EstoqueModel destruído e conexão fechada. [_log | meu_logger]
+2025-06-30 11:16:17,199 - DEBUG - [ReceitasPageController._handle_nova_receita] 
+
+TODOS OS PRODUTOS DO DB['Farinha de Trigo', 'Ovos', 'Leite', 'Manteiga', 'Açúcar', 'Chocolate em Pó', 'Fermento em Pó', 'Sal', 'Óleo', 'Canela']
+
+ [_log | meu_logger]
+2025-06-30 11:16:17,199 - INFO - [DialogReceita.__init__] Inicializando DialogReceita [_log | meu_logger]
+2025-06-30 11:17:55,853 - INFO - [EstoqueModel.__init__] EstoqueModel inicializado. [_log | meu_logger]
+2025-06-30 11:17:55,873 - INFO - [EstoqueModel.close] Conexão com o banco de dados fechada. [_log | meu_logger]
+2025-06-30 11:17:55,874 - INFO - [EstoqueModel.__del__] EstoqueModel destruído e conexão fechada. [_log | meu_logger]
+2025-06-30 11:17:55,874 - DEBUG - [ReceitasPageController._handle_nova_receita] 
+
+TODOS OS PRODUTOS DO DB['Farinha de Trigo', 'Ovos', 'Leite', 'Manteiga', 'Açúcar', 'Chocolate em Pó', 'Fermento em Pó', 'Sal', 'Óleo', 'Canela']
+
+ [_log | meu_logger]
+2025-06-30 11:17:55,874 - INFO - [DialogReceita.__init__] Inicializando DialogReceita [_log | meu_logger]
+2025-06-30 11:18:15,045 - INFO - [EstoqueModel.__init__] EstoqueModel inicializado. [_log | meu_logger]
+2025-06-30 11:18:15,134 - INFO - [EstoqueModel.close] Conexão com o banco de dados fechada. [_log | meu_logger]
+2025-06-30 11:18:15,135 - INFO - [EstoqueModel.__del__] EstoqueModel destruído e conexão fechada. [_log | meu_logger]
+2025-06-30 11:18:15,135 - DEBUG - [ReceitasPageController._handle_nova_receita] 
+
+TODOS OS PRODUTOS DO DB['Farinha de Trigo', 'Ovos', 'Leite', 'Manteiga', 'Açúcar', 'Chocolate em Pó', 'Fermento em Pó', 'Sal', 'Óleo', 'Canela']
+
+ [_log | meu_logger]
+2025-06-30 11:18:15,135 - INFO - [DialogReceita.__init__] Inicializando DialogReceita [_log | meu_logger]
+2025-06-30 11:23:03,523 - INFO - [ReceitasPage.__init__] Iniciando ReceitasPage... [_log | meu_logger]
+2025-06-30 11:23:03,533 - INFO - [ReceitasModel.__init__] ReceitasModel inicializado [_log | meu_logger]
+2025-06-30 11:23:03,533 - DEBUG - [RodapePaginacao.set_callback] Callback definido: None [_log | meu_logger]
+2025-06-30 11:23:03,535 - INFO - [RodapePaginacao.__init__] RodapePaginacao inicializado [_log | meu_logger]
+2025-06-30 11:23:03,536 - DEBUG - [ReceitasPageView._initialize_components] Componentes básicos da view inicializados [_log | meu_logger]
+2025-06-30 11:23:03,538 - DEBUG - [ReceitasPageView._setup_ui_elements] Elementos de busca configurados [_log | meu_logger]
+2025-06-30 11:23:03,538 - INFO - [ReceitasPageView.__init__] ReceitasPageView inicializada [_log | meu_logger]
+2025-06-30 11:23:03,539 - INFO - [ReceitaBloco.__init__] Componente ReceitaBloco inicializado [_log | meu_logger]
+2025-06-30 11:23:03,539 - INFO - [ReceitasPageController.__init__] Inicializando ReceitasPageController [_log | meu_logger]
+2025-06-30 11:23:03,540 - DEBUG - [ReceitasPageController._setup_callbacks] Configurando callbacks da view [_log | meu_logger]
+2025-06-30 11:23:03,540 - DEBUG - [ReceitasPageView.set_on_buscar] Callback de busca configurado [_log | meu_logger]
+2025-06-30 11:23:03,540 - DEBUG - [ReceitasPageView.definir_acoes_botoes_navBar] Callbacks definidos para navbar [_log | meu_logger]
+2025-06-30 11:23:03,541 - DEBUG - [RodapePaginacao.set_callback] Callback definido: <bound method ReceitasPageController._handle_paginacao_receitas of <controller.receitas.controller_receitas_page.ReceitasPageController object at 0x00000291C495D7F0>> [_log | meu_logger]
+2025-06-30 11:23:03,543 - DEBUG - [ReceitasPageView.definir_acoes_botoes_rodape] Callback definido para rodapé [_log | meu_logger]
+2025-06-30 11:23:03,544 - INFO - [ReceitasPageController._initialize_handlers] Handlers inicializados com sucesso [_log | meu_logger]
+2025-06-30 11:23:03,544 - INFO - [ReceitasPage.__init__] ReceitasPageController criado com sucesso. [_log | meu_logger]
+2025-06-30 11:23:03,544 - DEBUG - [ReceitasPageController.exibir_view_receitas] Exibindo view inicial de receitas [_log | meu_logger]
+2025-06-30 11:23:03,585 - DEBUG - [ReceitasPageController.carregar_dados_receitas] {
+    "dados": [
+        {
+            "id": 1,
+            "nome_receita": "Bolo de Chocolate",
+            "descricao": "Bolo simples de chocolate",
+            "modo_preparo": "Misture todos os ingredientes secos. Adicione os líquidos e misture bem. Asse por 40 minutos.",
+            "tempo_preparo": 50,
+            "rendimento": 8.000,
+            "dificuldade": "fácil",
+            "custo_estimado": 1690.00,
+            "categoria": "Bolos",
+            "unidade_rendimento": "fatia",
+            "ingredientes": [
+                "Farinha de Trigo (300.000 g)",
+                "Leite (1.000 l)",
+                "Açúcar (200.000 g)",
+                "Chocolate em Pó (100.000 g)",
+                "Fermento em Pó (10.000 g)",
+                "Ovos (3.000 un)"
+            ]
+        },
+        {
+            "id": 4,
+            "nome_receita": "Brigadeiro",
+            "descricao": "Brigadeiro tradicional",
+            "modo_preparo": "Misture todos os ingredientes em uma panela e cozinhe em fogo baixo até desgrudar do fundo.",
+            "tempo_preparo": 25,
+            "rendimento": 30.000,
+            "dificuldade": "fácil",
+            "custo_estimado": 1545.80,
+            "categoria": "Sobremesas",
+            "unidade_rendimento": "un",
+            "ingredientes": [
+                "Leite (200.000 ml)",
+                "Chocolate em Pó (50.000 g)",
+                "Manteiga (20.000 g)"
+            ]
+        },
+        {
+            "id": 5,
+            "nome_receita": "Cookies",
+            "descricao": "Cookies de chocolate",
+            "modo_preparo": "Misture os ingredientes secos. Adicione manteiga e ovos. Forme bolinhas e asse por 15 minutos.",
+            "tempo_preparo": 30,
+            "rendimento": 24.000,
+            "dificuldade": "médio",
+            "custo_estimado": 1630.65,
+            "categoria": "Sobremesas",
+            "unidade_rendimento": "un",
+            "ingredientes": [
+                "Farinha de Trigo (300.000 g)",
+                "Manteiga (150.000 g)",
+                "Açúcar (150.000 g)",
+                "Ovos (2.000 un)",
+                "Chocolate em Pó (100.000 g)",
+                "Canela (5.000 g)"
+            ]
+        },
+        {
+            "id": 2,
+            "nome_receita": "Panquecas",
+            "descricao": "Panquecas americanas",
+            "modo_preparo": "Misture os ingredientes secos e líquidos separadamente. Combine e cozinhe em frigideira.",
+            "tempo_preparo": 30,
+            "rendimento": 12.000,
+            "dificuldade": "fácil",
+            "custo_estimado": null,
+            "categoria": "Salgados",
+            "unidade_rendimento": "un",
+            "ingredientes": []
+        },
+        {
+            "id": 3,
+            "nome_receita": "Pão de Ló",
+            "descricao": "Pão de ló simples",
+            "modo_preparo": "Bata os ovos com açúcar até dobrar de volume. Adicione farinha delicadamente. Asse por 30 minutos.",
+            "tempo_preparo": 45,
+            "rendimento": 10.000,
+            "dificuldade": "médio",
+            "custo_estimado": 327.50,
+            "categoria": "Pães e Massas",
+            "unidade_rendimento": "fatia",
+            "ingredientes": [
+                "Farinha de Trigo (250.000 g)",
+                "Ovos (4.000 un)",
+                "Açúcar (150.000 g)",
+                "Fermento em Pó (10.000 g)"
+            ]
+        }
+    ],
+    "pagina_atual": 1,
+    "por_pagina": 20,
+    "total_registros": 5,
+    "total_paginas": 1
+} [_log | meu_logger]
+2025-06-30 11:23:03,587 - DEBUG - [ReceitasPageController.adicionar_receitas_view] Adicionando receitas: {'dados': [{'id': 1, 'nome_receita': 'Bolo de Chocolate', 'descricao': 'Bolo simples de chocolate', 'modo_preparo': 'Misture todos os ingredientes secos. Adicione os líquidos e misture bem. Asse por 40 minutos.', 'tempo_preparo': 50, 'rendimento': Decimal('8.000'), 'dificuldade': 'fácil', 'custo_estimado': Decimal('1690.00'), 'categoria': 'Bolos', 'unidade_rendimento': 'fatia', 'ingredientes': ['Farinha de Trigo (300.000 g)', 'Leite (1.000 l)', 'Açúcar (200.000 g)', 'Chocolate em Pó (100.000 g)', 'Fermento em Pó (10.000 g)', 'Ovos (3.000 un)']}, {'id': 4, 'nome_receita': 'Brigadeiro', 'descricao': 'Brigadeiro tradicional', 'modo_preparo': 'Misture todos os ingredientes em uma panela e cozinhe em fogo baixo até desgrudar do fundo.', 'tempo_preparo': 25, 'rendimento': Decimal('30.000'), 'dificuldade': 'fácil', 'custo_estimado': Decimal('1545.80'), 'categoria': 'Sobremesas', 'unidade_rendimento': 'un', 'ingredientes': ['Leite (200.000 ml)', 'Chocolate em Pó (50.000 g)', 'Manteiga (20.000 g)']}, {'id': 5, 'nome_receita': 'Cookies', 'descricao': 'Cookies de chocolate', 'modo_preparo': 'Misture os ingredientes secos. Adicione manteiga e ovos. Forme bolinhas e asse por 15 minutos.', 'tempo_preparo': 30, 'rendimento': Decimal('24.000'), 'dificuldade': 'médio', 'custo_estimado': Decimal('1630.65'), 'categoria': 'Sobremesas', 'unidade_rendimento': 'un', 'ingredientes': ['Farinha de Trigo (300.000 g)', 'Manteiga (150.000 g)', 'Açúcar (150.000 g)', 'Ovos (2.000 un)', 'Chocolate em Pó (100.000 g)', 'Canela (5.000 g)']}, {'id': 2, 'nome_receita': 'Panquecas', 'descricao': 'Panquecas americanas', 'modo_preparo': 'Misture os ingredientes secos e líquidos separadamente. Combine e cozinhe em frigideira.', 'tempo_preparo': 30, 'rendimento': Decimal('12.000'), 'dificuldade': 'fácil', 'custo_estimado': None, 'categoria': 'Salgados', 'unidade_rendimento': 'un', 'ingredientes': []}, {'id': 3, 'nome_receita': 'Pão de Ló', 'descricao': 'Pão de ló simples', 'modo_preparo': 'Bata os ovos com açúcar até dobrar de volume. Adicione farinha delicadamente. Asse por 30 minutos.', 'tempo_preparo': 45, 'rendimento': Decimal('10.000'), 'dificuldade': 'médio', 'custo_estimado': Decimal('327.50'), 'categoria': 'Pães e Massas', 'unidade_rendimento': 'fatia', 'ingredientes': ['Farinha de Trigo (250.000 g)', 'Ovos (4.000 un)', 'Açúcar (150.000 g)', 'Fermento em Pó (10.000 g)']}], 'pagina_atual': 1, 'por_pagina': 20, 'total_registros': 5, 'total_paginas': 1} [_log | meu_logger]
+2025-06-30 11:23:03,588 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Bolo de Chocolate [_log | meu_logger]
+2025-06-30 11:23:03,592 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Brigadeiro [_log | meu_logger]
+2025-06-30 11:23:03,595 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Cookies [_log | meu_logger]
+2025-06-30 11:23:03,597 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Panquecas [_log | meu_logger]
+2025-06-30 11:23:03,600 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Pão de Ló [_log | meu_logger]
+2025-06-30 11:23:03,603 - ERROR - [ReceitasPageController.adicionar_receitas_view] Erro ao adicionar receita: Container Control must be added to the page first [_log | meu_logger]
+2025-06-30 11:23:03,604 - ERROR - [ReceitasPageController._handle_error] Erro atualizando view: 'NoneType' object has no attribute 'value' [_log | meu_logger]
+2025-06-30 11:23:03,605 - DEBUG - [ReceitasPageView.create_view] Construindo a view completa de receitas [_log | meu_logger]
+2025-06-30 11:23:07,939 - INFO - [EstoqueModel.__init__] EstoqueModel inicializado. [_log | meu_logger]
+2025-06-30 11:23:07,958 - INFO - [EstoqueModel.close] Conexão com o banco de dados fechada. [_log | meu_logger]
+2025-06-30 11:23:07,958 - INFO - [EstoqueModel.__del__] EstoqueModel destruído e conexão fechada. [_log | meu_logger]
+2025-06-30 11:23:07,959 - DEBUG - [ReceitasPageController._handle_nova_receita] 
+
+TODOS OS PRODUTOS DO DB[{'id': 1, 'nome': 'Farinha de Trigo'}, {'id': 2, 'nome': 'Ovos'}, {'id': 3, 'nome': 'Leite'}, {'id': 4, 'nome': 'Manteiga'}, {'id': 5, 'nome': 'Açúcar'}, {'id': 6, 'nome': 'Chocolate em Pó'}, {'id': 7, 'nome': 'Fermento em Pó'}, {'id': 8, 'nome': 'Sal'}, {'id': 9, 'nome': 'Óleo'}, {'id': 10, 'nome': 'Canela'}]
+
+ [_log | meu_logger]
+2025-06-30 11:23:07,959 - INFO - [DialogReceita.__init__] Inicializando DialogReceita [_log | meu_logger]
+2025-06-30 11:27:05,609 - INFO - [ReceitasPage.__init__] Iniciando ReceitasPage... [_log | meu_logger]
+2025-06-30 11:27:05,612 - INFO - [ReceitasModel.__init__] ReceitasModel inicializado [_log | meu_logger]
+2025-06-30 11:27:05,613 - DEBUG - [RodapePaginacao.set_callback] Callback definido: None [_log | meu_logger]
+2025-06-30 11:27:05,613 - INFO - [RodapePaginacao.__init__] RodapePaginacao inicializado [_log | meu_logger]
+2025-06-30 11:27:05,613 - DEBUG - [ReceitasPageView._initialize_components] Componentes básicos da view inicializados [_log | meu_logger]
+2025-06-30 11:27:05,614 - DEBUG - [ReceitasPageView._setup_ui_elements] Elementos de busca configurados [_log | meu_logger]
+2025-06-30 11:27:05,614 - INFO - [ReceitasPageView.__init__] ReceitasPageView inicializada [_log | meu_logger]
+2025-06-30 11:27:05,615 - INFO - [ReceitaBloco.__init__] Componente ReceitaBloco inicializado [_log | meu_logger]
+2025-06-30 11:27:05,615 - INFO - [ReceitasPageController.__init__] Inicializando ReceitasPageController [_log | meu_logger]
+2025-06-30 11:27:05,615 - DEBUG - [ReceitasPageController._setup_callbacks] Configurando callbacks da view [_log | meu_logger]
+2025-06-30 11:27:05,615 - DEBUG - [ReceitasPageView.set_on_buscar] Callback de busca configurado [_log | meu_logger]
+2025-06-30 11:27:05,616 - DEBUG - [ReceitasPageView.definir_acoes_botoes_navBar] Callbacks definidos para navbar [_log | meu_logger]
+2025-06-30 11:27:05,616 - DEBUG - [RodapePaginacao.set_callback] Callback definido: <bound method ReceitasPageController._handle_paginacao_receitas of <controller.receitas.controller_receitas_page.ReceitasPageController object at 0x0000011C270ED430>> [_log | meu_logger]
+2025-06-30 11:27:05,617 - DEBUG - [ReceitasPageView.definir_acoes_botoes_rodape] Callback definido para rodapé [_log | meu_logger]
+2025-06-30 11:27:05,617 - INFO - [ReceitasPageController._initialize_handlers] Handlers inicializados com sucesso [_log | meu_logger]
+2025-06-30 11:27:05,617 - INFO - [ReceitasPage.__init__] ReceitasPageController criado com sucesso. [_log | meu_logger]
+2025-06-30 11:27:05,618 - DEBUG - [ReceitasPageController.exibir_view_receitas] Exibindo view inicial de receitas [_log | meu_logger]
+2025-06-30 11:27:05,648 - DEBUG - [ReceitasPageController.carregar_dados_receitas] {
+    "dados": [
+        {
+            "id": 1,
+            "nome_receita": "Bolo de Chocolate",
+            "descricao": "Bolo simples de chocolate",
+            "modo_preparo": "Misture todos os ingredientes secos. Adicione os líquidos e misture bem. Asse por 40 minutos.",
+            "tempo_preparo": 50,
+            "rendimento": 8.000,
+            "dificuldade": "fácil",
+            "custo_estimado": 1690.00,
+            "categoria": "Bolos",
+            "unidade_rendimento": "fatia",
+            "ingredientes": [
+                "Farinha de Trigo (300.000 g)",
+                "Leite (1.000 l)",
+                "Açúcar (200.000 g)",
+                "Chocolate em Pó (100.000 g)",
+                "Fermento em Pó (10.000 g)",
+                "Ovos (3.000 un)"
+            ]
+        },
+        {
+            "id": 4,
+            "nome_receita": "Brigadeiro",
+            "descricao": "Brigadeiro tradicional",
+            "modo_preparo": "Misture todos os ingredientes em uma panela e cozinhe em fogo baixo até desgrudar do fundo.",
+            "tempo_preparo": 25,
+            "rendimento": 30.000,
+            "dificuldade": "fácil",
+            "custo_estimado": 1545.80,
+            "categoria": "Sobremesas",
+            "unidade_rendimento": "un",
+            "ingredientes": [
+                "Leite (200.000 ml)",
+                "Chocolate em Pó (50.000 g)",
+                "Manteiga (20.000 g)"
+            ]
+        },
+        {
+            "id": 5,
+            "nome_receita": "Cookies",
+            "descricao": "Cookies de chocolate",
+            "modo_preparo": "Misture os ingredientes secos. Adicione manteiga e ovos. Forme bolinhas e asse por 15 minutos.",
+            "tempo_preparo": 30,
+            "rendimento": 24.000,
+            "dificuldade": "médio",
+            "custo_estimado": 1630.65,
+            "categoria": "Sobremesas",
+            "unidade_rendimento": "un",
+            "ingredientes": [
+                "Farinha de Trigo (300.000 g)",
+                "Manteiga (150.000 g)",
+                "Açúcar (150.000 g)",
+                "Ovos (2.000 un)",
+                "Chocolate em Pó (100.000 g)",
+                "Canela (5.000 g)"
+            ]
+        },
+        {
+            "id": 2,
+            "nome_receita": "Panquecas",
+            "descricao": "Panquecas americanas",
+            "modo_preparo": "Misture os ingredientes secos e líquidos separadamente. Combine e cozinhe em frigideira.",
+            "tempo_preparo": 30,
+            "rendimento": 12.000,
+            "dificuldade": "fácil",
+            "custo_estimado": null,
+            "categoria": "Salgados",
+            "unidade_rendimento": "un",
+            "ingredientes": []
+        },
+        {
+            "id": 3,
+            "nome_receita": "Pão de Ló",
+            "descricao": "Pão de ló simples",
+            "modo_preparo": "Bata os ovos com açúcar até dobrar de volume. Adicione farinha delicadamente. Asse por 30 minutos.",
+            "tempo_preparo": 45,
+            "rendimento": 10.000,
+            "dificuldade": "médio",
+            "custo_estimado": 327.50,
+            "categoria": "Pães e Massas",
+            "unidade_rendimento": "fatia",
+            "ingredientes": [
+                "Farinha de Trigo (250.000 g)",
+                "Ovos (4.000 un)",
+                "Açúcar (150.000 g)",
+                "Fermento em Pó (10.000 g)"
+            ]
+        }
+    ],
+    "pagina_atual": 1,
+    "por_pagina": 20,
+    "total_registros": 5,
+    "total_paginas": 1
+} [_log | meu_logger]
+2025-06-30 11:27:05,649 - DEBUG - [ReceitasPageController.adicionar_receitas_view] Adicionando receitas: {'dados': [{'id': 1, 'nome_receita': 'Bolo de Chocolate', 'descricao': 'Bolo simples de chocolate', 'modo_preparo': 'Misture todos os ingredientes secos. Adicione os líquidos e misture bem. Asse por 40 minutos.', 'tempo_preparo': 50, 'rendimento': Decimal('8.000'), 'dificuldade': 'fácil', 'custo_estimado': Decimal('1690.00'), 'categoria': 'Bolos', 'unidade_rendimento': 'fatia', 'ingredientes': ['Farinha de Trigo (300.000 g)', 'Leite (1.000 l)', 'Açúcar (200.000 g)', 'Chocolate em Pó (100.000 g)', 'Fermento em Pó (10.000 g)', 'Ovos (3.000 un)']}, {'id': 4, 'nome_receita': 'Brigadeiro', 'descricao': 'Brigadeiro tradicional', 'modo_preparo': 'Misture todos os ingredientes em uma panela e cozinhe em fogo baixo até desgrudar do fundo.', 'tempo_preparo': 25, 'rendimento': Decimal('30.000'), 'dificuldade': 'fácil', 'custo_estimado': Decimal('1545.80'), 'categoria': 'Sobremesas', 'unidade_rendimento': 'un', 'ingredientes': ['Leite (200.000 ml)', 'Chocolate em Pó (50.000 g)', 'Manteiga (20.000 g)']}, {'id': 5, 'nome_receita': 'Cookies', 'descricao': 'Cookies de chocolate', 'modo_preparo': 'Misture os ingredientes secos. Adicione manteiga e ovos. Forme bolinhas e asse por 15 minutos.', 'tempo_preparo': 30, 'rendimento': Decimal('24.000'), 'dificuldade': 'médio', 'custo_estimado': Decimal('1630.65'), 'categoria': 'Sobremesas', 'unidade_rendimento': 'un', 'ingredientes': ['Farinha de Trigo (300.000 g)', 'Manteiga (150.000 g)', 'Açúcar (150.000 g)', 'Ovos (2.000 un)', 'Chocolate em Pó (100.000 g)', 'Canela (5.000 g)']}, {'id': 2, 'nome_receita': 'Panquecas', 'descricao': 'Panquecas americanas', 'modo_preparo': 'Misture os ingredientes secos e líquidos separadamente. Combine e cozinhe em frigideira.', 'tempo_preparo': 30, 'rendimento': Decimal('12.000'), 'dificuldade': 'fácil', 'custo_estimado': None, 'categoria': 'Salgados', 'unidade_rendimento': 'un', 'ingredientes': []}, {'id': 3, 'nome_receita': 'Pão de Ló', 'descricao': 'Pão de ló simples', 'modo_preparo': 'Bata os ovos com açúcar até dobrar de volume. Adicione farinha delicadamente. Asse por 30 minutos.', 'tempo_preparo': 45, 'rendimento': Decimal('10.000'), 'dificuldade': 'médio', 'custo_estimado': Decimal('327.50'), 'categoria': 'Pães e Massas', 'unidade_rendimento': 'fatia', 'ingredientes': ['Farinha de Trigo (250.000 g)', 'Ovos (4.000 un)', 'Açúcar (150.000 g)', 'Fermento em Pó (10.000 g)']}], 'pagina_atual': 1, 'por_pagina': 20, 'total_registros': 5, 'total_paginas': 1} [_log | meu_logger]
+2025-06-30 11:27:05,650 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Bolo de Chocolate [_log | meu_logger]
+2025-06-30 11:27:05,654 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Brigadeiro [_log | meu_logger]
+2025-06-30 11:27:05,657 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Cookies [_log | meu_logger]
+2025-06-30 11:27:05,660 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Panquecas [_log | meu_logger]
+2025-06-30 11:27:05,663 - DEBUG - [ReceitaBloco.criar_bloco] Criando bloco para receita: Pão de Ló [_log | meu_logger]
+2025-06-30 11:27:05,665 - ERROR - [ReceitasPageController.adicionar_receitas_view] Erro ao adicionar receita: Container Control must be added to the page first [_log | meu_logger]
+2025-06-30 11:27:05,666 - ERROR - [ReceitasPageController._handle_error] Erro atualizando view: 'NoneType' object has no attribute 'value' [_log | meu_logger]
+2025-06-30 11:27:05,669 - DEBUG - [ReceitasPageView.create_view] Construindo a view completa de receitas [_log | meu_logger]
+2025-06-30 11:27:08,553 - INFO - [EstoqueModel.__init__] EstoqueModel inicializado. [_log | meu_logger]
+2025-06-30 11:27:08,580 - INFO - [EstoqueModel.close] Conexão com o banco de dados fechada. [_log | meu_logger]
+2025-06-30 11:27:08,581 - INFO - [EstoqueModel.__del__] EstoqueModel destruído e conexão fechada. [_log | meu_logger]
+2025-06-30 11:27:08,581 - DEBUG - [ReceitasPageController._handle_nova_receita] 
+
+TODOS OS PRODUTOS DO DB[{'id': 1, 'nome': 'Farinha de Trigo'}, {'id': 2, 'nome': 'Ovos'}, {'id': 3, 'nome': 'Leite'}, {'id': 4, 'nome': 'Manteiga'}, {'id': 5, 'nome': 'Açúcar'}, {'id': 6, 'nome': 'Chocolate em Pó'}, {'id': 7, 'nome': 'Fermento em Pó'}, {'id': 8, 'nome': 'Sal'}, {'id': 9, 'nome': 'Óleo'}, {'id': 10, 'nome': 'Canela'}]
+
+ [_log | meu_logger]
+2025-06-30 11:27:08,581 - INFO - [DialogReceita.__init__] Inicializando DialogReceita [_log | meu_logger]
+2025-06-30 11:28:51,024 - INFO - [EstoqueModel.__init__] EstoqueModel inicializado. [_log | meu_logger]
+2025-06-30 11:28:51,045 - INFO - [EstoqueModel.close] Conexão com o banco de dados fechada. [_log | meu_logger]
+2025-06-30 11:28:51,046 - INFO - [EstoqueModel.__del__] EstoqueModel destruído e conexão fechada. [_log | meu_logger]
+2025-06-30 11:28:51,046 - DEBUG - [ReceitasPageController._handle_nova_receita] 
+
+TODOS OS PRODUTOS DO DB[{'id': 1, 'nome': 'Farinha de Trigo'}, {'id': 2, 'nome': 'Ovos'}, {'id': 3, 'nome': 'Leite'}, {'id': 4, 'nome': 'Manteiga'}, {'id': 5, 'nome': 'Açúcar'}, {'id': 6, 'nome': 'Chocolate em Pó'}, {'id': 7, 'nome': 'Fermento em Pó'}, {'id': 8, 'nome': 'Sal'}, {'id': 9, 'nome': 'Óleo'}, {'id': 10, 'nome': 'Canela'}]
+
+ [_log | meu_logger]
+2025-06-30 11:28:51,047 - INFO - [DialogReceita.__init__] Inicializando DialogReceita [_log | meu_logger]
