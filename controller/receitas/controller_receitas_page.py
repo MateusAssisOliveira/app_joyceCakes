@@ -1,7 +1,7 @@
 import time
 import simplejson as json
 
-from components.dialogs.dialog_receita import DialogReceita
+from components.dialogs.receita_dialog import DialogReceita
 from components.receita_bloco import ReceitaBloco
 from controller.receitas.controller_receitas_data_handler import ReceitasDataHandler
 from controller.receitas.controller_receitas_handler import ReceitastHandler
@@ -129,13 +129,13 @@ class ReceitasPageController:
 
         self.log.debug(f"\n\nTODOS OS PRODUTOS DO DB{id_nome}\n\n")
 
-        dialog = DialogReceita(self.page,id_nome)
+        dialog_receita = DialogReceita(self.page, id_nome)
         
         def on_salvar(dados):
             success, message = self._receitas_handler.adicionar_receita(dados)
-            self._finalizar_operacao_receitas(success, message, dialog)
+            self._finalizar_operacao_receitas(success, message, dialog_receita)
             
-        dialog.abrir(
+        dialog_receita.abrir(
             modo_edicao=False,
             on_salvar=on_salvar,
             #on_cancelar=lambda: self.log.debug("Adição cancelada")
