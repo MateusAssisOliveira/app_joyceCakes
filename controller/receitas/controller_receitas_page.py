@@ -125,11 +125,9 @@ class ReceitasPageController:
         """Abre diálogo para nova receita"""
         """Abre diálogo para adicionar novo produto"""
         lista_produtos = ProdutoService.listar_para_dropdown()
-        id_nome = [{'id': produto['id'], 'nome': produto['nome']} for produto in lista_produtos]
+        self.log.debug(f"\n\nTODOS OS PRODUTOS DO DB{lista_produtos}\n\n")
 
-        self.log.debug(f"\n\nTODOS OS PRODUTOS DO DB{id_nome}\n\n")
-
-        dialog_receita = DialogReceita(self.page, id_nome)
+        dialog_receita = DialogReceita(self.page, lista_produtos,self.log)
         
         def on_salvar(dados):
             success, message = self._receitas_handler.adicionar_receita(dados)

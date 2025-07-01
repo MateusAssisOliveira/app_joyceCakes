@@ -9,7 +9,7 @@ def home_page(page: ft.Page) -> ft.View:
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 expand=True,
                 controls=[
-                    ft.Text("Bem-vindo ao Sistema", size=30, weight=ft.FontWeight.BOLD),
+                    ft.Text("Bem-vindo ao Sistema --", size=30, weight=ft.FontWeight.BOLD),
                     ft.Text("Escolha uma opção para continuar.", size=18),
                     ft.ElevatedButton(
                         text="Ir para Receitas",

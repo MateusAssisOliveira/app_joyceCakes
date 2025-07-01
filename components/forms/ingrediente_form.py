@@ -1,128 +1,237 @@
+from logs.logger import Logger
 from typing import Any, Dict, List, Optional
 import flet as ft
 from time import time
 import asyncio
 
 class IngredienteForm:
-    def __init__(self, produtos: List[Dict[str, Any]], page: ft.Page):
+    def __init__(self, produtos: List[Dict[str, Any]], page: ft.Page, logger: Logger):
         self.produtos = produtos
         self.page = page
         self.lista_ingredientes = ft.ListView(expand=True)
         self._last_search_time = 0
-        self._search_task: Optional[asyncio.Task] = None
-        self._setup_campos_ingrediente()
+        self._search_task = None
+        self.log = logger
+        self.produto_selecionado = None
+        
+        self.log.debug("Inicializando IngredienteForm")
+        self.log.debug(f"Produtos recebidos: {len(self.produtos)} itens")
+        self._setup_ui()
     
-    def _setup_campos_ingrediente(self):
-        self.campo_pesquisa_ingrediente = ft.TextField(
+    def _setup_ui(self):
+        """Configura todos os elementos da interface do usuário"""
+        self.log.debug("Configurando interface do usuário")
+        
+        # Campo de pesquisa
+        self.campo_pesquisa = ft.TextField(
             label="Pesquisar ingrediente",
-            height=25,
+            height=30,
             expand=True,
-            on_change=self._handle_search_change,
+            on_change=self._handle_search,
+            text_align=ft.TextAlign.LEFT,
+            text_size=12
         )
         
-        self.suggestions_panel = ft.ListView(
-            height=200,
+        # Lista de sugestões
+        self.suggestions_list = ft.ListView(
+            height=100,
             visible=False,
-            #bgcolor=ft.Colors.WHITE,
             padding=ft.padding.symmetric(vertical=5),
         )
         
-        self.search_container = ft.Column(
-            [
-                self.campo_pesquisa_ingrediente,
-                ft.Container(
-                    content=self.suggestions_panel,
-                    border=ft.border.all(1, ft.Colors.GREY_300),
-                    border_radius=5,
-                    shadow=ft.BoxShadow(
-                        spread_radius=1,
-                        blur_radius=5,
-                        color=ft.Colors.BLACK26,
-                        offset=ft.Offset(0, 3),
-                    ),
-                ),
-            ],
-            spacing=0,
+        # Botão de adicionar
+        self.botao_adicionar = ft.IconButton(
+            icon=ft.Icons.ADD,
+            on_click=lambda e: self._adicionar_ingrediente(getattr(self, 'produto_selecionado', None))
         )
         
-        self.botao_add_ingrediente = ft.IconButton(icon=ft.Icons.ADD)
+        # Painel de sugestões
+        suggestions_panel = ft.Container(
+            content=self.suggestions_list,
+            border=ft.border.all(1, ft.Colors.GREY_300),
+            border_radius=5,
+            shadow=ft.BoxShadow(
+                spread_radius=1,
+                blur_radius=5,
+                color=ft.Colors.BLACK26,
+                offset=ft.Offset(0, 3),
+            )
+        )
+        
+        # Container principal
+        self.search_container = ft.Container(
+            content=ft.Column(
+                controls=[
+                    ft.Row([self.campo_pesquisa, self.botao_adicionar]),
+                    suggestions_panel
+                ],
+                spacing=0,
+            )
+        )
+        self.log.debug("Interface do usuário configurada com sucesso")
     
-    async def _handle_search_change(self, e):
-
+    def _make_suggestion_handler(self, produto):
+        self.log.debug(f"Criando handler para sugestão: {produto.get('nome')}")
+        async def handler(e):
+            await self._selecionar_sugestao(produto)
+        return handler
+    
+    async def _handle_search(self, e):
+        """Manipula a pesquisa de ingredientes com debounce"""
+        self.log.debug("Iniciando manipulação de pesquisa")
         self._last_search_time = time()
-
         await asyncio.sleep(0.3)
+        
         if time() - self._last_search_time < 0.3:
+            self.log.debug("Pesquisa ignorada (debounce)")
             return
         
-        search_term = self.campo_pesquisa_ingrediente.value.strip().lower()
-        print(f" - {search_term}")
+        termo = self.campo_pesquisa.value.strip().lower()
+        self.log.debug(f"Termo de pesquisa: '{termo}'")
         
         if self._search_task and not self._search_task.done():
+            self.log.debug("Cancelando tarefa de pesquisa anterior")
             self._search_task.cancel()
         
-        if len(search_term) < 2:
-            self.suggestions_panel.visible = False
+        if len(termo) < 2:
+            self.log.debug("Termo muito curto, ocultando sugestões")
+            self.suggestions_list.visible = False
             self.page.update()
             return
         
-        self._search_task = asyncio.create_task(self._update_suggestions(search_term))
+        self.log.debug("Iniciando nova tarefa de pesquisa")
+        self._search_task = asyncio.create_task(self._atualizar_sugestoes(termo))
     
-    async def _update_suggestions(self, search_term: str):
-
-        print('Entrou aqui')
-        filtered = [
-            p for p in self.produtos 
-            if search_term in p["nome"].lower()
-        ][:5]
+    async def _atualizar_sugestoes(self, termo: str):
+        """Atualiza a lista de sugestões com base no termo de pesquisa"""
+        self.log.debug(f"Atualizando sugestões para o termo: '{termo}'")
         
-        self.suggestions_panel.controls.clear()
-        print(self.produtos)
-        print(filtered)
-        
-        for produto in filtered:
-            self.suggestions_panel.controls.append(
-                ft.ListTile(
-                    title=ft.Text(produto["nome"]),
-                    on_click=lambda e, p=produto: self._select_suggestion(p),
+        try:
+            sugestoes = [
+                p for p in self.produtos 
+                if termo in p["nome"].lower()
+            ][:5]
+            
+            self.log.debug(f"Encontradas {len(sugestoes)} sugestões")
+            
+            self.suggestions_list.controls.clear()
+            
+            for produto in sugestoes:
+                self.log.debug(f"Adicionando sugestão: {produto['nome']}")
+                self.suggestions_list.controls.append(
+                    ft.ListTile(
+                        title=ft.Text(produto["nome"]),
+                        on_click=self._make_suggestion_handler(produto),
+                    )
                 )
-            )
-        
-        self.suggestions_panel.visible = bool(filtered)
-        self.page.update()
+            
+            self.suggestions_list.visible = bool(sugestoes)
+            self.page.update()
+            self.log.debug("Sugestões atualizadas com sucesso")
+            
+        except Exception as e:
+            self.log.error(f"Erro ao atualizar sugestões: {str(e)}")
+            raise
     
-    async def _select_suggestion(self, produto: Dict[str, Any]):
-        self.campo_pesquisa_ingrediente.value = produto["nome"]
-        self.suggestions_panel.visible = False
-        self.page.update()
+    async def _selecionar_sugestao(self, produto: Dict[str, Any]):
+        """Seleciona uma sugestão da lista"""
+        self.log.debug(f"Selecionando sugestão: {produto['nome']}")
         
-        # Aqui você pode adicionar lógica adicional após selecionar um item
+        try:
+            self.campo_pesquisa.value = produto["nome"]
+            self.suggestions_list.visible = False
+            self.produto_selecionado = produto
+            self.page.update()
+            self.log.debug("Sugestão selecionada com sucesso")
+        except Exception as e:
+            self.log.error(f"Erro ao selecionar sugestão: {str(e)}")
+            raise
     
-    def adicionar_ingrediente_ui(self, ingrediente: Dict[str, Any]):
-        card = ft.Card(
-            content=ft.Container(
+    def _adicionar_ingrediente(self, ingrediente: Optional[Dict[str, Any]] = None):
+        """Adiciona um novo ingrediente à lista"""
+        if not ingrediente:
+            nome = self.campo_pesquisa.value.strip()
+            if not nome:
+                self.log.debug("Ignorando adição de ingrediente vazio")
+                return
+            
+            ingrediente = next((p for p in self.produtos if p['nome'].lower() == nome.lower()), None)
+            if not ingrediente:
+                self.log.warning(f"Ingrediente '{nome}' não encontrado na lista de produtos")
+                ingrediente = {'nome': nome}
+        
+        self.log.debug(f"Adicionando ingrediente: {ingrediente.get('nome')}")
+        
+        try:
+            # Criamos um container temporário sem referências ao card
+            container = ft.Container(
                 content=ft.Column([
                     ft.ListTile(
-                        title=ft.Text(ingrediente["nome"]),
-                        subtitle=ft.Text(f"{ingrediente['quantidade']} {ingrediente['unidade']}"),
-                        trailing=ft.IconButton(
-                            icon=ft.Icons.DELETE,
-                            on_click=lambda e, card=card: self._remover_ingrediente(e, card)
+                        title=ft.Text(ingrediente['nome']),
+                        subtitle=ft.Text(
+                            f"{ingrediente.get('quantidade', '1')} - {ingrediente.get('unidade_medida', 'un')}",
+                            size=12
                         ),
                     ),
-                    ft.Text(ingrediente.get("observacoes", ""), size=12) 
-                    if ingrediente.get("observacoes") else None
+                    ft.TextField(
+                        label="Observações",
+                        value=ingrediente.get('observacoes', ''),
+                        text_size=12,
+                        dense=True
+                    )
                 ]),
                 padding=10,
-            ),
-            data=ingrediente
-        )
-        self.lista_ingredientes.controls.append(card)
-        self.page.update()
+            )
+
+            # Agora criamos o card com o container
+            card = ft.Card(
+                content=container,
+                data=ingrediente
+            )
+
+            # Configuramos os callbacks depois que o card existe
+            delete_btn = ft.IconButton(icon=ft.Icons.DELETE)
+            container.content.controls[0].trailing = delete_btn
+            delete_btn.on_click = lambda e: self._remover_ingrediente(card)
+
+            obs_field = container.content.controls[1]
+            obs_field.on_change = lambda e: self._atualizar_observacoes(card, e.control.value)
+
+            self.lista_ingredientes.controls.append(card)
+            self.campo_pesquisa.value = ""
+            self.produto_selecionado = None
+            self.page.update()
+            self.log.debug(f"Ingrediente '{ingrediente['nome']}' adicionado com sucesso")
+            
+        except Exception as e:
+            self.log.error(f"Erro ao adicionar ingrediente: {str(e)}")
+            raise
     
-    def _remover_ingrediente(self, e, card: ft.Card):
-        self.lista_ingredientes.controls.remove(card)
-        self.page.update()
+    def _atualizar_observacoes(self, card: ft.Card, observacoes: str):
+        """Atualiza as observações do ingrediente"""
+        card.data['observacoes'] = observacoes
+        self.log.debug(f"Observações atualizadas para {card.data.get('nome')}")
+    
+    def _remover_ingrediente(self, card: ft.Card):
+        """Remove um ingrediente da lista"""
+        try:
+            ingrediente = card.data.get("nome", "desconhecido")
+            self.log.debug(f"Removendo ingrediente: {ingrediente}")
+            self.lista_ingredientes.controls.remove(card)
+            self.page.update()
+            self.log.debug(f"Ingrediente {ingrediente} removido com sucesso")
+        except Exception as e:
+            self.log.error(f"Erro ao remover ingrediente: {str(e)}")
+            raise
     
     def get_ingredientes(self) -> List[Dict[str, Any]]:
-        return [item.data for item in self.lista_ingredientes.controls]
+        """Retorna a lista completa de ingredientes adicionados com todos os dados"""
+        self.log.debug("Obtendo lista completa de ingredientes")
+        ingredientes = [item.data for item in self.lista_ingredientes.controls]
+        self.log.debug(f"Retornando {len(ingredientes)} ingredientes com dados completos")
+        return ingredientes
+    
+    def build(self):
+        """Retorna o widget principal para exibição"""
+        self.log.debug("Construindo componente principal")
+        return self.search_container

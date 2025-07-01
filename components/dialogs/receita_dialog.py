@@ -2,12 +2,15 @@ from typing import Any, Dict, List
 import flet as ft
 from components.forms.ingrediente_form import IngredienteForm
 from components.forms.receita_form import ReceitaForm
+from logs.logger import Logger
+
 
 class DialogReceita:
-    def __init__(self, page: ft.Page, produtos: List[Dict[str, Any]]):
+    def __init__(self, page: ft.Page, produtos: List[Dict[str, Any]],logge : Logger):
         self.page = page
         self.receita_form = ReceitaForm()
-        self.ingrediente_form = IngredienteForm(produtos,self.page)
+        self.log = logge
+        self.ingrediente_form = IngredienteForm(produtos,self.page,self.log)
         self._setup_botoes()
         self._setup_dialog()
     
@@ -23,12 +26,8 @@ class DialogReceita:
                 controls=[
                     *self.receita_form.get_campos(),
                     ft.Divider(),
-                    ft.Row([
-                        ft.Text("Ingredientes:", weight=ft.FontWeight.BOLD),
-                        self.ingrediente_form.campo_pesquisa_ingrediente,
-                        self.ingrediente_form.botao_add_ingrediente
-                    ]),
-                    self.ingrediente_form.lista_ingredientes,
+                    ft.Text("Ingredientes:", weight=ft.FontWeight.BOLD),
+                    self.ingrediente_form.build(),
                 ],
                 scroll=ft.ScrollMode.AUTO,
                 height=500,
