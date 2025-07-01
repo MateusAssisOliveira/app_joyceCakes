@@ -12,27 +12,36 @@ class EstoqueModel:
         self.log.info("EstoqueModel inicializado.")
 
     def get_todos_produtos(self):
-        query = "SELECT * FROM produtos"
+        query = """ SELECT 
+                p.id,
+                p.nome AS nome_produto,
+                p.descricao AS descricao_produto,
+                p.codigo_barras,
+                p.custo_unitario,
+                p.estoque_minimo,
+                p.data_cadastro,
+                p.ativo,
+                
+                c.id AS categoria_id,
+                c.nome AS nome_categoria,
+                c.descricao AS descricao_categoria,
+                
+                u.id AS unidade_id,
+                u.nome AS nome_unidade,
+                u.simbolo,
+                u.tipo
+
+            FROM produtos p
+            LEFT JOIN categorias_produto c ON p.categoria_id = c.id
+            LEFT JOIN unidades_medida u ON p.unidade_medida_id = u.id;
+            """
         resultados = self.database.fetch_data(query)
         
         if not resultados:
             self.log.error("Erro ao buscar produtos.")
             return []
         
-        """ produtos = []
-
-        for row in resultados:
-
-            produtos.append(
-                ProdutoModel(
-                    id=row["id"],
-                    nome=row["nome"],
-                    #descricao=row["descricao"],
-                    #preco=row["preco"],
-                    #quantidade=row["quantidade"],
-                    #tipo=row["tipo"]
-                )
-            ) """
+        
 
         return resultados
 

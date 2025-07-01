@@ -1,6 +1,6 @@
 from typing import Any, Dict, List
 import flet as ft
-from components.forms.ingrediente_form import IngredienteForm
+from components.forms.ingrediente.ingrediente_form import IngredienteForm
 from components.forms.receita_form import ReceitaForm
 from logs.logger import Logger
 
@@ -28,6 +28,7 @@ class DialogReceita:
                     ft.Divider(),
                     ft.Text("Ingredientes:", weight=ft.FontWeight.BOLD),
                     self.ingrediente_form.build(),
+                    self.ingrediente_form.lista_ingredientes
                 ],
                 scroll=ft.ScrollMode.AUTO,
                 height=500,

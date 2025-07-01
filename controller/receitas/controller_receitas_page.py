@@ -1,7 +1,7 @@
 import time
 import simplejson as json
 
-from components.dialogs.receita_dialog import DialogReceita
+from components.dialogs.receitas.receita_dialog import DialogReceita
 from components.receita_bloco import ReceitaBloco
 from controller.receitas.controller_receitas_data_handler import ReceitasDataHandler
 from controller.receitas.controller_receitas_handler import ReceitastHandler
@@ -136,7 +136,6 @@ class ReceitasPageController:
         dialog_receita.abrir(
             modo_edicao=False,
             on_salvar=on_salvar,
-            #on_cancelar=lambda: self.log.debug("Adição cancelada")
         )
 
     def _handle_editar_receita(self, e):
