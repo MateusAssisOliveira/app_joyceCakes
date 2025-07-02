@@ -1,4 +1,4 @@
-from pages.estoque.estoque_page import EstoquePage
+from pages.estoque.produto_page import ProdutoPageView
 from pages.home.home_page import home_page
 from pages.page_404.not_found_page import not_found_page
 from pages.receitas.receitas_page import ReceitasPage
@@ -16,7 +16,7 @@ class RouteController:
         return home_page(self.page)
 
     def estoque_view(self):
-        return EstoquePage(self.page).as_view()
+        return ProdutoPageView(self.page).as_view()
     
     def receitas_view(self):
         return ReceitasPage(self.page).as_view()
