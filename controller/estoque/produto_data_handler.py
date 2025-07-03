@@ -36,7 +36,7 @@ class ProdutoDataHandler:
         )
     def _obter_todos_dados_prdoutos(self):
         """Obtém todos dados os dados dos produtos"""
-        return self.produto_model.get_todos_produtos()
+        return self.produto_model.listar_todos_dados_produtos()
 
     def _gerar_chave_cache(self, pagina: int, params: dict) -> str:
         """Gera chave única para cache baseada nos parâmetros"""

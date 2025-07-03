@@ -3,7 +3,7 @@ import flet as ft
 
 from logs.logger import Logger
 from ui.forms.ingrediente.ingrediente_form import IngredienteForm
-from ui.forms.receita.receita_form import ReceitaForm
+from ui.forms.receita.form_add_receita import ReceitaForm
 
 
 class DialogReceita:

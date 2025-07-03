@@ -6,7 +6,7 @@ from time import time
 import asyncio
 
 from ui.forms.ingrediente.ingrediente_data import IngredienteData
-from ui.forms.ingrediente.ingrediente_service import IngredienteService
+from services.ingredientes.ingrediente_service import IngredienteService
 from ui.forms.ingrediente.ingrediente_ui import IngredienteUI
 
 
@@ -90,6 +90,8 @@ class IngredienteForm:
     async def _atualizar_sugestoes(self, termo: str):
         """Atualiza a lista de sugestões com base no termo de pesquisa"""
         try:
+            self.log.info(f"`_atualizar_sugestoes {termo}")
+
             sugestoes = self.service.pesquisar_ingredientes(termo)
             self.log.debug(f"Encontradas {len(sugestoes)} sugestões")
             

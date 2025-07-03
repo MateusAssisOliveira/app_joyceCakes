@@ -20,6 +20,9 @@ class ReceitasModel:
         """
         Retorna dados paginados de receitas com produtos associados
         """
+
+        self.log.info("get_paginas_receita_com_produtos Inicializado")
+        
         try:
             # Validação de colunas para ordenação
             colunas_validas = {
@@ -98,8 +101,9 @@ class ReceitasModel:
             query += f" LIMIT {por_pagina} OFFSET {offset}"
 
             # Execução das queries
-            dados = self.db.fetch_data(query, tuple(params))
-            total = self.db.fetch_data(query_total, tuple(params))
+            dados, colunas = self.db.fetch_all(query, tuple(params), return_columns=True)
+
+            total = self.db.fetch_all(query_total, tuple(params))
 
             total_registros = total[0]['total'] if total else 0
             total_paginas = max(1, (total_registros + por_pagina - 1) // por_pagina)
@@ -186,8 +190,8 @@ class ReceitasModel:
             query += f" LIMIT {por_pagina} OFFSET {offset}"
 
             # Execução das queries
-            dados = self.db.fetch_data(query, tuple(params))
-            total_result = self.db.fetch_data(count_query, tuple(params))
+            dados = self.db.fetch_all(query, tuple(params))
+            total_result = self.db.fetch_all(count_query, tuple(params))
             total_registros = total_result[0]['total'] if total_result else 0
 
             # Busca ingredientes para cada receita
@@ -230,7 +234,7 @@ class ReceitasModel:
                 JOIN unidades_medida um ON rp.unidade_medida_id = um.id
                 WHERE rp.receita_id = %s
             """
-            ingredientes = self.db.fetch_data(query, (receita_id,))
+            ingredientes = self.db.fetch_all(query, (receita_id,))
             return ingredientes if ingredientes else []
         except Exception as e:
             self.log.error(f"Erro ao buscar ingredientes: {str(e)}")
@@ -250,7 +254,7 @@ class ReceitasModel:
                 LEFT JOIN unidades_medida um ON r.unidade_medida_id = um.id
                 WHERE r.id = %s
             """
-            receita = self.db.fetch_data(query, (receita_id,))
+            receita = self.db.fetch_all(query, (receita_id,))
             
             if not receita:
                 return None

@@ -9,8 +9,13 @@ class IngredienteService:
     def __init__(self, produtos: List[IngredienteData], logger: Logger):
         self.produtos = produtos
         self.log = logger
+
+        
     
     def pesquisar_ingredientes(self, termo: str) -> List[IngredienteData]:
+
+        self.log.info(f'TODOS DOS PRODUTOS DO IngredienteService {self.produtos}')
+        
         """Pesquisa ingredientes com base no termo fornecido"""
         self.log.debug(f"Pesquisando ingredientes para: '{termo}'")
         

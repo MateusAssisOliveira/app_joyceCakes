@@ -49,6 +49,7 @@ class ReceitasPageController:
         """Carrega os dados do estoque para uma página específica"""
         try:
             resultado = self._receitas_Data_Handler.listar_receitas_paginadas(pagina=pagina)
+            self.log.info(f"Retorno do carregar_dados_receitas listar_receitas_paginadas {resultado}")
             json_str = json.dumps(resultado, indent=4, use_decimal=True, ensure_ascii=False)
             self.log.debug(json_str)
             
