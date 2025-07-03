@@ -1,6 +1,6 @@
 import flet as ft
-from components.forms.ingrediente.Ingrediente_data import IngredienteData
 from logs.logger import Logger
+from ui.forms.ingrediente.ingrediente_data import IngredienteData
 
 
 class IngredienteUI:
