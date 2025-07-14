@@ -5,9 +5,9 @@ import flet as ft
 from time import time
 import asyncio
 
-from ui.forms.ingrediente.ingrediente_data import IngredienteData
+from ui.forms.add_ingrediente_dialog_receita.ingrediente_data import IngredienteData
 from services.ingredientes.ingrediente_service import IngredienteService
-from ui.forms.ingrediente.ingrediente_ui import IngredienteUI
+from ui.forms.add_ingrediente_dialog_receita.ingrediente_ui import IngredienteUI
 
 
 class IngredienteForm:

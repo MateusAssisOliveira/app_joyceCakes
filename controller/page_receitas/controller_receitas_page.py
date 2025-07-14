@@ -2,14 +2,14 @@ import time
 import simplejson as json
 
 from components.receita_bloco import ReceitaBloco
-from controller.receitas.controller_receitas_data_handler import ReceitasDataHandler
-from controller.receitas.controller_receitas_handler import ReceitastHandler
+from controller.page_receitas.controller_receitas_data_handler import ReceitasDataHandler
+from controller.page_receitas.controller_receitas_handler import ReceitastHandler
 from logs.logger import Logger
 import flet as ft
 
 from model.receitas.receitas_model import ReceitasModel
 from services.produto.produto_service import ProdutoService
-from ui.dialogs.receitas.receita_dialog import DialogReceita
+from ui.dialogs.add_receitas.receita_dialog import DialogReceita
 from view.receitas.receitas_page_view import ReceitasPageView
 
 class ReceitasPageController:

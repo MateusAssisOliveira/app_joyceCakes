@@ -2,7 +2,7 @@ from typing import Any, Dict, List
 import flet as ft
 
 from logs.logger import Logger
-from ui.forms.ingrediente.ingrediente_form import IngredienteForm
+from ui.forms.add_ingrediente_dialog_receita.ingrediente_form import IngredienteForm
 from ui.forms.receita.form_add_receita import ReceitaForm
 
 

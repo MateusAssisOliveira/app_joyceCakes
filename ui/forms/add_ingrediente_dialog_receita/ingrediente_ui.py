@@ -1,6 +1,6 @@
 import flet as ft
 from logs.logger import Logger
-from ui.forms.ingrediente.ingrediente_data import IngredienteData
+from ui.forms.add_ingrediente_dialog_receita.ingrediente_data import IngredienteData
 
 
 class IngredienteUI:
@@ -56,7 +56,7 @@ class IngredienteUI:
     def criar_card_ingrediente(self, ingrediente: IngredienteData,quantidade) -> ft.Card:
         """Cria um card visual para representar um ingrediente"""
         campo_receita_medida = ft.Container(
-            content = ft.Text(f"{ingrediente['nome_produto']} {quantidade} {ingrediente.get('simbolo', '') }"),
+            content = ft.Text(f"{ingrediente['nome_produto']} ( {quantidade} {ingrediente.get('simbolo', '') } )"),
         )
         
         container = ft.Container(

@@ -1,7 +1,7 @@
 from typing import List
 
 from logs.logger import Logger
-from ui.forms.ingrediente.ingrediente_data import IngredienteData
+from ui.forms.add_ingrediente_dialog_receita.ingrediente_data import IngredienteData
 
 
 class IngredienteService:

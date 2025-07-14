@@ -1,6 +1,6 @@
 # view/receitas/receitas_page.py
 import flet as ft
-from controller.receitas.controller_receitas_page import ReceitasPageController
+from controller.page_receitas.controller_receitas_page import ReceitasPageController
 from view.receitas.receitas_page_view import ReceitasPageView
 from model.receitas.receitas_model import ReceitasModel
 from logs.logger import Logger
