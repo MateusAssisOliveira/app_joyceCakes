@@ -28,6 +28,17 @@ class ReceitaForm:
             min_lines=4,
             max_lines=8
         )
+
+        self.descricao = ft.TextField(
+            label="Descrição",
+            multiline=True,
+            min_lines=4,
+            max_lines=8
+        )
+
+
+
+
         self.campo_tempo = ft.TextField(
             label="Tempo (minutos)*",
             keyboard_type=ft.KeyboardType.NUMBER,
@@ -54,7 +65,11 @@ class ReceitaForm:
             self.campo_nome,
             ft.Row([self.campo_categoria, self.campo_dificuldade]),
             ft.Row([self.campo_tempo, self.campo_rendimento]),
-            self.campo_modo_preparo
+            self.campo_modo_preparo,
+            ft.Divider(),
+            self.descricao
+
+
         ]
     
     def get_valores(self) -> Dict[str, Any]:
@@ -63,6 +78,7 @@ class ReceitaForm:
             "nome": self.campo_nome.value.strip(),
             "categoria": self.campo_categoria.value,
             "modo_preparo": self.campo_modo_preparo.value.strip(),
+            "descricao":self.descricao.value.strip(),
             "tempo": int(self.campo_tempo.value) if self.campo_tempo.value else 0,
             "rendimento": float(self.campo_rendimento.value) if self.campo_rendimento.value else 0,
             "dificuldade": self.campo_dificuldade.value
@@ -74,6 +90,7 @@ class ReceitaForm:
         self.campo_nome.value = receita.get("nome", "")
         self.campo_categoria.value = receita.get("categoria", "")
         self.campo_modo_preparo.value = receita.get("modo_preparo", "")
+        self.descricao.value = receita.get("descricao", "")
         self.campo_tempo.value = str(receita.get("tempo", ""))
         self.campo_rendimento.value = str(receita.get("rendimento", ""))
         self.campo_dificuldade.value = receita.get("dificuldade", "facil")
@@ -84,6 +101,7 @@ class ReceitaForm:
         self.campo_nome.value = ""
         self.campo_categoria.value = ""
         self.campo_modo_preparo.value = ""
+        self.descricao.value = ""
         self.campo_tempo.value = ""
         self.campo_rendimento.value = ""
         self.campo_dificuldade.value = "facil"

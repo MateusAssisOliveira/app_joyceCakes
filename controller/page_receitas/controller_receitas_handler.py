@@ -18,8 +18,12 @@ class ReceitastHandler:
 
     def adicionar_receita(self, dados: Dict[str, Any]) -> Tuple[bool, str]:
         """Adiciona um novo receita ao estoque"""
+
+        self.log.debug(f"DADOS A SEREM SALVOS : {dados}")
+
         try:
-            dados["quantidade"] = int(dados["quantidade"])
+            #dados["quantidade"] = int(dados["quantidade"])
+
             if self.receitas_model.adicionar_receita(dados):
                 return True, "receita adicionado com sucesso!"
             return False, "Falha ao adicionar receita"

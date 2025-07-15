@@ -56,7 +56,7 @@ class IngredienteUI:
     def criar_card_ingrediente(self, ingrediente: IngredienteData,quantidade) -> ft.Card:
         """Cria um card visual para representar um ingrediente"""
         campo_receita_medida = ft.Container(
-            content = ft.Text(f"{ingrediente['nome_produto']} ( {quantidade} {ingrediente.get('simbolo', '') } )"),
+            content = ft.Text(f"{ingrediente['nome_produto']} ( {quantidade} {ingrediente['unidade_simbolo'] } )"),
         )
         
         container = ft.Container(

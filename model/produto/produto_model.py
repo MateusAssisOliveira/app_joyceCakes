@@ -293,9 +293,11 @@ class ProdutoModel:
 
             c.id AS categoria_id,
             c.nome AS categoria_nome,
+            
 
             u.id AS unidade_id,
-            u.nome AS unidade_nome
+            u.nome AS unidade_nome,
+            u.simbolo AS unidade_simbolo
 
         FROM produtos p
         LEFT JOIN categorias_receita c ON p.categoria_id = c.id
