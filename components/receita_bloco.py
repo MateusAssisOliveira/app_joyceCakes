@@ -104,12 +104,14 @@ class ReceitaBloco:
         )
 
     def _criar_detalhes(self, receita: Dict) -> ft.Column:
+        self.log.debug(receita)
+
         """Seção de detalhes com ícones e layout organizado"""
         tempo = str(timedelta(minutes=receita.get('tempo_preparo', 0)))
         rendimento = receita.get('rendimento', 0)
         unidade_rendimento = receita.get('unidade_medida_simbolo', 'porções')
         custo = receita.get('custo_estimado', 0)
-        descricao = receita.get('descricao', 'Sem descrição')
+        descricao = receita.get('descricao_receita', 'Sem descrição')
         dificuldade = receita.get('dificuldade', 'médio').capitalize()
 
         detalhes = [
@@ -203,10 +205,16 @@ class ReceitaBloco:
             border_radius=10,
             width=420)
 
-    def _criar_chip(self, ingrediente: str) -> ft.Chip:
+    def _criar_chip(self, ingrediente: Dict) -> ft.Chip:
         """Cria um chip básico para ingrediente"""
+        self.log.debug(f"\n\n{ingrediente}")
+        unidade_medida =ingrediente.get('unidade_medida') 
+        nome_ingrediente = ingrediente.get('nome').capitalize()
+        qinatidade_ingrediente = ingrediente.get('quantidade')
+        
+
         return ft.Chip(
-            label=ft.Text(ingrediente.capitalize()),
+            label=ft.Text(f'{nome_ingrediente} ({qinatidade_ingrediente} {unidade_medida})'),
             bgcolor=ft.Colors.GREY_100,
             selected_color=self.theme['primary'],
             on_select=lambda e: self._handle_chip_select(e, ingrediente)

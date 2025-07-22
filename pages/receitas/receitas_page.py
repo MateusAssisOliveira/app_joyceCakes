@@ -1,6 +1,7 @@
 # view/receitas/receitas_page.py
 import flet as ft
 from controller.page_receitas.controller_receitas_page import ReceitasPageController
+from database.db import Database
 from view.receitas.receitas_page_view import ReceitasPageView
 from model.receitas.receitas_model import ReceitasModel
 from logs.logger import Logger
@@ -10,10 +11,12 @@ class ReceitasPage:
         self.log = Logger()  # Instância do logger
         self.page = page
 
+
         self.log.info("Iniciando ReceitasPage...")
 
         # Inicializa os componentes do padrão MVC
-        self._receitas_model = ReceitasModel()
+        self.data_base = Database()
+        self._receitas_model = ReceitasModel(self.data_base,self.log)
         self._receitas_view = ReceitasPageView()
         
         # Cria o controller com as dependências injetadas

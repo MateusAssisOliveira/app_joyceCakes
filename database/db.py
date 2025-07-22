@@ -87,6 +87,7 @@ class Database:
             if return_lastrowid:
                 lastrowid = cursor.lastrowid
                 logging.debug(f"🆔 Último ID inserido: {lastrowid}")
+                
                 return lastrowid
                 
             logging.debug(f"✅ Query executada. Linhas afetadas: {affected_rows}")

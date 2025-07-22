@@ -3,7 +3,7 @@ import simplejson as json
 
 from components.receita_bloco import ReceitaBloco
 from controller.page_receitas.controller_receitas_data_handler import ReceitasDataHandler
-from controller.page_receitas.controller_receitas_handler import ReceitastHandler
+from controller.page_receitas.controller_receitas_handler import ReceitasHandler
 from logs.logger import Logger
 import flet as ft
 
@@ -28,7 +28,7 @@ class ReceitasPageController:
         """Inicializa os handlers de dados e produtos"""
         try:
             self._receitas_Data_Handler = ReceitasDataHandler(self.receitas_model,self.log)
-            self._receitas_handler = ReceitastHandler(self.receitas_model, self.log)
+            self._receitas_handler = ReceitasHandler(self.receitas_model, self.log)
             self.log.info("Handlers inicializados com sucesso")
         except Exception as e:
             self._handle_error(f"Falha na inicialização: {e}")
@@ -74,11 +74,12 @@ class ReceitasPageController:
         self.log.debug("Callback de clique em bloco configurado")
 
     def adicionar_receitas_view(self, receitas_response: dict):
-        """Adiciona blocos de receita ao body a partir do dicionário completo da resposta"""
+        """Adiciona blocos de receita ao body a partir do dicionário completo da resposta."""
         try:
             self.log.debug(f"Adicionando receitas: {receitas_response}")
 
-            receitas_lista = receitas_response.get('dados', [])
+            receitas_lista = receitas_response.get("dados") or []
+
             for receita in receitas_lista:
                 bloco = self._bloco_component.criar_bloco(receita)
                 self.receitas_view.columnbody.controls.append(bloco)
@@ -86,7 +87,7 @@ class ReceitasPageController:
             self.receitas_view.body.update()
 
         except Exception as e:
-            self.log.error(f"Erro ao adicionar receita: {str(e)}")
+            self.log.error(f"Erro ao adicionar receita: {e}")
 
     def _handle_busca_receita(self, termo: str):
         """Lida com a busca de receitas"""
