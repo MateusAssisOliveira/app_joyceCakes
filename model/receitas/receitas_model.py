@@ -4,6 +4,8 @@ from logs.logger import Logger
 from typing import Any, Dict, List, Optional, Union, Tuple
 from datetime import datetime
 
+from util.retornos import Retorno
+
 class ReceitasModel:
     """Modelo responsável por todas as operações de banco de dados relacionadas a receitas"""
     
@@ -26,7 +28,7 @@ class ReceitasModel:
         ordenar_por: Optional[str] = None,
         filtros: Optional[Dict] = None,
         direcao: str = 'ASC'
-    ) -> Tuple[Dict[str, Any], Optional[str]]:
+    ) -> Dict[str, Any]:
         """
         Busca receitas paginadas do banco de dados
         
@@ -38,7 +40,7 @@ class ReceitasModel:
             direcao: Direção da ordenação (ASC/DESC)
             
         Returns:
-            Tuple[dict, Optional[str]]: (dados, erro) onde erro é None se bem-sucedido
+            Dict[str, Any]: Retorno padronizado com os dados ou erro
         """
         try:
             # Query principal
@@ -104,25 +106,18 @@ class ReceitasModel:
             total_result = self.db.fetch_all(count_query, tuple(params))
             total_registros = total_result[0]['total'] if total_result else 0
 
-
             for receita in dados:
                 receita['ingredientes'] = self._buscar_ingredientes_receita(receita['id'])
 
             self.log.info(f"{len(dados)} receitas encontradas na página {pagina}")
-
-            return {
-                'dados': dados,
-                'pagina': pagina,
-                'por_pagina': por_pagina,
-                'total_registros': total_registros,
-                'total_paginas': max(1, (total_registros + por_pagina - 1) // por_pagina)
-            }
+            
+            return Retorno.sucesso(mensagem="",dados=dados)
 
         except Exception as e:
             self.log.error(f"Erro ao buscar receitas: {str(e)}")
-            return {}, str(e)
+            return Retorno.erro(f"Erro ao buscar receitas: {str(e)}")
 
-    def buscar_receita_completa(self, receita_id: int) -> Tuple[Optional[Dict], Optional[str]]:
+    def buscar_receita_completa(self, receita_id: int) -> Dict[str, Any]:
         """
         Busca uma receita com todos seus detalhes
         
@@ -130,7 +125,7 @@ class ReceitasModel:
             receita_id: ID da receita a ser buscada
             
         Returns:
-            Tuple[Optional[dict], Optional[str]]: (receita, erro) onde erro é None se bem-sucedido
+            Dict[str, Any]: Retorno padronizado com os dados ou erro
         """
         try:
             # Query para dados básicos
@@ -147,16 +142,18 @@ class ReceitasModel:
             receitas = self.db.fetch_all(query, (receita_id,))
             
             if not receitas:
-                return None, f"Receita ID {receita_id} não encontrada"
+                return Retorno.nao_encontrado(f"Receita ID {receita_id} não encontrada")
                 
             receita = receitas[0]
-            return receita, None
+            receita['ingredientes'] = self._buscar_ingredientes_receita(receita_id)
+            
+            return Retorno.sucesso("Receita encontrada com sucesso", receita)
             
         except Exception as e:
             self.log.error(f"Erro ao buscar receita por ID: {str(e)}")
-            return None, str(e)
+            return Retorno.erro(f"Erro ao buscar receita: {str(e)}")
 
-    def _buscar_ingredientes_receita(self, receita_id: int) -> Tuple[List[Dict], Optional[str]]:
+    def _buscar_ingredientes_receita(self, receita_id: int) -> List[Dict]:
         """
         Busca os ingredientes de uma receita específica
         
@@ -164,7 +161,7 @@ class ReceitasModel:
             receita_id: ID da receita
             
         Returns:
-            Tuple[list, Optional[str]]: (ingredientes, erro) onde erro é None se bem-sucedido
+            List[Dict]: Lista de ingredientes ou lista vazia em caso de erro
         """
         try:
             query = """
@@ -185,12 +182,9 @@ class ReceitasModel:
         
         except Exception as e:
             self.log.error(f"Erro ao buscar ingredientes: {str(e)}")
-            return [], str(e)
+            return []
 
-    def inserir_receita(self, dados: Dict) -> Tuple[Optional[int], Optional[str]]:
-        self.log.info(f'\n DADOS A SEREM INSERIDO NO DB {dados}')
-
-
+    def inserir_receita(self, dados: Dict) -> Dict[str, Any]:
         """
         Insere uma nova receita no banco de dados
         
@@ -198,9 +192,11 @@ class ReceitasModel:
             dados: Dicionário com os dados da receita
             
         Returns:
-            Tuple[Optional[int], Optional[str]]: (receita_id, erro) onde erro é None se bem-sucedido
+            Dict[str, Any]: Retorno padronizado com o ID da receita ou erro
         """
         try:
+            self.log.info(f'\n DADOS DA RECEITA A SEREM INSERIDO NO DB {dados}')
+
             query = """
                 INSERT INTO receitas (
                     nome, descricao, categoria_id, modo_preparo, tempo_preparo, rendimento, 
@@ -223,13 +219,15 @@ class ReceitasModel:
             
             receita_id = self.db.execute(query, params, return_lastrowid=True)
             
-            return receita_id, None
+            if receita_id:
+                return Retorno.sucesso("Receita criada com sucesso", {"receita_id": receita_id})
+            return Retorno.erro("Falha ao inserir receita")
             
         except Exception as e:
             self.log.error(f"Erro ao inserir receita: {str(e)}")
-            return None, str(e)
+            return Retorno.erro(f"Erro ao inserir receita: {str(e)}")
 
-    def inserir_ingrediente(self, receita_id: int, ingrediente: Dict) -> Tuple[bool, Optional[str]]:
+    def inserir_ingrediente(self, receita_id: int, ingrediente: Dict) -> Dict[str, Any]:
         """
         Insere um ingrediente para uma receita
         
@@ -238,9 +236,11 @@ class ReceitasModel:
             ingrediente: Dicionário com dados do ingrediente
             
         Returns:
-            Tuple[bool, Optional[str]]: (sucesso, erro) onde erro é None se bem-sucedido
+            Dict[str, Any]: Retorno padronizado indicando sucesso ou erro
         """
         try:
+            self.log.info(f'\n\n DADOS DOS INGREDIENTES A SEREM INSERIDO NO DB {receita_id} - {ingrediente}\n')
+
             query = """
                 INSERT INTO receitas_produtos (
                     receita_id, produto_id, quantidade, unidade_medida_id
@@ -253,12 +253,16 @@ class ReceitasModel:
                 ingrediente['unidade_medida_id']
             )
             success = self.db.execute(query, params) > 0
-            return success, None
+
+            if success:
+                return Retorno.sucesso("Ingrediente adicionado com sucesso")
+            return Retorno.erro("Falha ao adicionar ingrediente")
+            
         except Exception as e:
             self.log.error(f"Erro ao inserir ingrediente: {str(e)}")
-            return False, str(e)
+            return Retorno.erro(f"Erro ao inserir ingrediente: {str(e)}")
 
-    def atualizar_custo_receita(self, receita_id: int) -> Tuple[bool, Optional[str]]:
+    def atualizar_custo_receita(self, receita_id: int) -> Dict[str, Any]:
         """
         Atualiza o custo estimado de uma receita
         
@@ -266,7 +270,7 @@ class ReceitasModel:
             receita_id: ID da receita
             
         Returns:
-            Tuple[bool, Optional[str]]: (sucesso, erro) onde erro é None se bem-sucedido
+            Dict[str, Any]: Retorno padronizado indicando sucesso ou erro
         """
         try:
             query = """
@@ -280,12 +284,16 @@ class ReceitasModel:
                 WHERE r.id = %s
             """
             success = self.db.execute(query, (receita_id, receita_id)) > 0
-            return success, None
+            
+            if success:
+                return Retorno.sucesso("Custo da receita atualizado com sucesso")
+            return Retorno.erro("Falha ao atualizar custo da receita")
+            
         except Exception as e:
             self.log.error(f"Erro ao atualizar custo da receita: {str(e)}")
-            return False, str(e)
+            return Retorno.erro(f"Erro ao atualizar custo da receita: {str(e)}")
 
-    def atualizar_receita(self, receita_id: int, dados: Dict) -> Tuple[bool, Optional[str]]:
+    def atualizar_receita(self, receita_id: int, dados: Dict) -> Dict[str, Any]:
         """
         Atualiza os dados de uma receita existente
         
@@ -294,7 +302,7 @@ class ReceitasModel:
             dados: Dicionário com os dados a serem atualizados
             
         Returns:
-            Tuple[bool, Optional[str]]: (sucesso, erro) onde erro é None se bem-sucedido
+            Dict[str, Any]: Retorno padronizado indicando sucesso ou erro
         """
         try:
             # Construir a query dinamicamente baseada nos campos fornecidos
@@ -306,19 +314,22 @@ class ReceitasModel:
                 params.append(valor)
             
             if not campos:
-                return False, "Nenhum dado fornecido para atualização"
+                return Retorno.dados_invalidos("Nenhum dado fornecido para atualização")
                 
             query = f"UPDATE receitas SET {', '.join(campos)} WHERE id = %s"
             params.append(receita_id)
             
             success = self.db.execute(query, tuple(params)) > 0
-            return success, None
+            
+            if success:
+                return Retorno.sucesso("Receita atualizada com sucesso")
+            return Retorno.erro("Falha ao atualizar receita")
             
         except Exception as e:
             self.log.error(f"Erro ao atualizar receita: {str(e)}")
-            return False, str(e)
+            return Retorno.erro(f"Erro ao atualizar receita: {str(e)}")
 
-    def excluir_receita(self, receita_id: int) -> Tuple[bool, Optional[str]]:
+    def excluir_receita(self, receita_id: int) -> Dict[str, Any]:
         """
         Exclui uma receita do banco de dados
         
@@ -326,7 +337,7 @@ class ReceitasModel:
             receita_id: ID da receita a ser excluída
             
         Returns:
-            Tuple[bool, Optional[str]]: (sucesso, erro) onde erro é None se bem-sucedido
+            Dict[str, Any]: Retorno padronizado indicando sucesso ou erro
         """
         try:
             # Primeiro excluir os ingredientes associados
@@ -336,8 +347,11 @@ class ReceitasModel:
             # Depois excluir a receita
             query_delete_receita = "DELETE FROM receitas WHERE id = %s"
             success = self.db.execute(query_delete_receita, (receita_id,)) > 0
-            return success, None
+            
+            if success:
+                return Retorno.sucesso("Receita excluída com sucesso")
+            return Retorno.erro("Falha ao excluir receita")
             
         except Exception as e:
             self.log.error(f"Erro ao excluir receita: {str(e)}")
-            return False, str(e)
+            return Retorno.erro(f"Erro ao excluir receita: {str(e)}")

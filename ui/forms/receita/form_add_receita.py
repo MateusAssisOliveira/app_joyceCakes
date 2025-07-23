@@ -68,7 +68,7 @@ class ReceitaForm:
             valores["ingredientes"] = []  # Preenchido externamente
             valores["data_cadastro"] = datetime.now()
 
-            self.log.debug(f"Valores coletados do formulário: {valores}")
+            self.log.debug(f"\nValores coletados do formulário: {valores}")
 
         except ValueError as ve:
             self.log.error(f"Erro na conversão de campo numérico: {ve}")
@@ -119,7 +119,7 @@ class ReceitaForm:
             "paes": 3
         }
         categoria_id = categorias.get(nome_categoria, 0)
-        self.log.debug(f"Convertendo categoria '{nome_categoria}' para ID: {categoria_id}")
+        self.log.debug(f"\nConvertendo categoria '{nome_categoria}' para ID: {categoria_id}")
         return categoria_id
 
     def _mapear_categoria_para_nome(self, categoria_id: int) -> str:
@@ -129,5 +129,5 @@ class ReceitaForm:
             3: "paes"
         }
         nome = ids.get(categoria_id, "")
-        self.log.debug(f"Convertendo ID de categoria '{categoria_id}' para nome: '{nome}'")
+        self.log.debug(f"\nConvertendo ID de categoria '{categoria_id}' para nome: '{nome}'")
         return nome

@@ -79,11 +79,13 @@ class DialogReceita:
                 self.log.info(f"Receita salva com sucesso: {dados['nome']}")
 
             self.fechar()
+
         except Exception as e:
             self.log.warning(f"Erro ao salvar receita: {e}")
             self._mostrar_erro(str(e))
 
     def fechar(self):
+        
         self.dialog.open = False
         self.page.update()
         self.log.debug("Diálogo de receita fechado.")

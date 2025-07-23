@@ -69,7 +69,7 @@ class IngredienteForm:
             return
         
         termo = self.campo_pesquisa.value.strip().lower()
-        self.log.debug(f"Termo de pesquisa: '{termo}'")
+        self.log.debug(f"\n\nTermo de pesquisa: '{termo}'")
         
         if self._search_task and not self._search_task.done():
             self._search_task.cancel()
@@ -82,7 +82,7 @@ class IngredienteForm:
         self._search_task = asyncio.create_task(self._atualizar_sugestoes(termo))
 
     def _make_suggestion_handler(self, produto):
-        self.log.debug(f"Criando handler para sugestão: {produto.get('nome')}")
+        self.log.debug(f"\n\nCriando handler para sugestão: {produto.get('nome')}")
         async def handler(e):
             await self._selecionar_sugestao(produto)
         return handler
@@ -93,7 +93,7 @@ class IngredienteForm:
             self.log.info(f"`_atualizar_sugestoes {termo}")
 
             sugestoes = self.service.pesquisar_ingredientes(termo)
-            self.log.debug(f"Encontradas {len(sugestoes)} sugestões")
+            self.log.debug(f"\n\nEncontradas {len(sugestoes)} sugestões")
             
             self.suggestions_list.controls.clear()
             
@@ -130,7 +130,7 @@ class IngredienteForm:
                 if not ingrediente:
                     return
             quantidade = self.campo_valor_medida.value.strip()
-            self.log.debug(f"Adicionando ingrediente: {ingrediente.get('nome_produto')}")
+            self.log.debug(f"\n\nAdicionando ingrediente: {ingrediente.get('nome_produto')}")
             
             card = self.ui.criar_card_ingrediente(ingrediente,quantidade)
             self._configurar_eventos_card(card)
@@ -139,7 +139,7 @@ class IngredienteForm:
             self._limpar_campos_pesquisa()
             self._limpar_campos_unidade_medida()
             self.page.update()
-            self.log.debug(f"Ingrediente '{ingrediente['nome_produto']}' adicionado com sucesso")
+            self.log.debug(f"\n\nIngrediente '{ingrediente['nome_produto']}' adicionado com sucesso")
             
         except Exception as e:
             self.log.error(f"Erro ao adicionar ingrediente: {str(e)}")
@@ -165,7 +165,7 @@ class IngredienteForm:
         """Remove um ingrediente da lista"""
         try:
             ingrediente = card.data.get("nome_produto", "desconhecido")
-            self.log.debug(f"Removendo ingrediente: {ingrediente}")
+            self.log.debug(f"\n\nRemovendo ingrediente: {ingrediente}")
             self.lista_ingredientes.controls.remove(card)
             self.page.update()
         except Exception as e:

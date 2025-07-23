@@ -51,7 +51,7 @@ class ProdutoPageView:
         """Método auxiliar para registrar dados iniciais (opcional)"""
         try:
             initial_data = self.controller.data_handler.listar_produtos_paginados()
-            self.log.debug(f"Dados iniciais carregados: {initial_data.get('dados', [])[:1]}...")  # Log apenas do primeiro item
+            self.log.debug(f"\n\nDados iniciais carregados: {initial_data.get('dados', [])[:1]}...")  # Log apenas do primeiro item
         except Exception as e:
             self.log.error(f"Erro ao registrar dados iniciais: {e}")
             

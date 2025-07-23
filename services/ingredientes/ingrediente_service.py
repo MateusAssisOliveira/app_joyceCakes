@@ -17,7 +17,7 @@ class IngredienteService:
         self.log.info(f'TODOS DOS PRODUTOS DO IngredienteService {self.produtos}')
         
         """Pesquisa ingredientes com base no termo fornecido"""
-        self.log.debug(f"Pesquisando ingredientes para: '{termo}'")
+        self.log.debug(f"\nPesquisando ingredientes para: '{termo}'")
         
         if len(termo) < 2:
             return []

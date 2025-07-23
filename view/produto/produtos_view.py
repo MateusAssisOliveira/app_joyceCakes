@@ -69,8 +69,8 @@ class ProdutosView:
         self.log.info(f"Alimentando tabela com {len(rows)} registros")
         success = self.table.set_data(headers, rows)
         
-        self.log.debug(f"Headers: {headers}")
-        self.log.debug(f"Total de linhas: {len(rows)}")
+        self.log.debug(f"\n\nHeaders: {headers}")
+        self.log.debug(f"\n\nTotal de linhas: {len(rows)}")
         
         return success
 

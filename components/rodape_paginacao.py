@@ -23,7 +23,7 @@ class RodapePaginacao:
         if callback is not None and not callable(callback):
             raise ValueError("Callback deve ser uma função ou None")
         self.ao_mudar_pagina = callback
-        self.log.debug(f"Callback definido: {callback}")
+        self.log.debug(f"\n\nCallback definido: {callback}")
         
     def construir(self):
         """Cria e retorna o componente de rodapé de paginação"""

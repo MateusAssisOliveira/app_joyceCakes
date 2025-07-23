@@ -1,4 +1,5 @@
 import time
+from typing import Any, Dict
 import simplejson as json
 
 from components.receita_bloco import ReceitaBloco
@@ -10,178 +11,251 @@ import flet as ft
 from model.receitas.receitas_model import ReceitasModel
 from services.produto.produto_service import ProdutoService
 from ui.dialogs.add_receitas.receita_dialog import DialogReceita
+from util.retornos import Retorno
 from view.receitas.receitas_page_view import ReceitasPageView
 
 class ReceitasPageController:
     def __init__(self, page: ft.Page, receitas_model: ReceitasModel, receitas_view: ReceitasPageView):
         self.page = page
-        
         self.receitas_view = receitas_view
-        self._bloco_component = ReceitaBloco()  # Componente de blocos
+        
+        
+        self._bloco_component = ReceitaBloco()
         self.receitas_model = receitas_model
         self.log = Logger()
         self.log.info("Inicializando ReceitasPageController")
+        self.receitas_view.create_view()
         self._setup_callbacks()
         self._initialize_handlers()
 
     def _initialize_handlers(self):
-        """Inicializa os handlers de dados e produtos"""
         try:
-            self._receitas_Data_Handler = ReceitasDataHandler(self.receitas_model,self.log)
+            self._receitas_Data_Handler = ReceitasDataHandler(self.receitas_model, self.log)
             self._receitas_handler = ReceitasHandler(self.receitas_model, self.log)
             self.log.info("Handlers inicializados com sucesso")
+            return Retorno.sucesso("Handlers inicializados com sucesso")
         except Exception as e:
-            self._handle_error(f"Falha na inicialização: {e}")
+            error_msg = f"Falha na inicialização: {e}"
+            self._handle_error(error_msg)
+            return Retorno.erro(error_msg)
 
     def _setup_callbacks(self):
-        """Configura todos os callbacks"""
         self.log.debug("Configurando callbacks da view")
-        self.receitas_view.set_on_buscar(self._handle_busca_receita)
-        self.receitas_view.definir_acoes_botoes_navBar({
-            'home': lambda: self.page.go('/'),
-            'novo': self._handle_nova_receita,
-            'editar': self._handle_editar_receita,
-            'deletar': self._handle_deletar_receita
-        })
-        self.receitas_view.definir_acoes_botoes_rodape(self._handle_paginacao_receitas)
+        try:
+            self.receitas_view.set_on_buscar(self._handle_busca_receita)
+            self.receitas_view.definir_acoes_botoes_navBar({
+                'home': lambda: self.page.go('/'),
+                'novo': self._handle_nova_receita,
+                'editar': self._handle_editar_receita,
+                'deletar': self._handle_deletar_receita
+            })
+            self.receitas_view.definir_acoes_botoes_rodape(self._handle_paginacao_receitas)
+            return Retorno.sucesso("Callbacks configurados com sucesso")
+        
+        except Exception as e:
+            error_msg = f"Erro ao configurar callbacks: {e}"
+            self._handle_error(error_msg)
+            return Retorno.erro(error_msg)
     
-    def carregar_dados_receitas(self, pagina: int = 1):
-        """Carrega os dados do estoque para uma página específica"""
+    def carregar_dados_receitas(self, pagina: int = 1) -> Dict[str, Any]:
+        """Carrega os dados paginados e atualiza a view"""
         try:
             resultado = self._receitas_Data_Handler.listar_receitas_paginadas(pagina=pagina)
-            self.log.info(f"Retorno do carregar_dados_receitas listar_receitas_paginadas {resultado}")
+            self.log.info(f"Retorno do carregar_dados_receitas: {resultado}")
+
+            if not resultado.get("ok", False):
+                error_msg = f"Erro ao carregar dados: {resultado.get('mensagem')}"
+                self._handle_error(error_msg)
+                return Retorno.erro(error_msg)
+
+            # Loga os dados de forma legível
             json_str = json.dumps(resultado, indent=4, use_decimal=True, ensure_ascii=False)
             self.log.debug(json_str)
-            
-            self._atualizar_view_com_dados(resultado)
+
+            self._atualizar_view_com_dados(resultado.get("dados", {}))
             self.page.update()
+            return Retorno.sucesso("Dados carregados com sucesso", resultado.get("dados"))
 
         except Exception as e:
-            self._handle_error(f"Erro carregando dados: {e}")
+            error_msg = f"Erro carregando dados: {e}"
+            self._handle_error(error_msg)
+            return Retorno.erro(error_msg)
 
-    def _atualizar_view_com_dados(self, resultado: dict):
-        """Atualiza a view com os dados recebidos"""
+    def _atualizar_view_com_dados(self, dados: dict) -> Dict[str, Any]:
         try:
-            self.receitas_view.rodaPe.total_paginas = resultado.get('total_paginas')
-            self.adicionar_receitas_view(resultado)
+            if not hasattr(self.receitas_view, 'rodaPe'):
+                error_msg = "Componente rodaPe não inicializado!"
+                self.log.error(error_msg)
+                return Retorno.erro(error_msg)
+
+            # Atualiza paginação
+            self.receitas_view.rodaPe.total_paginas = dados.get('total_paginas', 1)
+            resultado = self.adicionar_receitas_view(dados)
+            
+            if not resultado.get("ok", False):
+                return resultado
+                
             self.receitas_view.rodaPe._atualizar_ui()
+            return Retorno.sucesso("View atualizada com sucesso")
+
         except Exception as e:
-            self._handle_error(f"Erro atualizando view: {e}")
+            error_msg = f"Erro atualizando view: {e}"
+            self._handle_error(error_msg)
+            return Retorno.erro(error_msg)
 
-    def set_on_clique_bloco(self, callback: callable):
-        """Configura callback para clique nos blocos"""
-        self._bloco_component._handle_clique_bloco = callback
-        self.log.debug("Callback de clique em bloco configurado")
-
-    def adicionar_receitas_view(self, receitas_response: dict):
-        """Adiciona blocos de receita ao body a partir do dicionário completo da resposta."""
+    def adicionar_receitas_view(self, dados_response: dict) -> Dict[str, Any]:
         try:
-            self.log.debug(f"Adicionando receitas: {receitas_response}")
+            if not hasattr(self.receitas_view, 'columnbody'):
+                raise ValueError("Container columnbody não existe na view")
+            if not isinstance(self.receitas_view.columnbody, ft.Control):
+                raise ValueError("columnbody não é um controle Flet válido")
 
-            receitas_lista = receitas_response.get("dados") or []
+            self.receitas_view.columnbody.controls.clear()
+            receitas_lista = dados_response.get("itens") or []
+            
+            if not receitas_lista:
+                return Retorno.sucesso("Nenhuma receita para exibir", dados_response)
 
             for receita in receitas_lista:
                 bloco = self._bloco_component.criar_bloco(receita)
                 self.receitas_view.columnbody.controls.append(bloco)
 
-            self.receitas_view.body.update()
+            if self.receitas_view.body in self.page.controls:
+                self.receitas_view.body.update()
+
+            return Retorno.sucesso(f"{len(receitas_lista)} receitas adicionadas à view")
 
         except Exception as e:
-            self.log.error(f"Erro ao adicionar receita: {e}")
+            error_msg = f"Erro ao adicionar receita: {e}"
+            self.log.error(error_msg)
+            return Retorno.erro(error_msg)
 
-    def _handle_busca_receita(self, termo: str):
-        """Lida com a busca de receitas"""
+    def _handle_busca_receita(self, termo: str) -> Dict[str, Any]:
         self.log.info(f"Busca de receitas iniciada com o termo: '{termo}'")
         try:
             self.receitas_view.limpar_receitas()
-            dados = self._receitas_Data_Handler.listar_receitas_paginadas(filtro=termo)
+            resultado = self._receitas_Data_Handler.listar_receitas_paginadas(filtros={"termo": termo})
 
-            if not dados['dados']:
+            if not resultado.get("ok", False):
+                error_msg = resultado.get("mensagem", "Erro desconhecido na busca")
+                self._handle_error(error_msg)
+                return Retorno.erro(error_msg)
+
+            if not resultado.get("dados", {}).get("itens"):
                 self.receitas_view.error_message.value = "Nenhuma receita encontrada"
                 self.log.warning(f"Nenhuma receita encontrada para o termo: '{termo}'")
-            else:
-                for receita in dados['dados']:
-                    self.adicionar_receitas_view(receita)
-                self.log.info(f"{len(dados['dados'])} receitas encontradas para o termo '{termo}'")
+                return Retorno.sucesso("Nenhuma receita encontrada", {"termo": termo})
 
+            self.adicionar_receitas_view(resultado.get("dados"))
             self.page.update()
-        except Exception as e:
-            self.log.error(f"Erro ao buscar receitas com termo '{termo}': {str(e)}")
+            return Retorno.sucesso(
+                f"{len(resultado['dados']['itens'])} receitas encontradas",
+                {"termo": termo, "quantidade": len(resultado['dados']['itens'])}
+            )
 
-    def _handle_paginacao_receitas(self, pagina: int):
-        """Lida com a mudança de página"""
+        except Exception as e:
+            error_msg = f"Erro ao buscar receitas com termo '{termo}': {e}"
+            self.log.error(error_msg)
+            return Retorno.erro(error_msg)
+
+    def _handle_paginacao_receitas(self, pagina: int) -> Dict[str, Any]:
         self.log.info(f"Alterando para a página {pagina} de receitas")
         try:
-            dados = self._receitas_Data_Handler.listar_receitas_paginadas(pagina=pagina)
-            self.receitas_view.limpar_receitas()
-
-            for receita in dados['dados']:
-                self.adicionar_receitas_view(receita)
-
-            self.page.update()
-            self.log.info(f"Página {pagina} carregada com {len(dados['dados'])} receitas")
-        except Exception as e:
-            self.log.error(f"Erro ao paginar receitas na página {pagina}: {str(e)}")
-
-    def _handle_nova_receita(self):
-        """Abre diálogo para nova receita"""
-        """Abre diálogo para adicionar novo produto"""
-        lista_produtos = ProdutoService.listar_para_dropdown()
-        self.log.debug(f"\n\nTODOS OS PRODUTOS DO DB{lista_produtos}\n\n")
-
-        dialog_receita = DialogReceita(self.page, lista_produtos,self.log)
-        
-        def on_salvar(dados):
-            success, message = self._receitas_handler.adicionar_receita(dados)
-            self._finalizar_operacao_receitas(success, message, dialog_receita)
+            resultado = self._receitas_Data_Handler.listar_receitas_paginadas(pagina=pagina)
             
-        dialog_receita.abrir(
-            modo_edicao=False,
-            on_salvar=on_salvar,
-        )
+            if not resultado.get("ok", False):
+                error_msg = f"Erro ao carregar página {pagina}: {resultado.get('mensagem')}"
+                self._handle_error(error_msg)
+                return Retorno.erro(error_msg)
 
-    def _handle_editar_receita(self, e):
-        """Abre diálogo para edição"""
+            self.receitas_view.limpar_receitas()
+            self.adicionar_receitas_view(resultado.get("dados"))
+            self.page.update()
+            
+            return Retorno.sucesso(
+                f"Página {pagina} carregada com {len(resultado['dados']['itens'])} receitas",
+                {"pagina": pagina, "quantidade": len(resultado['dados']['itens'])}
+            )
+            
+        except Exception as e:
+            error_msg = f"Erro ao paginar receitas na página {pagina}: {e}"
+            self.log.error(error_msg)
+            return Retorno.erro(error_msg)
+
+    def _handle_nova_receita(self) -> Dict[str, Any]:
+        try:
+            lista_produtos = ProdutoService.listar_para_dropdown()
+            self.log.debug(f"TODOS OS PRODUTOS DO DB: {lista_produtos}")
+
+            dialog_receita = DialogReceita(self.page, lista_produtos, self.log)
+            
+            def on_salvar(dados):
+                retorno = self._receitas_handler.adicionar_receita(dados)
+                self._finalizar_operacao_receitas(retorno, dialog_receita)
+                
+            dialog_receita.abrir(modo_edicao=False, on_salvar=on_salvar)
+            return Retorno.sucesso("Diálogo de nova receita aberto com sucesso")
+            
+        except Exception as e:
+            error_msg = f"Erro ao abrir diálogo de nova receita: {e}"
+            self.log.error(error_msg)
+            return Retorno.erro(error_msg)
+
+    def _handle_editar_receita(self, e) -> Dict[str, Any]:
         self.log.info("Ação de edição de receita acionada")
         # Implementar edição
-        pass
+        return Retorno.sucesso("Edição de receita acionada (não implementado)")
 
-    def _handle_deletar_receita(self, e):
-        """Lida com exclusão"""
+    def _handle_deletar_receita(self, e) -> Dict[str, Any]:
         self.log.info("Ação de exclusão de receita acionada")
         # Implementar exclusão
-        pass
+        return Retorno.sucesso("Exclusão de receita acionada (não implementado)")
     
-    def _handle_error(self, error_msg: str):
-        """Tratamento centralizado de erros"""
+    def _handle_error(self, error_msg: str) -> Dict[str, Any]:
         self.log.error(error_msg)
         self.receitas_view.error_message.value = error_msg
         self.page.update()
+        return Retorno.erro(error_msg)
 
-    def exibir_view_receitas(self):
-        """Retorna a view inicial"""
-        self.log.debug("Exibindo view inicial de receitas")
-        self.carregar_dados_receitas()
-        return self.receitas_view.create_view()
-    
-    def _finalizar_operacao_receitas(self, success: bool, message: str, dialog=None):
-        """Finaliza operações comuns após adição/edição/exclusão"""
+    def exibir_view_receitas(self) -> Dict[str, Any]:
+        self.log.debug("Retornando view existente de receitas")
+        try:
+            if not hasattr(self.receitas_view, 'body'):
+                raise ValueError("View de receitas não inicializada corretamente")
+            return Retorno.sucesso("View de receitas retornada com sucesso", {"view": self.receitas_view.body})
+        except Exception as e:
+            error_msg = f"Erro ao exibir view de receitas: {e}"
+            self.log.error(error_msg)
+            return Retorno.erro(error_msg)
+
+    def _finalizar_operacao_receitas(self, resultado: Dict[str, Any], dialog=None) -> Dict[str, Any]:
+        success = resultado.get("ok", False)
+        message = resultado.get("mensagem", "Operação finalizada")
+        
         self._show_snackbar(message, success)
+        
         if success:
             if dialog:
                 dialog.open = False
                 self.page.update()
 
-            self._receitas_Data_Handler.limpar_cache_paginacao()
-            time.sleep(0.3)  # Pequeno delay para visualização
-            self.carregar_dados_receitas()
-            
-    def _show_snackbar(self, message: str, success: bool):
-        """Exibe mensagem de feedback"""
-        self.page.snack_bar = ft.SnackBar(
-            content=ft.Text(message),
-            bgcolor=ft.Colors.GREEN_300 if success else ft.Colors.RED_300
-        )
-        self.page.snack_bar.open = True
-        self.page.open(self.page.snack_bar)
-        self.page.update()
+            self._receitas_Data_Handler.limpar_cache()
+            time.sleep(0.3)
+            return self.carregar_dados_receitas()
+        
+        return resultado
+
+    def _show_snackbar(self, message: str, success: bool) -> Dict[str, Any]:
+        try:
+            self.page.snack_bar = ft.SnackBar(
+                content=ft.Text(message),
+                bgcolor=ft.Colors.GREEN_300 if success else ft.Colors.RED_300
+            )
+            self.page.snack_bar.open = True
+            self.page.open(self.page.snack_bar)
+            self.page.update()
+            return Retorno.sucesso("Snackbar exibido com sucesso")
+        except Exception as e:
+            error_msg = f"Erro ao exibir snackbar: {e}"
+            self.log.error(error_msg)
+            return Retorno.erro(error_msg)

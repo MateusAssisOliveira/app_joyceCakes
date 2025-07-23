@@ -8,18 +8,19 @@ from logs.logger import Logger
 
 class ReceitasPage:
     def __init__(self, page: ft.Page):
-        self.log = Logger()  # Instância do logger
+        self.log = Logger()
         self.page = page
-
-
         self.log.info("Iniciando ReceitasPage...")
 
         # Inicializa os componentes do padrão MVC
         self.data_base = Database()
-        self._receitas_model = ReceitasModel(self.data_base,self.log)
+        self._receitas_model = ReceitasModel(self.data_base, self.log)
         self._receitas_view = ReceitasPageView()
         
-        # Cria o controller com as dependências injetadas
+        # Primeiro cria a view básica
+        self._receitas_view.create_view()
+        
+        # Depois cria o controller
         self.controller = ReceitasPageController(
             page=self.page,
             receitas_model=self._receitas_model,
@@ -35,32 +36,36 @@ class ReceitasPage:
         # Limpa os controles anteriores da página
         self.page.controls.clear()
 
-        # Adiciona a nova view usando o controller
-        self.page.add(
-            ft.Column(
-                controls=[self.controller.exibir_view_receitas()],
-                expand=True
-            )
-        )
-
-        # Atualiza a interface
+        # Garante que a view está criada antes de carregar dados
+        view_content = self._receitas_view.create_view()
+        self.page.add(ft.Column(controls=[view_content], expand=True))
+        
+        # Carrega os dados após a view estar pronta
+        self.controller.carregar_dados_receitas()
         self.page.update()
 
         self.log.info("View de receitas adicionada à página.")
 
     def as_view(self) -> ft.View:
         """Retorna a tela de receitas como uma View para navegação com rotas"""
-        self.page.controls.clear()
-
+        self.log.debug("Criando view para navegação por rotas")
+        
+        # Garante que a view está criada antes de carregar dados
+        view_content = self._receitas_view.create_view()
+        
         view = ft.View(
             route="/receitas",
             controls=[
                 ft.Column(
-                    controls=[self.controller.exibir_view_receitas()],
+                    controls=[view_content],
                     expand=True
                 )
             ]
         )
+        
+        # Carrega os dados após a view estar pronta
+        self.controller.carregar_dados_receitas()
+        
         self.page.views.clear()
         self.page.views.append(view)
         self.page.update()

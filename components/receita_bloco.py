@@ -24,7 +24,7 @@ class ReceitaBloco:
     def criar_bloco(self, receita: Dict) -> ft.Container:
         """Cria um bloco visual moderno para uma receita"""
         try:
-            self.log.debug(f"Criando bloco para receita: {receita.get('nome_receita', 'Desconhecida')}")
+            self.log.debug(f"\nCriando bloco para receita: {receita.get('nome_receita', 'Desconhecida')}")
             
             return ft.Container(
                 key = 'bloco_receita_' + str(receita['id']), 
@@ -207,7 +207,7 @@ class ReceitaBloco:
 
     def _criar_chip(self, ingrediente: Dict) -> ft.Chip:
         """Cria um chip básico para ingrediente"""
-        self.log.debug(f"\n\n{ingrediente}")
+        self.log.debug(f"\n\n\n{ingrediente}")
         unidade_medida =ingrediente.get('unidade_medida') 
         nome_ingrediente = ingrediente.get('nome').capitalize()
         qinatidade_ingrediente = ingrediente.get('quantidade')
