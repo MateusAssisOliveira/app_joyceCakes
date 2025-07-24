@@ -8,4 +8,4 @@ class ProdutoService:
     @staticmethod
     def listar_para_dropdown():
         db = Database()
-        return ProdutoDataHandler(ProdutoModel(db))._obter_todos_dados_prdoutos()
+        return ProdutoDataHandler(ProdutoModel(db))._obter_todos_dados_produtos()

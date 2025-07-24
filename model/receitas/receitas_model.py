@@ -167,7 +167,7 @@ class ReceitasModel:
             query = """
                 SELECT 
                     p.id,
-                    p.nome,
+                    p.nome AS nome_produto,
                     rp.quantidade,
                     um.simbolo AS unidade_medida,
                     p.custo_unitario,

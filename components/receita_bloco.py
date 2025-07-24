@@ -1,4 +1,3 @@
-# components/receita_bloco.py
 import flet as ft
 from logs.logger import Logger
 from decimal import Decimal
@@ -209,7 +208,7 @@ class ReceitaBloco:
         """Cria um chip básico para ingrediente"""
         self.log.debug(f"\n\n\n{ingrediente}")
         unidade_medida =ingrediente.get('unidade_medida') 
-        nome_ingrediente = ingrediente.get('nome').capitalize()
+        nome_ingrediente = ingrediente.get('nome_produto').capitalize()
         qinatidade_ingrediente = ingrediente.get('quantidade')
         
 

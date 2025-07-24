@@ -1,4 +1,3 @@
-
 from logs.logger import Logger
 from typing import Any, Dict, List, Optional, TypedDict
 import flet as ft
@@ -8,6 +7,7 @@ import asyncio
 from ui.forms.add_ingrediente_dialog_receita.ingrediente_data import IngredienteData
 from services.ingredientes.ingrediente_service import IngredienteService
 from ui.forms.add_ingrediente_dialog_receita.ingrediente_ui import IngredienteUI
+from util.retornos import Retorno
 
 
 class IngredienteForm:
@@ -22,7 +22,7 @@ class IngredienteForm:
         # Componentes UI
         self.lista_ingredientes = ft.ListView(expand=True)
         self.campo_pesquisa = self.ui.criar_campo_pesquisa()
-        self.campo_valor_medida= self.ui.criar_campo_valor_medida()
+        self.campo_valor_medida = self.ui.criar_campo_valor_medida()
         self.suggestions_list = self.ui.criar_lista_sugestoes()
         self.botao_adicionar = self.ui.criar_botao_adicionar()
         
@@ -37,62 +37,92 @@ class IngredienteForm:
         self.log.debug("Inicializando IngredienteForm")
         self._setup_ui()
     
-    def _setup_ui(self):
+    def _setup_ui(self) -> Dict[str, Any]:
         """Configura a interface do usuário"""
-        self.log.debug("Configurando interface do usuário")
-        
-        suggestions_panel = self.ui.criar_painel_sugestoes(self.suggestions_list)
-        
-        self.search_container = ft.Container(
-            content=ft.Column(
-                controls=[
-                    ft.Row([self.campo_pesquisa, self.campo_valor_medida,self.botao_adicionar]),
-                    suggestions_panel
-                ],
-                spacing=0,
+        try:
+            self.log.debug("Configurando interface do usuário")
+            
+            suggestions_panel = self.ui.criar_painel_sugestoes(self.suggestions_list)
+            
+            self.search_container = ft.Container(
+                content=ft.Column(
+                    controls=[
+                        ft.Row([self.campo_pesquisa, self.campo_valor_medida, self.botao_adicionar]),
+                        suggestions_panel
+                    ],
+                    spacing=0,
+                )
             )
-        )
-        self.log.debug("Interface do usuário configurada com sucesso")
+            self.log.debug("Interface do usuário configurada com sucesso")
+            return Retorno.sucesso("Interface configurada com sucesso")
+        except Exception as e:
+            error_msg = f"Erro ao configurar interface: {str(e)}"
+            self.log.error(error_msg)
+            return Retorno.erro(error_msg)
     
-    def _setup_event_handlers(self):
+    def _setup_event_handlers(self) -> Dict[str, Any]:
         """Configura todos os handlers de eventos"""
-        self.campo_pesquisa.on_change = self._handle_search
-        self.botao_adicionar.on_click = lambda e: self._adicionar_ingrediente()
+        try:
+            self.campo_pesquisa.on_change = self._handle_search
+            self.botao_adicionar.on_click = lambda e: self._adicionar_ingrediente()
+            return Retorno.sucesso("Event handlers configurados com sucesso")
+        except Exception as e:
+            error_msg = f"Erro ao configurar event handlers: {str(e)}"
+            self.log.error(error_msg)
+            return Retorno.erro(error_msg)
     
-    async def _handle_search(self, e):
+    async def _handle_search(self, e) -> Dict[str, Any]:
         """Manipula a pesquisa de ingredientes com debounce"""
-        self._last_search_time = time()
-        await asyncio.sleep(0.3)
-        
-        if time() - self._last_search_time < 0.3:
-            self.log.debug("Pesquisa ignorada (debounce)")
-            return
-        
-        termo = self.campo_pesquisa.value.strip().lower()
-        self.log.debug(f"\n\nTermo de pesquisa: '{termo}'")
-        
-        if self._search_task and not self._search_task.done():
-            self._search_task.cancel()
-        
-        if len(termo) < 2:
-            self.suggestions_list.visible = False
-            self.page.update()
-            return
-        
-        self._search_task = asyncio.create_task(self._atualizar_sugestoes(termo))
+        try:
+            self._last_search_time = time()
+            await asyncio.sleep(0.3)
+            
+            if time() - self._last_search_time < 0.3:
+                self.log.debug("Pesquisa ignorada (debounce)")
+                return Retorno.sucesso("Pesquisa ignorada (debounce)")
+            
+            termo = self.campo_pesquisa.value.strip().lower()
+            self.log.debug(f"\n\nTermo de pesquisa: '{termo}'")
+            
+            if self._search_task and not self._search_task.done():
+                self._search_task.cancel()
+            
+            if len(termo) < 2:
+                self.suggestions_list.visible = False
+                self.page.update()
+                return Retorno.sucesso("Termo de pesquisa muito curto")
+            
+            self._search_task = asyncio.create_task(self._atualizar_sugestoes(termo))
+            return Retorno.sucesso("Pesquisa iniciada com sucesso")
+            
+        except Exception as e:
+            error_msg = f"Erro ao processar pesquisa: {str(e)}"
+            self.log.error(error_msg)
+            return Retorno.erro(error_msg)
 
-    def _make_suggestion_handler(self, produto):
-        self.log.debug(f"\n\nCriando handler para sugestão: {produto.get('nome')}")
-        async def handler(e):
-            await self._selecionar_sugestao(produto)
-        return handler
+    def _make_suggestion_handler(self, produto) -> Dict[str, Any]:
+        """Cria handler para seleção de sugestão"""
+        try:
+            self.log.debug(f"\n\nCriando handler para sugestão: {produto.get('nome_produto')}")
+            async def handler(e):
+                return await self._selecionar_sugestao(produto)
+            return handler
+        except Exception as e:
+            error_msg = f"Erro ao criar suggestion handler: {str(e)}"
+            self.log.error(error_msg)
+            return Retorno.erro(error_msg)
     
-    async def _atualizar_sugestoes(self, termo: str):
+    async def _atualizar_sugestoes(self, termo: str) -> Dict[str, Any]:
         """Atualiza a lista de sugestões com base no termo de pesquisa"""
         try:
             self.log.info(f"`_atualizar_sugestoes {termo}")
 
-            sugestoes = self.service.pesquisar_ingredientes(termo)
+            resultado = self.service.pesquisar_ingredientes(termo)
+            
+            if not resultado.get("ok", False):
+                return resultado
+                
+            sugestoes = resultado['dados']
             self.log.debug(f"\n\nEncontradas {len(sugestoes)} sugestões")
             
             self.suggestions_list.controls.clear()
@@ -105,11 +135,14 @@ class IngredienteForm:
             self.suggestions_list.visible = bool(sugestoes)
             self.page.update()
             
+            return Retorno.sucesso(f"{len(sugestoes)} sugestões encontradas", sugestoes)
+            
         except Exception as e:
-            self.log.error(f"Erro ao atualizar sugestões: {str(e)}")
-            raise
+            error_msg = f"Erro ao atualizar sugestões: {str(e)}"
+            self.log.error(error_msg)
+            return Retorno.erro(error_msg)
     
-    async def _selecionar_sugestao(self, produto: IngredienteData):
+    async def _selecionar_sugestao(self, produto: IngredienteData) -> Dict[str, Any]:
         """Seleciona uma sugestão da lista"""
         try:
             self.campo_pesquisa.value = produto["nome_produto"]
@@ -117,68 +150,115 @@ class IngredienteForm:
             self.produto_selecionado = produto
             self.page.update()
             self.log.debug("Sugestão selecionada com sucesso")
+            return Retorno.sucesso("Sugestão selecionada com sucesso", produto)
         except Exception as e:
-            self.log.error(f"Erro ao selecionar sugestão: {str(e)}")
-            raise
+            error_msg = f"Erro ao selecionar sugestão: {str(e)}"
+            self.log.error(error_msg)
+            return Retorno.erro(error_msg)
     
-    def _adicionar_ingrediente(self, ingrediente: Optional[IngredienteData] = None):
+    def _adicionar_ingrediente(self, ingrediente: Optional[IngredienteData] = None) -> Dict[str, Any]:
         """Adiciona um novo ingrediente à lista"""
         try:
             if not ingrediente:
                 nome = self.campo_pesquisa.value.strip()
-                ingrediente = self.service.validar_ingrediente(nome)
-                if not ingrediente:
-                    return
+                resultado = self.service.validar_ingrediente(nome)
+                
+                if not resultado.get("ok", False):
+                    return resultado
+                    
+                ingrediente = resultado['dados']
+                
             quantidade = self.campo_valor_medida.value.strip()
             self.log.debug(f"\n\nAdicionando ingrediente: {ingrediente.get('nome_produto')}")
             
-            card = self.ui.criar_card_ingrediente(ingrediente,quantidade)
+            card = self.ui.criar_card_ingrediente(ingrediente, quantidade)
             self._configurar_eventos_card(card)
             
             self.lista_ingredientes.controls.append(card)
             self._limpar_campos_pesquisa()
             self._limpar_campos_unidade_medida()
             self.page.update()
+            
             self.log.debug(f"\n\nIngrediente '{ingrediente['nome_produto']}' adicionado com sucesso")
+            return Retorno.sucesso("Ingrediente adicionado com sucesso", ingrediente)
             
         except Exception as e:
-            self.log.error(f"Erro ao adicionar ingrediente: {str(e)}")
-            raise
+            error_msg = f"Erro ao adicionar ingrediente: {str(e)}"
+            self.log.error(error_msg)
+            return Retorno.erro(error_msg)
     
-    def _configurar_eventos_card(self, card: ft.Card):
+    def _configurar_eventos_card(self, card: ft.Card) -> Dict[str, Any]:
         """Configura os eventos para um card de ingrediente"""
-        delete_btn = ft.IconButton(icon=ft.Icons.DELETE)
-        container = card.content
-        container.content.controls[0].trailing = delete_btn
-        delete_btn.on_click = lambda e, c=card: self._remover_ingrediente(c)
+        try:
+            delete_btn = ft.IconButton(icon=ft.Icons.DELETE)
+            container = card.content
+            container.content.controls[0].trailing = delete_btn
+            delete_btn.on_click = lambda e, c=card: self._remover_ingrediente(c)
+            return Retorno.sucesso("Eventos do card configurados com sucesso")
+        except Exception as e:
+            error_msg = f"Erro ao configurar eventos do card: {str(e)}"
+            self.log.error(error_msg)
+            return Retorno.erro(error_msg)
     
-    def _limpar_campos_pesquisa(self):
+    def _limpar_campos_pesquisa(self) -> Dict[str, Any]:
         """Limpa os campos de pesquisa após adição"""
-        self.campo_pesquisa.value = ""
-        self.produto_selecionado = None
+        try:
+            self.campo_pesquisa.value = ""
+            self.produto_selecionado = None
+            return Retorno.sucesso("Campos de pesquisa limpos com sucesso")
+        except Exception as e:
+            error_msg = f"Erro ao limpar campos de pesquisa: {str(e)}"
+            self.log.error(error_msg)
+            return Retorno.erro(error_msg)
 
-    def _limpar_campos_unidade_medida(self):
-        """Limpa os campos de pesquisa após adição"""
-        self.campo_valor_medida.value = ""
+    def _limpar_campos_unidade_medida(self) -> Dict[str, Any]:
+        """Limpa os campos de unidade de medida após adição"""
+        try:
+            self.campo_valor_medida.value = ""
+            return Retorno.sucesso("Campos de unidade de medida limpos com sucesso")
+        except Exception as e:
+            error_msg = f"Erro ao limpar campos de unidade de medida: {str(e)}"
+            self.log.error(error_msg)
+            return Retorno.erro(error_msg)
     
-    def _remover_ingrediente(self, card: ft.Card):
+    def _remover_ingrediente(self, card: ft.Card) -> Dict[str, Any]:
         """Remove um ingrediente da lista"""
         try:
             ingrediente = card.data.get("nome_produto", "desconhecido")
             self.log.debug(f"\n\nRemovendo ingrediente: {ingrediente}")
             self.lista_ingredientes.controls.remove(card)
             self.page.update()
+            return Retorno.sucesso("Ingrediente removido com sucesso", {"nome_produto": ingrediente})
         except Exception as e:
-            self.log.error(f"Erro ao remover ingrediente: {str(e)}")
-            raise
+            error_msg = f"Erro ao remover ingrediente: {str(e)}"
+            self.log.error(error_msg)
+            return Retorno.erro(error_msg)
     
-    def get_ingredientes(self) -> List[IngredienteData]:
+    def get_ingredientes(self) -> Dict[str, Any]:
         """Retorna a lista completa de ingredientes adicionados"""
-        return [item.data for item in self.lista_ingredientes.controls]
+        try:
+            ingredientes = [item.data for item in self.lista_ingredientes.controls]
+            return Retorno.sucesso("Lista de ingredientes obtida com sucesso", ingredientes)
+        except Exception as e:
+            error_msg = f"Erro ao obter lista de ingredientes: {str(e)}"
+            self.log.error(error_msg)
+            return Retorno.erro(error_msg)
     
-    def build(self):
+    def build(self) -> Dict[str, Any]:
         """Retorna o widget principal para exibição"""
-        return self.search_container
+        try:
+            return Retorno.sucesso("Widget principal construído com sucesso", {"widget": self.search_container})
+        
+        except Exception as e:
+            error_msg = f"Erro ao construir widget principal: {str(e)}"
+            self.log.error(error_msg)
+            return Retorno.erro(error_msg)
     
-    def get_lista_ingredientes(self):
-        return self.lista_ingredientes
+    def get_lista_ingredientes(self) -> Dict[str, Any]:
+        """Retorna a lista de ingredientes como controle Flet"""
+        try:
+            return Retorno.sucesso("Lista de ingredientes obtida com sucesso", {"lista": self.lista_ingredientes})
+        except Exception as e:
+            error_msg = f"Erro ao obter lista de ingredientes: {str(e)}"
+            self.log.error(error_msg)
+            return Retorno.erro(error_msg)
