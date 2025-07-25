@@ -84,9 +84,16 @@ class ReceitaForm:
                 error_msg = f"Erro na conversão de campo numérico: {str(ve)}"
                 self.log.error(error_msg)
                 return Retorno.dados_invalidos(error_msg)
+            
+
+            resultado_busca_campo_categoria = self._mapear_categoria_para_id(self.campo_categoria.value)
+
+            if not resultado_busca_campo_categoria['ok']:
+                self.log.warning(f"campo categoria id {resultado_busca_campo_categoria} não encontrado")
+                return Retorno.nao_encontrado(f"Campo categoria id {resultado_busca_campo_categoria} não encontrado")
 
             valores["dificuldade"] = self.campo_dificuldade.value
-            valores["categoria_id"] = self._mapear_categoria_para_id(self.campo_categoria.value)
+            valores["categoria_id"] = resultado_busca_campo_categoria['dados']
             valores["ingredientes"] = []  # Preenchido externamente
             valores["data_cadastro"] = datetime.now()
 
@@ -160,7 +167,7 @@ class ReceitaForm:
             if categoria_id == 0:
                 return Retorno.dados_invalidos(f"Categoria '{nome_categoria}' não encontrada")
                 
-            return Retorno.sucesso("Categoria mapeada com sucesso", {"categoria_id": categoria_id})
+            return Retorno.sucesso("Categoria mapeada com sucesso", dados=categoria_id)
             
         except Exception as e:
             error_msg = f"Erro ao mapear categoria para ID: {str(e)}"

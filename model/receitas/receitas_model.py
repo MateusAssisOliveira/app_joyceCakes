@@ -185,6 +185,7 @@ class ReceitasModel:
             return []
 
     def inserir_receita(self, dados: Dict) -> Dict[str, Any]:
+
         """
         Insere uma nova receita no banco de dados
         

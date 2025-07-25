@@ -183,22 +183,43 @@ class ReceitasPageController:
             return Retorno.erro(error_msg)
 
     def _handle_nova_receita(self) -> Dict[str, Any]:
+        """Abre o diálogo para criação de nova receita"""
         try:
-            lista_produtos = ProdutoService.listar_para_dropdown()
-            self.log.debug(f"TODOS OS PRODUTOS DO DB: {lista_produtos}")
+            # 1. Obter lista de produtos
+            resultado_produtos = ProdutoService.listar_para_dropdown()
+            
+            if not resultado_produtos.get("ok", False):
+                error_msg = f"Falha ao obter produtos: {resultado_produtos.get('mensagem', 'Erro desconhecido')}"
+                self.log.error(error_msg)
+                return Retorno.erro(error_msg)
 
+            # 2. Extrair lista de produtos do retorno
+            lista_produtos = resultado_produtos["dados"]
+            self.log.debug(f"Produtos obtidos para dropdown: {lista_produtos}")
+
+            # 3. Validar estrutura dos dados
+            if not isinstance(lista_produtos, list):
+                error_msg = "Estrutura de produtos inválida - lista esperada"
+                self.log.error(f"{error_msg}. Tipo recebido: {type(lista_produtos)}")
+                return Retorno.erro(error_msg)
+
+            # 4. Criar e abrir diálogo
             dialog_receita = DialogReceita(self.page, lista_produtos, self.log)
             
             def on_salvar(dados):
                 retorno = self._receitas_handler.adicionar_receita(dados)
                 self._finalizar_operacao_receitas(retorno, dialog_receita)
-                
+            
             dialog_receita.abrir(modo_edicao=False, on_salvar=on_salvar)
-            return Retorno.sucesso("Diálogo de nova receita aberto com sucesso")
+            
+            return Retorno.sucesso(
+                "Diálogo de nova receita aberto com sucesso",
+                {"quantidade_produtos": len(lista_produtos)}
+            )
             
         except Exception as e:
-            error_msg = f"Erro ao abrir diálogo de nova receita: {e}"
-            self.log.error(error_msg)
+            error_msg = f"Erro ao abrir diálogo de nova receita: {str(e)}"
+            self.log.error(error_msg, exc_info=True)
             return Retorno.erro(error_msg)
 
     def _handle_editar_receita(self, e) -> Dict[str, Any]:

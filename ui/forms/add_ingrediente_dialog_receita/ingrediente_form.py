@@ -113,33 +113,62 @@ class IngredienteForm:
             return Retorno.erro(error_msg)
     
     async def _atualizar_sugestoes(self, termo: str) -> Dict[str, Any]:
-        """Atualiza a lista de sugestões com base no termo de pesquisa"""
+        """Atualiza a lista de sugestões com base no termo de pesquisa
+        
+        Args:
+            termo: Termo de pesquisa para ingredientes
+            
+        Returns:
+            Dict[str, Any]: Retorno padronizado com sugestões ou erro
+        """
         try:
-            self.log.info(f"`_atualizar_sugestoes {termo}")
+            self.log.info(f"Iniciando busca por sugestões: '{termo}'")
 
+            # 1. Validação do termo
+            if not termo or len(termo.strip()) < 2:
+                self.suggestions_list.controls.clear()
+                self.suggestions_list.visible = False
+                self.page.update()
+                return Retorno.sucesso("Termo muito curto - lista limpa", [])
+
+            # 2. Pesquisa no service
             resultado = self.service.pesquisar_ingredientes(termo)
             
             if not resultado.get("ok", False):
-                return resultado
-                
+                self.log.warning(f"Falha na pesquisa: {resultado.get('mensagem')}")
+                return resultado  
+
             sugestoes = resultado['dados']
-            self.log.debug(f"\n\nEncontradas {len(sugestoes)} sugestões")
-            
+            self.log.debug(f"Encontradas {len(sugestoes)} sugestões válidas")
+
+            # 3. Atualização da UI
             self.suggestions_list.controls.clear()
             
             for produto in sugestoes:
-                item = self.ui.criar_item_sugestao(produto)
-                item.on_click = self._make_suggestion_handler(produto)
-                self.suggestions_list.controls.append(item)
-            
+                try:
+                    item = self.ui.criar_item_sugestao(produto)
+                    item.on_click = self._make_suggestion_handler(produto)
+                    self.suggestions_list.controls.append(item)
+                except Exception as e:
+                    self.log.error(f"Erro ao criar item para {produto.get('nome_produto')}: {str(e)}")
+                    continue
+
             self.suggestions_list.visible = bool(sugestoes)
             self.page.update()
             
-            return Retorno.sucesso(f"{len(sugestoes)} sugestões encontradas", sugestoes)
+            return Retorno.sucesso(
+                f"Exibindo {len(sugestoes)} sugestões",
+                {"quantidade": len(sugestoes), "termo": termo}
+            )
             
         except Exception as e:
-            error_msg = f"Erro ao atualizar sugestões: {str(e)}"
-            self.log.error(error_msg)
+            error_msg = f"Erro crítico ao atualizar sugestões: {str(e)}"
+            self.log.error(error_msg, exc_info=True)
+            
+            # Garante que a UI seja atualizada mesmo em caso de erro
+            self.suggestions_list.visible = False
+            self.page.update()
+            
             return Retorno.erro(error_msg)
     
     async def _selecionar_sugestao(self, produto: IngredienteData) -> Dict[str, Any]:

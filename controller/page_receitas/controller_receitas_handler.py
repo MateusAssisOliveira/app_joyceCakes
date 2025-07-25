@@ -44,6 +44,7 @@ class ReceitasHandler:
             return Retorno.erro(f"Erro ao selecionar receita: {str(e)}")
 
     def adicionar_receita(self, dados: Dict[str, Any]) -> Dict[str, Any]:
+
         """
         Adiciona uma nova receita e seus ingredientes
         
@@ -60,6 +61,7 @@ class ReceitasHandler:
 
         # Validação básica
         campos_obrigatorios = ['nome', 'descricao', 'categoria_id', 'modo_preparo']
+
         for campo in campos_obrigatorios:
             if campo not in dados or not dados[campo]:
                 msg = f"Campo obrigatório ausente: {campo}"
@@ -107,7 +109,6 @@ class ReceitasHandler:
                     resultado_ingrediente = self.receitas_model.inserir_ingrediente(receita_id, ingrediente_formatado)
                     if not resultado_ingrediente['ok']:
                         self.log.error(f"Erro ao inserir ingrediente {ingrediente_formatado.get('produto_id')}: {resultado_ingrediente['mensagem']}")
-                        # Continua mesmo se um ingrediente falhar
             
             # Atualiza o custo estimado da receita com base nos ingredientes
             self.log.debug("Atualizando custo estimado da receita...")

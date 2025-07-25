@@ -57,6 +57,13 @@ class DialogReceita:
                 error_msg = "lista_ingredientes não encontrada no formulário"
                 self.log.error(error_msg)
                 return Retorno.erro(error_msg)
+            
+            resultado_campos = self.receita_form.get_campos()
+
+            if not resultado_campos.get("ok"):
+                return resultado_campos  # Já está no formato Retorno.erro()
+                
+            campos_receita = resultado_campos["dados"]["campos"]
 
             # 5. Construção do diálogo principal
             self.dialog = ft.AlertDialog(
@@ -64,7 +71,7 @@ class DialogReceita:
                 title=ft.Text("Nova Receita"),
                 content=ft.Column(
                     controls=[
-                        *self.receita_form.get_campos(),
+                        *campos_receita,
                         ft.Divider(),
                         ft.Text("Ingredientes:", weight=ft.FontWeight.BOLD),
                         ingrediente_widget,
@@ -121,7 +128,7 @@ class DialogReceita:
             self.log.error(error_msg)
             self._mostrar_erro("Erro ao abrir o formulário.")
             return Retorno.erro(error_msg)
-
+        
     def _salvar_receita(self, callback) -> Dict[str, Any]:
         """Salva os dados da receita"""
         try:
@@ -139,6 +146,7 @@ class DialogReceita:
             self.log.info(f"Iniciando o salvamento da receita: {dados.get('nome', 'Nova receita')}")
 
             resultado_validacao = self._validar_dados(dados)
+
             if not resultado_validacao.get("ok", False):
                 return resultado_validacao
 
