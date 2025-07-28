@@ -20,7 +20,7 @@ class ReceitasPageController:
         self.receitas_view = receitas_view
         
         
-        self._bloco_component = ReceitaBloco()
+        
         self.receitas_model = receitas_model
         self.log = Logger()
         self.log.info("Inicializando ReceitasPageController")
@@ -32,6 +32,7 @@ class ReceitasPageController:
         try:
             self._receitas_Data_Handler = ReceitasDataHandler(self.receitas_model, self.log)
             self._receitas_handler = ReceitasHandler(self.receitas_model, self.log)
+            self._bloco_component = ReceitaBloco(self._receitas_handler)
             self.log.info("Handlers inicializados com sucesso")
             return Retorno.sucesso("Handlers inicializados com sucesso")
         except Exception as e:
@@ -222,10 +223,62 @@ class ReceitasPageController:
             self.log.error(error_msg, exc_info=True)
             return Retorno.erro(error_msg)
 
-    def _handle_editar_receita(self, e) -> Dict[str, Any]:
-        self.log.info("Ação de edição de receita acionada")
-        # Implementar edição
-        return Retorno.sucesso("Edição de receita acionada (não implementado)")
+    def _handle_editar_receita(self) -> Dict[str, Any]:
+        """Abre o diálogo para edição da receita atualmente selecionada"""
+        try:
+            # 1. Obter a receita completa diretamente do handler
+            resultado = self._receitas_handler.get_receita_completa_selecionada()
+            
+            if not resultado['ok']:
+                return resultado 
+
+            receita_completa = resultado['dados']
+            
+            # 2. Validar dados mínimos
+            if not isinstance(receita_completa, dict) or not receita_completa.get('id'):
+                error_msg = "Receita selecionada inválida ou sem ID"
+                self.log.error(f"{error_msg}. Dados: {receita_completa}")
+                return Retorno.dados_invalidos(error_msg)
+
+            # 3. Obter apenas a lista de produtos (única chamada externa necessária)
+            resultado_produtos = ProdutoService.listar_para_dropdown()
+            
+            if not resultado_produtos['ok']:
+                return resultado_produtos  # Retorna o erro já formatado
+
+            # 4. Preparar dados para o diálogo
+            self.log.debug(f"Iniciando edição da receita ID: {receita_completa['id']}")
+
+            # 5. Criar e abrir diálogo com os dados completos
+            dialog_receita = DialogReceita(
+                page=self.page,
+                produtos=resultado_produtos['dados'],
+                logger=self.log
+            )
+            
+            def on_salvar(dados_editados):
+                # O handler já sabe qual receita editar (mantém o estado)
+                retorno = self._receitas_handler.editar_receita(dados_editados)
+                self._finalizar_operacao_receitas(retorno, dialog_receita)
+            
+            dialog_receita.abrir(
+                modo_edicao=True,
+                dados_receita=receita_completa,
+                on_salvar=on_salvar
+            )
+            
+            return Retorno.sucesso(
+                "Diálogo de edição aberto com sucesso",
+                dados={
+                    "receita_id": receita_completa['id'],
+                    "nome_receita": receita_completa.get('nome_receita')
+                }
+            )
+            
+        except Exception as e:
+            error_msg = f"Falha ao iniciar edição: {str(e)}"
+            self.log.error(error_msg)
+            return Retorno.erro(error_msg)
 
     def _handle_deletar_receita(self, e) -> Dict[str, Any]:
         self.log.info("Ação de exclusão de receita acionada")

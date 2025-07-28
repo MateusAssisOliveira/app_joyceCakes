@@ -1,4 +1,5 @@
 import flet as ft
+from controller.page_receitas.controller_receitas_handler import ReceitasHandler
 from logs.logger import Logger
 from decimal import Decimal
 from typing import Optional, List, Dict, Union
@@ -7,7 +8,7 @@ from datetime import timedelta
 class ReceitaBloco:
     """Componente moderno para exibição de receitas com design sofisticado"""
 
-    def __init__(self, theme: Optional[dict] = None):
+    def __init__(self,receitasHandler : ReceitasHandler,theme: Optional[dict] = None):
         self.log = Logger()
         self.theme = theme or {
             'primary': ft.Colors.PINK_700,
@@ -19,6 +20,8 @@ class ReceitaBloco:
             'accent': ft.Colors.TEAL_400
         }
         self.log.info("Componente ReceitaBloco inicializado")
+
+        self.receitasHandler = receitasHandler
 
     def criar_bloco(self, receita: Dict) -> ft.Container:
         """Cria um bloco visual moderno para uma receita"""
@@ -263,6 +266,9 @@ class ReceitaBloco:
     def _handle_clique_bloco(self, e: ft.ControlEvent, receita_id: int):
         """Clique no bloco da receita"""
         self.log.info(f"Receita clicada - ID: {receita_id}")
+        self.receitasHandler.obter_receita_por_id(receita_id)
+
+
 
     def _handle_favorito(self, e: ft.ControlEvent, receita_id: int):
         """Adiciona/remove dos favoritos"""

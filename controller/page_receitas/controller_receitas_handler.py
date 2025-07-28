@@ -21,7 +21,8 @@ class ReceitasHandler:
         """Retorna a receita atualmente selecionada"""
         return self._receita_selecionada
 
-    def selecionar_receita(self, receita_id: int) -> Dict[str, Any]:
+    def obter_receita_por_id(self, receita_id: int) -> Dict[str, Any]:
+
         """
         Seleciona uma receita para operações futuras
         
@@ -129,6 +130,7 @@ class ReceitasHandler:
         
         Retorna:
         - Dict[str, Any]: Retorno padronizado indicando sucesso ou erro
+
         """
         if not self._receita_selecionada:
             msg = "Nenhuma receita selecionada"
@@ -189,3 +191,39 @@ class ReceitasHandler:
         self._receita_selecionada = None
         self.log.debug("Seleção de receita limpa")
         return Retorno.sucesso("Seleção de receita limpa com sucesso")
+    
+    def get_receita_completa_selecionada(self) -> dict:
+        """Obtém a receita atualmente selecionada
+        
+        Returns:
+            dict: Retorno padronizado contendo:
+                - ok: bool indicando sucesso/falha
+                - mensagem: str descritiva
+                - status: código HTTP
+                - dados: receita selecionada ou None
+        """
+        try:
+            if not hasattr(self, '_receita_selecionada'):
+                msg = "Atributo '_receita_selecionada' não encontrado"
+                self.log.error(msg)
+                return Retorno.erro(msg)
+            
+            if self._receita_selecionada is None:
+                msg = "Nenhuma receita selecionada atualmente"
+                self.log.debug(msg)
+                return Retorno.nao_encontrado(msg)
+            
+            self.log.debug(f"""Retornando receita selecionada 
+                receita_id:{ self._receita_selecionada.get('id')} 
+                nome:{ self._receita_selecionada.get('nome_receita')}"""
+            )         
+            
+            return Retorno.sucesso(
+                "Receita selecionada obtida com sucesso",
+                dados=self._receita_selecionada
+            )
+            
+        except Exception as e:
+            error_msg = f"Erro ao obter receita selecionada: {str(e)}"
+            self.log.error(error_msg)
+            return Retorno.erro(error_msg)

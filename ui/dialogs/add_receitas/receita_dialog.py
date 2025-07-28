@@ -35,6 +35,7 @@ class DialogReceita:
         try:
             # 1. Validação do build do ingrediente_form
             resultado_build = self.ingrediente_form.build()
+
             if not resultado_build.get("ok"):
                 self.log.error(f"Falha no build: {resultado_build.get('mensagem', 'Erro desconhecido')}")
                 return Retorno.erro("Falha ao construir formulário de ingredientes")
@@ -47,6 +48,7 @@ class DialogReceita:
 
             # 3. Validação do widget retornado
             ingrediente_widget = resultado_build["dados"]["widget"]
+
             if not isinstance(ingrediente_widget, ft.Control):
                 error_msg = "O widget retornado não é um controle Flet válido"
                 self.log.error(error_msg)
@@ -93,18 +95,26 @@ class DialogReceita:
             self.log.error(error_msg, exc_info=True)
             return Retorno.erro(error_msg)
 
-    def abrir(self, modo_edicao=False, receita=None, on_salvar=None) -> Dict[str, Any]:
+    def abrir(self, modo_edicao=False, dados_receita=None, on_salvar=None) -> Dict[str, Any]:
 
+        self.log.info('DialogReceita.abri')
 
+        self.log.debug(f""" 
+                       modo_edicao :{modo_edicao} 
+                       receita : {dados_receita}
+                       on_salvar : {on_salvar}
+                        """
+                    )
+        
         """Abre o diálogo de receita"""
         try:
-            if modo_edicao and receita:
-                resultado = self.receita_form.preencher_campos(receita)
+            if modo_edicao and dados_receita:
+                resultado = self.receita_form.preencher_campos(dados_receita)
                 if not resultado.get("ok", False):
                     return resultado
                 
-                self.dialog.title = ft.Text(f"Editar: {receita['nome']}")
-                self.log.info(f"Abrindo diálogo em modo edição para receita: {receita['nome']}")
+                self.dialog.title = ft.Text(f"Editar: {dados_receita['nome']}")
+                self.log.info(f"Abrindo diálogo em modo edição para receita: {dados_receita['nome']}")
             else:
                 resultado = self.receita_form.limpar_campos()
                 if not resultado.get("ok", False):

@@ -1,5 +1,5 @@
 import flet as ft
-from controller.routes.route_controller import RouteController  # Ajuste o caminho conforme necessário
+from controller.routes.route_controller import RouteController
 
 def main(page: ft.Page):
     page.title = "Sistema"

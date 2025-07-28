@@ -1,5 +1,5 @@
 from logs.logger import Logger
-from typing import Any, Dict, List, Optional, TypedDict
+from typing import Any, Dict, List, Optional, TypedDict, Union
 import flet as ft
 from time import time
 import asyncio
@@ -185,36 +185,64 @@ class IngredienteForm:
             self.log.error(error_msg)
             return Retorno.erro(error_msg)
     
-    def _adicionar_ingrediente(self, ingrediente: Optional[IngredienteData] = None) -> Dict[str, Any]:
-        """Adiciona um novo ingrediente à lista"""
+    def _adicionar_ingrediente(self, ingrediente: Optional[Union[IngredienteData, Dict]] = None, lista_ingredientes: Optional[List[Dict]] = None) -> Dict[str, Any]:
+        """
+        Adiciona um ou mais ingredientes à lista. Se `lista_ingredientes` for fornecida, itera sobre ela.
+        """
         try:
+            # Se for fornecida uma lista de ingredientes, iteramos sobre ela
+            if lista_ingredientes:
+                for item in lista_ingredientes:
+                    nome = item.get("nome_produto")
+                    quantidade = item.get("quantidade")
+
+                    if not nome or not quantidade:
+                        self.log.warning(f"Ingr. inválido: {item}")
+                        continue
+
+                    resultado = self.service.validar_ingrediente(nome)
+                    
+                    if not resultado.get("ok", False):
+                        self.log.warning(f"Ingr. não válido: {nome}")
+                        continue
+
+                    ingrediente_validado = resultado['dados']
+                    card = self.ui.criar_card_ingrediente(ingrediente_validado, quantidade)
+                    self._configurar_eventos_card(card)
+                    self.lista_ingredientes.controls.append(card)
+
+                self.page.update()
+                return Retorno.sucesso("Ingredientes adicionados com sucesso")
+
+            # Caso contrário, adiciona apenas um ingrediente (modo antigo)
             if not ingrediente:
                 nome = self.campo_pesquisa.value.strip()
                 resultado = self.service.validar_ingrediente(nome)
-                
+
                 if not resultado.get("ok", False):
                     return resultado
-                    
+
                 ingrediente = resultado['dados']
-                
+
             quantidade = self.campo_valor_medida.value.strip()
             self.log.debug(f"\n\nAdicionando ingrediente: {ingrediente.get('nome_produto')}")
             
             card = self.ui.criar_card_ingrediente(ingrediente, quantidade)
             self._configurar_eventos_card(card)
-            
+
             self.lista_ingredientes.controls.append(card)
             self._limpar_campos_pesquisa()
             self._limpar_campos_unidade_medida()
             self.page.update()
-            
+
             self.log.debug(f"\n\nIngrediente '{ingrediente['nome_produto']}' adicionado com sucesso")
             return Retorno.sucesso("Ingrediente adicionado com sucesso", ingrediente)
-            
+
         except Exception as e:
             error_msg = f"Erro ao adicionar ingrediente: {str(e)}"
             self.log.error(error_msg)
             return Retorno.erro(error_msg)
+
     
     def _configurar_eventos_card(self, card: ft.Card) -> Dict[str, Any]:
         """Configura os eventos para um card de ingrediente"""
