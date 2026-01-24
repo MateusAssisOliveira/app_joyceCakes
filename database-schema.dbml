@@ -1,0 +1,52 @@
+// ARQUIVO DE SCHEMA DO BANCO DE DADOS (DBML)
+//
+// Propósito:
+// Este arquivo descreve a estrutura do banco de dados relacional usando a linguagem DBML (Database Markup Language).
+// Ele não é usado diretamente pela aplicação, mas serve como uma documentação visual e técnica do schema.
+//
+// Como usar:
+// Copie o conteúdo deste arquivo e cole no editor do site https://dbdiagram.io para gerar um
+// diagrama de Entidade-Relacionamento (ERD) interativo.
+//
+// Responsabilidade:
+// - Definir tabelas, colunas, tipos de dados e chaves primárias/estrangeiras.
+// - Visualizar as relações entre as diferentes entidades do sistema.
+
+Table Products {
+  id varchar [pk, default: `uuid_generate_v4()`]
+  name varchar(255) [not null]
+  description text
+  price decimal(10, 2) [not null, default: 0]
+  category varchar(100)
+  imageUrlId varchar(255)
+  stock_quantity integer [not null, default: 0]
+  created_at timestamp [default: `now()`]
+}
+
+Table Supplies {
+  id varchar [pk, default: `uuid_generate_v4()`]
+  name varchar(255) [not null]
+  stock integer [not null, default: 0]
+  unit varchar(10) [not null, note: '"kg", "L", or "un"']
+  costPerUnit decimal(10, 2) [not null, default: 0]
+  created_at timestamp [default: `now()`]
+}
+
+Table Orders {
+  id varchar [pk, default: `uuid_generate_v4()`]
+  customerName varchar(255) [not null]
+  date timestamp [not null, default: `now()`]
+  total decimal(10, 2) [not null, default: 0]
+  status varchar(50) [not null, default: 'Pendente', note: 'Ex: Pendente, Em Preparo, Entregue']
+}
+
+Table OrderItems {
+  order_id varchar [ref: > Orders.id]
+  product_id varchar [ref: > Products.id]
+  quantity integer [not null, default: 1]
+  price_at_time decimal(10, 2) [not null]
+  
+  indexes {
+    (order_id, product_id) [pk]
+  }
+}

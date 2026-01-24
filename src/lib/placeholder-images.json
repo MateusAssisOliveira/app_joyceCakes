@@ -1,0 +1,106 @@
+{
+  "placeholderImages": [
+    {
+      "id": "hero-confectionery-1",
+      "description": "Bolo decorado exclusivo da Sabor e Arte",
+      "imageUrl": "https://images.unsplash.com/photo-1667908775750-395e9b043396?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxleGNsdXNpdmUlMjBjYWtlfGVufDB8fHx8MTc2NDAwNTQ5M3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "exclusive cake"
+    },
+    {
+      "id": "about-confectioner-1",
+      "description": "A female confectioner smiling and decorating a cake.",
+      "imageUrl": "https://images.unsplash.com/photo-1635341814289-55cf1490024c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxwYXN0cnklMjBjaGVmfGVufDB8fHx8MTc2NDAwNTQ5M3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "pastry chef"
+    },
+    {
+      "id": "gallery-cake-1",
+      "description": "A multi-layered custom cake for a celebration.",
+      "imageUrl": "https://images.unsplash.com/photo-1693059740565-6de14aa71288?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxjdXN0b20lMjBjYWtlfGVufDB8fHx8MTc2NDAwNTQ5M3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "custom cake"
+    },
+    {
+      "id": "gallery-sweets-1",
+      "description": "Caixa de brigadeiros gourmets variados",
+      "imageUrl": "https://picsum.photos/seed/gallery2/400/500",
+      "imageHint": "gourmet brigadeiros"
+    },
+    {
+      "id": "highlight-red-velvet",
+      "description": "Fatia de bolo Red Velvet",
+      "imageUrl": "https://images.unsplash.com/photo-1544772546-4357b9384b60?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8cmVkJTIwdmVsdmV0fGVufDB8fHx8MTc2Mzk5NTI4OHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "red velvet"
+    },
+    {
+      "id": "highlight-brigadeiros",
+      "description": "Caixa de brigadeiros gourmets variados",
+      "imageUrl": "https://picsum.photos/seed/brigadeirobox/600/400",
+      "imageHint": "gourmet brigadeiros"
+    },
+    {
+      "id": "highlight-macarons",
+      "description": "Pilha de macarons coloridos",
+      "imageUrl": "https://images.unsplash.com/photo-1714387278170-d560a9b6f08a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxjb2xvcmZ1bCUyMG1hY2Fyb25zfGVufDB8fHx8MTc2Mzk0MjQxMnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "colorful macarons"
+    },
+    {
+      "id": "product-cake-1",
+      "description": "A slice of chocolate cake.",
+      "imageUrl": "https://images.unsplash.com/photo-1605807646983-377bc5a76493?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxjaG9jb2xhdGUlMjBjYWtlfGVufDB8fHx8MTc2MzkwODY0OHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "chocolate cake"
+    },
+    {
+      "id": "product-cake-2",
+      "description": "A strawberry shortcake.",
+      "imageUrl": "https://images.unsplash.com/photo-1650419424455-d0513aaf0dd6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxzdHJhd2JlcnJ5JTIwY2FrZXxlbnwwfHx8fDE3NjM5OTAxOTJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "strawberry cake"
+    },
+    {
+      "id": "product-cookie-1",
+      "description": "Chocolate chip cookies.",
+      "imageUrl": "https://images.unsplash.com/photo-1691201196320-f9131945c8e3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxjaG9jb2xhdGUlMjBjb29raWVzfGVufDB8fHx8MTc2MzkyMDk3MXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "chocolate cookies"
+    },
+    {
+      "id": "product-cupcake-1",
+      "description": "Vanilla cupcakes with frosting.",
+      "imageUrl": "https://images.unsplash.com/photo-1658422928126-6120ea188353?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHx2YW5pbGxhJTIwY3VwY2FrZXxlbnwwfHx8fDE3NjM5OTAxOTF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "vanilla cupcake"
+    },
+    {
+      "id": "product-cupcake-2",
+      "description": "Red velvet cupcake.",
+      "imageUrl": "https://images.unsplash.com/photo-1640292767657-3c817244f77b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxyZWQlMjB2ZWx2ZXR8ZW58MHx8fHwxNzYzOTk1Mjg4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "red velvet"
+    },
+    {
+      "id": "product-torte-1",
+      "description": "A rich chocolate torte.",
+      "imageUrl": "https://images.unsplash.com/photo-1594223801958-db8561d7009a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxjaG9jb2xhdGUlMjB0b3J0ZXxlbnwwfHx8fDE3NjM5OTAxOTF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "chocolate torte"
+    },
+    {
+      "id": "product-pie-1",
+      "description": "A classic apple pie.",
+      "imageUrl": "https://images.unsplash.com/photo-1562007908-17c67e878c88?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxhcHBsZSUyMHBpZXxlbnwwfHx8fDE3NjM5MzA1OTJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "apple pie"
+    },
+    {
+      "id": "product-macaron-1",
+      "description": "Colorful macarons.",
+      "imageUrl": "https://images.unsplash.com/photo-1612198789721-0a430df91862?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8Y29sb3JmdWwlMjBtYWNhcm9uc3xlbnwwfHx8fDE3NjM5NDI0MTJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "colorful macarons"
+    },
+    {
+      "id": "product-sweets-1",
+      "description": "Gourmet brigadeiros.",
+      "imageUrl": "https://picsum.photos/seed/prodsweets1/600/400",
+      "imageHint": "gourmet brigadeiros"
+    },
+    {
+      "id": "product-desserts-1",
+      "description": "A slice of a delicious seasonal dessert pie.",
+      "imageUrl": "https://images.unsplash.com/photo-1647540242464-5ef3a7e748b1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxkZXNzZXJ0JTIwcGllfGVufDB8fHx8MTc2NDAwNTQ5M3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "dessert pie"
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------------------------------------------------------------------
+    // Helper Functions
+    // ---------------------------------------------------------------------
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // ---------------------------------------------------------------------
+    // Collection Rules
+    // ---------------------------------------------------------------------
+    
+    // As coleções globais são acessíveis por qualquer funcionário (usuário autenticado).
+    match /products/{productId} { allow get, list, write: if isSignedIn(); }
+    
+    match /supplies/{supplyId} { 
+      allow get, list, write: if isSignedIn();
+      // Histórico de preços só pode ser lido ou criado, nunca alterado ou excluído.
+      match /price_history/{priceHistoryId} {
+        allow get, list: if isSignedIn();
+        allow create: if isSignedIn();
+        allow update, delete: if false;
+      }
+    }
+
+    match /financial_categories/{financialCategoryId} { allow get, list, write: if isSignedIn(); }
+    match /technical_sheets/{sheetId} { allow get, list, write: if isSignedIn(); }
+    match /orders/{orderId} {
+      allow get, list, write: if isSignedIn();
+      match /order_items/{orderItemId} {
+        allow get, list, write: if isSignedIn();
+      }
+    }
+
+    // Acesso aos dados do usuário.
+    match /users/{userId} {
+      // Qualquer usuário autenticado pode ler o documento de perfil de outro usuário
+      // para encontrar seu caixa ativo, mas só o dono pode escrever no seu próprio perfil.
+      allow get: if isSignedIn();
+      allow list: if isSignedIn(); // Permite listar usuários, se necessário
+      allow write: if isOwner(userId);
+
+      // Regras para a subcoleção de caixas.
+      // A operação 'list' foi removida e substituída por 'get' no documento principal do usuário.
+      match /cash_registers/{cashRegisterId} {
+        allow get, create, update, delete: if isOwner(userId);
+        
+        // Regra para a sub-subcoleção de movimentações financeiras.
+        match /financial_movements/{movementId} {
+          allow get, list, create, update, delete: if isOwner(userId);
+        }
+      }
+    }
+  }
+}

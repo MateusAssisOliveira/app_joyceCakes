@@ -1,0 +1,101 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /*
+   ==========================================================================
+   NOVO TEMA: ROSA VIBRANTE GOURMET
+   ==========================================================================
+   Este tema usa um rosa energético como cor primária, complementado por
+   dourado e um fundo neutro para um visual moderno e sofisticado.
+  */
+  .theme-vibrant-pink {
+    --background: 0 0% 99%; /* Branco-gelo/acinzentado muito claro */
+    --foreground: 20 14% 4%; /* Preto suave para texto */
+
+    --card: 0 0% 100%; /* Branco puro para os cards */
+    --card-foreground: 20 14% 4%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 20 14% 4%;
+
+    --primary: 338 90% 65%; /* Rosa vibrante, mas não neon */
+    --primary-foreground: 0 0% 100%; /* Texto branco para botões primários */
+
+    --secondary: 338 80% 96%; /* Rosa muito claro para fundos sutis */
+    --secondary-foreground: 338 80% 40%; /* Texto rosa escuro sobre o fundo secundário */
+
+    --muted: 30 20% 95%; /* Tom neutro para hovers e áreas desativadas */
+    --muted-foreground: 20 10% 45%;
+
+    --accent: 35 90% 60%; /* Dourado/Caramelo para detalhes de acento */
+    --accent-foreground: 20 14% 4%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 30 20% 90%;
+    --input: 30 20% 95%;
+    --ring: 338 90% 70%;
+
+    /* Sidebar — um tom de rosa mais escuro e sofisticado */
+    --sidebar-background: 335 45% 25%; /* Rosa escuro/Vinho */
+    --sidebar-foreground: 335 40% 95%; /* Texto quase branco */
+    --sidebar-accent: 335 45% 35%; /* Tom um pouco mais claro para hover */
+    --sidebar-accent-foreground: 0 0% 100%;
+
+    /* Gráficos — paleta vibrante e coesa */
+    --chart-1: 338 90% 65%; /* Rosa Vibrante */
+    --chart-2: 35 90% 60%;  /* Dourado */
+    --chart-3: 198 90% 60%; /* Azul Ciano Suave */
+    --chart-4: 30 90% 60%;  /* Laranja Suave */
+    --chart-5: 250 80% 70%; /* Lilás */
+  }
+
+  /*
+   ==========================================================================
+   TEMA ANTIGO (Referência)
+   ==========================================================================
+  */
+  .theme-admin-original{
+    --background: 30 25% 97%;
+    --foreground: 20 20% 10%;
+    --card: 30 25% 99%;
+    --card-foreground: 20 20% 10%;
+    --popover: 30 25% 99%;
+    --popover-foreground: 20 20% 10%;
+    --primary: 338 82% 54%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 35 85% 56%;
+    --secondary-foreground: 20 20% 5%;
+    --muted: 28 20% 88%;
+    --muted-foreground: 20 14% 40%;
+    --accent: 25 70% 48%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 28 18% 82%;
+    --input: 28 18% 90%;
+    --ring: 338 82% 54%;
+    --sidebar-background: 25 15% 14%;
+    --sidebar-foreground: 28 18% 88%;
+    --sidebar-accent: 25 18% 25%;
+    --sidebar-accent-foreground: 30 25% 96%;
+    --chart-1: 338 82% 54%;
+    --chart-2: 35 85% 56%;
+    --chart-3: 210 80% 60%;
+    --chart-4: 160 70% 48%;
+    --chart-5: 48 92% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}

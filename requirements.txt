@@ -1,6 +1,0 @@
-flet
-python-dotenv
-mysql-connector-python
-simplejson
-pymysql
-cachetools
