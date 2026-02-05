@@ -18,6 +18,7 @@ import { Lora, Poppins } from "next/font/google";
 import "./globals.css";
 import "./printing.css";
 import { cn } from "@/lib/utils";
+import { activeThemeClass } from "@/lib/theme";
 import { Toaster } from "@/components/ui/toaster";
 
 const lora = Lora({
@@ -47,7 +48,8 @@ export default function RootLayout({
       <head />
       <body
         className={cn(
-          "h-full bg-background text-foreground antialiased theme-vibrant-pink", // Aplica o novo tema aqui
+          "h-full bg-background text-foreground antialiased",
+          activeThemeClass,
           lora.variable,
           poppins.variable
         )}
