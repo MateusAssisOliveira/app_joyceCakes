@@ -1,9 +1,9 @@
+/* Temas: todas as cores do app em um só lugar. Ver src/styles/themes.css */
+@import "../styles/themes.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Temas: todas as cores do app em um só lugar. Ver src/styles/themes.css */
-@import "../styles/themes.css";
 
 @layer base {
   * {
