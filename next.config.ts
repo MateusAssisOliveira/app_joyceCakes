@@ -15,9 +15,11 @@ import type { NextConfig } from 'next';
 const nextConfig: NextConfig = {
   /* config options here */
   typescript: {
+    // TODO: Remover ignoreBuildErrors após corrigir os erros de tipo listados em ERROS_TIPO.md
     ignoreBuildErrors: true,
   },
   eslint: {
+    // TODO: Remover ignoreDuringBuilds após corrigir ESLint issues
     ignoreDuringBuilds: true,
   },
   images: {

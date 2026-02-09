@@ -4,7 +4,10 @@ import React, { createContext, useContext, ReactNode, useMemo, useState, useEffe
 import { FirebaseApp } from 'firebase/app';
 import { Firestore } from 'firebase/firestore';
 import { Auth, User, onAuthStateChanged } from 'firebase/auth';
-import { FirebaseErrorListener } from '@/components/FirebaseErrorListener'
+import { FirebaseErrorListener } from '@/components/FirebaseErrorListener';
+import { createLogger } from '@/lib/logger';
+
+const logger = createLogger('FirebaseProvider');
 
 interface FirebaseProviderProps {
   children: ReactNode;
@@ -70,27 +73,27 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
   // Effect to subscribe to Firebase auth state changes
   useEffect(() => {
     if (!auth) { // If no Auth service instance, cannot determine user state
-      console.info('[FirebaseProvider] Auth service not provided. Setting user state to not loading.');
+      logger.debug('Auth service not provided. Setting user state to not loading.');
       setUserAuthState({ user: null, isUserLoading: false, userError: new Error("Auth service not provided.") });
       return;
     }
     
-    console.info('[FirebaseProvider] Subscribing to onAuthStateChanged.');
+    logger.debug('Subscribing to onAuthStateChanged.');
     setUserAuthState({ user: null, isUserLoading: true, userError: null }); // Reset on auth instance change
 
     const unsubscribe = onAuthStateChanged(
       auth,
       (firebaseUser) => { // Auth state determined
-        console.info(`[FirebaseProvider] onAuthStateChanged triggered. User: ${firebaseUser?.uid || 'null'}. Setting isUserLoading to false.`);
+        logger.debug(`onAuthStateChanged triggered. User: ${firebaseUser?.uid || 'null'}. Setting isUserLoading to false.`);
         setUserAuthState({ user: firebaseUser, isUserLoading: false, userError: null });
       },
       (error) => { // Auth listener error
-        console.error("[FirebaseProvider] onAuthStateChanged error:", error);
+        logger.error("onAuthStateChanged error", error);
         setUserAuthState({ user: null, isUserLoading: false, userError: error });
       }
     );
     return () => {
-      console.info('[FirebaseProvider] Unsubscribing from onAuthStateChanged.');
+      logger.debug('Unsubscribing from onAuthStateChanged.');
       unsubscribe();
     } 
   }, [auth]); // Depends on the auth instance
@@ -109,7 +112,7 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
     };
   }, [firebaseApp, firestore, auth, userAuthState]);
   
-  console.info(`[FirebaseProvider] Rendering with state: isUserLoading=${contextValue.isUserLoading}, user=${contextValue.user?.uid || 'null'}`);
+  logger.debug(`Rendering with state: isUserLoading=${contextValue.isUserLoading}, user=${contextValue.user?.uid || 'null'}`);
 
   return (
     <FirebaseContext.Provider value={contextValue}>

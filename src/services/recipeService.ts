@@ -5,7 +5,7 @@ import type { TechnicalSheet } from "@/types";
 import { collection, doc, Firestore, serverTimestamp, addDoc, updateDoc, getDocs, Timestamp } from "firebase/firestore";
 import { errorEmitter } from "@/firebase/error-emitter";
 import { FirestorePermissionError } from "@/firebase/errors";
-import { serializeObject } from "./utils";
+import { serializeObject, setDocumentActive } from "./utils";
 import { updateDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 
 /**
@@ -63,8 +63,7 @@ export const updateTechnicalSheet = (firestore: Firestore, id: string, updatedDa
  * @param id O ID da ficha a ser inativada.
  */
 export const inactivateTechnicalSheet = (firestore: Firestore, id: string): void => {
-    const sheetDocRef = doc(firestore, 'technical_sheets', id);
-    updateDocumentNonBlocking(sheetDocRef, { isActive: false });
+    setDocumentActive(firestore, 'technical_sheets', id, false);
 };
 
 /**
@@ -73,8 +72,7 @@ export const inactivateTechnicalSheet = (firestore: Firestore, id: string): void
  * @param id O ID da ficha a ser reativada.
  */
 export const reactivateTechnicalSheet = (firestore: Firestore, id: string): void => {
-    const sheetDocRef = doc(firestore, 'technical_sheets', id);
-    updateDocumentNonBlocking(sheetDocRef, { isActive: true });
+    setDocumentActive(firestore, 'technical_sheets', id, true);
 };
 
 /**

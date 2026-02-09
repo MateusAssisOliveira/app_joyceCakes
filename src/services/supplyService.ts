@@ -10,7 +10,9 @@
 // - Isolar os componentes da UI da implementação da fonte de dados.
 
 import type { Supply, CashRegister, PriceVariation } from '@/types';
+import { toDate } from '@/lib/timestamp-utils';
 import { deleteDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
+import { setDocumentActive } from './utils';
 import { collection, doc, Firestore, serverTimestamp, Timestamp, writeBatch, getDocs, addDoc, updateDoc, query, where, limit, getDoc } from 'firebase/firestore';
 import { addFinancialMovement } from './financialMovementService';
 import { serializeObject } from './utils';
@@ -51,8 +53,14 @@ export const addSupply = async (firestore: Firestore, supplyData: Omit<Supply, '
         ...supplyData, 
         isActive: true, 
         createdAt: serverTimestamp(),
-        lastPurchaseDate: supplyData.lastPurchaseDate ? Timestamp.fromDate(new Date(supplyData.lastPurchaseDate)) : serverTimestamp(),
-        expirationDate: supplyData.expirationDate ? Timestamp.fromDate(new Date(supplyData.expirationDate)) : undefined,
+        lastPurchaseDate: (() => {
+            const d = toDate(supplyData.lastPurchaseDate);
+            return d ? Timestamp.fromDate(d) : serverTimestamp();
+        })(),
+        expirationDate: (() => {
+            const d = toDate(supplyData.expirationDate);
+            return d ? Timestamp.fromDate(d) : undefined;
+        })(),
         packageCost: supplyData.packageCost ?? undefined,
         packageQuantity: supplyData.packageQuantity ?? undefined,
     };
@@ -102,8 +110,14 @@ export const addSuppliesInBatch = async (firestore: Firestore, suppliesData: Omi
             ...supplyData,
             isActive: true,
             createdAt: serverTimestamp(),
-            lastPurchaseDate: supplyData.lastPurchaseDate ? Timestamp.fromDate(new Date(supplyData.lastPurchaseDate as string)) : undefined,
-            expirationDate: supplyData.expirationDate ? Timestamp.fromDate(new Date(supplyData.expirationDate as string)) : undefined,
+            lastPurchaseDate: (() => {
+                const d = toDate(supplyData.lastPurchaseDate);
+                return d ? Timestamp.fromDate(d) : undefined;
+            })(),
+            expirationDate: (() => {
+                const d = toDate(supplyData.expirationDate);
+                return d ? Timestamp.fromDate(d) : undefined;
+            })(),
         };
         batch.set(newDocRef, dataWithTimestamp);
 
@@ -135,13 +149,15 @@ export const updateSupply = async (firestore: Firestore, id: string, updatedData
     const dataToUpdate: any = { ...updatedData };
 
     if (dataToUpdate.lastPurchaseDate) {
-        dataToUpdate.lastPurchaseDate = Timestamp.fromDate(new Date(dataToUpdate.lastPurchaseDate as string));
+        const d = toDate(dataToUpdate.lastPurchaseDate);
+        dataToUpdate.lastPurchaseDate = d ? Timestamp.fromDate(d) : undefined;
     } else {
         dataToUpdate.lastPurchaseDate = undefined;
     }
 
     if (dataToUpdate.expirationDate) {
-        dataToUpdate.expirationDate = Timestamp.fromDate(new Date(dataToUpdate.expirationDate as string));
+        const d = toDate(dataToUpdate.expirationDate);
+        dataToUpdate.expirationDate = d ? Timestamp.fromDate(d) : undefined;
     } else {
         dataToUpdate.expirationDate = undefined;
     }
@@ -181,20 +197,20 @@ export const updateSupply = async (firestore: Firestore, id: string, updatedData
 
 /**
  * Inativa (soft delete) um insumo, marcando `isActive` como false.
+ * @param firestore Instância do Firestore.
  * @param id O ID do insumo a ser inativado.
  */
-export const inactivateSupply = (firestore: Firestore, id: string) => {
-    const supplyDocRef = doc(firestore, 'supplies', id);
-    updateDocumentNonBlocking(supplyDocRef, { isActive: false });
+export const inactivateSupply = (firestore: Firestore, id: string): void => {
+    setDocumentActive(firestore, 'supplies', id, false);
 };
 
 /**
  * Reativa um insumo, marcando `isActive` como true.
+ * @param firestore Instância do Firestore.
  * @param id O ID do insumo a ser reativado.
  */
-export const reactivateSupply = (firestore: Firestore, id: string) => {
-    const supplyDocRef = doc(firestore, 'supplies', id);
-    updateDocumentNonBlocking(supplyDocRef, { isActive: true });
+export const reactivateSupply = (firestore: Firestore, id: string): void => {
+    setDocumentActive(firestore, 'supplies', id, true);
 };
 
 /**

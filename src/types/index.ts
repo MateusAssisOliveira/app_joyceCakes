@@ -13,60 +13,71 @@
 import { Timestamp } from "firebase/firestore";
 import { LucideIcon } from "lucide-react";
 
+// Permitir strings ISO, Date ou Firestore Timestamp em entradas/seed
+export type DateLike = string | Date | Timestamp;
+
 export type Product = {
-    id: string;
-    name: string;
-    description: string;
-    price: number;
-    costPrice?: number; // Custo de produção, vindo da ficha de montagem
-    category: string;
-    imageUrlId: string;
-    stock_quantity: number;
-    createdAt: string; // Alterado para string para serialização
-    isActive: boolean;
-    // Detalhes da montagem agora fazem parte do produto
-    components?: TechnicalSheetComponent[];
-    preparationTime?: number;
-    laborCost?: number;
-    fixedCost?: number;
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  costPrice?: number;
+  category: string;
+  imageUrlId: string;
+  stock_quantity: number;
+  createdAt: DateLike;
+  isActive: boolean;
+  components?: TechnicalSheetComponent[];
+  preparationTime?: number;
+  laborCost?: number;
+  fixedCost?: number;
 };
 
 export type DashboardMetric = {
-    title: string;
-    value: string;
-    trend?: string;
-    trendDirection?: "positive" | "negative";
-    description?: string;
-    icon?: LucideIcon;
-    color?: string;
-}
-
-export type FinancialMovement = {
-    id: string;
-    cashRegisterId: string;
-    type: "income" | "expense";
-    category: string;
-    description: string;
-    amount: number;
-    paymentMethod: string;
-    movementDate: Date; // Convertido para Date pelo hook
-    orderId?: string; // Vincula a movimentação ao pedido que a gerou
+  title: string;
+  value: string;
+  trend?: string;
+  trendDirection?: "positive" | "negative";
+  description?: string;
+  icon?: LucideIcon;
+  color?: string;
 };
 
+export type FinancialMovement = {
+  id: string;
+  cashRegisterId: string;
+  type: "income" | "expense";
+  category: string;
+  description: string;
+  amount: number;
+  paymentMethod: string;
+  // Legacy data uses `date`; some code expects `movementDate` — aceitar ambos
+  date?: DateLike;
+  movementDate?: DateLike;
+  // Legacy field names in mocks
+  value?: number;
+  method?: string;
+  orderId?: string;
+};
 
 export type CashRegister = {
-    id: string;
-    userId: string;
-    openingDate: Date; // Convertido para Date pelo hook
-    closingDate: Date | null; // Convertido para Date pelo hook
-    initialBalance: number;
-    finalBalance: number | null;
-    totalSales: number;
-    totalExpenses: number;
-    status: 'open' | 'closed';
-}
+  id: string;
+  userId: string;
+  openingDate: DateLike;
+  closingDate: DateLike | null;
+  initialBalance: number;
+  finalBalance: number | null;
+  totalSales: number;
+  totalExpenses: number;
+  status: "open" | "closed";
+};
 
-export type OrderStatus = 'Pendente' | 'Em Preparo' | 'Pronto para Retirada' | 'Entregue' | 'Cancelado';
+export type OrderStatus =
+  | "Pendente"
+  | "Em Preparo"
+  | "Pronto para Retirada"
+  | "Entregue"
+  | "Cancelado";
 
 export type OrderItem = {
   productId: string;
@@ -79,13 +90,15 @@ export type OrderItem = {
 export type Order = {
   id: string;
   orderNumber: string;
-  customerName: string;
-  createdAt: Date; // Convertido para Date pelo hook
-  userId: string; // Usuário que criou o pedido
-  cashRegisterId: string; // Caixa onde a venda foi registrada
+  createdAt: DateLike;
+  // Algumas telas usam `customerName`/`date` — manter opcionais para compatibilidade
+  customerName?: string;
+  date?: DateLike;
+  userId: string;
+  cashRegisterId: string;
   paymentMethod: string;
   total: number;
-  totalCost: number; // Custo total dos produtos no pedido
+  totalCost: number;
   status: OrderStatus;
   items: OrderItem[];
 };
@@ -93,58 +106,55 @@ export type Order = {
 export type Supply = {
   id: string;
   name: string;
-  sku: string; // ID personalizado / código do produto
-  category: string; // Categoria do insumo (ex: Secos, Laticínios)
-  type: 'ingredient' | 'packaging'; // Tipo de insumo
+  sku: string;
+  category: string;
+  type: "ingredient" | "packaging";
   stock: number;
   unit: "kg" | "g" | "L" | "ml" | "un";
   costPerUnit: number;
-  packageCost?: number; // Custo do pacote/caixa
-  packageQuantity?: number; // Quantidade de unidades no pacote/caixa
-  supplier: string; // Fornecedor
-  lastPurchaseDate?: string; // Já é string
-  expirationDate?: string; // Já é string
-  minStock: number; // Estoque mínimo desejado
-  createdAt?: string; // Já é string
+  packageCost?: number;
+  packageQuantity?: number;
+  supplier?: string;
+  lastPurchaseDate?: DateLike;
+  expirationDate?: DateLike;
+  createdAt?: DateLike;
+  minStock: number;
   isActive: boolean;
 };
 
-
 export type TechnicalSheetComponent = {
-  componentId: string; // Pode ser um supplyId ou outro technicalSheetId
+  componentId: string;
   componentName: string;
-  componentType: 'supply' | 'sheet';
+  componentType: "supply" | "sheet" | "packaging";
   quantity: number;
-  unit: string; // g, ml, un, etc.
-}
+  unit: string;
+  lossFactor?: number; // some seed data included this on components
+};
 
 export type TechnicalSheet = {
   id: string;
   name: string;
   description: string;
-  type: 'base'; // Apenas 'base' (receita) agora
+  type: "base";
   components: TechnicalSheetComponent[];
-  steps: string; // Modo de Preparo
-  yield: string; // ex: "10 potes de 200g"
+  steps: string;
+  yield: string;
   totalCost: number;
-  createdAt: string; // Já é string
+  createdAt?: DateLike;
   isActive: boolean;
-  // Fator de perda aplicado ao custo total da receita.
-  lossFactor?: number; 
-  // Campos de preço e tempo movidos para Product
+  lossFactor?: number;
   suggestedPrice: number;
-  preparationTime?: number; 
-  laborCost?: number; 
+  preparationTime?: number;
+  laborCost?: number;
   fixedCost?: number;
-}
+};
 
 export type UserProfile = {
   id: string;
   email: string;
   name: string;
-  activeCashRegisterId?: string | null; // ID do caixa ativo atualmente
-}
-
+  activeCashRegisterId?: string | null;
+};
 
 export type CartItem = {
   id: string;
@@ -154,21 +164,19 @@ export type CartItem = {
   quantity: number;
 };
 
-
 export type HighlightCategory = {
-    title: string;
-    description: string;
-    imageUrlId: string;
-    href: string;
-}
+  title: string;
+  description: string;
+  imageUrlId: string;
+  href: string;
+};
 
 export type PriceVariation = {
-    id: string;
-    date: Timestamp; // Mantém Timestamp aqui pois é usado no lado do servidor/serviços
-    costPerUnit: number;
-    supplier?: string;
-}
+  id: string;
+  date: DateLike;
+  costPerUnit: number;
+  supplier?: string;
+};
 
-// Manter o tipo Recipe para retrocompatibilidade se necessário, mas usar TechnicalSheet para novo desenvolvimento
 export type Recipe = TechnicalSheet;
 export type RecipeIngredient = TechnicalSheetComponent;

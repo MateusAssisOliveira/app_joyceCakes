@@ -30,6 +30,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Timestamp } from 'firebase/firestore';
 import { cn } from "@/lib/utils";
 import { format } from 'date-fns';
+import { toIsoString } from '@/lib/timestamp-utils';
 import {
   Tooltip,
   TooltipContent,
@@ -94,7 +95,7 @@ export function SupplyFormDialog({ isOpen, onClose, onSave, supply, defaultType 
 
   useEffect(() => {
     if (isOpen) {
-      if (supply) {
+        if (supply) {
         setFormData({
           name: supply.name || "",
           category: supply.category || "",
@@ -107,8 +108,8 @@ export function SupplyFormDialog({ isOpen, onClose, onSave, supply, defaultType 
           sku: supply.sku || "",
           supplier: supply.supplier || "",
           minStock: supply.minStock || 0,
-          lastPurchaseDate: supply.lastPurchaseDate,
-          expirationDate: supply.expirationDate,
+          lastPurchaseDate: supply.lastPurchaseDate ? toIsoString(supply.lastPurchaseDate) : undefined,
+          expirationDate: supply.expirationDate ? toIsoString(supply.expirationDate) : undefined,
         });
          // Ao editar, desabilitar por padrão o registro financeiro para evitar duplicatas.
          setFinancialData({

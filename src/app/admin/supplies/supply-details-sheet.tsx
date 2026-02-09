@@ -8,9 +8,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { Supply } from "@/types";
 import { format } from "date-fns";
+import { toDate } from '@/lib/timestamp-utils';
 import { cn } from "@/lib/utils";
 import { History } from "lucide-react";
-import { PriceHistoryDialog } from "./price-history-dialog";
+import { PriceHistoryDialog } from "@/components/admin/supplies/price-history-dialog";
 
 type SupplyDetailsSheetProps = {
   supply: Supply | null;
@@ -45,13 +46,11 @@ export function SupplyDetailsSheet({ supply, isOpen, onOpenChange }: SupplyDetai
   
   const purchaseCostLabel = `Preço de Compra (por ${supply.unit})`;
 
-  const getDate = (dateString?: string): string => {
-    if (!dateString) return "Não informada";
-    try {
-        return format(new Date(dateString), "dd/MM/yyyy");
-    } catch (error) {
-        return "Data inválida";
-    }
+  const getDate = (value?: any): string => {
+    if (!value) return "Não informada";
+    const d = toDate(value);
+    if (!d) return "Data inválida";
+    return format(d, "dd/MM/yyyy");
   }
 
   return (

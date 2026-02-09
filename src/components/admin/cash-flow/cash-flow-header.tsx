@@ -20,6 +20,7 @@ import { Loader2 } from 'lucide-react';
 import type { CashRegister } from '@/types';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { formatDate } from '@/lib/timestamp-utils';
 import { closeCashRegister } from '@/services';
 import { useToast } from '@/hooks/use-toast';
 
@@ -78,9 +79,9 @@ export function CashFlowHeader({ register }: CashFlowHeaderProps) {
       </CardHeader>
       <CardContent>
         {openingDate && (
-            <p className="text-sm text-muted-foreground">
-                Aberto em: <span className="font-semibold">{format(openingDate, "PPP 'às' HH:mm", { locale: ptBR })}</span>
-            </p>
+          <p className="text-sm text-muted-foreground">
+            Aberto em: <span className="font-semibold">{formatDate(openingDate)}</span>
+          </p>
         )}
       </CardContent>
     </Card>

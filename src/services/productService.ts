@@ -12,7 +12,7 @@ import { collection, getDocs, Firestore, doc, serverTimestamp, addDoc, updateDoc
 import type { Product } from '@/types';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
-import { serializeObject } from './utils';
+import { serializeObject, setDocumentActive } from './utils';
 import { updateDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 
 /**
@@ -67,8 +67,7 @@ export const updateProduct = (firestore: Firestore, id: string, updatedData: Par
  * @param id O ID do produto a ser inativado.
  */
 export const inactivateProduct = (firestore: Firestore, id: string): void => {
-    const productDocRef = doc(firestore, 'products', id);
-    updateDocumentNonBlocking(productDocRef, { isActive: false });
+    setDocumentActive(firestore, 'products', id, false);
 };
 
 /**
@@ -77,8 +76,7 @@ export const inactivateProduct = (firestore: Firestore, id: string): void => {
  * @param id O ID do produto a ser reativado.
  */
 export const reactivateProduct = (firestore: Firestore, id: string): void => {
-    const productDocRef = doc(firestore, 'products', id);
-    updateDocumentNonBlocking(productDocRef, { isActive: true });
+    setDocumentActive(firestore, 'products', id, true);
 };
 
 

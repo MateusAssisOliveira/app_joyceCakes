@@ -15,3 +15,4 @@ export * from './supplyService';
 export * from './recipeService';
 export * from './financialMovementService';
 export * from './userService';
+export * from './utils';

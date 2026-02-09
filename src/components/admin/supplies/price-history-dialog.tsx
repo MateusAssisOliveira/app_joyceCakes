@@ -25,6 +25,7 @@ import { getPriceHistory } from "@/services";
 import type { Supply, PriceVariation } from "@/types";
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { toDate } from '@/lib/timestamp-utils';
 
 type PriceHistoryDialogProps = {
   supply: Supply;
@@ -41,20 +42,22 @@ export function PriceHistoryDialog({ supply, isOpen, onClose }: PriceHistoryDial
     if (isOpen && firestore) {
       setIsLoading(true);
       getPriceHistory(firestore, supply.id)
-        .then(data => {
-            const sortedData = data.sort((a, b) => b.date.toMillis() - a.date.toMillis());
-            setHistory(sortedData);
-        })
+      .then(data => {
+        const sortedData = data.sort((a, b) => {
+          const ad = toDate(a.date)?.getTime() ?? 0;
+          const bd = toDate(b.date)?.getTime() ?? 0;
+          return bd - ad;
+        });
+        setHistory(sortedData);
+      })
         .catch(err => console.error(err))
         .finally(() => setIsLoading(false));
     }
   }, [isOpen, firestore, supply.id]);
   
   const getDate = (item: PriceVariation) => {
-      if (item.date && typeof (item.date as any).toDate === 'function') {
-        return format((item.date as any).toDate(), "PPP 'às' HH:mm", { locale: ptBR });
-      }
-      return 'Data indisponível';
+      const d = toDate(item.date);
+      return d ? format(d, "PPP 'às' HH:mm", { locale: ptBR }) : 'Data indisponível';
   }
 
   return (

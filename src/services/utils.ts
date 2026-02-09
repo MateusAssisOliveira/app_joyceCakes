@@ -1,5 +1,26 @@
 
-import { Timestamp } from 'firebase/firestore';
+import { Timestamp, Firestore, doc } from 'firebase/firestore';
+import { isFirebaseTimestamp, isDateInstance } from '@/lib/timestamp-utils';
+import { updateDocumentNonBlocking } from '@/firebase';
+
+/**
+ * Ativa ou desativa um documento no Firestore (soft delete)
+ * Função genérica reutilizável para qualquer coleção
+ *
+ * @param firestore - Instância do Firestore
+ * @param collectionName - Nome da coleção (supplies, technical_sheets, products, etc)
+ * @param id - ID do documento
+ * @param isActive - true para ativar, false para desativar
+ */
+export const setDocumentActive = (
+  firestore: Firestore,
+  collectionName: string,
+  id: string,
+  isActive: boolean
+): void => {
+  const docRef = doc(firestore, collectionName, id);
+  updateDocumentNonBlocking(docRef, { isActive });
+};
 
 /**
  * Recursively converts Firestore Timestamps within an object to ISO date strings.
@@ -15,18 +36,18 @@ export function serializeObject<T>(obj: T): T {
   }
 
   // Handle Firestore Timestamps
-  if (obj instanceof Timestamp) {
-    return obj.toDate().toISOString() as any;
+  if (isFirebaseTimestamp(obj)) {
+    return obj.toDate().toISOString() as unknown as T;
   }
   
   // Handle native Date objects
-  if (obj instanceof Date) {
-    return obj.toISOString() as any;
+  if (isDateInstance(obj)) {
+    return obj.toISOString() as unknown as T;
   }
 
   // Handle arrays by recursively serializing each item
   if (Array.isArray(obj)) {
-    return obj.map(item => serializeObject(item)) as any;
+    return obj.map(item => serializeObject(item)) as unknown as T;
   }
 
   // Handle objects by recursively serializing each value

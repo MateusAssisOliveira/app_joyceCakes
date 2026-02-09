@@ -211,7 +211,7 @@ export function ProductsClient() {
                             className="cursor-pointer"
                           >
                               <TableCell className="font-medium flex items-center gap-2">
-                                {product.components && product.components.length > 0 ? <LinkIcon className="h-4 w-4 text-primary" title="Produto montado com componentes"/> : <Link2Off className="h-4 w-4 text-muted-foreground" title="Produto de venda direta"/>}
+                                {product.components && product.components.length > 0 ? <LinkIcon className="h-4 w-4 text-primary" aria-label="Produto montado com componentes"/> : <Link2Off className="h-4 w-4 text-muted-foreground" aria-label="Produto de venda direta"/>}
                                 {product.name}
                               </TableCell>
                               <TableCell>

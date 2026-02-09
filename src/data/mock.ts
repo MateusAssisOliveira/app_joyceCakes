@@ -86,16 +86,16 @@ export const paymentMethodsData = [
 ];
 
 export const recentMovements: FinancialMovement[] = [
-  { id: 'mov_001', date: '2024-07-29T14:35:00', description: 'Venda Pedido #1024', category: 'Venda Balcão', type: 'income', value: 85.50, method: 'PIX' },
-  { id: 'mov_002', date: '2024-07-29T13:10:00', description: 'Pagamento Fornecedor de Farinha', category: 'Fornecedor', type: 'expense', value: -250.00, method: 'Transferência' },
-  { id: 'mov_003', date: '2024-07-29T12:05:00', description: 'Venda Balcão', category: 'Venda Balcão', type: 'income', value: 45.00, method: 'Crédito' },
-  { id: 'mov_004', date: '2024-07-29T10:15:00', description: 'Compra de Embalagens', category: 'Insumos', type: 'expense', value: -120.00, method: 'Débito' },
-  { id: 'mov_005', date: '2024-07-29T09:30:00', description: 'Venda Pedido #1023', category: 'Pedido Online', type: 'income', value: 150.00, method: 'Crédito' },
-  { id: 'mov_006', date: '2024-07-28T18:00:00', description: 'Conta de Energia', category: 'Despesa Fixa', type: 'expense', value: -180.30, method: 'Débito Automático' },
-  { id: 'mov_007', date: '2024-07-28T15:20:00', description: 'Encomenda Evento #E-012', category: 'Encomenda/Evento', type: 'income', value: 450.00, method: 'Transferência' },
-  { id: 'mov_008', date: '2024-07-28T11:45:00', description: 'Venda Balcão', category: 'Venda Balcão', type: 'income', value: 22.50, method: 'Dinheiro' },
-  { id: 'mov_009', date: '2024-07-28T10:00:00', description: 'Pagamento Aluguel', category: 'Despesa Fixa', type: 'expense', value: -1200.00, method: 'Transferência' },
-  { id: 'mov_010', date: '2024-07-27T16:50:00', description: 'Venda Pedido #1022', category: 'Pedido Online', type: 'income', value: 75.50, method: 'Crédito' },
+  { id: 'mov_001', date: '2024-07-29T14:35:00', description: 'Venda Pedido #1024', category: 'Venda Balcão', type: 'income', value: 85.50, method: 'PIX', cashRegisterId: 'cash_main', amount: 85.5, paymentMethod: 'PIX' },
+  { id: 'mov_002', date: '2024-07-29T13:10:00', description: 'Pagamento Fornecedor de Farinha', category: 'Fornecedor', type: 'expense', value: -250.00, method: 'Transferência', cashRegisterId: 'cash_main', amount: -250, paymentMethod: 'Transferência' },
+  { id: 'mov_003', date: '2024-07-29T12:05:00', description: 'Venda Balcão', category: 'Venda Balcão', type: 'income', value: 45.00, method: 'Crédito', cashRegisterId: 'cash_main', amount: 45, paymentMethod: 'Crédito' },
+  { id: 'mov_004', date: '2024-07-29T10:15:00', description: 'Compra de Embalagens', category: 'Insumos', type: 'expense', value: -120.00, method: 'Débito', cashRegisterId: 'cash_main', amount: -120, paymentMethod: 'Débito' },
+  { id: 'mov_005', date: '2024-07-29T09:30:00', description: 'Venda Pedido #1023', category: 'Pedido Online', type: 'income', value: 150.00, method: 'Crédito', cashRegisterId: 'cash_main', amount: 150, paymentMethod: 'Crédito' },
+  { id: 'mov_006', date: '2024-07-28T18:00:00', description: 'Conta de Energia', category: 'Despesa Fixa', type: 'expense', value: -180.30, method: 'Débito Automático', cashRegisterId: 'cash_main', amount: -180.3, paymentMethod: 'Débito Automático' },
+  { id: 'mov_007', date: '2024-07-28T15:20:00', description: 'Encomenda Evento #E-012', category: 'Encomenda/Evento', type: 'income', value: 450.00, method: 'Transferência', cashRegisterId: 'cash_main', amount: 450, paymentMethod: 'Transferência' },
+  { id: 'mov_008', date: '2024-07-28T11:45:00', description: 'Venda Balcão', category: 'Venda Balcão', type: 'income', value: 22.50, method: 'Dinheiro', cashRegisterId: 'cash_main', amount: 22.5, paymentMethod: 'Dinheiro' },
+  { id: 'mov_009', date: '2024-07-28T10:00:00', description: 'Pagamento Aluguel', category: 'Despesa Fixa', type: 'expense', value: -1200.00, method: 'Transferência', cashRegisterId: 'cash_main', amount: -1200, paymentMethod: 'Transferência' },
+  { id: 'mov_010', date: '2024-07-27T16:50:00', description: 'Venda Pedido #1022', category: 'Pedido Online', type: 'income', value: 75.50, method: 'Crédito', cashRegisterId: 'cash_main', amount: 75.5, paymentMethod: 'Crédito' },
 ];
 
 export const orderStatuses: OrderStatus[] = ['Pendente', 'Em Preparo', 'Pronto para Retirada', 'Entregue', 'Cancelado'];
