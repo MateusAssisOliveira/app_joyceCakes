@@ -43,13 +43,14 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { PlusCircle, Trash2, Search, Loader, Pencil, ArchiveRestore, Link as LinkIcon, Link2Off } from "lucide-react";
+import { PlusCircle, Trash2, Search, Loader, Pencil, ArchiveRestore, Link as LinkIcon, Link2Off, BarChart3 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { inactivateProduct, reactivateProduct } from "@/services";
 import type { Product, TechnicalSheet, Supply } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { ProductForm } from "@/components/admin/products/product-form";
+import Link from "next/link";
 import { collection, query } from 'firebase/firestore';
 
 
@@ -149,6 +150,12 @@ export function ProductsClient() {
               </div>
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full sm:w-auto">
                 <Button onClick={() => handleOpenFormDialog(null)} className="w-full sm:w-auto"><PlusCircle className="mr-2 h-4 w-4" />Adicionar</Button>
+                <Button variant="outline" asChild className="w-full sm:w-auto">
+                  <Link href="/admin/products/margin-analysis">
+                    <BarChart3 className="mr-2 h-4 w-4" />
+                    Análise de Margens
+                  </Link>
+                </Button>
                 <Button variant="outline" onClick={() => selectedProduct && handleOpenFormDialog(selectedProduct)} disabled={!selectedProduct} className="w-full sm:w-auto"><Pencil className="mr-2 h-4 w-4" />Editar</Button>
                 <Button 
                   variant="destructive" 

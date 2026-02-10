@@ -56,7 +56,7 @@ export function SupplyActions({
           </DropdownMenuItem>
           <DropdownMenuItem onClick={onEdit} disabled={isEditDisabled}>
             <Pencil className="mr-2 h-4 w-4" />
-            Editar Item
+            Repor Estoque
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem

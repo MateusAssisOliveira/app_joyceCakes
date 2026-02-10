@@ -119,7 +119,7 @@ export function CashFlowClient() {
 
   return (
     <div className="w-full flex flex-col gap-8">
-      <CashFlowHeader register={activeCashRegister} />
+      <CashFlowHeader register={activeCashRegister} finalBalance={metrics.finalBalance} />
       <CashFlowMetrics metrics={metrics} />
       <Card>
         <CardContent className="pt-6">

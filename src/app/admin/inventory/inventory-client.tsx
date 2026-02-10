@@ -39,6 +39,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { SupplyFormDialog } from "@/components/admin/supplies/supply-form-dialog";
+import { SupplyQuickAddDialog } from "@/components/admin/supplies/supply-quick-add-dialog";
 import { SupplyImportDialog } from "@/components/admin/supplies/supply-import-dialog";
 import { SupplyActions } from "@/components/admin/supplies/supply-actions";
 import { SupplyTable } from "@/components/admin/supplies/supply-table";
@@ -53,6 +54,7 @@ export function InventoryClient() {
   const [selectedSupplyId, setSelectedSupplyId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [isFormDialogOpen, setIsFormDialogOpen] = useState(false);
+  const [isQuickAddDialogOpen, setIsQuickAddDialogOpen] = useState(false);
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
   const [supplyToEdit, setSupplyToEdit] = useState<Supply | null>(null);
@@ -125,12 +127,23 @@ export function InventoryClient() {
   
   const handleOpenFormDialog = (supply: Supply | null) => {
     setSupplyToEdit(supply);
-    setIsFormDialogOpen(true);
+    if (supply) {
+      // Editar item existente - usar dialog simplificado (quick add)
+      setIsQuickAddDialogOpen(true);
+    } else {
+      // Criar novo item - usar formulário completo
+      setIsFormDialogOpen(true);
+    }
   }
 
   const handleCloseFormDialog = () => {
     setSupplyToEdit(null);
     setIsFormDialogOpen(false);
+  }
+
+  const handleCloseQuickAddDialog = () => {
+    setSupplyToEdit(null);
+    setIsQuickAddDialogOpen(false);
   }
   
   const handleSaveSupply = async (
@@ -286,6 +299,18 @@ export function InventoryClient() {
         supply={supplyToEdit}
         defaultType={activeTab === 'all' ? 'ingredient' : activeTab}
       />
+
+      {supplyToEdit && (
+        <SupplyQuickAddDialog
+          isOpen={isQuickAddDialogOpen}
+          onClose={handleCloseQuickAddDialog}
+          supply={supplyToEdit}
+          onSuccess={() => {
+            setSelectedSupplyId(null);
+            handleCloseQuickAddDialog();
+          }}
+        />
+      )}
 
        <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
         <AlertDialogContent>

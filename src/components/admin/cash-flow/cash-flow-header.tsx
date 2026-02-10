@@ -26,9 +26,10 @@ import { useToast } from '@/hooks/use-toast';
 
 type CashFlowHeaderProps = {
   register: CashRegister;
+  finalBalance: number;
 };
 
-export function CashFlowHeader({ register }: CashFlowHeaderProps) {
+export function CashFlowHeader({ register, finalBalance }: CashFlowHeaderProps) {
   const [isClosing, setIsClosing] = useState(false);
   const firestore = useFirestore();
   const { user } = useUser();
@@ -39,10 +40,9 @@ export function CashFlowHeader({ register }: CashFlowHeaderProps) {
 
     setIsClosing(true);
     try {
-      // O saldo final será calculado no backend ou via cloud function no futuro para mais segurança
-      // Por agora, o front-end não precisa calcular ou enviar.
-      await closeCashRegister(firestore, user.uid, register.id, 0);
-      toast({ title: 'Caixa Fechado', description: 'O caixa foi fechado com sucesso.' });
+      // Envia o saldo final real calculado
+      await closeCashRegister(firestore, user.uid, register.id, finalBalance);
+      toast({ title: 'Caixa Fechado', description: `O caixa foi fechado com saldo: ${finalBalance.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}` });
     } catch (error: any) {
       toast({ variant: 'destructive', title: 'Erro ao fechar o caixa', description: error.message });
     } finally {
