@@ -54,11 +54,11 @@ export function CashFlowHeader({ register, finalBalance }: CashFlowHeaderProps) 
 
   return (
     <Card className="bg-gradient-to-r from-primary/10 to-primary/5">
-      <CardHeader className="flex flex-row items-center justify-between">
+      <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <CardTitle className="text-2xl font-bold text-primary">Caixa Aberto</CardTitle>
          <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button variant="destructive" disabled={isClosing}>
+            <Button className="w-full sm:w-auto" variant="destructive" disabled={isClosing}>
               {isClosing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Fechar Caixa
             </Button>

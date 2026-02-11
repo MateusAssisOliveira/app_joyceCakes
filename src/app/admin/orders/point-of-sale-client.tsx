@@ -157,81 +157,170 @@ export function PointOfSaleClient({ products }: PointOfSaleClientProps) {
               </div>
             </CardHeader>
             <CardContent className="flex-1">
-            <Table>
-                <TableHeader>
-                <TableRow>
-                    <TableHead>Pedido</TableHead>
-                    <TableHead>Total</TableHead>
-                    <TableHead className="text-center">Status</TableHead>
-                    <TableHead className="text-right">Ações</TableHead>
-                </TableRow>
-                </TableHeader>
-                <TableBody>
+              <div className="space-y-3 md:hidden">
                 {orders?.map((order) => (
-                    <TableRow key={order.id}>
-                    <TableCell>
-                        <div className="font-medium">{order.customerName}</div>
-                        <div className="text-xs text-muted-foreground">{order.orderNumber} - {getOrderDate(order).toLocaleDateString("pt-BR")}</div>
-                    </TableCell>
-                    <TableCell>
-                        {order.total.toLocaleString("pt-BR", { style: "currency", currency: "BRL"})}
-                    </TableCell>
-                    <TableCell>
-                        <div className="flex justify-center">
-                        <Select name={`status-${order.id}`} value={order.status} onValueChange={(value: OrderStatus) => handleStatusChange(order.id, value)} >
-                            <SelectTrigger id={`status-trigger-${order.id}`} className="w-44 h-9">
-                            <Badge variant={getStatusVariant(order.status)} className={cn("w-full justify-start border-none",
-                                order.status === 'Em Preparo' && 'bg-amber-500 text-white hover:bg-amber-500/90',
-                                order.status === 'Pendente' && 'bg-yellow-500 text-white hover:bg-yellow-500/90',
-                                order.status === 'Pronto para Retirada' && 'bg-blue-500 text-white hover:bg-blue-500/90',
-                                order.status === 'Entregue' && 'bg-emerald-500 text-white hover:bg-emerald-500/90',
-                                order.status === 'Cancelado' && 'bg-red-500 text-white hover:bg-red-500/90')}>
-                                {order.status}
-                            </Badge>
-                            </SelectTrigger>
-                            <SelectContent>
-                                {['Pendente', 'Em Preparo', 'Pronto para Retirada', 'Entregue', 'Cancelado'].map((status) => (
-                                    <SelectItem key={status} value={status}>{status}</SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                        </div>
-                    </TableCell>
-                    <TableCell className="text-right space-x-1">
-                        <Button variant="ghost" size="icon" title="Editar Pedido" asChild>
-                            <Link href={getEditOrderUrl(order)}><Pencil className="h-4 w-4" /></Link>
-                        </Button>
-                        <Dialog open={!!selectedOrder && selectedOrder.id === order.id} onOpenChange={(isOpen) => !isOpen && setSelectedOrder(null)}>
-                            <DialogTrigger asChild>
-                                <Button variant="ghost" size="icon" title="Visualizar Detalhes" onClick={() => setSelectedOrder(order)}>
-                                <Eye className="h-4 w-4" />
-                                </Button>
-                            </DialogTrigger>
-                            {selectedOrder && (
-                                <DialogContent className="max-w-md print:hidden">
-                                <DialogHeader>
-                                    <DialogTitle>Detalhes do Pedido {selectedOrder.orderNumber}</DialogTitle>
-                                </DialogHeader>
-                                <OrderReceipt order={selectedOrder} />
-                                <DialogFooter className="gap-2 sm:justify-end">
-                                    <DialogClose asChild><Button variant="outline">Fechar</Button></DialogClose>
-                                    <Button onClick={handlePrint}><Printer className="mr-2 h-4 w-4" />Imprimir</Button>
-                                </DialogFooter>
-                                </DialogContent>
+                  <div key={order.id} className="rounded-lg border p-3">
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <p className="font-medium">{order.customerName}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {order.orderNumber} - {getOrderDate(order).toLocaleDateString("pt-BR")}
+                        </p>
+                      </div>
+                      <p className="text-sm font-semibold">
+                        {order.total.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                      </p>
+                    </div>
+                    <div className="mt-3">
+                      <Select
+                        name={`status-mobile-${order.id}`}
+                        value={order.status}
+                        onValueChange={(value: OrderStatus) => handleStatusChange(order.id, value)}
+                      >
+                        <SelectTrigger id={`status-mobile-trigger-${order.id}`} className="h-10 w-full">
+                          <Badge
+                            variant={getStatusVariant(order.status)}
+                            className={cn(
+                              "w-full justify-start border-none",
+                              order.status === 'Em Preparo' && 'bg-amber-500 text-white hover:bg-amber-500/90',
+                              order.status === 'Pendente' && 'bg-yellow-500 text-white hover:bg-yellow-500/90',
+                              order.status === 'Pronto para Retirada' && 'bg-blue-500 text-white hover:bg-blue-500/90',
+                              order.status === 'Entregue' && 'bg-emerald-500 text-white hover:bg-emerald-500/90',
+                              order.status === 'Cancelado' && 'bg-red-500 text-white hover:bg-red-500/90'
                             )}
-                        </Dialog>
-                    </TableCell>
-                    </TableRow>
+                          >
+                            {order.status}
+                          </Badge>
+                        </SelectTrigger>
+                        <SelectContent>
+                          {['Pendente', 'Em Preparo', 'Pronto para Retirada', 'Entregue', 'Cancelado'].map((status) => (
+                            <SelectItem key={status} value={status}>{status}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="mt-3 grid grid-cols-2 gap-2">
+                      <Button variant="outline" className="h-10" asChild>
+                        <Link href={getEditOrderUrl(order)}>
+                          <Pencil className="mr-2 h-4 w-4" />
+                          Editar
+                        </Link>
+                      </Button>
+                      <Dialog
+                        open={!!selectedOrder && selectedOrder.id === order.id}
+                        onOpenChange={(isOpen) => !isOpen && setSelectedOrder(null)}
+                      >
+                        <DialogTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className="h-10"
+                            title="Visualizar Detalhes"
+                            onClick={() => setSelectedOrder(order)}
+                          >
+                            <Eye className="mr-2 h-4 w-4" />
+                            Detalhes
+                          </Button>
+                        </DialogTrigger>
+                        {selectedOrder && (
+                          <DialogContent className="max-w-md print:hidden">
+                            <DialogHeader>
+                              <DialogTitle>Detalhes do Pedido {selectedOrder.orderNumber}</DialogTitle>
+                            </DialogHeader>
+                            <OrderReceipt order={selectedOrder} />
+                            <DialogFooter className="gap-2 sm:justify-end">
+                              <DialogClose asChild><Button variant="outline">Fechar</Button></DialogClose>
+                              <Button onClick={handlePrint}><Printer className="mr-2 h-4 w-4" />Imprimir</Button>
+                            </DialogFooter>
+                          </DialogContent>
+                        )}
+                      </Dialog>
+                    </div>
+                  </div>
                 ))}
-                 {orders?.length === 0 && (
-                    <TableRow>
-                        <TableCell colSpan={4} className="h-24 text-center text-muted-foreground">
-                            Nenhum pedido recebido ainda.
-                        </TableCell>
-                    </TableRow>
+                {orders?.length === 0 && (
+                  <div className="h-24 rounded-lg border text-center text-sm text-muted-foreground flex items-center justify-center">
+                    Nenhum pedido recebido ainda.
+                  </div>
                 )}
-                </TableBody>
-            </Table>
+              </div>
+
+              <div className="hidden md:block">
+                <Table>
+                  <TableHeader>
+                  <TableRow>
+                      <TableHead>Pedido</TableHead>
+                      <TableHead>Total</TableHead>
+                      <TableHead className="text-center">Status</TableHead>
+                      <TableHead className="text-right">Ações</TableHead>
+                  </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                  {orders?.map((order) => (
+                      <TableRow key={order.id}>
+                      <TableCell>
+                          <div className="font-medium">{order.customerName}</div>
+                          <div className="text-xs text-muted-foreground">{order.orderNumber} - {getOrderDate(order).toLocaleDateString("pt-BR")}</div>
+                      </TableCell>
+                      <TableCell>
+                          {order.total.toLocaleString("pt-BR", { style: "currency", currency: "BRL"})}
+                      </TableCell>
+                      <TableCell>
+                          <div className="flex justify-center">
+                          <Select name={`status-${order.id}`} value={order.status} onValueChange={(value: OrderStatus) => handleStatusChange(order.id, value)} >
+                              <SelectTrigger id={`status-trigger-${order.id}`} className="w-44 h-9">
+                              <Badge variant={getStatusVariant(order.status)} className={cn("w-full justify-start border-none",
+                                  order.status === 'Em Preparo' && 'bg-amber-500 text-white hover:bg-amber-500/90',
+                                  order.status === 'Pendente' && 'bg-yellow-500 text-white hover:bg-yellow-500/90',
+                                  order.status === 'Pronto para Retirada' && 'bg-blue-500 text-white hover:bg-blue-500/90',
+                                  order.status === 'Entregue' && 'bg-emerald-500 text-white hover:bg-emerald-500/90',
+                                  order.status === 'Cancelado' && 'bg-red-500 text-white hover:bg-red-500/90')}>
+                                  {order.status}
+                              </Badge>
+                              </SelectTrigger>
+                              <SelectContent>
+                                  {['Pendente', 'Em Preparo', 'Pronto para Retirada', 'Entregue', 'Cancelado'].map((status) => (
+                                      <SelectItem key={status} value={status}>{status}</SelectItem>
+                                  ))}
+                              </SelectContent>
+                          </Select>
+                          </div>
+                      </TableCell>
+                      <TableCell className="text-right space-x-1">
+                          <Button variant="ghost" size="icon" title="Editar Pedido" asChild>
+                              <Link href={getEditOrderUrl(order)}><Pencil className="h-4 w-4" /></Link>
+                          </Button>
+                          <Dialog open={!!selectedOrder && selectedOrder.id === order.id} onOpenChange={(isOpen) => !isOpen && setSelectedOrder(null)}>
+                              <DialogTrigger asChild>
+                                  <Button variant="ghost" size="icon" title="Visualizar Detalhes" onClick={() => setSelectedOrder(order)}>
+                                  <Eye className="h-4 w-4" />
+                                  </Button>
+                              </DialogTrigger>
+                              {selectedOrder && (
+                                  <DialogContent className="max-w-md print:hidden">
+                                  <DialogHeader>
+                                      <DialogTitle>Detalhes do Pedido {selectedOrder.orderNumber}</DialogTitle>
+                                  </DialogHeader>
+                                  <OrderReceipt order={selectedOrder} />
+                                  <DialogFooter className="gap-2 sm:justify-end">
+                                      <DialogClose asChild><Button variant="outline">Fechar</Button></DialogClose>
+                                      <Button onClick={handlePrint}><Printer className="mr-2 h-4 w-4" />Imprimir</Button>
+                                  </DialogFooter>
+                                  </DialogContent>
+                              )}
+                          </Dialog>
+                      </TableCell>
+                      </TableRow>
+                  ))}
+                   {orders?.length === 0 && (
+                      <TableRow>
+                          <TableCell colSpan={4} className="h-24 text-center text-muted-foreground">
+                              Nenhum pedido recebido ainda.
+                          </TableCell>
+                      </TableRow>
+                  )}
+                  </TableBody>
+                </Table>
+              </div>
             </CardContent>
         </Card>
       

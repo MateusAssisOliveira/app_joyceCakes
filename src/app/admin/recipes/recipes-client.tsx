@@ -64,9 +64,9 @@ export function RecipesClient() {
   return (
     <>
       <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as any)} className="w-full flex-1 flex flex-col">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="new-recipe">Nova Receita</TabsTrigger>
-          <TabsTrigger value="manage-recipes">Gerenciar Receitas</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2 h-auto">
+          <TabsTrigger value="new-recipe" className="py-2 text-xs sm:text-sm">Nova Receita</TabsTrigger>
+          <TabsTrigger value="manage-recipes" className="py-2 text-xs sm:text-sm">Gerenciar Receitas</TabsTrigger>
         </TabsList>
         <TabsContent value="new-recipe" className="flex-1 mt-6">
           <RecipeForm supplies={supplies || []} savedSheets={savedSheets || []} onSaveSuccess={handleSaveSuccess} />

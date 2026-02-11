@@ -24,7 +24,7 @@ import { Separator } from "@/components/ui/separator";
 import { Loader, AlertCircle, TrendingUp } from "lucide-react";
 import type { Supply } from "@/types";
 import { useToast } from "@/hooks/use-toast";
-import { useFirestore } from "@/firebase";
+import { useFirestore, useUser } from "@/firebase";
 import { updateSupply, getPriceHistory } from "@/services";
 import { format } from "date-fns";
 import { toDate } from "@/lib/timestamp-utils";
@@ -58,6 +58,7 @@ export function SupplyQuickAddDialog({
 
   const { toast } = useToast();
   const firestore = useFirestore();
+  const { user } = useUser();
 
   // Ao abrir, buscar o último preço registrado
   useEffect(() => {
@@ -105,6 +106,15 @@ export function SupplyQuickAddDialog({
       return;
     }
 
+    if (shouldRegisterExpense && !user?.uid) {
+      toast({
+        variant: "destructive",
+        title: "Usuário não identificado",
+        description: "Faça login novamente para registrar a despesa no caixa.",
+      });
+      return;
+    }
+
     setIsProcessing(true);
     try {
       const newStock = (supply.stock || 0) + quantityNum;
@@ -117,9 +127,8 @@ export function SupplyQuickAddDialog({
 
       // Prepare financial data if needed
       const financialData = {
-        shouldRegister:
-          shouldRegisterExpense && (shouldRegisterExpense || newCost > 0),
-        userId: "", // Será preenchido no serviço
+        shouldRegister: shouldRegisterExpense && newCost > 0,
+        userId: user?.uid || "",
         paymentMethod,
         description: `Reposição de estoque: ${supply.name}`,
         amount: newCost * quantityNum,
@@ -151,7 +160,7 @@ export function SupplyQuickAddDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !isProcessing && onClose()}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="w-[95vw] max-w-md">
         <DialogHeader>
           <DialogTitle>Repor Estoque: {supply.name}</DialogTitle>
           <DialogDescription>
@@ -205,7 +214,7 @@ export function SupplyQuickAddDialog({
                 </span>
               )}
             </Label>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <Label htmlFor="last-price" className="text-sm text-muted-foreground">
                   Último custo
@@ -321,15 +330,16 @@ export function SupplyQuickAddDialog({
           </div>
         </form>
 
-        <DialogFooter className="border-t pt-4">
+        <DialogFooter className="border-t pt-4 flex-col sm:flex-row">
           <Button
+            className="w-full sm:w-auto"
             variant="outline"
             onClick={onClose}
             disabled={isProcessing}
           >
             Cancelar
           </Button>
-          <Button onClick={handleSubmit} disabled={isProcessing}>
+          <Button className="w-full sm:w-auto" onClick={handleSubmit} disabled={isProcessing}>
             {isProcessing && <Loader className="mr-2 h-4 w-4 animate-spin" />}
             {isProcessing ? "Atualizando..." : "Confirmar"}
           </Button>

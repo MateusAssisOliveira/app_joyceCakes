@@ -169,7 +169,7 @@ export function RecipeForm({ supplies, savedSheets, onSaveSuccess }: RecipeFormP
   return (
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start h-full">
         <div className="lg:col-span-1 h-full">
-          <Card className="sticky top-24 flex flex-col">
+          <Card className="lg:sticky lg:top-24 flex flex-col">
             <CardHeader>
               <CardTitle>Ingredientes Disponíveis</CardTitle>
               <div className="relative pt-2">
@@ -185,24 +185,42 @@ export function RecipeForm({ supplies, savedSheets, onSaveSuccess }: RecipeFormP
               </div>
             </CardHeader>
             <CardContent className="flex-1 min-h-0">
-              <ScrollArea className="h-[35rem]">
-                <Table>
-                  <TableBody>
-                    {paginatedSupplies.map((supply) => (
-                      <TableRow key={supply.id} className="cursor-pointer" onClick={() => addComponent(supply)}>
-                        <TableCell className="py-2">{supply.name}</TableCell>
-                        <TableCell className="text-right py-2">
-                          <Button size="icon" variant="ghost" disabled={components.some(c => c.componentId === supply.id)}>
-                            <PlusCircle className="h-4 w-4" />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                     {paginatedSupplies.length === 0 && (
-                        <TableRow><TableCell colSpan={2} className="text-center h-24">Nenhum ingrediente encontrado.</TableCell></TableRow>
-                    )}
-                  </TableBody>
-                </Table>
+              <ScrollArea className="h-[20rem] sm:h-[35rem]">
+                <div className="space-y-2 md:hidden">
+                  {paginatedSupplies.map((supply) => (
+                    <div key={supply.id} className="flex items-center justify-between rounded-md border p-2">
+                      <span className="text-sm">{supply.name}</span>
+                      <Button size="sm" variant="outline" onClick={() => addComponent(supply)} disabled={components.some(c => c.componentId === supply.id)}>
+                        <PlusCircle className="h-4 w-4 mr-1" />
+                        Adicionar
+                      </Button>
+                    </div>
+                  ))}
+                  {paginatedSupplies.length === 0 && (
+                    <div className="h-24 rounded-md border text-center text-sm text-muted-foreground flex items-center justify-center">
+                      Nenhum ingrediente encontrado.
+                    </div>
+                  )}
+                </div>
+                <div className="hidden md:block">
+                  <Table>
+                    <TableBody>
+                      {paginatedSupplies.map((supply) => (
+                        <TableRow key={supply.id} className="cursor-pointer" onClick={() => addComponent(supply)}>
+                          <TableCell className="py-2">{supply.name}</TableCell>
+                          <TableCell className="text-right py-2">
+                            <Button size="icon" variant="ghost" disabled={components.some(c => c.componentId === supply.id)}>
+                              <PlusCircle className="h-4 w-4" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                       {paginatedSupplies.length === 0 && (
+                          <TableRow><TableCell colSpan={2} className="text-center h-24">Nenhum ingrediente encontrado.</TableCell></TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
               </ScrollArea>
             </CardContent>
              <CardFooter className="flex items-center justify-between border-t pt-4">
@@ -243,36 +261,57 @@ export function RecipeForm({ supplies, savedSheets, onSaveSuccess }: RecipeFormP
                 <Card className="mt-2">
                     <CardContent className="p-2">
                         <ScrollArea className="h-40">
-                             <Table>
-                                <TableHeader>
-                                <TableRow>
-                                    <TableHead className="w-3/5">Ingrediente</TableHead>
-                                    <TableHead>Qtd.</TableHead>
-                                    <TableHead>Un.</TableHead>
-                                    <TableHead className="text-right">Custo</TableHead>
-                                    <TableHead className="text-right">Ação</TableHead>
-                                </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                {components.length > 0 ? (
-                                    components.map((item) => (
-                                    <TableRow key={item.componentId}>
-                                        <TableCell className="font-medium py-1">{item.componentName}</TableCell>
-                                        <TableCell className="py-1">
-                                            <Input type="number" className="w-20 h-8" value={item.quantity} onChange={(e) => updateComponentQuantity(item.componentId, parseFloat(e.target.value) || 0)} min="0" />
-                                        </TableCell>
-                                        <TableCell className="text-xs text-muted-foreground py-1">{item.unit}</TableCell>
-                                        <TableCell className="text-right py-1">{getCost(item).toLocaleString("pt-BR", { style: "currency", currency: "BRL"})}</TableCell>
-                                        <TableCell className="text-right py-1">
-                                            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => removeItem(item.componentId)}><Trash2 className="h-4 w-4 text-destructive"/></Button>
-                                        </TableCell>
-                                    </TableRow>
-                                    ))
-                                ) : (
-                                    <TableRow><TableCell colSpan={5} className="text-center h-24 text-muted-foreground">Adicione ingredientes da lista ao lado.</TableCell></TableRow>
-                                )}
-                                </TableBody>
-                            </Table>
+                             <div className="space-y-2 md:hidden">
+                              {components.length > 0 ? (
+                                components.map((item) => (
+                                  <div key={item.componentId} className="rounded-md border p-2">
+                                    <div className="flex items-center justify-between gap-2">
+                                      <p className="font-medium text-sm">{item.componentName}</p>
+                                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => removeItem(item.componentId)}><Trash2 className="h-4 w-4 text-destructive"/></Button>
+                                    </div>
+                                    <div className="mt-2 grid grid-cols-3 gap-2 items-end">
+                                      <Input type="number" className="h-8" value={item.quantity} onChange={(e) => updateComponentQuantity(item.componentId, parseFloat(e.target.value) || 0)} min="0" />
+                                      <span className="text-xs text-muted-foreground">{item.unit}</span>
+                                      <span className="text-right text-sm">{getCost(item).toLocaleString("pt-BR", { style: "currency", currency: "BRL"})}</span>
+                                    </div>
+                                  </div>
+                                ))
+                              ) : (
+                                <div className="h-24 rounded-md border text-center text-sm text-muted-foreground flex items-center justify-center">Adicione ingredientes da lista acima.</div>
+                              )}
+                             </div>
+                             <div className="hidden md:block">
+                              <Table>
+                                  <TableHeader>
+                                  <TableRow>
+                                      <TableHead className="w-3/5">Ingrediente</TableHead>
+                                      <TableHead>Qtd.</TableHead>
+                                      <TableHead>Un.</TableHead>
+                                      <TableHead className="text-right">Custo</TableHead>
+                                      <TableHead className="text-right">Ação</TableHead>
+                                  </TableRow>
+                                  </TableHeader>
+                                  <TableBody>
+                                  {components.length > 0 ? (
+                                      components.map((item) => (
+                                      <TableRow key={item.componentId}>
+                                          <TableCell className="font-medium py-1">{item.componentName}</TableCell>
+                                          <TableCell className="py-1">
+                                              <Input type="number" className="w-20 h-8" value={item.quantity} onChange={(e) => updateComponentQuantity(item.componentId, parseFloat(e.target.value) || 0)} min="0" />
+                                          </TableCell>
+                                          <TableCell className="text-xs text-muted-foreground py-1">{item.unit}</TableCell>
+                                          <TableCell className="text-right py-1">{getCost(item).toLocaleString("pt-BR", { style: "currency", currency: "BRL"})}</TableCell>
+                                          <TableCell className="text-right py-1">
+                                              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => removeItem(item.componentId)}><Trash2 className="h-4 w-4 text-destructive"/></Button>
+                                          </TableCell>
+                                      </TableRow>
+                                      ))
+                                  ) : (
+                                      <TableRow><TableCell colSpan={5} className="text-center h-24 text-muted-foreground">Adicione ingredientes da lista ao lado.</TableCell></TableRow>
+                                  )}
+                                  </TableBody>
+                              </Table>
+                             </div>
                         </ScrollArea>
                     </CardContent>
                 </Card>
@@ -281,7 +320,7 @@ export function RecipeForm({ supplies, savedSheets, onSaveSuccess }: RecipeFormP
                 <Label htmlFor="sheet-steps">Modo de Preparo</Label>
                 <Textarea id="sheet-steps" name="sheet-steps" placeholder="Passo 1: Misture os ingredientes secos..." value={steps} onChange={(e) => setSteps(e.target.value)} rows={5}/>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="grid gap-2">
                       <Label htmlFor="sheet-yield">Rendimento Final da Receita</Label>
                       <Input id="sheet-yield" name="sheet-yield" placeholder="Ex: 1200g, 1000ml" value={sheetYield} onChange={e => setSheetYield(e.target.value)}/>
@@ -297,8 +336,8 @@ export function RecipeForm({ supplies, savedSheets, onSaveSuccess }: RecipeFormP
                     <div className="flex flex-col gap-2"><Label>Custo Total da Receita</Label><p className="font-bold text-lg">{totalCost.toLocaleString("pt-BR", { style: "currency", currency: "BRL"})}</p></div>
                 </div>
                  <div className="flex flex-col sm:flex-row justify-end gap-2 mt-4">
-                     <Button variant="outline" onClick={clearForm} disabled={isProcessing}>Limpar Formulário</Button>
-                     <Button onClick={handleSaveSheet} disabled={isProcessing}>
+                     <Button className="w-full sm:w-auto" variant="outline" onClick={clearForm} disabled={isProcessing}>Limpar Formulário</Button>
+                     <Button className="w-full sm:w-auto" onClick={handleSaveSheet} disabled={isProcessing}>
                         {isProcessing && <Loader className="mr-2 h-4 w-4 animate-spin" />}
                         {isProcessing ? 'Salvando...' : <><BookMarked className="mr-2 h-4 w-4"/>Salvar Receita</>}
                     </Button>

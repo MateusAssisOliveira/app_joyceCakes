@@ -128,54 +128,100 @@ export function SuppliesReportClient() {
             <Loader className="h-8 w-8 animate-spin text-primary" />
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead>Nome</TableHead>
-                        <TableHead>Tipo</TableHead>
-                        <TableHead>Estoque</TableHead>
-                        <TableHead>Custo/Un.</TableHead>
-                        <TableHead>Fornecedor</TableHead>
-                        <TableHead>Última Compra</TableHead>
-                        <TableHead>Status</TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {filteredSupplies && filteredSupplies.map((supply) => {
-                      const purchaseDate = getDate(supply.lastPurchaseDate);
-                      return (
-                        <TableRow key={supply.id}>
-                            <TableCell className="font-medium">{supply.name}</TableCell>
-                            <TableCell>
-                              <Badge variant="outline" className="flex items-center gap-1.5 w-fit font-normal">
-                                {supply.type === 'packaging' ? <Package className="h-3 w-3"/> : <FlaskConical className="h-3 w-3" />}
-                                {supply.type === 'packaging' ? 'Embalagem' : 'Ingrediente'}
-                              </Badge>
-                            </TableCell>
-                            <TableCell>
-                              <Badge variant={supply.minStock != null && supply.stock < supply.minStock ? "destructive" : "secondary"}>
-                                  {supply.stock} {supply.unit}
-                              </Badge>
-                            </TableCell>
-                            <TableCell>
-                              {supply.costPerUnit.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
-                            </TableCell>
-                             <TableCell>{supply.supplier || 'N/A'}</TableCell>
-                             <TableCell>
-                                {purchaseDate ? format(purchaseDate, "dd/MM/yy") : 'N/A'}
-                            </TableCell>
-                             <TableCell>
-                              <Badge variant={supply.isActive !== false ? "default" : "outline"} className={cn("text-xs", supply.isActive !== false && "bg-emerald-500 hover:bg-emerald-600")}>
-                                {supply.isActive !== false ? "Ativo" : "Arquivado"}
-                              </Badge>
-                            </TableCell>
-                        </TableRow>
-                      )
-                    })}
-                    {filteredSupplies.length === 0 && <TableRow><TableCell colSpan={8} className="text-center h-24">Nenhum item encontrado para os filtros aplicados.</TableCell></TableRow>}
-                </TableBody>
-            </Table>
+          <div>
+            <div className="space-y-3 md:hidden">
+              {filteredSupplies.map((supply) => {
+                const purchaseDate = getDate(supply.lastPurchaseDate);
+                return (
+                  <div key={supply.id} className="rounded-lg border p-3">
+                    <div className="flex items-start justify-between gap-2">
+                      <p className="font-medium">{supply.name}</p>
+                      <Badge variant={supply.isActive !== false ? "default" : "outline"} className={cn("text-xs", supply.isActive !== false && "bg-emerald-500 hover:bg-emerald-600")}>
+                        {supply.isActive !== false ? "Ativo" : "Arquivado"}
+                      </Badge>
+                    </div>
+                    <div className="mt-2 flex items-center justify-between text-sm">
+                      <Badge variant="outline" className="flex items-center gap-1.5 w-fit font-normal">
+                        {supply.type === 'packaging' ? <Package className="h-3 w-3"/> : <FlaskConical className="h-3 w-3" />}
+                        {supply.type === 'packaging' ? 'Embalagem' : 'Ingrediente'}
+                      </Badge>
+                      <Badge variant={supply.minStock != null && supply.stock < supply.minStock ? "destructive" : "secondary"}>
+                        {supply.stock} {supply.unit}
+                      </Badge>
+                    </div>
+                    <div className="mt-2 space-y-1 text-sm">
+                      <div className="flex items-center justify-between">
+                        <span className="text-muted-foreground">Custo/Un.</span>
+                        <span>{supply.costPerUnit.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-muted-foreground">Fornecedor</span>
+                        <span>{supply.supplier || 'N/A'}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-muted-foreground">Última compra</span>
+                        <span>{purchaseDate ? format(purchaseDate, "dd/MM/yy") : 'N/A'}</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+              {filteredSupplies.length === 0 && (
+                <div className="h-24 rounded-lg border text-center text-sm text-muted-foreground flex items-center justify-center">
+                  Nenhum item encontrado para os filtros aplicados.
+                </div>
+              )}
+            </div>
+
+            <div className="hidden overflow-x-auto md:block">
+              <Table>
+                  <TableHeader>
+                      <TableRow>
+                          <TableHead>Nome</TableHead>
+                          <TableHead>Tipo</TableHead>
+                          <TableHead>Estoque</TableHead>
+                          <TableHead>Custo/Un.</TableHead>
+                          <TableHead>Fornecedor</TableHead>
+                          <TableHead>Última Compra</TableHead>
+                          <TableHead>Status</TableHead>
+                      </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                      {filteredSupplies && filteredSupplies.map((supply) => {
+                        const purchaseDate = getDate(supply.lastPurchaseDate);
+                        return (
+                          <TableRow key={supply.id}>
+                              <TableCell className="font-medium">{supply.name}</TableCell>
+                              <TableCell>
+                                <Badge variant="outline" className="flex items-center gap-1.5 w-fit font-normal">
+                                  {supply.type === 'packaging' ? <Package className="h-3 w-3"/> : <FlaskConical className="h-3 w-3" />}
+                                  {supply.type === 'packaging' ? 'Embalagem' : 'Ingrediente'}
+                                </Badge>
+                              </TableCell>
+                              <TableCell>
+                                <Badge variant={supply.minStock != null && supply.stock < supply.minStock ? "destructive" : "secondary"}>
+                                    {supply.stock} {supply.unit}
+                                </Badge>
+                              </TableCell>
+                              <TableCell>
+                                {supply.costPerUnit.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                              </TableCell>
+                               <TableCell>{supply.supplier || 'N/A'}</TableCell>
+                               <TableCell>
+                                  {purchaseDate ? format(purchaseDate, "dd/MM/yy") : 'N/A'}
+                              </TableCell>
+                               <TableCell>
+                                <Badge variant={supply.isActive !== false ? "default" : "outline"} className={cn("text-xs", supply.isActive !== false && "bg-emerald-500 hover:bg-emerald-600")}>
+                                  {supply.isActive !== false ? "Ativo" : "Arquivado"}
+                                </Badge>
+                              </TableCell>
+                          </TableRow>
+                        )
+                      })}
+                      {filteredSupplies.length === 0 && <TableRow><TableCell colSpan={8} className="text-center h-24">Nenhum item encontrado para os filtros aplicados.</TableCell></TableRow>}
+                  </TableBody>
+              </Table>
+            </div>
           </div>
         )}
       </CardContent>

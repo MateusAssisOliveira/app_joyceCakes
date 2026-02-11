@@ -78,7 +78,7 @@ export function AddMovementDialog({ cashRegister, products }: AddMovementDialogP
 
     setIsProcessing(true);
     try {
-      addFinancialMovement(firestore, cashRegister, {
+      await addFinancialMovement(firestore, cashRegister, {
         type,
         amount,
         description,
@@ -104,14 +104,14 @@ export function AddMovementDialog({ cashRegister, products }: AddMovementDialogP
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button><PlusCircle className="mr-2 h-4 w-4" /> Nova Movimentação</Button>
+        <Button className="w-full sm:w-auto"><PlusCircle className="mr-2 h-4 w-4" /> Nova Movimentação</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="w-[95vw] max-w-md">
         <DialogHeader>
           <DialogTitle>Registrar Movimentação</DialogTitle>
         </DialogHeader>
         <Tabs value={type} onValueChange={(v) => setType(v as any)} className="w-full pt-4">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-2 h-auto">
             <TabsTrigger value="income">Entrada</TabsTrigger>
             <TabsTrigger value="expense">Saída</TabsTrigger>
           </TabsList>
@@ -153,7 +153,7 @@ export function AddMovementDialog({ cashRegister, products }: AddMovementDialogP
                 </Popover>
               </div>
             )}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="grid gap-2">
                     <Label htmlFor="amount">Valor</Label>
                     <Input id="amount" name="amount" type="number" placeholder="R$ 0,00" value={amount || ''} onChange={(e) => setAmount(parseFloat(e.target.value) || 0)} autoFocus />
@@ -189,9 +189,9 @@ export function AddMovementDialog({ cashRegister, products }: AddMovementDialogP
             </div>
           </div>
         </Tabs>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => setIsOpen(false)} disabled={isProcessing}>Cancelar</Button>
-          <Button onClick={handleAddMovement} disabled={isProcessing}>
+        <DialogFooter className="flex-col sm:flex-row">
+          <Button className="w-full sm:w-auto" variant="outline" onClick={() => setIsOpen(false)} disabled={isProcessing}>Cancelar</Button>
+          <Button className="w-full sm:w-auto" onClick={handleAddMovement} disabled={isProcessing}>
             {isProcessing && <Loader className="mr-2 h-4 w-4 animate-spin" />}
             {isProcessing ? 'Registrando...' : 'Registrar'}
           </Button>

@@ -125,7 +125,7 @@ export function EditOrderClient({ order, products }: EditOrderClientProps) {
     setItems((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!firestore) {
       toast({
         variant: "destructive",
@@ -148,7 +148,7 @@ export function EditOrderClient({ order, products }: EditOrderClientProps) {
     setIsSaving(true);
 
     try {
-      updateOrder(firestore, order.id, {
+      await updateOrder(firestore, order.id, {
         items,
         total,
       });
@@ -179,89 +179,161 @@ export function EditOrderClient({ order, products }: EditOrderClientProps) {
       </CardHeader>
       <CardContent className="flex-1">
         <div className="flex flex-col gap-4">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Produto</TableHead>
-                <TableHead className="w-32">Quantidade</TableHead>
-                <TableHead className="w-32">Preço</TableHead>
-                <TableHead className="w-32 text-right">Total</TableHead>
-                <TableHead className="w-16 text-right">Ações</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {items.map((item, index) => {
-                const lineTotal = (item.price || 0) * (item.quantity || 0);
-
-                return (
-                  <TableRow key={`${item.productId}-${index}`}>
-                    <TableCell>
-                      <Select
-                        value={item.productId}
-                        onValueChange={(value) =>
-                          handleChangeProduct(index, value)
-                        }
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Selecione um produto" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {products.map((product) => (
-                            <SelectItem key={product.id} value={product.id}>
-                              {product.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </TableCell>
-                    <TableCell>
+          <div className="space-y-3 md:hidden">
+            {items.map((item, index) => {
+              const lineTotal = (item.price || 0) * (item.quantity || 0);
+              return (
+                <div key={`${item.productId}-${index}`} className="rounded-lg border p-3 space-y-3">
+                  <div>
+                    <p className="mb-1 text-xs text-muted-foreground">Produto</p>
+                    <Select
+                      value={item.productId}
+                      onValueChange={(value) => handleChangeProduct(index, value)}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Selecione um produto" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {products.map((product) => (
+                          <SelectItem key={product.id} value={product.id}>
+                            {product.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <p className="mb-1 text-xs text-muted-foreground">Quantidade</p>
                       <Input
                         type="number"
                         min={1}
                         value={item.quantity}
-                        onChange={(e) =>
-                          handleChangeQuantity(index, e.target.value)
-                        }
-                        className="w-24"
+                        onChange={(e) => handleChangeQuantity(index, e.target.value)}
+                        className="w-full"
                       />
-                    </TableCell>
-                    <TableCell>
-                      {item.price.toLocaleString("pt-BR", {
-                        style: "currency",
-                        currency: "BRL",
-                      })}
-                    </TableCell>
-                    <TableCell className="text-right">
+                    </div>
+                    <div className="text-right">
+                      <p className="mb-1 text-xs text-muted-foreground">Preço</p>
+                      <p className="text-sm">
+                        {item.price.toLocaleString("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm text-muted-foreground">Total do item</p>
+                    <p className="font-semibold">
                       {lineTotal.toLocaleString("pt-BR", {
                         style: "currency",
                         currency: "BRL",
                       })}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleRemoveItem(index)}
-                      >
-                        ✕
-                      </Button>
+                    </p>
+                  </div>
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => handleRemoveItem(index)}
+                  >
+                    Remover item
+                  </Button>
+                </div>
+              );
+            })}
+            {items.length === 0 && (
+              <div className="h-24 rounded-lg border text-center text-sm text-muted-foreground flex items-center justify-center">
+                Nenhum item neste pedido. Adicione itens para começar.
+              </div>
+            )}
+          </div>
+
+          <div className="hidden md:block overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Produto</TableHead>
+                  <TableHead className="w-32">Quantidade</TableHead>
+                  <TableHead className="w-32">Preço</TableHead>
+                  <TableHead className="w-32 text-right">Total</TableHead>
+                  <TableHead className="w-16 text-right">Ações</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {items.map((item, index) => {
+                  const lineTotal = (item.price || 0) * (item.quantity || 0);
+
+                  return (
+                    <TableRow key={`${item.productId}-${index}`}>
+                      <TableCell>
+                        <Select
+                          value={item.productId}
+                          onValueChange={(value) =>
+                            handleChangeProduct(index, value)
+                          }
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Selecione um produto" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {products.map((product) => (
+                              <SelectItem key={product.id} value={product.id}>
+                                {product.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </TableCell>
+                      <TableCell>
+                        <Input
+                          type="number"
+                          min={1}
+                          value={item.quantity}
+                          onChange={(e) =>
+                            handleChangeQuantity(index, e.target.value)
+                          }
+                          className="w-24"
+                        />
+                      </TableCell>
+                      <TableCell>
+                        {item.price.toLocaleString("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        })}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {lineTotal.toLocaleString("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        })}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleRemoveItem(index)}
+                        >
+                          ✕
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+
+                {items.length === 0 && (
+                  <TableRow>
+                    <TableCell
+                      colSpan={5}
+                      className="h-24 text-center text-muted-foreground"
+                    >
+                      Nenhum item neste pedido. Adicione itens para começar.
                     </TableCell>
                   </TableRow>
-                );
-              })}
-
-              {items.length === 0 && (
-                <TableRow>
-                  <TableCell
-                    colSpan={5}
-                    className="h-24 text-center text-muted-foreground"
-                  >
-                    Nenhum item neste pedido. Adicione itens para começar.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+                )}
+              </TableBody>
+            </Table>
+          </div>
 
           <div className="flex justify-between items-center">
             <Button variant="outline" type="button" onClick={handleAddItem}>
@@ -279,8 +351,9 @@ export function EditOrderClient({ order, products }: EditOrderClientProps) {
           </div>
         </div>
       </CardContent>
-      <CardFooter className="flex justify-end gap-2">
+      <CardFooter className="flex flex-col sm:flex-row sm:justify-end gap-2">
         <Button
+          className="w-full sm:w-auto"
           type="button"
           onClick={handleSave}
           disabled={isSaving || items.length === 0}

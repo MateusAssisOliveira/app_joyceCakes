@@ -269,20 +269,33 @@ export function ProductForm({ product, supplies, baseSheets, onSaveSuccess }: Pr
                     <div className="space-y-4">
                         <div>
                             <Label className="text-xs font-bold text-muted-foreground px-2">INGREDIENTES & EMBALAGENS</Label>
-                            <Table>
-                                <TableBody>
-                                    {paginatedSupplies.map((supply) => (
-                                    <TableRow key={supply.id} className="cursor-pointer" onClick={() => addComponent(supply, 'supply')}>
-                                        <TableCell className="py-2">{supply.name}</TableCell>
-                                        <TableCell className="text-right py-2">
-                                        <Button size="icon" variant="ghost" disabled={components.some(c => c.componentId === supply.id)}>
-                                            <PlusCircle className="h-4 w-4" />
-                                        </Button>
-                                        </TableCell>
-                                    </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
+                            <div className="space-y-2 md:hidden">
+                                {paginatedSupplies.map((supply) => (
+                                  <div key={supply.id} className="flex items-center justify-between rounded-md border p-2">
+                                    <span className="text-sm">{supply.name}</span>
+                                    <Button size="sm" variant="outline" onClick={() => addComponent(supply, 'supply')} disabled={components.some(c => c.componentId === supply.id)}>
+                                      <PlusCircle className="h-4 w-4 mr-1" />
+                                      Adicionar
+                                    </Button>
+                                  </div>
+                                ))}
+                            </div>
+                            <div className="hidden md:block">
+                              <Table>
+                                  <TableBody>
+                                      {paginatedSupplies.map((supply) => (
+                                      <TableRow key={supply.id} className="cursor-pointer" onClick={() => addComponent(supply, 'supply')}>
+                                          <TableCell className="py-2">{supply.name}</TableCell>
+                                          <TableCell className="text-right py-2">
+                                          <Button size="icon" variant="ghost" disabled={components.some(c => c.componentId === supply.id)}>
+                                              <PlusCircle className="h-4 w-4" />
+                                          </Button>
+                                          </TableCell>
+                                      </TableRow>
+                                      ))}
+                                  </TableBody>
+                              </Table>
+                            </div>
                             <div className="flex items-center justify-end space-x-2 py-2">
                                 <Button variant="outline" size="sm" onClick={() => setSuppliesPage(p => p - 1)} disabled={suppliesPage === 1}><ChevronLeft className="h-4 w-4" /> Anterior</Button>
                                 <Button variant="outline" size="sm" onClick={() => setSuppliesPage(p => p + 1)} disabled={suppliesPage >= totalSuppliesPages}>Próximo <ChevronRight className="h-4 w-4" /></Button>
@@ -291,20 +304,33 @@ export function ProductForm({ product, supplies, baseSheets, onSaveSuccess }: Pr
 
                         <div>
                             <Label className="text-xs font-bold text-muted-foreground px-2 mt-4 block">RECEITAS (FICHAS DE BASE)</Label>
-                            <Table>
-                                <TableBody>
-                                    {paginatedSheets.map((sheet) => (
-                                    <TableRow key={sheet.id} className="cursor-pointer" onClick={() => addComponent(sheet, 'sheet')}>
-                                        <TableCell className="py-2">{sheet.name}</TableCell>
-                                        <TableCell className="text-right py-2">
-                                        <Button size="icon" variant="ghost" disabled={components.some(c => c.componentId === sheet.id)}>
-                                            <PlusCircle className="h-4 w-4" />
-                                        </Button>
-                                        </TableCell>
-                                    </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
+                            <div className="space-y-2 md:hidden">
+                                {paginatedSheets.map((sheet) => (
+                                  <div key={sheet.id} className="flex items-center justify-between rounded-md border p-2">
+                                    <span className="text-sm">{sheet.name}</span>
+                                    <Button size="sm" variant="outline" onClick={() => addComponent(sheet, 'sheet')} disabled={components.some(c => c.componentId === sheet.id)}>
+                                      <PlusCircle className="h-4 w-4 mr-1" />
+                                      Adicionar
+                                    </Button>
+                                  </div>
+                                ))}
+                            </div>
+                            <div className="hidden md:block">
+                              <Table>
+                                  <TableBody>
+                                      {paginatedSheets.map((sheet) => (
+                                      <TableRow key={sheet.id} className="cursor-pointer" onClick={() => addComponent(sheet, 'sheet')}>
+                                          <TableCell className="py-2">{sheet.name}</TableCell>
+                                          <TableCell className="text-right py-2">
+                                          <Button size="icon" variant="ghost" disabled={components.some(c => c.componentId === sheet.id)}>
+                                              <PlusCircle className="h-4 w-4" />
+                                          </Button>
+                                          </TableCell>
+                                      </TableRow>
+                                      ))}
+                                  </TableBody>
+                              </Table>
+                            </div>
                              <div className="flex items-center justify-end space-x-2 py-2">
                                 <Button variant="outline" size="sm" onClick={() => setSheetsPage(p => p - 1)} disabled={sheetsPage === 1}><ChevronLeft className="h-4 w-4" /> Anterior</Button>
                                 <Button variant="outline" size="sm" onClick={() => setSheetsPage(p => p + 1)} disabled={sheetsPage >= totalSheetsPages}>Próximo <ChevronRight className="h-4 w-4" /></Button>
@@ -317,13 +343,13 @@ export function ProductForm({ product, supplies, baseSheets, onSaveSuccess }: Pr
 
         {/* Coluna de Formulário do Produto */}
         <div className="lg:col-span-2 h-full flex flex-col">
-            <div className="flex-1 flex flex-col gap-6 overflow-y-auto px-1 pr-4">
+            <div className="flex-1 flex flex-col gap-6 overflow-y-auto px-1 pr-0 md:pr-4">
                 <CardHeader className="p-0">
                     <CardTitle>Montagem do Produto</CardTitle>
                     <CardDescription>Defina os detalhes, adicione componentes e calcule o preço do seu produto final.</CardDescription>
                 </CardHeader>
                 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="grid gap-2">
                         <Label htmlFor="product-name">Nome do Produto</Label>
                         <Input id="product-name" placeholder="Ex: Bolo de Pote de Chocolate" value={productName} onChange={(e) => setProductName(e.target.value)} />
@@ -342,41 +368,62 @@ export function ProductForm({ product, supplies, baseSheets, onSaveSuccess }: Pr
                     <Card className="mt-2">
                         <CardContent className="p-2">
                             <ScrollArea className="h-40">
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow>
-                                            <TableHead className="w-3/5">Componente</TableHead>
-                                            <TableHead>Qtd.</TableHead>
-                                            <TableHead>Un.</TableHead>
-                                            <TableHead className="text-right">Custo</TableHead>
-                                            <TableHead className="text-right">Ação</TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        {components.length > 0 ? (
-                                            components.map((item) => (
-                                            <TableRow key={item.componentId}>
-                                                <TableCell className="font-medium py-1">{item.componentName}</TableCell>
-                                                <TableCell className="py-1">
-                                                    <Input type="number" className="w-20 h-8" value={item.quantity} onChange={(e) => updateComponentQuantity(item.componentId, parseFloat(e.target.value) || 0)} min="0" />
-                                                </TableCell>
-                                                <TableCell className="text-xs text-muted-foreground py-1">{item.unit}</TableCell>
-                                                <TableCell className="text-right py-1">{getCost(item).toLocaleString("pt-BR", { style: "currency", currency: "BRL"})}</TableCell>
-                                                <TableCell className="text-right py-1">
-                                                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => removeItem(item.componentId)}><Trash2 className="h-4 w-4 text-destructive"/></Button>
-                                                </TableCell>
-                                            </TableRow>
-                                            ))
-                                        ) : (
-                                            <TableRow><TableCell colSpan={5} className="text-center h-24 text-muted-foreground">Adicione componentes da lista ao lado.</TableCell></TableRow>
-                                        )}
-                                    </TableBody>
-                                </Table>
+                                <div className="space-y-2 md:hidden">
+                                    {components.length > 0 ? (
+                                      components.map((item) => (
+                                        <div key={item.componentId} className="rounded-md border p-2">
+                                          <div className="flex items-center justify-between gap-2">
+                                            <p className="font-medium text-sm">{item.componentName}</p>
+                                            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => removeItem(item.componentId)}><Trash2 className="h-4 w-4 text-destructive"/></Button>
+                                          </div>
+                                          <div className="mt-2 grid grid-cols-3 gap-2 items-end">
+                                            <Input type="number" className="h-8" value={item.quantity} onChange={(e) => updateComponentQuantity(item.componentId, parseFloat(e.target.value) || 0)} min="0" />
+                                            <span className="text-xs text-muted-foreground">{item.unit}</span>
+                                            <span className="text-right text-sm">{getCost(item).toLocaleString("pt-BR", { style: "currency", currency: "BRL"})}</span>
+                                          </div>
+                                        </div>
+                                      ))
+                                    ) : (
+                                      <div className="h-24 rounded-md border text-center text-sm text-muted-foreground flex items-center justify-center">Adicione componentes da lista ao lado.</div>
+                                    )}
+                                </div>
+                                <div className="hidden md:block">
+                                  <Table>
+                                      <TableHeader>
+                                          <TableRow>
+                                              <TableHead className="w-3/5">Componente</TableHead>
+                                              <TableHead>Qtd.</TableHead>
+                                              <TableHead>Un.</TableHead>
+                                              <TableHead className="text-right">Custo</TableHead>
+                                              <TableHead className="text-right">Ação</TableHead>
+                                          </TableRow>
+                                      </TableHeader>
+                                      <TableBody>
+                                          {components.length > 0 ? (
+                                              components.map((item) => (
+                                              <TableRow key={item.componentId}>
+                                                  <TableCell className="font-medium py-1">{item.componentName}</TableCell>
+                                                  <TableCell className="py-1">
+                                                      <Input type="number" className="w-20 h-8" value={item.quantity} onChange={(e) => updateComponentQuantity(item.componentId, parseFloat(e.target.value) || 0)} min="0" />
+                                                  </TableCell>
+                                                  <TableCell className="text-xs text-muted-foreground py-1">{item.unit}</TableCell>
+                                                  <TableCell className="text-right py-1">{getCost(item).toLocaleString("pt-BR", { style: "currency", currency: "BRL"})}</TableCell>
+                                                  <TableCell className="text-right py-1">
+                                                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => removeItem(item.componentId)}><Trash2 className="h-4 w-4 text-destructive"/></Button>
+                                                  </TableCell>
+                                              </TableRow>
+                                              ))
+                                          ) : (
+                                              <TableRow><TableCell colSpan={5} className="text-center h-24 text-muted-foreground">Adicione componentes da lista ao lado.</TableCell></TableRow>
+                                          )}
+                                      </TableBody>
+                                  </Table>
+                                </div>
                             </ScrollArea>
                         </CardContent>
                     </Card>
                 </div>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="grid gap-2">
                         <Label htmlFor="prep-time">Tempo de Preparo (min)</Label>
                         <Input id="prep-time" type="number" value={preparationTime} onChange={e => setPreparationTime(parseInt(e.target.value) || 0)} />
@@ -423,7 +470,7 @@ export function ProductForm({ product, supplies, baseSheets, onSaveSuccess }: Pr
                     <div className="flex flex-col gap-2"><Label>Preço de Venda</Label><p className="font-headline text-2xl font-bold text-primary">{isFinite(suggestedPrice) ? suggestedPrice.toLocaleString("pt-BR", { style: "currency", currency: "BRL"}) : "Inválido"}</p></div>
                 </div>
                 <div className="flex justify-end gap-2 mt-2">
-                    <Button onClick={handleSaveProduct} disabled={isProcessing}>
+                    <Button className="w-full sm:w-auto" onClick={handleSaveProduct} disabled={isProcessing}>
                         {isProcessing && <Loader className="mr-2 h-4 w-4 animate-spin" />}
                         <Save className="mr-2 h-4 w-4" />
                         {product ? 'Salvar Alterações' : 'Salvar Produto'}

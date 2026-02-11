@@ -67,7 +67,49 @@ export function SupplyTable({
 
   return (
     <div className="flex-1 overflow-auto min-h-0 flex flex-col">
-        <div className="relative flex-1 w-full overflow-auto">
+        <div className="space-y-3 md:hidden">
+            {paginatedSupplies.map((supply) => (
+                <div
+                    key={supply.id}
+                    onClick={() => onRowClick(supply)}
+                    className={cn(
+                        "cursor-pointer rounded-lg border p-3",
+                        selectedSupplyId === supply.id && "ring-2 ring-primary bg-accent/40"
+                    )}
+                >
+                    <div className="flex items-start justify-between gap-2">
+                        <p className="font-medium">{supply.name}</p>
+                        <Badge variant="outline" className="flex items-center gap-1.5 w-fit font-normal">
+                            {supply.type === 'packaging' ? <Package className="h-3 w-3"/> : <FlaskConical className="h-3 w-3" />}
+                            {supply.type === 'packaging' ? 'Embalagem' : 'Ingrediente'}
+                        </Badge>
+                    </div>
+                    <div className="mt-2 flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">Estoque</span>
+                        <Badge variant={supply.minStock != null && supply.stock < supply.minStock ? "destructive" : "secondary"}>
+                            {supply.stock} {supply.unit}
+                        </Badge>
+                    </div>
+                    <div className="mt-1 flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">Preço de compra</span>
+                        <span className="font-medium">
+                            {supply.costPerUnit.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })} / {supply.unit}
+                        </span>
+                    </div>
+                    <div className="mt-2">
+                        <Badge variant={supply.isActive !== false ? "default" : "outline"} className={cn(supply.isActive !== false && "bg-emerald-500 hover:bg-emerald-600")}>
+                            {supply.isActive !== false ? "Ativo" : "Arquivado"}
+                        </Badge>
+                    </div>
+                </div>
+            ))}
+            {supplies.length === 0 && (
+                <div className="h-24 rounded-lg border text-center text-sm text-muted-foreground flex items-center justify-center">
+                    Nenhum insumo encontrado.
+                </div>
+            )}
+        </div>
+        <div className="relative hidden md:block flex-1 w-full overflow-auto">
             <Table className="w-full table-auto">
                 <TableHeader>
                     <TableRow>

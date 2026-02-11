@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarTrigger, SidebarProvider } from '@/components/ui/sidebar';
 import { ActiveLink } from '@/app/admin/active-link';
 import DynamicHeader from '@/app/admin/dynamic-header';
@@ -29,6 +30,20 @@ import { SyncStatusBadge } from '@/components/admin/sync-status-badge';
 import { useRouter } from 'next/navigation';
 import { signOut } from 'firebase/auth';
 import Loading from '@/app/admin/loading';
+
+const primaryNav = [
+    { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { href: "/admin/recipes", label: "Receitas", icon: NotebookPen },
+    { href: "/admin/inventory", label: "Estoque", icon: Warehouse },
+    { href: "/admin/orders", label: "Vendas", icon: Terminal },
+    { href: "/admin/cash-flow", label: "Financeiro", icon: DollarSign },
+];
+
+const secondaryNav = [
+    { href: "/admin/products", label: "Produtos", icon: Package },
+    { href: "/admin/calculator", label: "Calculadora", icon: Calculator },
+    { href: "/admin/operations", label: "Operações", icon: Activity },
+];
 
 export default function AdminPanel({
     children,
@@ -72,55 +87,32 @@ export default function AdminPanel({
                             </div>
                         </SidebarHeader>
                         <SidebarContent>
+                            <div className="px-3 pt-2 text-[11px] font-semibold uppercase tracking-wide text-sidebar-foreground/60">
+                                Menu principal
+                            </div>
                             <SidebarMenu>
-                                <SidebarMenuItem>
-                                <ActiveLink href="/admin/dashboard">
-                                    <LayoutDashboard />
-                                    Dashboard
-                                </ActiveLink>
-                                </SidebarMenuItem>
-                                 <SidebarMenuItem>
-                                <ActiveLink href="/admin/cash-flow">
-                                    <DollarSign />
-                                    Fluxo de Caixa
-                                </ActiveLink>
-                                </SidebarMenuItem>
-                                <SidebarMenuItem>
-                                <ActiveLink href="/admin/orders">
-                                    <Terminal />
-                                    Ponto de Venda
-                                </ActiveLink>
-                                </SidebarMenuItem>
-                                <SidebarMenuItem>
-                                <ActiveLink href="/admin/inventory">
-                                    <Warehouse />
-                                    Itens de Estoque
-                                </ActiveLink>
-                                </SidebarMenuItem>
-                                <SidebarMenuItem>
-                                <ActiveLink href="/admin/products">
-                                    <Package />
-                                    Produtos
-                                </ActiveLink>
-                                </SidebarMenuItem>
-                                <SidebarMenuItem>
-                                <ActiveLink href="/admin/recipes">
-                                    <NotebookPen />
-                                    Fichas Técnicas
-                                </ActiveLink>
-                                </SidebarMenuItem>
-                                <SidebarMenuItem>
-                                <ActiveLink href="/admin/calculator">
-                                    <Calculator />
-                                    Calculadora Rápida
-                                </ActiveLink>
-                                </SidebarMenuItem>
-                                <SidebarMenuItem>
-                                <ActiveLink href="/admin/operations">
-                                    <Activity />
-                                    Operações IA
-                                </ActiveLink>
-                                </SidebarMenuItem>
+                                {primaryNav.map((item) => (
+                                    <SidebarMenuItem key={item.href}>
+                                        <ActiveLink href={item.href}>
+                                            <item.icon />
+                                            {item.label}
+                                        </ActiveLink>
+                                    </SidebarMenuItem>
+                                ))}
+                            </SidebarMenu>
+                            <Separator className="my-2 bg-sidebar-border/60" />
+                            <div className="px-3 pt-1 text-[11px] font-semibold uppercase tracking-wide text-sidebar-foreground/60">
+                                Mais ferramentas
+                            </div>
+                            <SidebarMenu>
+                                {secondaryNav.map((item) => (
+                                    <SidebarMenuItem key={item.href}>
+                                        <ActiveLink href={item.href}>
+                                            <item.icon />
+                                            {item.label}
+                                        </ActiveLink>
+                                    </SidebarMenuItem>
+                                ))}
                             </SidebarMenu>
                         </SidebarContent>
                         <SidebarFooter>
@@ -157,12 +149,33 @@ export default function AdminPanel({
                             </div>
                         </header>
                          <main className="flex flex-1 flex-col">
-                            <div className="flex flex-1 p-4 sm:p-6 md:p-8 w-full min-w-0">
+                            <div className="flex flex-1 p-4 pb-28 sm:p-6 md:p-8 w-full min-w-0 md:pb-8">
                                 <Suspense fallback={<Loading />}>
                                     {children}
                                 </Suspense>
                             </div>
                         </main>
+                        <nav className="fixed bottom-0 left-0 right-0 z-40 border-t bg-background/95 backdrop-blur-sm pb-safe md:hidden">
+                            <div className="grid grid-cols-5 gap-1 px-1 py-2">
+                                {primaryNav.map((item) => {
+                                    const isActive = pathname.startsWith(item.href);
+                                    return (
+                                        <Button
+                                            key={item.href}
+                                            asChild
+                                            variant={isActive ? "default" : "ghost"}
+                                            size="sm"
+                                            className="h-16 flex-col gap-1 rounded-xl text-[11px]"
+                                        >
+                                            <Link href={item.href}>
+                                                <item.icon className="h-4 w-4" />
+                                                <span>{item.label}</span>
+                                            </Link>
+                                        </Button>
+                                    );
+                                })}
+                            </div>
+                        </nav>
                     </SidebarInset>
                 </div>
             </SidebarProvider>

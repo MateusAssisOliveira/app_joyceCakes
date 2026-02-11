@@ -13,7 +13,7 @@
 //   em toda a aplicação.
 // - Renderizar os `children`, que são as páginas ativas da aplicação.
 
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Lora, Poppins } from "next/font/google";
 import "./globals.css";
 import "./printing.css";
@@ -36,6 +36,12 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: "Doce Caixa | Gestão para Confeitaria",
   description: "Sistema de gestão para sua confeitaria.",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({

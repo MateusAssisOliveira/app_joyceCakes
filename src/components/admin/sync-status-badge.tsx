@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AlertTriangle, RefreshCw, WifiOff } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -11,13 +11,47 @@ import {
 
 export function SyncStatusBadge() {
   const [status, setStatus] = useState<SyncStatusSnapshot>(getSyncStatusSnapshot());
+  const [showSyncing, setShowSyncing] = useState(false);
+  const showDelayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hideDelayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     return subscribeSyncStatus(setStatus);
   }, []);
 
-  const { label, className, Icon, title } = useMemo(() => {
+  useEffect(() => {
+    if (showDelayRef.current) {
+      clearTimeout(showDelayRef.current);
+      showDelayRef.current = null;
+    }
+    if (hideDelayRef.current) {
+      clearTimeout(hideDelayRef.current);
+      hideDelayRef.current = null;
+    }
+
     if (status.health === "syncing") {
+      // Evita "piscar" para sincronizações rápidas.
+      showDelayRef.current = setTimeout(() => {
+        setShowSyncing(true);
+      }, 1800);
+      return;
+    }
+
+    // Pequena folga para transição visual suave ao sair de syncing.
+    hideDelayRef.current = setTimeout(() => {
+      setShowSyncing(false);
+    }, 400);
+  }, [status.health]);
+
+  useEffect(() => {
+    return () => {
+      if (showDelayRef.current) clearTimeout(showDelayRef.current);
+      if (hideDelayRef.current) clearTimeout(hideDelayRef.current);
+    };
+  }, []);
+
+  const { label, className, Icon, title } = useMemo(() => {
+    if (status.health === "syncing" && showSyncing) {
       return {
         label: "Sincronizando",
         className: "bg-blue-100 text-blue-800 border-blue-200",
@@ -47,10 +81,15 @@ export function SyncStatusBadge() {
       Icon: RefreshCw,
       title: "Sync ainda não iniciou",
     };
-  }, [status]);
+  }, [status, showSyncing]);
 
-  // Keep header clean during normal operation.
-  if (status.health === "idle" || status.health === "ok") {
+  // Mantém o cabeçalho limpo: mostra apenas erros/alertas e syncing prolongado.
+  const shouldRender =
+    status.health === "warning" ||
+    status.health === "error" ||
+    (status.health === "syncing" && showSyncing);
+
+  if (!shouldRender) {
     return null;
   }
 

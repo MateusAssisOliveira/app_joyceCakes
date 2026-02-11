@@ -118,11 +118,11 @@ export function RecipeFormDialog({ isOpen, onClose, onSaveSuccess, recipe, suppl
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !isProcessing && onClose()}>
-      <DialogContent className="max-w-3xl">
+      <DialogContent className="w-[95vw] max-w-3xl">
         <DialogHeader>
           <DialogTitle>Editar Receita (Ficha de Base): {recipe?.name}</DialogTitle>
         </DialogHeader>
-        <div className="grid gap-4 py-4 max-h-[70vh] overflow-y-auto pr-6">
+        <div className="grid gap-4 py-4 max-h-[70vh] overflow-y-auto pr-2 sm:pr-6">
            <div className="grid gap-2">
               <Label htmlFor="edit-sheet-name">Nome da Receita</Label>
               <Input id="edit-sheet-name" name="edit-sheet-name" value={formData.name || ''} onChange={(e) => setFormData({...formData, name: e.target.value})} disabled={isProcessing}/>
@@ -135,7 +135,7 @@ export function RecipeFormDialog({ isOpen, onClose, onSaveSuccess, recipe, suppl
             <Label htmlFor="edit-sheet-steps">Modo de Preparo</Label>
             <Textarea id="edit-sheet-steps" name="edit-sheet-steps" value={formData.steps || ''} onChange={(e) => setFormData({...formData, steps: e.target.value})} rows={5} disabled={isProcessing}/>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="grid gap-2">
                 <Label htmlFor="edit-sheet-yield">Rendimento da Receita</Label>
                 <Input id="edit-sheet-yield" name="edit-sheet-yield" value={formData.yield || ''} onChange={e => setFormData({...formData, yield: e.target.value})} disabled={isProcessing}/>
@@ -149,9 +149,9 @@ export function RecipeFormDialog({ isOpen, onClose, onSaveSuccess, recipe, suppl
             <div className="flex flex-col gap-2"><Label>Custo Total da Receita</Label><p className="font-bold text-lg">{totalCost.toLocaleString("pt-BR", { style: "currency", currency: "BRL"})}</p></div>
           </div>
         </div>
-        <DialogFooter>
-          <Button variant="outline" type="button" onClick={onClose} disabled={isProcessing}>Cancelar</Button>
-          <Button type="button" onClick={handleUpdateRecipe} disabled={isProcessing}>
+        <DialogFooter className="flex-col sm:flex-row">
+          <Button className="w-full sm:w-auto" variant="outline" type="button" onClick={onClose} disabled={isProcessing}>Cancelar</Button>
+          <Button className="w-full sm:w-auto" type="button" onClick={handleUpdateRecipe} disabled={isProcessing}>
             {isProcessing && <Loader className="mr-2 h-4 w-4 animate-spin" />}
             {isProcessing ? 'Salvando...' : 'Salvar Alterações'}
           </Button>

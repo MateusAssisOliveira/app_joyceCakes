@@ -183,15 +183,15 @@ export function SupplyFormDialog({ isOpen, onClose, onSave, supply, defaultType 
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !isProcessing && onClose()}>
-      <DialogContent className="sm:max-w-2xl">
+      <DialogContent className="w-[95vw] max-w-2xl">
         <DialogHeader>
           <DialogTitle>{supply ? 'Editar Item' : 'Adicionar Novo Item'}</DialogTitle>
           {isEditing && (
             <DialogDescription>Ajuste o estoque ou outros detalhes. Para registrar uma nova compra com custo diferente, use o botão "Adicionar".</DialogDescription>
           )}
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="grid gap-6 py-4 max-h-[80vh] overflow-y-auto pr-4">
-            <div className="grid grid-cols-2 gap-4">
+        <form onSubmit={handleSubmit} className="grid gap-6 py-4 max-h-[80vh] overflow-y-auto pr-2 sm:pr-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="grid gap-2">
                     <Label htmlFor="supply-name">Nome do Item</Label>
                     <Input id="supply-name" name="supply-name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required disabled={isProcessing}/>
@@ -230,7 +230,7 @@ export function SupplyFormDialog({ isOpen, onClose, onSave, supply, defaultType 
                 </Select>
             </div>
           
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="grid gap-2">
                     <Label htmlFor="supply-stock">Estoque Atual</Label>
                     <Input id="supply-stock" name="supply-stock" type="number" value={formData.stock} onChange={(e) => setFormData({ ...formData, stock: parseFloat(e.target.value) || 0 })} required min="0" step="any" disabled={isProcessing}/>
@@ -261,7 +261,7 @@ export function SupplyFormDialog({ isOpen, onClose, onSave, supply, defaultType 
                  <Label className="flex items-center gap-2 font-semibold">
                     Cálculo de Custo da Compra
                 </Label>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="grid gap-2">
                         <Label htmlFor="package-cost">Custo Total da Compra</Label>
                         <Input id="package-cost" name="package-cost" type="number" placeholder="Ex: 50.00" value={formData.packageCost || ''} onChange={(e) => setFormData({...formData, packageCost: parseFloat(e.target.value) || undefined})} step="0.01" min="0" disabled={isProcessing}/>
@@ -293,7 +293,7 @@ export function SupplyFormDialog({ isOpen, onClose, onSave, supply, defaultType 
                 </div>
             </div>
             
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                  <div className="grid gap-2">
                     <Label htmlFor="supply-supplier">Fornecedor</Label>
                     <Input id="supply-supplier" name="supply-supplier" value={formData.supplier} onChange={(e) => setFormData({ ...formData, supplier: e.target.value })} disabled={isProcessing}/>
@@ -304,7 +304,7 @@ export function SupplyFormDialog({ isOpen, onClose, onSave, supply, defaultType 
                  </div>
             </div>
             
-             <div className="grid grid-cols-2 gap-4">
+             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="grid gap-2">
                     <Label htmlFor="last-purchase-date">Data da Compra</Label>
                     <Popover>
@@ -373,7 +373,7 @@ export function SupplyFormDialog({ isOpen, onClose, onSave, supply, defaultType 
                 </div>
 
                 {financialData.shouldRegister && (
-                    <div className="grid grid-cols-2 gap-4 pt-2 animate-in fade-in-0">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 animate-in fade-in-0">
                         <div className="grid gap-2">
                             <Label htmlFor="payment-method">Método de Pagamento</Label>
                             <Select name="payment-method" value={financialData.paymentMethod} onValueChange={(value) => setFinancialData(prev => ({...prev, paymentMethod: value}))}>
@@ -395,9 +395,9 @@ export function SupplyFormDialog({ isOpen, onClose, onSave, supply, defaultType 
                 )}
             </div>
             
-        <DialogFooter className="pt-4 border-t">
-          <Button variant="outline" type="button" onClick={onClose} disabled={isProcessing}>Cancelar</Button>
-          <Button type="submit" disabled={isProcessing}>
+        <DialogFooter className="pt-4 border-t flex-col sm:flex-row">
+          <Button className="w-full sm:w-auto" variant="outline" type="button" onClick={onClose} disabled={isProcessing}>Cancelar</Button>
+          <Button className="w-full sm:w-auto" type="submit" disabled={isProcessing}>
             {isProcessing && <Loader className="mr-2 h-4 w-4 animate-spin" />}
             {isProcessing ? 'Salvando...' : 'Salvar'}
           </Button>

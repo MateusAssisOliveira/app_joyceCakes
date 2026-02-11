@@ -155,7 +155,7 @@ export function NewOrderDialog({ products, user, firestore }: NewOrderDialogProp
           Novo Pedido
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-5xl">
+      <DialogContent className="w-[95vw] max-w-5xl">
         <DialogHeader>
           <DialogTitle>Criar Novo Pedido</DialogTitle>
         </DialogHeader>
@@ -173,7 +173,7 @@ export function NewOrderDialog({ products, user, firestore }: NewOrderDialogProp
                       onChange={(e) =>
                         updateQuantity(item.productId, parseInt(e.target.value) || 0)
                       }
-                      className="w-16 h-8"
+                      className="w-16 h-10"
                     />
                     <span className="flex-1 truncate text-sm">{item.productName}</span>
                     <span className="text-sm font-medium">
@@ -185,7 +185,7 @@ export function NewOrderDialog({ products, user, firestore }: NewOrderDialogProp
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-8 w-8"
+                      className="h-10 w-10"
                       onClick={() => updateQuantity(item.productId, 0)}
                     >
                       <Trash2 className="h-4 w-4 text-destructive" />
@@ -245,7 +245,7 @@ export function NewOrderDialog({ products, user, firestore }: NewOrderDialogProp
           </div>
         </div>
         <Separator />
-        <div className="grid grid-cols-2 gap-4 pt-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
           <div className="grid gap-2">
             <Label htmlFor="customer-name">Nome do Cliente</Label>
             <Input
@@ -276,13 +276,14 @@ export function NewOrderDialog({ products, user, firestore }: NewOrderDialogProp
             </Select>
           </div>
         </div>
-        <DialogFooter className="pt-6">
+        <DialogFooter className="pt-6 flex-col sm:flex-row">
           <DialogClose asChild>
-            <Button variant="outline" disabled={isProcessingOrder}>
+            <Button className="w-full sm:w-auto" variant="outline" disabled={isProcessingOrder}>
               Cancelar
             </Button>
           </DialogClose>
           <Button
+            className="w-full sm:w-auto"
             onClick={handleCreateOrder}
             disabled={newOrderItems.length === 0 || isProcessingOrder}
           >

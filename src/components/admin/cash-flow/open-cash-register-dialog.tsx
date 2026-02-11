@@ -49,7 +49,7 @@ export function OpenCashRegisterDialog({ user }: OpenCashRegisterDialogProps) {
 
   return (
     <Dialog open={true}>
-      <DialogContent className="sm:max-w-md" onInteractOutside={(e) => e.preventDefault()}>
+      <DialogContent className="w-[95vw] max-w-md" onInteractOutside={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>Abrir Caixa</DialogTitle>
           <DialogDescription>
@@ -71,8 +71,8 @@ export function OpenCashRegisterDialog({ user }: OpenCashRegisterDialogProps) {
             />
           </div>
         </div>
-        <DialogFooter>
-          <Button onClick={handleOpenRegister} disabled={isProcessing}>
+        <DialogFooter className="flex-col sm:flex-row">
+          <Button className="w-full sm:w-auto" onClick={handleOpenRegister} disabled={isProcessing}>
             {isProcessing && <Loader className="mr-2 h-4 w-4 animate-spin" />}
             {isProcessing ? 'Abrindo...' : 'Abrir Caixa'}
           </Button>

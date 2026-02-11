@@ -197,7 +197,50 @@ export function ProductsClient() {
               </div>
             ) : (
              <div className="flex-1 overflow-auto min-h-0">
-              <div className="relative w-full h-full overflow-auto">
+              <div className="space-y-3 md:hidden">
+                {filteredProducts.map((product) => (
+                  <div
+                    key={product.id}
+                    onClick={() => setSelectedProductId(product.id)}
+                    className={cn(
+                      "cursor-pointer rounded-lg border p-3",
+                      selectedProductId === product.id && "ring-2 ring-primary bg-accent/40"
+                    )}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="font-medium flex items-center gap-2">
+                        {product.components && product.components.length > 0 ? <LinkIcon className="h-4 w-4 text-primary" aria-label="Produto montado com componentes"/> : <Link2Off className="h-4 w-4 text-muted-foreground" aria-label="Produto de venda direta"/>}
+                        {product.name}
+                      </div>
+                      <Badge variant="secondary">{product.category}</Badge>
+                    </div>
+                    <div className="mt-2 flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">Custo</span>
+                      <span>{product.costPrice ? product.costPrice.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }) : '---'}</span>
+                    </div>
+                    <div className="mt-1 flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">Preço</span>
+                      <span className="font-semibold">{product.price.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
+                    </div>
+                    <div className="mt-2 flex items-center justify-between gap-2">
+                      <Badge variant={product.isActive !== false ? "default" : "outline"} className={cn(product.isActive !== false && "bg-emerald-500 hover:bg-emerald-600")}>
+                        {product.isActive !== false ? "Ativo" : "Arquivado"}
+                      </Badge>
+                      <Button size="sm" variant="outline" onClick={() => handleOpenFormDialog(product)}>
+                        <Pencil className="mr-2 h-4 w-4" />
+                        Editar
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+                {filteredProducts.length === 0 && (
+                  <div className="h-24 rounded-lg border text-center text-sm text-muted-foreground flex items-center justify-center">
+                    Nenhum produto encontrado.
+                  </div>
+                )}
+              </div>
+
+              <div className="relative hidden md:block w-full h-full overflow-auto">
                 <Table className="w-full table-auto">
                   <TableHeader>
                       <TableRow>

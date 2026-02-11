@@ -6,40 +6,44 @@ import { usePathname } from 'next/navigation';
 
 const pageConfig: Record<string, { title: string, description: string }> = {
   '/admin/dashboard': {
-    title: 'Dashboard de Performance',
-    description: 'Visão geral em tempo real do seu negócio.',
+    title: 'Dashboard',
+    description: 'Veja o que vendeu, o que lucrou, o que falta no estoque e pedidos pendentes.',
   },
   '/admin/orders': {
-    title: 'Ponto de Venda (PDV)',
-    description: 'Crie novos pedidos ou gerencie os pedidos existentes em tempo real.',
+    title: 'Vendas',
+    description: 'Crie pedidos e acompanhe o andamento de cada venda.',
   },
    '/admin/orders/edit': {
     title: 'Editando Pedido',
-    description: 'Ajuste os itens, quantidades e detalhes do pedido selecionado.',
+    description: 'Ajuste itens, quantidades e dados do cliente.',
   },
   '/admin/inventory': {
-    title: 'Gestão de Itens de Estoque',
-    description: 'Gerencie ingredientes, embalagens e todos os seus insumos em um só lugar.',
+    title: 'Estoque',
+    description: 'Controle ingredientes e embalagens em um só lugar.',
   },
   '/admin/supplies/report': {
     title: 'Relatório de Estoque',
-    description: 'Visão detalhada de todo o seu estoque: ingredientes e embalagens.',
+    description: 'Resumo completo de entradas, saídas e saldo dos itens.',
   },
   '/admin/products': {
-    title: 'Catálogo de Produtos',
-    description: 'Monte produtos de venda, vincule receitas e defina preços.',
+    title: 'Produtos',
+    description: 'Gerencie os produtos finais e ajuste preços.',
   },
   '/admin/recipes': {
-    title: 'Livro de Fichas Técnicas',
-    description: 'Crie e gerencie as fichas de base que compõem seus produtos.',
+    title: 'Receitas',
+    description: 'Monte receitas com cálculo automático de custo.',
   },
   '/admin/calculator': {
-    title: 'Calculadora de Custo Rápida',
-    description: 'Calcule rapidamente o custo e o preço de venda de um item personalizado.',
+    title: 'Calculadora',
+    description: 'Simule custo, margem e preço de venda em poucos passos.',
   },
   '/admin/cash-flow': {
-    title: 'Fluxo de Caixa',
-    description: 'Gerencie as entradas, saídas e o status do seu caixa atual.',
+    title: 'Financeiro',
+    description: 'Acompanhe entradas, saídas e saldo do caixa.',
+  },
+  '/admin/operations': {
+    title: 'Operações',
+    description: 'Priorize tarefas do dia, sincronização e decisões rápidas.',
   },
 };
 

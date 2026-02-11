@@ -13,7 +13,7 @@ import type { Supply, CashRegister, PriceVariation } from '@/types';
 import { toDate } from '@/lib/timestamp-utils';
 import { deleteDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
 import { setDocumentActive } from './utils';
-import { collection, doc, Firestore, serverTimestamp, Timestamp, writeBatch, getDocs, addDoc, updateDoc, query, where, limit, getDoc } from 'firebase/firestore';
+import { collection, doc, Firestore, serverTimestamp, Timestamp, writeBatch, getDocs, addDoc, updateDoc, query, where, limit, getDoc, orderBy } from 'firebase/firestore';
 import { addFinancialMovement } from './financialMovementService';
 import { serializeObject } from './utils';
 
@@ -83,7 +83,7 @@ export const addSupply = async (firestore: Firestore, supplyData: Omit<Supply, '
         }
         const activeCashRegister = { id: registerSnap.docs[0].id, ...registerSnap.docs[0].data() } as CashRegister;
 
-        addFinancialMovement(firestore, activeCashRegister, {
+        await addFinancialMovement(firestore, activeCashRegister, {
             type: 'expense',
             amount: financialData.amount,
             category: 'Compra de Insumos',
@@ -185,7 +185,7 @@ export const updateSupply = async (firestore: Firestore, id: string, updatedData
         }
         const activeCashRegister = { id: registerSnap.docs[0].id, ...registerSnap.docs[0].data() } as CashRegister;
 
-        addFinancialMovement(firestore, activeCashRegister, {
+        await addFinancialMovement(firestore, activeCashRegister, {
             type: 'expense',
             amount: financialData.amount,
             category: 'Compra de Insumos',
@@ -243,7 +243,7 @@ export const getSupplies = async (firestore: Firestore): Promise<Supply[]> => {
 export const getPriceHistory = async (firestore: Firestore, supplyId: string): Promise<PriceVariation[]> => {
     const historyCollection = collection(firestore, `supplies/${supplyId}/price_history`);
     try {
-        const snapshot = await getDocs(query(historyCollection));
+        const snapshot = await getDocs(query(historyCollection, orderBy('date', 'desc')));
         if (snapshot.empty) {
             return [];
         }

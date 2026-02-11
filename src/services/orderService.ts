@@ -12,8 +12,7 @@
 //   (Agora usa o Firebase Firestore).
 
 import type { Order, OrderItem, OrderStatus, Product, CashRegister } from "@/types";
-import { collection, doc, Firestore, serverTimestamp, writeBatch, getDoc, getDocs, DocumentReference, updateDoc, addDoc, query, where, limit, Timestamp } from "firebase/firestore";
-import { addFinancialMovement } from "./financialMovementService";
+import { collection, doc, Firestore, serverTimestamp, writeBatch, getDocs, getDoc, updateDoc, query, where, limit, Timestamp } from "firebase/firestore";
 import { getProducts } from "./productService"; // Importa o serviço de produtos
 import { errorEmitter } from "@/firebase/error-emitter";
 import { FirestorePermissionError } from "@/firebase/errors";
@@ -26,28 +25,122 @@ import { FirestorePermissionError } from "@/firebase/errors";
  * @returns Um objeto com o custo total, disponibilidade de estoque e mensagem de erro.
  */
 async function processOrderItems(products: Product[], orderItems: OrderItem[]): Promise<{ totalCost: number; available: boolean; message: string }> {
+    return processOrderItemsWithPolicy(products, orderItems, { allowUnknownProducts: false }).then((result) => ({
+        totalCost: result.totalCost,
+        available: result.available,
+        message: result.message,
+    }));
+}
+
+type ProcessPolicy = {
+    allowUnknownProducts: boolean;
+};
+
+type ProcessResult = {
+    totalCost: number;
+    totalRevenue: number;
+    normalizedItems: OrderItem[];
+    stockAdjustments: Map<string, number>;
+    available: boolean;
+    message: string;
+};
+
+async function processOrderItemsWithPolicy(
+    products: Product[],
+    orderItems: OrderItem[],
+    policy: ProcessPolicy
+): Promise<ProcessResult> {
     let totalCost = 0;
+    let totalRevenue = 0;
+    const normalizedItems: OrderItem[] = [];
+    const stockAdjustments = new Map<string, number>();
+    const productsById = new Map(products.map((p) => [p.id, p]));
 
     for (const orderItem of orderItems) {
-        const product = products.find(p => p.id === orderItem.productId);
-        
-        if (!product) return { totalCost: 0, available: false, message: `Produto com ID ${orderItem.productId} não encontrado.` };
-        
-        totalCost += (product.costPrice || 0) * orderItem.quantity;
-        orderItem.costPrice = product.costPrice || 0;
-        
-        if (product.stock_quantity !== undefined) {
-            const currentStock = product.stock_quantity;
-            if (currentStock < orderItem.quantity) {
-                 return { totalCost: 0, available: false, message: `Estoque insuficiente para o produto "${product.name}". Necessário: ${orderItem.quantity}, Disponível: ${currentStock}` };
+        const quantity = Number(orderItem.quantity) || 0;
+        if (quantity <= 0) {
+            return {
+                totalCost: 0,
+                totalRevenue: 0,
+                normalizedItems: [],
+                stockAdjustments: new Map(),
+                available: false,
+                message: `Quantidade inválida para o item "${orderItem.productName}".`,
+            };
+        }
+
+        const product = productsById.get(orderItem.productId);
+
+        if (!product) {
+            if (!policy.allowUnknownProducts) {
+                return {
+                    totalCost: 0,
+                    totalRevenue: 0,
+                    normalizedItems: [],
+                    stockAdjustments: new Map(),
+                    available: false,
+                    message: `Produto com ID ${orderItem.productId} não encontrado.`,
+                };
             }
+
+            const unitPrice = Number(orderItem.price) || 0;
+            const unitCost = Number(orderItem.costPrice) || 0;
+            totalRevenue += unitPrice * quantity;
+            totalCost += unitCost * quantity;
+            normalizedItems.push({
+                productId: orderItem.productId,
+                productName: orderItem.productName,
+                quantity,
+                price: unitPrice,
+                costPrice: unitCost,
+            });
+            continue;
+        }
+
+        const unitPrice = Number(product.price) || 0;
+        const unitCost = Number(product.costPrice) || 0;
+
+        totalRevenue += unitPrice * quantity;
+        totalCost += unitCost * quantity;
+        normalizedItems.push({
+            productId: product.id,
+            productName: product.name,
+            quantity,
+            price: unitPrice,
+            costPrice: unitCost,
+        });
+
+        if (product.stock_quantity !== undefined) {
+            const alreadyReserved = stockAdjustments.get(product.id) || 0;
+            const newReserved = alreadyReserved + quantity;
+            const currentStock = Number(product.stock_quantity) || 0;
+            if (currentStock < newReserved) {
+                return {
+                    totalCost: 0,
+                    totalRevenue: 0,
+                    normalizedItems: [],
+                    stockAdjustments: new Map(),
+                    available: false,
+                    message: `Estoque insuficiente para o produto "${product.name}". Necessário: ${newReserved}, Disponível: ${currentStock}`,
+                };
+            }
+            stockAdjustments.set(product.id, newReserved);
         }
     }
 
-    return { totalCost, available: true, message: "" };
+    return {
+        totalCost,
+        totalRevenue,
+        normalizedItems,
+        stockAdjustments,
+        available: true,
+        message: "",
+    };
 }
 
-type NewOrderData = Omit<Order, "id" | "orderNumber" | "createdAt" | "status" | "cashRegisterId" | "totalCost">;
+type NewOrderData = Omit<Order, "id" | "orderNumber" | "createdAt" | "status" | "cashRegisterId" | "totalCost"> & {
+    allowUnknownProducts?: boolean;
+};
 
 /**
  * Adiciona um novo pedido, deduz o estoque, lança a receita e o CMV no fluxo de caixa.
@@ -71,7 +164,10 @@ export const addOrder = async (firestore: Firestore, newOrderData: NewOrderData)
 
     const products = await getProducts(firestore); 
 
-    const { totalCost, available, message } = await processOrderItems(products, newOrderData.items);
+    const { totalCost, totalRevenue, normalizedItems, stockAdjustments, available, message } =
+        await processOrderItemsWithPolicy(products, newOrderData.items, {
+            allowUnknownProducts: newOrderData.allowUnknownProducts === true,
+        });
 
     if (!available) {
         throw new Error(message);
@@ -79,40 +175,66 @@ export const addOrder = async (firestore: Firestore, newOrderData: NewOrderData)
     
     const orderNumber = `PED-${Date.now()}`;
     const ordersCollection = collection(firestore, "orders");
+    const orderRef = doc(ordersCollection);
+    const movementsCollection = collection(
+        firestore,
+        `users/${newOrderData.userId}/cash_registers/${activeCashRegister.id}/financial_movements`
+    );
     
     const fullOrderData: Omit<Order, 'id'> = {
         ...newOrderData,
+        items: normalizedItems,
+        total: totalRevenue,
         orderNumber: orderNumber,
         status: 'Pendente',
         createdAt: serverTimestamp() as Timestamp,
         cashRegisterId: activeCashRegister.id,
         totalCost: totalCost,
     };
+    delete (fullOrderData as any).allowUnknownProducts;
 
     try {
-        const docRef = await addDoc(ordersCollection, fullOrderData);
+        const batch = writeBatch(firestore);
+        batch.set(orderRef, fullOrderData);
 
-        // Ações de sucesso
-        addFinancialMovement(firestore, activeCashRegister, {
+        for (const [productId, reservedQty] of stockAdjustments.entries()) {
+            const product = products.find((p) => p.id === productId);
+            if (!product || product.stock_quantity === undefined) {
+                continue;
+            }
+            const updatedStock = (Number(product.stock_quantity) || 0) - reservedQty;
+            batch.update(doc(firestore, "products", productId), {
+                stock_quantity: updatedStock,
+            });
+        }
+
+        const incomeRef = doc(movementsCollection);
+        batch.set(incomeRef, {
             type: 'income',
-            amount: newOrderData.total,
+            amount: totalRevenue,
             category: 'Venda de Produto',
             description: `Venda do Pedido ${orderNumber}`,
             paymentMethod: newOrderData.paymentMethod,
-            orderId: docRef.id
+            orderId: orderRef.id,
+            cashRegisterId: activeCashRegister.id,
+            movementDate: serverTimestamp(),
         });
 
         if (totalCost > 0) {
-            addFinancialMovement(firestore, activeCashRegister, {
+            const expenseRef = doc(movementsCollection);
+            batch.set(expenseRef, {
                 type: 'expense',
                 amount: totalCost,
                 category: 'Custo de Produto Vendido',
                 description: `Custo do Pedido ${orderNumber}`,
                 paymentMethod: newOrderData.paymentMethod,
-                orderId: docRef.id
+                orderId: orderRef.id,
+                cashRegisterId: activeCashRegister.id,
+                movementDate: serverTimestamp(),
             });
         }
-        
+
+        await batch.commit();
     } catch(serverError) {
         const permissionError = new FirestorePermissionError({
             path: ordersCollection.path,
@@ -135,9 +257,101 @@ export const updateOrder = (
   firestore: Firestore,
   orderId: string,
   updatedData: { items: OrderItem[]; total: number }
-): void => {
+): Promise<void> => {
     const orderRef = doc(firestore, 'orders', orderId);
-    updateDoc(orderRef, updatedData).catch(async (serverError) => {
+    return getDoc(orderRef)
+      .then(async (orderSnap) => {
+        if (!orderSnap.exists()) {
+            throw new Error("Pedido não encontrado para atualização.");
+        }
+        const existingOrder = { id: orderSnap.id, ...orderSnap.data() } as Order;
+        const products = await getProducts(firestore);
+        const processed = await processOrderItemsWithPolicy(products, updatedData.items, {
+            allowUnknownProducts: true,
+        });
+
+        if (!processed.available) {
+            throw new Error(processed.message);
+        }
+
+        const batch = writeBatch(firestore);
+        batch.update(orderRef, {
+            items: processed.normalizedItems,
+            total: processed.totalRevenue,
+            totalCost: processed.totalCost,
+        });
+
+        if (existingOrder.userId && existingOrder.cashRegisterId) {
+            const movementPath = `users/${existingOrder.userId}/cash_registers/${existingOrder.cashRegisterId}/financial_movements`;
+            const movementCollection = collection(firestore, movementPath);
+            const movementSnapshot = await getDocs(
+                query(movementCollection, where("orderId", "==", orderId))
+            );
+
+            let incomeHandled = false;
+            let expenseHandled = false;
+            movementSnapshot.docs.forEach((movementDoc) => {
+                const data = movementDoc.data() as any;
+                if (data.type === "income" && !incomeHandled) {
+                    batch.update(movementDoc.ref, {
+                        amount: processed.totalRevenue,
+                        description: `Venda do Pedido ${existingOrder.orderNumber}`,
+                    });
+                    incomeHandled = true;
+                    return;
+                }
+
+                if (data.type === "expense" && !expenseHandled) {
+                    if (processed.totalCost > 0) {
+                        batch.update(movementDoc.ref, {
+                            amount: processed.totalCost,
+                            description: `Custo do Pedido ${existingOrder.orderNumber}`,
+                        });
+                    } else {
+                        batch.update(movementDoc.ref, {
+                            amount: 0,
+                            description: `Custo do Pedido ${existingOrder.orderNumber}`,
+                        });
+                    }
+                    expenseHandled = true;
+                }
+            });
+
+            if (!incomeHandled) {
+                const incomeRef = doc(movementCollection);
+                batch.set(incomeRef, {
+                    cashRegisterId: existingOrder.cashRegisterId,
+                    type: "income",
+                    category: "Venda de Produto",
+                    description: `Venda do Pedido ${existingOrder.orderNumber}`,
+                    amount: processed.totalRevenue,
+                    paymentMethod: existingOrder.paymentMethod,
+                    orderId,
+                    movementDate: serverTimestamp(),
+                });
+            }
+
+            if (!expenseHandled && processed.totalCost > 0) {
+                const expenseRef = doc(movementCollection);
+                batch.set(expenseRef, {
+                    cashRegisterId: existingOrder.cashRegisterId,
+                    type: "expense",
+                    category: "Custo de Produto Vendido",
+                    description: `Custo do Pedido ${existingOrder.orderNumber}`,
+                    amount: processed.totalCost,
+                    paymentMethod: existingOrder.paymentMethod,
+                    orderId,
+                    movementDate: serverTimestamp(),
+                });
+            }
+        }
+
+        await batch.commit();
+      })
+      .catch(async (serverError) => {
+        if (serverError instanceof Error && !(serverError as any).code) {
+            throw serverError;
+        }
         const permissionError = new FirestorePermissionError({
             path: orderRef.path,
             operation: 'update',
@@ -145,7 +359,7 @@ export const updateOrder = (
         });
         errorEmitter.emit('permission-error', permissionError);
         throw permissionError;
-    });
+      });
 };
 
 

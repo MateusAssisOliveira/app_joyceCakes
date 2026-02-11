@@ -2,7 +2,7 @@
 // CAMADA DE SERVIÇO PARA MOVIMENTAÇÕES FINANCEIRAS
 
 import type { FinancialMovement, CashRegister } from "@/types";
-import { collection, doc, Firestore, serverTimestamp, addDoc, updateDoc } from "firebase/firestore";
+import { collection, doc, Firestore, serverTimestamp, addDoc, updateDoc, getDocs, query, where, limit } from "firebase/firestore";
 import { errorEmitter } from "@/firebase/error-emitter";
 import { FirestorePermissionError } from "@/firebase/errors";
 import { updateUserProfile } from "./userService";
@@ -27,7 +27,19 @@ export const openCashRegister = (firestore: Firestore, userId: string, initialBa
         totalExpenses: 0,
     };
 
-    return addDoc(cashRegisterCollection, newRegisterData)
+    const openRegisterQuery = query(
+        cashRegisterCollection,
+        where('status', '==', 'open'),
+        limit(1)
+    );
+
+    return getDocs(openRegisterQuery)
+      .then(async (snapshot) => {
+        if (!snapshot.empty) {
+            throw new Error("Já existe um caixa aberto para este usuário.");
+        }
+      })
+      .then(() => addDoc(cashRegisterCollection, newRegisterData))
       .then(async (docRef) => {
         // Após criar o caixa, atualiza o perfil do usuário com o ID do novo caixa.
         await updateUserProfile(firestore, userId, { activeCashRegisterId: docRef.id });
@@ -85,11 +97,10 @@ export const addFinancialMovement = (
     firestore: Firestore, 
     cashRegister: CashRegister, 
     movementData: Omit<FinancialMovement, 'id' | 'movementDate' | 'cashRegisterId'>
-): void => {
+): Promise<void> => {
     if (!cashRegister.userId) {
         const error = new Error("ID do usuário não encontrado no caixa.");
-        console.error(error);
-        throw error;
+        return Promise.reject(error);
     }
     const movementsCollection = collection(firestore, `users/${cashRegister.userId}/cash_registers/${cashRegister.id}/financial_movements`);
     
@@ -99,15 +110,17 @@ export const addFinancialMovement = (
         movementDate: serverTimestamp(),
     };
 
-    addDoc(movementsCollection, fullMovementData).catch(async (serverError) => {
+    return addDoc(movementsCollection, fullMovementData)
+      .then(() => {})
+      .catch(async (serverError) => {
         const permissionError = new FirestorePermissionError({
             path: movementsCollection.path,
             operation: 'create',
             requestResourceData: fullMovementData
         });
         errorEmitter.emit('permission-error', permissionError);
-        // Não relançamos o erro aqui para manter o comportamento não-bloqueante original
-    });
+        throw permissionError;
+      });
 };
 
     
