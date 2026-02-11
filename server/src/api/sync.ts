@@ -32,6 +32,11 @@ interface ReconcileRequest {
   clientSummary?: Record<string, { count?: number; latestUpdatedAt?: string | null }>;
 }
 
+interface BootstrapRequest {
+  machineId: string;
+  localUpdates?: any[];
+}
+
 // Rotas permitidas para sincronização
 const allowedTables = ['products', 'orders', 'supplies', 'order_items'];
 
@@ -179,6 +184,115 @@ router.get('/reconcile/history', async (req: Request, res: Response) => {
     res.status(500).json({
       success: false,
       error: error instanceof Error ? error.message : 'Erro ao buscar histórico',
+    });
+  }
+});
+
+/**
+ * POST /api/sync/bootstrap/:table
+ * Bootstrap inicial (one-shot) de uma tabela quando o servidor ainda está vazio.
+ */
+router.post('/bootstrap/:table', async (req: Request, res: Response) => {
+  try {
+    const { table } = req.params;
+    const { machineId, localUpdates = [] }: BootstrapRequest = req.body || {};
+
+    if (!allowedTables.includes(table)) {
+      return res.status(400).json({ success: false, error: 'Tabela inválida' });
+    }
+
+    if (!machineId) {
+      return res.status(400).json({ success: false, error: 'machineId é obrigatório' });
+    }
+
+    const bootstrapState = await queryOne(
+      `SELECT table_name, status, machine_id FROM bootstrap_state WHERE table_name = $1`,
+      [table]
+    );
+
+    if (bootstrapState?.status === 'completed') {
+      return res.json({
+        success: true,
+        bootstrapped: false,
+        reason: 'already_completed',
+      });
+    }
+
+    if (bootstrapState?.status === 'in_progress' && bootstrapState.machine_id !== machineId) {
+      return res.json({
+        success: true,
+        bootstrapped: false,
+        reason: 'locked_by_other_machine',
+      });
+    }
+
+    await query(
+      `INSERT INTO bootstrap_state (table_name, status, machine_id, started_at, records_count)
+       VALUES ($1, 'in_progress', $2, NOW(), 0)
+       ON CONFLICT (table_name)
+       DO UPDATE SET status = 'in_progress', machine_id = $2, started_at = NOW()`,
+      [table, machineId]
+    );
+
+    const currentCountRow = await queryOne(`SELECT COUNT(*)::int AS count FROM ${table}`);
+    if ((currentCountRow?.count ?? 0) > 0) {
+      await query(
+        `UPDATE bootstrap_state
+         SET status = 'completed', completed_at = NOW(), records_count = $2
+         WHERE table_name = $1`,
+        [table, currentCountRow.count]
+      );
+      return res.json({
+        success: true,
+        bootstrapped: false,
+        reason: 'server_not_empty',
+      });
+    }
+
+    let processed = 0;
+    const conflicts: any[] = [];
+    for (const update of localUpdates) {
+      const { eventId, record } = normalizeUpdate(update);
+      if (!record || typeof record !== 'object') continue;
+
+      if (eventId) {
+        const alreadyProcessed = await isEventProcessed(eventId);
+        if (alreadyProcessed) continue;
+      }
+
+      try {
+        const { recordId } = await upsertRecord(table, record, machineId);
+        if (eventId) {
+          await markEventProcessed(eventId, table, recordId, machineId);
+        }
+        processed += 1;
+      } catch (error) {
+        conflicts.push({
+          id: record?.id,
+          error: error instanceof Error ? error.message : 'Erro desconhecido',
+        });
+      }
+    }
+
+    await query(
+      `UPDATE bootstrap_state
+       SET status = 'completed', completed_at = NOW(), records_count = $2
+       WHERE table_name = $1`,
+      [table, processed]
+    );
+
+    return res.json({
+      success: true,
+      bootstrapped: processed > 0,
+      processed,
+      conflicts,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error('❌ Erro no bootstrap inicial:', error);
+    return res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Erro no bootstrap',
     });
   }
 });

@@ -117,6 +117,16 @@ export async function initializeDatabase() {
           UNIQUE(table_name, record_id)
         );
 
+        -- Estado do bootstrap inicial por tabela (evita múltiplas máquinas bootstrapando ao mesmo tempo)
+        CREATE TABLE IF NOT EXISTS bootstrap_state (
+          table_name VARCHAR(50) PRIMARY KEY,
+          status VARCHAR(20) NOT NULL,
+          machine_id VARCHAR(255),
+          started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          completed_at TIMESTAMP NULL,
+          records_count INT NOT NULL DEFAULT 0
+        );
+
         -- Índices para performance
         CREATE INDEX IF NOT EXISTS idx_supplies_updated ON supplies(updatedAt DESC);
         CREATE INDEX IF NOT EXISTS idx_products_updated ON products(updatedAt DESC);
@@ -126,6 +136,7 @@ export async function initializeDatabase() {
         CREATE INDEX IF NOT EXISTS idx_reconcile_log_created ON reconcile_log(created_at DESC);
         CREATE INDEX IF NOT EXISTS idx_reconcile_log_machine ON reconcile_log(machine_id);
         CREATE INDEX IF NOT EXISTS idx_deleted_records_table_time ON deleted_records(table_name, deleted_at DESC);
+        CREATE INDEX IF NOT EXISTS idx_bootstrap_state_status ON bootstrap_state(status);
       `);
 
       console.log('✅ Schema criado/verificado no PostgreSQL');

@@ -7,6 +7,7 @@ export type SyncConfig = {
   serverUrl: string;
   machineId: string;
   syncApiKey?: string;
+  autoBootstrap: boolean;
   autoSync: boolean;
   syncInterval: number; // ms
   retryAttempts: number;
@@ -15,6 +16,7 @@ export type SyncConfig = {
   autoReconcile: boolean;
   reconcileInterval: number; // ms
   getClientSummary?: () => Promise<ClientSummary> | ClientSummary;
+  getTableData?: (table: string) => Promise<SyncRecord[]>;
   divergenceStrategy: "none" | "refresh_mismatched" | "full_resync";
   onDivergence?: (result: ReconcileResponse) => void | Promise<void>;
 };
@@ -238,7 +240,26 @@ export class SyncClient {
       'reconcile'
     );
 
-    const result = (await response.json()) as ReconcileResponse;
+    let result = (await response.json()) as ReconcileResponse;
+    const bootstrapApplied = await this.tryAutoBootstrap(result);
+
+    if (bootstrapApplied) {
+      // Re-run reconcile after bootstrap to confirm convergence.
+      const recheckResponse = await this.requestWithRetry(
+        () =>
+          fetch(`${this.config.serverUrl}/api/sync/reconcile`, {
+            method: 'POST',
+            headers: this.getJsonHeaders(),
+            body: JSON.stringify({
+              machineId: this.config.machineId,
+              clientSummary,
+            }),
+          }),
+        'reconcile:post-bootstrap'
+      );
+      result = (await recheckResponse.json()) as ReconcileResponse;
+    }
+
     if (!result.isConsistent) {
       console.warn(
         `⚠️ Divergência detectada em ${result.mismatches.length} tabela(s):`,
@@ -349,6 +370,59 @@ export class SyncClient {
     return headers;
   }
 
+  private async tryAutoBootstrap(result: ReconcileResponse): Promise<boolean> {
+    if (!this.config.autoBootstrap || !this.config.getTableData || result.isConsistent) {
+      return false;
+    }
+
+    let didBootstrap = false;
+    for (const mismatch of result.mismatches) {
+      if (!mismatch?.table || !mismatch.client || !mismatch.server) {
+        continue;
+      }
+
+      const isServerEmpty = mismatch.server.count === 0;
+      const clientHasData = (mismatch.client.count || 0) > 0;
+      const countRelated =
+        mismatch.reason === "count_mismatch" ||
+        mismatch.reason === "count_and_latest_updatedAt_mismatch";
+
+      if (!isServerEmpty || !clientHasData || !countRelated) {
+        continue;
+      }
+
+      try {
+        const tableData = await this.config.getTableData(mismatch.table);
+        if (!tableData || tableData.length === 0) {
+          continue;
+        }
+
+        const localUpdates = tableData.map((record) => this.normalizeUpdate(record));
+        const response = await this.requestWithRetry(
+          () =>
+            fetch(`${this.config.serverUrl}/api/sync/bootstrap/${mismatch.table}`, {
+              method: "POST",
+              headers: this.getJsonHeaders(),
+              body: JSON.stringify({
+                machineId: this.config.machineId,
+                localUpdates,
+              }),
+            }),
+          `bootstrap:${mismatch.table}`
+        );
+        const payload = await response.json();
+        if (payload?.success && payload?.bootstrapped) {
+          didBootstrap = true;
+          console.log(`🌱 Bootstrap concluído para ${mismatch.table}: ${payload.processed} registros.`);
+        }
+      } catch (error) {
+        console.error(`Falha no bootstrap automático de ${mismatch.table}:`, error);
+      }
+    }
+
+    return didBootstrap;
+  }
+
   private async handleDivergence(result: ReconcileResponse): Promise<void> {
     setSyncStatusPatch({
       health: "warning",
@@ -451,6 +525,7 @@ export class SyncClient {
       serverUrl: config.serverUrl || 'http://localhost:4000',
       machineId: config.machineId || this.generateMachineId(),
       syncApiKey: config.syncApiKey,
+      autoBootstrap: config.autoBootstrap ?? true,
       autoSync: config.autoSync !== false,
       syncInterval: config.syncInterval || 5000,
       retryAttempts: config.retryAttempts ?? 3,
@@ -459,6 +534,7 @@ export class SyncClient {
       autoReconcile: config.autoReconcile ?? false,
       reconcileInterval: config.reconcileInterval ?? 60000,
       getClientSummary: config.getClientSummary,
+      getTableData: config.getTableData,
       divergenceStrategy: config.divergenceStrategy || "refresh_mismatched",
       onDivergence: config.onDivergence,
     };
@@ -536,4 +612,3 @@ export function getSyncClient(): SyncClient {
   }
   return syncClient;
 }
-    setSyncStatusPatch({ health: "idle", currentOperation: null });

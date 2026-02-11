@@ -128,6 +128,7 @@ Variáveis recomendadas no cliente (`.env.local`):
 ```env
 NEXT_PUBLIC_SYNC_SERVER=http://localhost:4000
 NEXT_PUBLIC_SYNC_AUTO=true
+NEXT_PUBLIC_SYNC_AUTO_BOOTSTRAP=true
 NEXT_PUBLIC_SYNC_INTERVAL_MS=5000
 NEXT_PUBLIC_SYNC_RETRY_ATTEMPTS=3
 NEXT_PUBLIC_SYNC_RETRY_BASE_DELAY_MS=500
@@ -313,6 +314,16 @@ Clientes recebem o delete em `synced` com:
 `{ "id": "product-id", "_deleted": true, "updatedAt": "..." }`
 
 No cliente, o `SyncClient.fetch()` já aplica tombstones e retorna lista materializada sem os itens deletados.
+
+---
+
+### Bootstrap Inicial Automático
+Quando `NEXT_PUBLIC_SYNC_AUTO_BOOTSTRAP=true`, o cliente tenta bootstrap em tabelas com:
+- servidor vazio (`count = 0`)
+- cliente com dados (`count > 0`)
+
+Endpoint usado:
+`POST /api/sync/bootstrap/:table`
 
 ---
 

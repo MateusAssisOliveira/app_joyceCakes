@@ -4,7 +4,10 @@ import React, { useEffect, useMemo, type ReactNode } from 'react';
 import { FirebaseProvider } from '@/firebase/provider';
 import { getSdks } from '@/firebase';
 import { initSyncClient } from '@/lib/sync-client';
-import { createFirestoreClientSummaryGetter } from '@/lib/firestore-client-summary';
+import {
+  createFirestoreClientSummaryGetter,
+  createFirestoreTableDataGetter,
+} from '@/lib/firestore-client-summary';
 
 interface FirebaseClientProviderProps {
   children: ReactNode;
@@ -33,6 +36,7 @@ export function FirebaseClientProvider({ children }: FirebaseClientProviderProps
     const syncClient = initSyncClient({
       serverUrl: process.env.NEXT_PUBLIC_SYNC_SERVER || 'http://localhost:4000',
       syncApiKey: process.env.NEXT_PUBLIC_SYNC_API_KEY,
+      autoBootstrap: process.env.NEXT_PUBLIC_SYNC_AUTO_BOOTSTRAP !== 'false',
       autoSync: process.env.NEXT_PUBLIC_SYNC_AUTO !== 'false',
       syncInterval: parseNumber(process.env.NEXT_PUBLIC_SYNC_INTERVAL_MS, 5000),
       retryAttempts: parseNumber(process.env.NEXT_PUBLIC_SYNC_RETRY_ATTEMPTS, 3),
@@ -41,6 +45,7 @@ export function FirebaseClientProvider({ children }: FirebaseClientProviderProps
       autoReconcile: process.env.NEXT_PUBLIC_SYNC_AUTO_RECONCILE === 'true',
       reconcileInterval: parseNumber(process.env.NEXT_PUBLIC_SYNC_RECONCILE_INTERVAL_MS, 60000),
       getClientSummary: createFirestoreClientSummaryGetter(firebaseServices.firestore),
+      getTableData: createFirestoreTableDataGetter(firebaseServices.firestore),
       divergenceStrategy,
     });
 

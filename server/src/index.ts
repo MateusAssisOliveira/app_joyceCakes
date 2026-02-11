@@ -105,6 +105,7 @@ async function start() {
       console.log(`   POST   /api/sync/reconcile`);
       console.log(`   GET    /api/sync/reconcile`);
       console.log(`   GET    /api/sync/reconcile/history`);
+      console.log(`   POST   /api/sync/bootstrap/:table`);
       console.log(`   GET    /api/products`);
       console.log(`   POST   /api/products`);
       console.log(`\n✅ Pronto para sincronizar!\n`);

@@ -13,6 +13,7 @@ import {
   User,
   Terminal,
   Calculator,
+  Activity,
   House,
   LogOut,
   DollarSign,
@@ -112,6 +113,12 @@ export default function AdminPanel({
                                 <ActiveLink href="/admin/calculator">
                                     <Calculator />
                                     Calculadora Rápida
+                                </ActiveLink>
+                                </SidebarMenuItem>
+                                <SidebarMenuItem>
+                                <ActiveLink href="/admin/operations">
+                                    <Activity />
+                                    Operações IA
                                 </ActiveLink>
                                 </SidebarMenuItem>
                             </SidebarMenu>

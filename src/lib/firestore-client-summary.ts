@@ -6,7 +6,7 @@ import {
   type QueryDocumentSnapshot,
   type DocumentData,
 } from "firebase/firestore";
-import type { ClientSummary } from "@/lib/sync-client";
+import type { ClientSummary, SyncRecord } from "@/lib/sync-client";
 
 const RECONCILE_COLLECTIONS = ["products", "orders", "supplies", "order_items"] as const;
 
@@ -78,3 +78,75 @@ export function createFirestoreClientSummaryGetter(firestore: Firestore) {
   };
 }
 
+function normalizeRecordForSync(table: string, id: string, data: DocumentData): SyncRecord | null {
+  const updatedAt = (
+    parseDateValue(data.updatedAt) ||
+    parseDateValue(data.updated_at) ||
+    parseDateValue(data.createdAt) ||
+    parseDateValue(data.created_at) ||
+    new Date()
+  ).toISOString();
+
+  if (table === "supplies") {
+    return {
+      id,
+      name: data.name || "Insumo",
+      stock: Number(data.stock ?? 0),
+      unit: data.unit || "un",
+      costPerUnit: Number(data.costPerUnit ?? 0),
+      updatedAt,
+    };
+  }
+
+  if (table === "products") {
+    return {
+      id,
+      name: data.name || "Produto",
+      description: data.description || "",
+      price: Number(data.price ?? 0),
+      category: data.category || "Sem categoria",
+      imageUrlId: data.imageUrlId || null,
+      stock_quantity: Number(data.stock_quantity ?? 0),
+      updatedAt,
+    };
+  }
+
+  if (table === "orders") {
+    return {
+      id,
+      customerName: data.customerName || "Cliente",
+      total: Number(data.total ?? 0),
+      status: data.status || "Pendente",
+      updatedAt,
+    };
+  }
+
+  if (table === "order_items") {
+    return {
+      id,
+      order_id: data.order_id,
+      product_id: data.product_id,
+      quantity: Number(data.quantity ?? 0),
+      price: Number(data.price ?? 0),
+      updatedAt,
+    };
+  }
+
+  return null;
+}
+
+export function createFirestoreTableDataGetter(firestore: Firestore) {
+  return async function getTableData(table: string): Promise<SyncRecord[]> {
+    const snapshot = await getDocsPreferCache(firestore, table);
+    const records: SyncRecord[] = [];
+
+    for (const doc of snapshot.docs) {
+      const normalized = normalizeRecordForSync(table, doc.id, doc.data());
+      if (normalized) {
+        records.push(normalized);
+      }
+    }
+
+    return records;
+  };
+}
