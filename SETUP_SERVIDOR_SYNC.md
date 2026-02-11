@@ -64,6 +64,10 @@ DB_USER=joycecakes
 DB_PASSWORD=sua_senha_aqui
 DB_NAME=joycecakes_db
 NODE_ENV=development
+CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
+
+# Opcional (ativa auth nas rotas /api/sync/*)
+API_SECRET_KEY=sua_chave_secreta_aqui
 ```
 
 ### 3.3 - Instalar dependências
@@ -98,6 +102,20 @@ export const SYNC_CONFIG = {
   serverUrl: process.env.NEXT_PUBLIC_SYNC_SERVER || 'http://localhost:4000',
   autoSync: true,
   syncInterval: 5000, // 5 segundos
+  retryAttempts: 3,
+  retryBaseDelay: 500, // backoff exponencial: 500ms, 1000ms, 2000ms
+  retryMaxDelay: 5000,
+  autoReconcile: true,
+  reconcileInterval: 60000, // 1 minuto
+  getClientSummary: async () => {
+    // Substitua pelos dados da sua fonte local (SQLite/Firestore cache)
+    return {
+      products: { count: 0, latestUpdatedAt: null },
+      orders: { count: 0, latestUpdatedAt: null },
+      supplies: { count: 0, latestUpdatedAt: null },
+      order_items: { count: 0, latestUpdatedAt: null },
+    };
+  },
 };
 ```
 
@@ -105,41 +123,26 @@ export const SYNC_CONFIG = {
 
 ```
 NEXT_PUBLIC_SYNC_SERVER=http://localhost:4000
+NEXT_PUBLIC_SYNC_AUTO=true
+NEXT_PUBLIC_SYNC_INTERVAL_MS=5000
+NEXT_PUBLIC_SYNC_RETRY_ATTEMPTS=3
+NEXT_PUBLIC_SYNC_RETRY_BASE_DELAY_MS=500
+NEXT_PUBLIC_SYNC_RETRY_MAX_DELAY_MS=5000
+NEXT_PUBLIC_SYNC_AUTO_RECONCILE=true
+NEXT_PUBLIC_SYNC_RECONCILE_INTERVAL_MS=60000
+NEXT_PUBLIC_SYNC_DIVERGENCE_STRATEGY=refresh_mismatched
+NEXT_PUBLIC_SYNC_API_KEY=
 ```
 
-### 4.3 - Inicializar SyncClient no seu layout
+### 4.3 - Inicialização automática no provider Firebase
 
-Edite `src/app/layout.tsx`:
+O projeto inicializa o `SyncClient` no `FirebaseClientProvider` (`src/firebase/client-provider.tsx`), incluindo:
+- auto-sync
+- retry com backoff
+- auto-reconcile
+- `getClientSummary` real via Firestore local/cache
 
-```typescript
-'use client';
-
-import { useEffect } from 'react';
-import { initSyncClient } from '@/lib/sync-client';
-import { SYNC_CONFIG } from '@/lib/config';
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  useEffect(() => {
-    // Inicializar sincronização
-    const syncClient = initSyncClient(SYNC_CONFIG);
-    console.log('🔄 SyncClient inicializado');
-    
-    return () => {
-      syncClient.stopAutoSync();
-    };
-  }, []);
-
-  return (
-    <html>
-      <body>{children}</body>
-    </html>
-  );
-}
-```
+Não é necessário inicializar manualmente no `layout.tsx`.
 
 ## Step 5️⃣: Usar dados sincronizados nos componentes
 
@@ -211,6 +214,86 @@ export async function createProduct(data: any) {
   return localProduct;
 }
 ```
+
+### Resiliência de rede (retry + backoff)
+
+O `SyncClient` agora faz retry automático em falhas transitórias (`408`, `425`, `429`, `5xx` e erros de rede), com backoff exponencial.
+
+### Alerta automático de divergência
+
+Com `autoReconcile: true`, o cliente executa reconciliação periódica e gera `console.warn` quando `isConsistent` for `false`.
+Além do alerta, ele também executa auto-reparo conforme `NEXT_PUBLIC_SYNC_DIVERGENCE_STRATEGY`:
+- `none`: só alerta
+- `refresh_mismatched`: reset/fetch apenas nas tabelas divergentes
+- `full_resync`: reset/fetch completo em todas as tabelas
+
+### Segurança mínima (produção)
+
+- Configure `CORS_ORIGINS` no servidor com os domínios permitidos.
+- Para proteger `/api/sync/*`, defina `API_SECRET_KEY` no servidor e `NEXT_PUBLIC_SYNC_API_KEY` no cliente.
+- Em rede pública, use HTTPS e não exponha a chave em cliente web sem um backend intermediário.
+
+## Step 7️⃣: Reconciliação de consistência
+
+Use reconciliação para detectar divergência entre cliente e servidor por tabela.
+
+### 7.1 - Obter resumo do servidor
+
+```bash
+curl http://localhost:4000/api/sync/reconcile
+```
+
+Retorna, por tabela:
+- `count`
+- `latestUpdatedAt`
+
+### 7.2 - Comparar snapshot do cliente com servidor
+
+```bash
+curl -X POST http://localhost:4000/api/sync/reconcile \
+  -H "Content-Type: application/json" \
+  -d '{
+    "clientSummary": {
+      "products": { "count": 10, "latestUpdatedAt": "2026-02-11T18:00:00.000Z" },
+      "orders": { "count": 8, "latestUpdatedAt": "2026-02-11T17:40:00.000Z" },
+      "supplies": { "count": 30, "latestUpdatedAt": "2026-02-11T17:58:00.000Z" },
+      "order_items": { "count": 50, "latestUpdatedAt": "2026-02-11T17:39:00.000Z" }
+    }
+  }'
+```
+
+Resposta:
+- `isConsistent: true` quando não há divergência.
+- `mismatches` com motivo (`count_mismatch`, `latest_updatedAt_mismatch`, etc.) quando houver diferença.
+
+### 7.4 - Exclusão sincronizada (delete)
+
+Envie no `localUpdates`:
+```json
+{
+  "eventId": "uuid-do-evento",
+  "record": {
+    "id": "id-do-registro",
+    "_op": "delete"
+  }
+}
+```
+
+O servidor grava tombstone e propaga para clientes como:
+```json
+{ "id": "id-do-registro", "_deleted": true, "updatedAt": "..." }
+```
+
+### 7.3 - Consultar histórico de reconciliação
+
+```bash
+curl "http://localhost:4000/api/sync/reconcile/history?limit=50&onlyInconsistent=true"
+```
+
+Parâmetros:
+- `limit` (1-200)
+- `machineId`
+- `onlyInconsistent=true`
 
 ## Step 6️⃣: Testar Sincronização
 
@@ -326,11 +409,33 @@ MÁQUINA 2
 - [ ] Servidor sincronização rodando (http://localhost:4000/health)
 - [ ] `.env` do servidor configurado
 - [ ] `.env.local` do front-end configurado
-- [ ] `src/app/layout.tsx` inicializa SyncClient
+- [ ] `src/firebase/client-provider.tsx` inicializa SyncClient
 - [ ] App Next.js rodando
 - [ ] Teste de sincronização funcionando
 
 ---
 
 Qualquer dúvida, veja `ARQUITETURA_SQL_SYNC.md`!
+
+### Comando de verificação rápida
+
+```bash
+npm run sync:smoke
+```
+
+### Teste de confiabilidade completo
+
+```bash
+npm run sync:reliability
+```
+
+### Backup e restore do PostgreSQL
+
+```bash
+# Gera backup SQL em ./backups
+npm run db:backup
+
+# Restore (informe arquivo)
+npm run db:restore -- -File .\\backups\\joycecakes-YYYYMMDD-HHMMSS.sql
+```
 

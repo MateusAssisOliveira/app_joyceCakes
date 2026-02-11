@@ -60,10 +60,14 @@ DATABASE_URL=postgresql://joycecakes:senha@localhost:5432/joycecakes_sync
 # Server
 PORT=3001
 NODE_ENV=production
+CORS_ORIGINS=https://seu-frontend.com
 
 # Firebase (para validação)
 FIREBASE_PROJECT_ID=seu_projeto
 FIREBASE_PRIVATE_KEY=sua_chave_privada
+
+# Segurança das rotas /api/sync/*
+API_SECRET_KEY=sua_chave_secreta_aqui
 ```
 
 ### 4️⃣ Iniciar Servidor
@@ -120,6 +124,20 @@ await syncWithServer({
 })
 ```
 
+Variáveis recomendadas no cliente (`.env.local`):
+```env
+NEXT_PUBLIC_SYNC_SERVER=http://localhost:4000
+NEXT_PUBLIC_SYNC_AUTO=true
+NEXT_PUBLIC_SYNC_INTERVAL_MS=5000
+NEXT_PUBLIC_SYNC_RETRY_ATTEMPTS=3
+NEXT_PUBLIC_SYNC_RETRY_BASE_DELAY_MS=500
+NEXT_PUBLIC_SYNC_RETRY_MAX_DELAY_MS=5000
+NEXT_PUBLIC_SYNC_AUTO_RECONCILE=true
+NEXT_PUBLIC_SYNC_RECONCILE_INTERVAL_MS=60000
+NEXT_PUBLIC_SYNC_DIVERGENCE_STRATEGY=refresh_mismatched
+NEXT_PUBLIC_SYNC_API_KEY=
+```
+
 ---
 
 ## 📊 Estrutura do Servidor
@@ -172,11 +190,16 @@ Content-Type: application/json
 {
   "type": "product_updated",
   "timestamp": 1707554400000,
-  "data": { ... }
+  "data": { ... },
+  "event_id": "b9c4a2e1-9f2d-4f6a-9a17-3a6f9f1f4c2b"
 }
 
 Response: { success: true, synced_at: ... }
 ```
+
+**Idempotência:** envie sempre um `event_id` único por evento para evitar duplicações em retries.
+
+**Conflitos:** o servidor considera `updatedAt` (timestamp do servidor) como fonte de verdade. Atualizações com timestamp mais antigo podem ser ignoradas.
 
 ---
 
@@ -203,6 +226,145 @@ Response: { orders: [...], total: 45 }
 GET /api/supplies
 
 Response: { supplies: [...] }
+```
+
+---
+
+### Reconcile (resumo do servidor)
+```
+GET /api/sync/reconcile
+
+Response:
+{
+  "success": true,
+  "serverSummary": [
+    { "table": "products", "count": 10, "latestUpdatedAt": "2026-02-11T18:00:00.000Z" }
+  ]
+}
+```
+
+### Reconciliação automática no cliente
+
+Configure um job no cliente para enviar um resumo local periodicamente:
+
+```typescript
+const syncClient = initSyncClient({
+  serverUrl: "http://192.168.1.100:3001",
+  autoSync: true,
+  syncInterval: 5000,
+  autoReconcile: true,
+  reconcileInterval: 60000,
+  divergenceStrategy: "refresh_mismatched",
+  getClientSummary: async () => ({
+    products: { count: 120, latestUpdatedAt: "2026-02-11T18:00:00.000Z" },
+    orders: { count: 45, latestUpdatedAt: "2026-02-11T17:55:00.000Z" },
+    supplies: { count: 80, latestUpdatedAt: "2026-02-11T17:58:00.000Z" },
+    order_items: { count: 300, latestUpdatedAt: "2026-02-11T17:54:00.000Z" }
+  })
+});
+```
+
+Se houver divergência, o cliente gera alerta em log com os `mismatches`.
+Com `divergenceStrategy: "refresh_mismatched"`, ele também tenta auto-reparar apenas as tabelas divergentes.
+
+Se `API_SECRET_KEY` estiver ativo no servidor, envie `x-api-key` nas requisições de sync.
+
+---
+
+### Reconcile (comparação cliente x servidor)
+```
+POST /api/sync/reconcile
+Content-Type: application/json
+
+{
+  "machineId": "machine-1",
+  "clientSummary": {
+    "products": { "count": 10, "latestUpdatedAt": "2026-02-11T18:00:00.000Z" }
+  }
+}
+
+Response: { success: true, isConsistent: true, mismatches: [] }
+```
+
+---
+
+### Reconcile History (auditoria)
+```
+
+---
+
+### Delete via Sync (tombstone)
+```
+POST /api/sync/products
+Content-Type: application/json
+
+{
+  "machineId": "machine-1",
+  "localUpdates": [
+    {
+      "eventId": "58f6b58c-0d4c-4a02-9300-9ac7d3371b2a",
+      "record": { "id": "product-id", "_op": "delete" }
+    }
+  ]
+}
+```
+
+Clientes recebem o delete em `synced` com:
+`{ "id": "product-id", "_deleted": true, "updatedAt": "..." }`
+
+No cliente, o `SyncClient.fetch()` já aplica tombstones e retorna lista materializada sem os itens deletados.
+
+---
+
+### Smoke Test Operacional
+```
+npm run sync:smoke
+```
+
+Executa checagem de `health`, `reconcile` e `reconcile/history`.
+
+---
+
+### Reliability Test
+```
+npm run sync:reliability
+```
+
+Valida idempotência, conflito stale e delete com tombstone.
+
+---
+
+### Backup/Restore PostgreSQL
+```
+npm run db:backup
+npm run db:restore -- -File .\backups\joycecakes-YYYYMMDD-HHMMSS.sql
+```
+
+---
+
+### Status de Sync no Admin
+O header do painel admin exibe badge de saúde do sync:
+- `Aguardando`
+- `Sincronizando`
+- `Sincronizado`
+- `Com Divergência`
+- `Offline/Erro`
+GET /api/sync/reconcile/history?limit=50&machineId=machine-1&onlyInconsistent=true
+
+Response:
+{
+  "success": true,
+  "count": 3,
+  "data": [
+    {
+      "id": 12,
+      "machine_id": "machine-1",
+      "is_consistent": false,
+      "mismatches_count": 2,
+      "created_at": "2026-02-11T18:12:00.000Z"
+    }
+  ]
+}
 ```
 
 ---

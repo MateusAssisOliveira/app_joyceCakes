@@ -24,6 +24,7 @@ import { ActiveLink } from '@/app/admin/active-link';
 import DynamicHeader from '@/app/admin/dynamic-header';
 import { useUser, useAuth } from '@/firebase';
 import { SidebarInset } from '@/components/ui/sidebar';
+import { SyncStatusBadge } from '@/components/admin/sync-status-badge';
 import { useRouter } from 'next/navigation';
 import { signOut } from 'firebase/auth';
 import Loading from '@/app/admin/loading';
@@ -140,6 +141,7 @@ export default function AdminPanel({
                                 <DynamicHeader />
                             </div>
                             <div className="flex items-center justify-end gap-4">
+                                <SyncStatusBadge />
                                 <Avatar className="h-10 w-10 border-2 border-primary/50 shadow-md">
                                     <AvatarFallback className="bg-muted text-foreground font-bold">
                                         {user?.email ? user.email.charAt(0).toUpperCase() : <User />}

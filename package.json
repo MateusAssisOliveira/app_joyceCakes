@@ -7,7 +7,13 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "sync:smoke": "powershell -ExecutionPolicy Bypass -File scripts/sync-smoke-test.ps1",
+    "sync:reliability": "powershell -ExecutionPolicy Bypass -File scripts/sync-reliability-test.ps1",
+    "db:backup": "powershell -ExecutionPolicy Bypass -File scripts/pg-backup.ps1",
+    "db:restore": "powershell -ExecutionPolicy Bypass -File scripts/pg-restore.ps1",
+    "typecheck": "npm run typecheck:web && npm run typecheck:server",
+    "typecheck:web": "tsc --noEmit",
+    "typecheck:server": "npm --prefix server run build -- --noEmit"
   },
   "dependencies": {
     "@hookform/resolvers": "^4.1.3",

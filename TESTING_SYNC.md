@@ -147,6 +147,59 @@ Verificar comportamento quando 2 máquinas editam mesmo dado
 
 ---
 
+## 🎯 Teste 5: Idempotência (sem duplicação)
+
+### Objetivo
+Garantir que retry/reenvio do mesmo evento não crie registros duplicados no servidor.
+
+### Passos
+
+1. Gere um payload com `eventId` fixo.
+2. Envie duas vezes para o endpoint `POST /api/sync/products`.
+3. Verifique no banco que o registro foi aplicado uma vez.
+
+**Esperado**:
+- Mesmo `eventId` processado uma única vez.
+- Sem duplicidade na tabela de destino.
+
+---
+
+## 🎯 Teste 6: Reconcile + Auto-Reparo
+
+### Objetivo
+Verificar detecção de divergência e recuperação automática no cliente.
+
+### Passos
+
+1. Configure `NEXT_PUBLIC_SYNC_AUTO_RECONCILE=true`.
+2. Configure `NEXT_PUBLIC_SYNC_DIVERGENCE_STRATEGY=refresh_mismatched`.
+3. Force uma divergência entre cliente e servidor (ex.: apague um item localmente).
+4. Aguarde um ciclo de reconciliação.
+
+**Esperado**:
+- Cliente registra `console.warn` com `mismatches`.
+- Cliente roda reset/fetch da tabela divergente.
+- No próximo ciclo, `isConsistent` tende a `true`.
+
+---
+
+## 🎯 Teste 7: Auditoria de Reconciliação
+
+### Objetivo
+Confirmar que histórico fica persistido para investigação.
+
+### Passos
+
+1. Execute reconciliações por `POST /api/sync/reconcile`.
+2. Consulte `GET /api/sync/reconcile/history?limit=20`.
+3. Consulte `GET /api/sync/reconcile/history?onlyInconsistent=true`.
+
+**Esperado**:
+- Histórico contém `machine_id`, `is_consistent`, `mismatches_count`, `created_at`.
+- Filtragem por inconsistência retorna apenas falhas.
+
+---
+
 ## 📊 Teste 4: Performance & Latência
 
 ### Verifiquer velocidade de sincronização
@@ -173,6 +226,9 @@ Antes de usar em produção:
 - [ ] Edições de ambas máquinas não causam perda de dados
 - [ ] Offline em uma máquina não afeta a outra
 - [ ] Cache local funciona (modo offline)
+- [ ] Retry/backoff evita falhas transitórias sem duplicar dados
+- [ ] Reconcile identifica divergências e auto-reparo funciona
+- [ ] Histórico de reconciliação disponível para auditoria
 
 ---
 
