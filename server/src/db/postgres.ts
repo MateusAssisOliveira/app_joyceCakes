@@ -87,11 +87,45 @@ export async function initializeDatabase() {
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
 
+        -- Eventos já processados (idempotência)
+        CREATE TABLE IF NOT EXISTS sync_events (
+          event_id VARCHAR(255) PRIMARY KEY,
+          table_name VARCHAR(50) NOT NULL,
+          record_id VARCHAR(255),
+          machine_id VARCHAR(255),
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+
+        -- Histórico de reconciliações para auditoria
+        CREATE TABLE IF NOT EXISTS reconcile_log (
+          id SERIAL PRIMARY KEY,
+          machine_id VARCHAR(255),
+          is_consistent BOOLEAN NOT NULL,
+          mismatches_count INT NOT NULL DEFAULT 0,
+          server_summary JSONB NOT NULL,
+          mismatches JSONB NOT NULL,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+
+        -- Tombstones de exclusão para sincronizar deletes entre máquinas
+        CREATE TABLE IF NOT EXISTS deleted_records (
+          id SERIAL PRIMARY KEY,
+          table_name VARCHAR(50) NOT NULL,
+          record_id VARCHAR(255) NOT NULL,
+          machine_id VARCHAR(255),
+          deleted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          UNIQUE(table_name, record_id)
+        );
+
         -- Índices para performance
         CREATE INDEX IF NOT EXISTS idx_supplies_updated ON supplies(updatedAt DESC);
         CREATE INDEX IF NOT EXISTS idx_products_updated ON products(updatedAt DESC);
         CREATE INDEX IF NOT EXISTS idx_orders_updated ON orders(updatedAt DESC);
         CREATE INDEX IF NOT EXISTS idx_sync_log_table ON sync_log(table_name);
+        CREATE INDEX IF NOT EXISTS idx_sync_events_table ON sync_events(table_name);
+        CREATE INDEX IF NOT EXISTS idx_reconcile_log_created ON reconcile_log(created_at DESC);
+        CREATE INDEX IF NOT EXISTS idx_reconcile_log_machine ON reconcile_log(machine_id);
+        CREATE INDEX IF NOT EXISTS idx_deleted_records_table_time ON deleted_records(table_name, deleted_at DESC);
       `);
 
       console.log('✅ Schema criado/verificado no PostgreSQL');

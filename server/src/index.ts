@@ -15,13 +15,21 @@ dotenv.config();
 
 const app: Express = express();
 const PORT = process.env.PORT || 4000;
+const apiSecretKey = (process.env.API_SECRET_KEY || '').trim();
+const enforceApiKey = apiSecretKey.length > 0 && apiSecretKey !== 'sua_chave_secreta_aqui';
+const configuredCorsOrigins = (process.env.CORS_ORIGINS || '')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+const corsOrigin: string | string[] =
+  configuredCorsOrigins.length > 0 ? configuredCorsOrigins : '*';
 
 // ✅ Middleware
 app.use(cors({
-  origin: '*', // Em produção, especifique domínios permitidos
+  origin: corsOrigin,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-api-key']
 }));
 
 app.use(express.json());
@@ -39,6 +47,20 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 // Health check
 app.get('/health', (req: Request, res: Response) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// Autenticação opcional para rotas de sync (ativa quando API_SECRET_KEY foi configurada)
+app.use('/api/sync', (req: Request, res: Response, next: NextFunction) => {
+  if (!enforceApiKey) {
+    return next();
+  }
+
+  const apiKey = req.header('x-api-key');
+  if (!apiKey || apiKey !== apiSecretKey) {
+    return res.status(401).json({ success: false, error: 'Unauthorized' });
+  }
+
+  return next();
 });
 
 // API de Sincronização (principal)
@@ -65,11 +87,24 @@ async function start() {
     // Iniciar servidor
     app.listen(PORT, () => {
       console.log(`\n🚀 Servidor rodando em http://localhost:${PORT}`);
+      if (configuredCorsOrigins.length > 0) {
+        console.log(`🔐 CORS restrito para: ${configuredCorsOrigins.join(', ')}`);
+      } else {
+        console.log(`⚠️ CORS aberto (*). Configure CORS_ORIGINS para produção.`);
+      }
+      if (enforceApiKey) {
+        console.log(`🔐 API key habilitada para /api/sync/*`);
+      } else {
+        console.log(`⚠️ API key desabilitada para /api/sync/*`);
+      }
       console.log(`📍 Endpoints:`);
       console.log(`   GET    /health`);
       console.log(`   POST   /api/sync/products`);
       console.log(`   POST   /api/sync/orders`);
       console.log(`   POST   /api/sync/supplies`);
+      console.log(`   POST   /api/sync/reconcile`);
+      console.log(`   GET    /api/sync/reconcile`);
+      console.log(`   GET    /api/sync/reconcile/history`);
       console.log(`   GET    /api/products`);
       console.log(`   POST   /api/products`);
       console.log(`\n✅ Pronto para sincronizar!\n`);
