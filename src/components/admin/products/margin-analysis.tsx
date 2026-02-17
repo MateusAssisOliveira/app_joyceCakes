@@ -35,8 +35,6 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  LineChart,
-  Line,
 } from "recharts";
 import {
   ChartContainer,
@@ -44,12 +42,6 @@ import {
 } from "@/components/ui/chart";
 import { TrendingUp, TrendingDown, AlertCircle, CheckCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-
-interface ProductWithMargin extends Product {
-  marginPercentage: number;
-  profitPerUnit: number;
-  marginStatus: "high" | "medium" | "low";
-}
 
 type MarginAnalysisProps = {
   products: Product[];

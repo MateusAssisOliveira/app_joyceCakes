@@ -73,7 +73,7 @@ export function InventoryClient() {
     return query(collection(firestore, 'supplies'));
   }, [firestore, user]);
 
-  const { data: allSupplies, isLoading, error } = useCollection<Supply>(suppliesQuery);
+  const { data: allSupplies, isLoading } = useCollection<Supply>(suppliesQuery);
   
   const handleSort = (key: SortKey) => {
     if (sortKey === key) {
@@ -278,7 +278,6 @@ export function InventoryClient() {
                 onRowDoubleClick={handleRowDoubleClick}
                 onSort={handleSort}
                 sortKey={sortKey}
-                sortDirection={sortDirection}
             />
           )}
         </CardContent>

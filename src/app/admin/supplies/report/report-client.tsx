@@ -1,9 +1,9 @@
 
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { useUser, useCollection, useFirestore } from '@/firebase';
-import { collection, query, Timestamp } from 'firebase/firestore';
+import { collection, query } from 'firebase/firestore';
 import {
   Card,
   CardHeader,
@@ -72,10 +72,12 @@ export function SuppliesReportClient() {
 
   const showLoading = isUserLoading || (isLoading && !supplies);
   
-  const getDate = (date: any): Date | null => {
+  const getDate = (date: unknown): Date | null => {
       if (!date) return null;
       if (date instanceof Date) return date;
-      if (typeof (date as any).toDate === 'function') return (date as any).toDate();
+      if (typeof date === "object" && date !== null && "toDate" in date) {
+        return (date as { toDate: () => Date }).toDate();
+      }
       return null;
   }
 
@@ -100,7 +102,7 @@ export function SuppliesReportClient() {
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
             </div>
-            <Select name="report-type-filter" value={typeFilter} onValueChange={(value: any) => setTypeFilter(value)}>
+            <Select name="report-type-filter" value={typeFilter} onValueChange={(value) => setTypeFilter(value as "ingredient" | "packaging" | "all")}>
                 <SelectTrigger id="report-type-filter" className="w-full">
                     <SelectValue placeholder="Filtrar por tipo" />
                 </SelectTrigger>
@@ -110,7 +112,7 @@ export function SuppliesReportClient() {
                     <SelectItem value="packaging">Embalagens</SelectItem>
                 </SelectContent>
             </Select>
-            <Select name="report-view-mode" value={viewMode} onValueChange={(value: any) => setViewMode(value)}>
+            <Select name="report-view-mode" value={viewMode} onValueChange={(value) => setViewMode(value as "active" | "archived" | "all")}>
                 <SelectTrigger id="report-view-mode" className="w-full">
                     <SelectValue placeholder="Filtrar por status" />
                 </SelectTrigger>

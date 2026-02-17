@@ -1,42 +1,39 @@
-// COMPONENTE DE CARD DE MÉTRICA
-//
-// Propósito:
-// Este componente exibe uma métrica individual no dashboard, como "Vendas Hoje"
-// ou "Ticket Médio".
-//
-// Responsabilidade:
-// - Receber as propriedades de uma métrica (título, valor, tendência, etc.) via props.
-// - Renderizar um `Card` com as informações formatadas.
-// - Exibir um ícone de seta para cima ou para baixo para indicar a direção da tendência
-//   (positiva ou negativa).
-// - Apresentar um `Tooltip` com a descrição da métrica quando o usuário passa o mouse
-//   sobre o ícone de informação.
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
 import type { DashboardMetric } from "@/types";
-import { ArrowDown, ArrowUp, Info } from "lucide-react";
+import { ArrowDown, ArrowUp } from "lucide-react";
 
 export function MetricCard({ title, value, trend, trendDirection, description, icon: Icon, color }: DashboardMetric) {
+  const accent = color || "hsl(var(--primary))";
+
   return (
-    <Card className="border-l-4" style={{ borderColor: color }}>
+    <Card
+      className="surface-card border-l-4 transition-transform duration-200 hover:-translate-y-0.5"
+      style={{
+        borderLeftColor: accent,
+        boxShadow: `0 18px 35px -28px ${accent}`,
+      }}
+    >
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium flex items-center gap-2">
-          {title}
-        </CardTitle>
-        {Icon && <Icon className="h-5 w-5 text-muted-foreground" style={{ color }} />}
+        <CardTitle className="flex items-center gap-2 text-sm font-medium">{title}</CardTitle>
+        {Icon && (
+          <div className="rounded-xl p-2" style={{ backgroundColor: `${accent}20` }}>
+            <Icon className="h-4 w-4" style={{ color: accent }} />
+          </div>
+        )}
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
-         {description && (
-             <p className="text-xs text-muted-foreground pt-1">{description}</p>
-          )}
+        <div className="text-2xl font-bold tracking-tight">{value}</div>
+        {description && <p className="pt-1 text-xs text-muted-foreground">{description}</p>}
+        {trend && (
+          <p className="mt-2 inline-flex items-center gap-1 text-xs font-medium">
+            {trendDirection === "negative" ? (
+              <ArrowDown className="h-3.5 w-3.5 text-destructive" />
+            ) : (
+              <ArrowUp className="h-3.5 w-3.5 text-emerald-600" />
+            )}
+            <span className={trendDirection === "negative" ? "text-destructive" : "text-emerald-600"}>{trend}</span>
+          </p>
+        )}
       </CardContent>
     </Card>
   );

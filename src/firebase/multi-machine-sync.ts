@@ -3,10 +3,7 @@
 
 import { 
   collection, 
-  onSnapshot, 
-  query, 
-  Query,
-  Firestore 
+  onSnapshot
 } from 'firebase/firestore';
 import { getSdks } from './index';
 import React from 'react';

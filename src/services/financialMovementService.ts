@@ -44,7 +44,7 @@ export const openCashRegister = (firestore: Firestore, userId: string, initialBa
         // Após criar o caixa, atualiza o perfil do usuário com o ID do novo caixa.
         await updateUserProfile(firestore, userId, { activeCashRegisterId: docRef.id });
       })
-      .catch(async (serverError) => {
+      .catch(async () => {
         const permissionError = new FirestorePermissionError({
             path: cashRegisterCollection.path,
             operation: 'create',
@@ -76,7 +76,7 @@ export const closeCashRegister = (firestore: Firestore, userId: string, register
         // Após fechar o caixa, limpa o campo do perfil do usuário.
         await updateUserProfile(firestore, userId, { activeCashRegisterId: null });
       })
-      .catch(async (serverError) => {
+      .catch(async () => {
         const permissionError = new FirestorePermissionError({
             path: registerDocRef.path,
             operation: 'update',
@@ -112,7 +112,7 @@ export const addFinancialMovement = (
 
     return addDoc(movementsCollection, fullMovementData)
       .then(() => {})
-      .catch(async (serverError) => {
+      .catch(async () => {
         const permissionError = new FirestorePermissionError({
             path: movementsCollection.path,
             operation: 'create',

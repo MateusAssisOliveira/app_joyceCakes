@@ -55,18 +55,6 @@ function CardTitleHelp({
   );
 }
 
-function toDate(value: unknown): Date {
-  if (value instanceof Date) return value;
-  if (value && typeof value === "object" && "toDate" in value) {
-    return (value as { toDate: () => Date }).toDate();
-  }
-  if (typeof value === "string" || typeof value === "number") {
-    const d = new Date(value);
-    if (!Number.isNaN(d.getTime())) return d;
-  }
-  return new Date(0);
-}
-
 export default function OperationsPage() {
   const firestore = useFirestore();
   const { user } = useUser();
@@ -118,9 +106,9 @@ export default function OperationsPage() {
   }, [firestore, user, activeCashRegister]);
   const { data: movementsData } = useCollection<FinancialMovement>(movementsQuery);
 
-  const todayOrders = todayOrdersData || [];
-  const supplies = suppliesData || [];
-  const movements = movementsData || [];
+  const todayOrders = useMemo(() => todayOrdersData ?? [], [todayOrdersData]);
+  const supplies = useMemo(() => suppliesData ?? [], [suppliesData]);
+  const movements = useMemo(() => movementsData ?? [], [movementsData]);
 
   useEffect(() => subscribeSyncStatus(setSyncStatus), []);
 

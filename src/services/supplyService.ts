@@ -11,7 +11,6 @@
 
 import type { Supply, CashRegister, PriceVariation } from '@/types';
 import { toDate } from '@/lib/timestamp-utils';
-import { deleteDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
 import { setDocumentActive } from './utils';
 import { collection, doc, Firestore, serverTimestamp, Timestamp, writeBatch, getDocs, addDoc, updateDoc, query, where, limit, getDoc, orderBy } from 'firebase/firestore';
 import { addFinancialMovement } from './financialMovementService';

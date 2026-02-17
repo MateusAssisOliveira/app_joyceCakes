@@ -27,8 +27,6 @@ import { addFinancialMovement } from '@/services';
 import type { CashRegister, Product } from '@/types';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
-import { cn } from '@/lib/utils';
-import { Check } from 'lucide-react';
 
 type AddMovementDialogProps = {
   cashRegister: CashRegister;

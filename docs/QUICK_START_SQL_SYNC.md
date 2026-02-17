@@ -1,6 +1,6 @@
-# ⚡ Guia Rápido: BD SQL com Sincronização
+﻿# âš¡ Guia RÃ¡pido: BD SQL com SincronizaÃ§Ã£o
 
-## 🎯 Em 5 Minutos
+## ðŸŽ¯ Em 5 Minutos
 
 ### 1. Instalar PostgreSQL
 ```bash
@@ -36,24 +36,24 @@ npm run dev
 ```
 
 ### 5. Testar
-- Máquina 1: http://localhost:3000
-- Máquina 2: http://localhost:3001 (outra janela/máquina)
-- Criar dado em uma → ver na outra ✅
+- MÃ¡quina 1: http://localhost:3000
+- MÃ¡quina 2: http://localhost:3001 (outra janela/mÃ¡quina)
+- Criar dado em uma â†’ ver na outra âœ…
 
 ---
 
-## 📁 Arquivos Criados
+## ðŸ“ Arquivos Criados
 
-| Arquivo | Propósito |
+| Arquivo | PropÃ³sito |
 |---------|-----------|
-| `ARQUITETURA_SQL_SYNC.md` | Explicação da arquitetura |
-| `SETUP_SERVIDOR_SYNC.md` | Guia passo-a-passo completo |
-| `server/` | Servidor de sincronização Node.js |
+| `ARQUITETURA_SQL_SYNC.md` | ExplicaÃ§Ã£o da arquitetura |
+| `docs/deployment/setup-sync-server.md` | Guia passo-a-passo completo |
+| `server/` | Servidor de sincronizaÃ§Ã£o Node.js |
 | `src/lib/sync-client.ts` | Cliente de sync para front-end |
 
 ---
 
-## 🚀 Como Usar
+## ðŸš€ Como Usar
 
 ### Em Componentes React
 
@@ -77,20 +77,20 @@ await sync.sync('products', [{
 ```
 
 #### 3. Auto-sync (a cada 5s)
-Automático! Inicializa em `src/app/layout.tsx`
+AutomÃ¡tico! Inicializa em `src/app/layout.tsx`
 
 ---
 
-## 🔧 Próximos Passos
+## ðŸ”§ PrÃ³ximos Passos
 
-1. **Hoje**: Testar server + front em 2 máquinas
+1. **Hoje**: Testar server + front em 2 mÃ¡quinas
 2. **Depois**: Integrar com seu BD atual
-3. **Segurança**: Adicionar autenticação/JWT
-4. **Deploy**: Hospedar servidor em produção
+3. **SeguranÃ§a**: Adicionar autenticaÃ§Ã£o/JWT
+4. **Deploy**: Hospedar servidor em produÃ§Ã£o
 
 ---
 
-## ❓ FAQ
+## â“ FAQ
 
 **P: Preciso instalar PostgreSQL?**  
 R: Sim. Ou use SQLite no servidor (mais simples)
@@ -98,13 +98,14 @@ R: Sim. Ou use SQLite no servidor (mais simples)
 **P: E se servidor cair?**  
 R: App continua funcionando offline, sincroniza quando servidor volta
 
-**P: Quantas máquinas posso sincronizar?**  
-R: Ilimitadas! Só precisa de uma conta no servidor
+**P: Quantas mÃ¡quinas posso sincronizar?**  
+R: Ilimitadas! SÃ³ precisa de uma conta no servidor
 
-**P: É seguro?**  
-R: Básico agora. Em produção, adicione JWT/OAuth
+**P: Ã‰ seguro?**  
+R: BÃ¡sico agora. Em produÃ§Ã£o, adicione JWT/OAuth
 
 ---
 
-Veja `SETUP_SERVIDOR_SYNC.md` para detalhes! 🚀
+Veja `docs/deployment/setup-sync-server.md` para detalhes! ðŸš€
+
 

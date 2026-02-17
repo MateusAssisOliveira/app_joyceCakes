@@ -4,9 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
+    "dev:lan": "next dev --turbopack -H 0.0.0.0 -p 3000",
+    "dev:all": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev-all.ps1",
+    "clean:next": "powershell -NoProfile -Command \"if (Test-Path .next) { Remove-Item -Recurse -Force .next }\"",
+    "build": "npm run clean:next && next build",
     "start": "next start",
     "lint": "next lint",
+    "verify:release": "npm run typecheck && npm run lint && npm run build",
     "sync:smoke": "powershell -ExecutionPolicy Bypass -File scripts/sync-smoke-test.ps1",
     "sync:reliability": "powershell -ExecutionPolicy Bypass -File scripts/sync-reliability-test.ps1",
     "db:backup": "powershell -ExecutionPolicy Bypass -File scripts/pg-backup.ps1",
@@ -62,6 +66,8 @@
     "@types/papaparse": "^5.3.14",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "^15.3.3",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"

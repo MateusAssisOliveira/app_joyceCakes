@@ -1,5 +1,5 @@
 
-import { Timestamp, Firestore, doc } from 'firebase/firestore';
+import { Firestore, doc } from 'firebase/firestore';
 import { isFirebaseTimestamp, isDateInstance } from '@/lib/timestamp-utils';
 import { updateDocumentNonBlocking } from '@/firebase';
 

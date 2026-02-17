@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useUser, useDoc, useFirestore, useCollection } from '@/firebase';
 import { doc, collection, query } from 'firebase/firestore';
 import type { CashRegister, FinancialMovement, UserProfile, Product } from '@/types';

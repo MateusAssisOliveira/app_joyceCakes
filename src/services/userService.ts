@@ -18,7 +18,7 @@ export const updateUserProfile = (firestore: Firestore, userId: string, data: Pa
     // Usamos setDoc com { merge: true } para criar o documento se não existir,
     // ou mesclar os novos dados se ele já existir.
     return setDoc(userDocRef, data, { merge: true })
-      .catch(async (serverError) => {
+      .catch(async () => {
           const permissionError = new FirestorePermissionError({
               path: userDocRef.path,
               operation: 'write', // 'write' cobre create e update

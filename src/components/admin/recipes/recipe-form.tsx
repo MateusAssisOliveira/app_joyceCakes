@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import {
   Card,
   CardHeader,
@@ -50,6 +50,7 @@ export function RecipeForm({ supplies, savedSheets, onSaveSuccess }: RecipeFormP
   const [currentPage, setCurrentPage] = useState(1);
   const { toast } = useToast();
   const firestore = useFirestore();
+  void savedSheets;
 
   const filteredSupplies = useMemo(() => {
     return supplies.filter((supply) =>
@@ -98,7 +99,7 @@ export function RecipeForm({ supplies, savedSheets, onSaveSuccess }: RecipeFormP
     setComponents(components.filter(c => c.componentId !== componentId));
   }
 
-  const getCost = (component: TechnicalSheetComponent) => {
+  const getCost = useCallback((component: TechnicalSheetComponent) => {
     let rawCost = 0;
     const supply = supplies.find(s => s.id === component.componentId);
     if (!supply) return 0;
@@ -110,12 +111,12 @@ export function RecipeForm({ supplies, savedSheets, onSaveSuccess }: RecipeFormP
     rawCost = component.quantity * costPerBaseUnit;
 
     return rawCost;
-  };
+  }, [supplies]);
 
   const totalCost = useMemo(() => {
     const subTotal = components.reduce((total, item) => total + getCost(item), 0);
     return subTotal * (1 + (lossFactor || 0) / 100);
-  }, [components, supplies, lossFactor]);
+  }, [components, getCost, lossFactor]);
 
   const clearForm = () => {
       setComponents([]);

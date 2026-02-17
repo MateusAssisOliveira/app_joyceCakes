@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import {
   Dialog,
   DialogContent,
@@ -58,7 +58,7 @@ export function RecipeFormDialog({ isOpen, onClose, onSaveSuccess, recipe, suppl
     }
   }, [recipe, supplies, isOpen]);
   
-  const getCost = (component: Omit<TechnicalSheetComponent, 'lossFactor'>) => {
+  const getCost = useCallback((component: Omit<TechnicalSheetComponent, 'lossFactor'>) => {
     let rawCost = 0;
     if (component.componentType === 'supply') {
         const supply = supplies.find(s => s.id === component.componentId);
@@ -81,12 +81,12 @@ export function RecipeFormDialog({ isOpen, onClose, onSaveSuccess, recipe, suppl
         rawCost = component.quantity * costPerGramOrMlOfSheet;
     }
     return rawCost;
-  };
+  }, [supplies, savedSheets]);
 
   const totalCost = useMemo(() => {
     const subTotal = components.reduce((total, item) => total + getCost(item), 0);
     return subTotal * (1 + (formData.lossFactor || 0) / 100);
-  }, [components, supplies, savedSheets, formData.lossFactor]);
+  }, [components, getCost, formData.lossFactor]);
 
   const handleUpdateRecipe = async () => {
     if (!firestore || !recipe || !formData.name) return;
@@ -117,7 +117,7 @@ export function RecipeFormDialog({ isOpen, onClose, onSaveSuccess, recipe, suppl
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !isProcessing && onClose()}>
+    <Dialog open={isOpen} onOpenChange={() => !isProcessing && onClose()}>
       <DialogContent className="w-[95vw] max-w-3xl">
         <DialogHeader>
           <DialogTitle>Editar Receita (Ficha de Base): {recipe?.name}</DialogTitle>

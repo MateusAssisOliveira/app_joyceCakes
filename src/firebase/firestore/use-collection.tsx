@@ -113,7 +113,7 @@ export function useCollection<T = any>(
         setError(null);
         setIsLoading(false);
       },
-      async (serverError: FirestoreError) => {
+      async () => {
         const path = "path" in targetRefOrQuery ? targetRefOrQuery.path : (targetRefOrQuery as InternalQuery)._query.path.canonicalString();
 
         const contextualError = new FirestorePermissionError({

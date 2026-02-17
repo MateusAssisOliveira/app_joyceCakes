@@ -159,8 +159,8 @@ export function SupplyFormDialog({ isOpen, onClose, onSave, supply, defaultType 
         const descriptionForFinancial = `Compra de insumo: ${finalData.name}`;
 
         onSave(finalData, { ...financialData, description: descriptionForFinancial });
-      } catch (error) {
-        // Error is handled by the service and the global error handler
+      } catch {
+        // O erro ja e tratado pelo servico e pelo handler global
       } finally {
         setIsProcessing(false);
       }
@@ -182,7 +182,7 @@ export function SupplyFormDialog({ isOpen, onClose, onSave, supply, defaultType 
 
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !isProcessing && onClose()}>
+    <Dialog open={isOpen} onOpenChange={() => !isProcessing && onClose()}>
       <DialogContent className="w-[95vw] max-w-2xl">
         <DialogHeader>
           <DialogTitle>{supply ? 'Editar Item' : 'Adicionar Novo Item'}</DialogTitle>
@@ -407,3 +407,4 @@ export function SupplyFormDialog({ isOpen, onClose, onSave, supply, defaultType 
     </Dialog>
   )
 }
+

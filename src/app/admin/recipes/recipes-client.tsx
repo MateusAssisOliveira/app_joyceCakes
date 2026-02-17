@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useMemo, useEffect, useCallback } from "react";
+import { useState, useMemo } from "react";
 import type { Supply, TechnicalSheet } from "@/types";
 import { useUser, useFirestore, useCollection } from "@/firebase";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -9,13 +9,11 @@ import { RecipeForm } from "@/components/admin/recipes/recipe-form";
 import { RecipeList } from "@/components/admin/recipes/recipe-list";
 import { RecipeFormDialog } from "@/components/admin/recipes/recipe-form-dialog";
 import { Loader } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
 import { collection, query } from "firebase/firestore";
 
 export function RecipesClient() {
   const firestore = useFirestore();
   const { user } = useUser();
-  const { toast } = useToast();
   
   const suppliesQuery = useMemo(() => {
     if (!firestore || !user) return null;

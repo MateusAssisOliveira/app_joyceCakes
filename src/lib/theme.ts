@@ -20,7 +20,7 @@ export const themeClasses = [
 export type ThemeClass = (typeof themeClasses)[number];
 
 /** Tema aplicado no <body>. Mude aqui para trocar as cores do app inteiro. */
-export const activeThemeClass: ThemeClass = "theme-vibrant-pink";
+export const activeThemeClass: ThemeClass = "theme-cream-soft";
 
 /** Nomes amigáveis para uso em seletor de tema (futuro). */
 export const themeDisplayNames: Record<ThemeClass, string> = {

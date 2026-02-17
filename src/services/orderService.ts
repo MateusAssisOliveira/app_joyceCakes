@@ -24,14 +24,6 @@ import { FirestorePermissionError } from "@/firebase/errors";
  * @param orderItems Itens do pedido.
  * @returns Um objeto com o custo total, disponibilidade de estoque e mensagem de erro.
  */
-async function processOrderItems(products: Product[], orderItems: OrderItem[]): Promise<{ totalCost: number; available: boolean; message: string }> {
-    return processOrderItemsWithPolicy(products, orderItems, { allowUnknownProducts: false }).then((result) => ({
-        totalCost: result.totalCost,
-        available: result.available,
-        message: result.message,
-    }));
-}
-
 type ProcessPolicy = {
     allowUnknownProducts: boolean;
 };
@@ -235,7 +227,7 @@ export const addOrder = async (firestore: Firestore, newOrderData: NewOrderData)
         }
 
         await batch.commit();
-    } catch(serverError) {
+    } catch {
         const permissionError = new FirestorePermissionError({
             path: ordersCollection.path,
             operation: 'create',
@@ -373,7 +365,7 @@ export const updateOrderStatus = (firestore: Firestore, orderId: string, status:
     const orderRef = doc(firestore, 'orders', orderId);
     const updatedData = { status };
 
-    updateDoc(orderRef, updatedData).catch(async (serverError) => {
+    updateDoc(orderRef, updatedData).catch(async () => {
         const permissionError = new FirestorePermissionError({
             path: orderRef.path,
             operation: 'update',

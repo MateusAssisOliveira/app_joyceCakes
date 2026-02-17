@@ -1,14 +1,13 @@
 
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Card,
   CardHeader,
   CardTitle,
   CardContent,
   CardDescription,
-  CardFooter,
 } from "@/components/ui/card";
 import {
   Table,
@@ -32,7 +31,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Eye, Printer, Pencil, Loader } from "lucide-react";
@@ -44,7 +42,7 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 import { useUser, useFirestore, errorEmitter, FirestorePermissionError } from "@/firebase";
-import { collection, query, orderBy, onSnapshot, FirestoreError } from "firebase/firestore";
+import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 import { NewOrderDialog } from "@/components/admin/orders/new-order-dialog";
 
 const getStatusVariant = (status: OrderStatus) => {
@@ -91,7 +89,7 @@ export function PointOfSaleClient({ products }: PointOfSaleClientProps) {
       });
       setOrders(fetchedOrders);
       setAreOrdersLoading(false);
-    }, (serverError: FirestoreError) => {
+    }, () => {
       // Cria e emite o erro contextual
       const permissionError = new FirestorePermissionError({
           path: 'orders',
@@ -324,8 +322,9 @@ export function PointOfSaleClient({ products }: PointOfSaleClientProps) {
             </CardContent>
         </Card>
       
-      {/* Hidden printable component */}
+      {/* Componente oculto para impressao */}
       {selectedOrder && <OrderReceipt order={selectedOrder} className="hidden print:block" />}
     </>
   );
 }
+

@@ -10,7 +10,7 @@ async function initGenkit() {
       logLevel: 'debug',
       enableTracingAndMetrics: true,
     });
-  } catch (err) {
+  } catch {
     // Fallback stub when genkit package is not available
     _ai = {
       isAvailable: false,

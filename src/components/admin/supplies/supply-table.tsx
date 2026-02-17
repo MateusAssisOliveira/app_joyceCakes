@@ -28,7 +28,6 @@ type SupplyTableProps = {
   onRowDoubleClick: (supply: Supply) => void;
   onSort: (key: SortKey) => void;
   sortKey: SortKey;
-  sortDirection: 'asc' | 'desc';
 };
 
 export function SupplyTable({
@@ -37,8 +36,7 @@ export function SupplyTable({
   onRowClick,
   onRowDoubleClick,
   onSort,
-  sortKey,
-  sortDirection
+  sortKey
 }: SupplyTableProps) {
   const [currentPage, setCurrentPage] = useState(1);
 

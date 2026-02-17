@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import {
   Card,
   CardHeader,
@@ -89,7 +89,7 @@ export function ProductForm({ product, supplies, baseSheets, onSaveSuccess }: Pr
     }
   }, [product]);
 
-  // --- COMPONENT LIST LOGIC ---
+  // --- LOGICA DA LISTA DE COMPONENTES ---
   const filteredSupplies = useMemo(() => {
     return supplies.filter((supply) =>
       supply.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -120,7 +120,7 @@ export function ProductForm({ product, supplies, baseSheets, onSaveSuccess }: Pr
   }, [searchTerm]);
 
 
-  // --- FORM LOGIC ---
+  // --- LOGICA DO FORMULARIO ---
   const addComponent = (item: Supply | TechnicalSheet, type: 'supply' | 'sheet') => {
     if (components.find((c) => c.componentId === item.id)) return;
     
@@ -158,7 +158,7 @@ export function ProductForm({ product, supplies, baseSheets, onSaveSuccess }: Pr
     setComponents(components.filter(c => c.componentId !== componentId));
   }
 
-  const getCost = (component: Omit<TechnicalSheetComponent, 'lossFactor'>) => {
+  const getCost = useCallback((component: Omit<TechnicalSheetComponent, 'lossFactor'>) => {
     let rawCost = 0;
     if (component.componentType === 'supply') {
         const supply = supplies.find(s => s.id === component.componentId);
@@ -181,11 +181,11 @@ export function ProductForm({ product, supplies, baseSheets, onSaveSuccess }: Pr
         rawCost = component.quantity * costPerGramOfSheet;
     }
     return rawCost;
-  };
+  }, [supplies, baseSheets]);
 
   const materialCost = useMemo(() => {
     return components.reduce((total, item) => total + getCost(item), 0);
-  }, [components, supplies, baseSheets]);
+  }, [components, getCost]);
 
   const totalLaborCost = useMemo(() => {
     if (laborCost === 0 || preparationTime === 0) return 0;
@@ -481,3 +481,4 @@ export function ProductForm({ product, supplies, baseSheets, onSaveSuccess }: Pr
     </div>
   );
 }
+

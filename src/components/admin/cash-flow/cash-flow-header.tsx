@@ -18,8 +18,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
 import type { CashRegister } from '@/types';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 import { formatDate } from '@/lib/timestamp-utils';
 import { closeCashRegister } from '@/services';
 import { useToast } from '@/hooks/use-toast';

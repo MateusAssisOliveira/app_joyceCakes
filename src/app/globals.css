@@ -11,11 +11,51 @@
   }
   body {
     @apply bg-background text-foreground;
+    background-image:
+      radial-gradient(circle at 8% 8%, hsl(var(--primary) / 0.08), transparent 34%),
+      radial-gradient(circle at 88% 18%, hsl(var(--accent) / 0.1), transparent 30%),
+      radial-gradient(circle at 50% 120%, hsl(var(--primary) / 0.06), transparent 42%);
+    background-attachment: fixed;
   }
 }
 
 @layer utilities {
+  .surface-card {
+    @apply rounded-2xl border border-border/70 bg-card/85 shadow-[0_20px_45px_-30px_hsl(var(--foreground)/0.35)] backdrop-blur-sm;
+  }
+
+  .glass-panel {
+    @apply rounded-2xl border border-border/60 bg-background/70 backdrop-blur-xl;
+  }
+
+  .page-reveal {
+    animation: fade-up 0.45s ease-out both;
+  }
+
+  .stagger-in > * {
+    animation: fade-up 0.4s ease-out both;
+  }
+
+  .stagger-in > *:nth-child(2) {
+    animation-delay: 80ms;
+  }
+
+  .stagger-in > *:nth-child(3) {
+    animation-delay: 140ms;
+  }
+
   .pb-safe {
     padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

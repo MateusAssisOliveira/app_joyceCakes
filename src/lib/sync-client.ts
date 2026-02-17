@@ -134,7 +134,15 @@ export class SyncClient {
         `sync:${table}`
       );
 
-      const data = await response.json();
+      const data = await this.parseJsonResponse<{
+        success?: boolean;
+        error?: string;
+        synced?: SyncRecord[];
+        conflicts?: unknown[];
+      }>(response, `sync:${table}`);
+      if (data.success !== true) {
+        throw new Error(data.error || `Falha ao sincronizar ${table}`);
+      }
       if (Array.isArray(data.synced)) {
         this.materializeTableData(table, data.synced as SyncRecord[]);
       }
@@ -142,7 +150,7 @@ export class SyncClient {
       // Atualizar timestamp do último sync
       this.lastSync.set(table, new Date().toISOString());
 
-      console.log(`✅ Sincronizados ${data.synced.length} registros de ${table}`);
+      console.log(`✅ Sincronizados ${(data.synced || []).length} registros de ${table}`);
 
       return data;
     } catch (error) {
@@ -168,12 +176,20 @@ export class SyncClient {
         `fetch:${table}`
       );
 
-      const data = await response.json();
+      const data = await this.parseJsonResponse<{
+        success?: boolean;
+        error?: string;
+        data?: SyncRecord[];
+        count?: number;
+      }>(response, `fetch:${table}`);
+      if (data.success !== true) {
+        throw new Error(data.error || `Falha ao buscar ${table}`);
+      }
       const incoming = Array.isArray(data.data) ? (data.data as SyncRecord[]) : [];
       const materialized = this.materializeTableData(table, incoming);
       this.lastSync.set(table, new Date().toISOString());
 
-      console.log(`📥 Obtidos ${data.count} registros de ${table}`);
+      console.log(`📥 Obtidos ${data.count ?? incoming.length} registros de ${table}`);
 
       return materialized;
     } catch (error) {
@@ -240,7 +256,18 @@ export class SyncClient {
       'reconcile'
     );
 
-    let result = (await response.json()) as ReconcileResponse;
+    let result = await this.parseJsonResponse<ReconcileResponse & { error?: string }>(
+      response,
+      "reconcile"
+    );
+    if (
+      result.success !== true ||
+      typeof result.isConsistent !== "boolean" ||
+      !Array.isArray(result.mismatches) ||
+      !Array.isArray(result.serverSummary)
+    ) {
+      throw new Error(result.error || "Resposta invalida em reconcile");
+    }
     const bootstrapApplied = await this.tryAutoBootstrap(result);
 
     if (bootstrapApplied) {
@@ -257,7 +284,18 @@ export class SyncClient {
           }),
         'reconcile:post-bootstrap'
       );
-      result = (await recheckResponse.json()) as ReconcileResponse;
+      result = await this.parseJsonResponse<ReconcileResponse & { error?: string }>(
+        recheckResponse,
+        "reconcile:post-bootstrap"
+      );
+      if (
+        result.success !== true ||
+        typeof result.isConsistent !== "boolean" ||
+        !Array.isArray(result.mismatches) ||
+        !Array.isArray(result.serverSummary)
+      ) {
+        throw new Error(result.error || "Resposta invalida em reconcile:post-bootstrap");
+      }
     }
 
     if (!result.isConsistent) {
@@ -303,11 +341,13 @@ export class SyncClient {
     for (let attempt = 0; attempt <= this.config.retryAttempts; attempt++) {
       try {
         const response = await requestFn();
-        if (!response.ok && this.shouldRetryStatus(response.status, attempt)) {
-          throw new Error(`Erro HTTP ${response.status}`);
-        }
         if (!response.ok) {
-          throw new Error(`Erro HTTP ${response.status}`);
+          const detail = await this.extractErrorDetail(response);
+          const message = `Erro HTTP ${response.status} em ${operationName}${detail ? `: ${detail}` : ""}`;
+          if (this.shouldRetryStatus(response.status, attempt)) {
+            throw new Error(message);
+          }
+          throw new Error(message);
         }
         setSyncStatusPatch({
           health: "ok",
@@ -356,6 +396,42 @@ export class SyncClient {
 
   private sleep(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  private async parseJsonResponse<T>(response: Response, operationName: string): Promise<T> {
+    const raw = await response.text();
+    if (!raw) {
+      return {} as T;
+    }
+
+    try {
+      return JSON.parse(raw) as T;
+    } catch {
+      const contentType = response.headers.get("content-type") || "desconhecido";
+      const preview = raw.slice(0, 200).replace(/\s+/g, " ").trim();
+      throw new Error(
+        `Resposta invalida em ${operationName} (status ${response.status}, content-type ${contentType}): ${preview}`
+      );
+    }
+  }
+
+  private async extractErrorDetail(response: Response): Promise<string> {
+    try {
+      const contentType = response.headers.get("content-type") || "";
+      const bodyText = await response.text();
+      if (!bodyText) {
+        return "";
+      }
+
+      if (contentType.includes("application/json")) {
+        const parsed = JSON.parse(bodyText) as { error?: string; message?: string };
+        return parsed.error || parsed.message || bodyText.slice(0, 200);
+      }
+
+      return bodyText.slice(0, 200).replace(/\s+/g, " ").trim();
+    } catch {
+      return "";
+    }
   }
 
   private getJsonHeaders(): HeadersInit {
@@ -410,8 +486,16 @@ export class SyncClient {
             }),
           `bootstrap:${mismatch.table}`
         );
-        const payload = await response.json();
-        if (payload?.success && payload?.bootstrapped) {
+        const payload = await this.parseJsonResponse<{
+          success?: boolean;
+          error?: string;
+          bootstrapped?: boolean;
+          processed?: number;
+        }>(response, `bootstrap:${mismatch.table}`);
+        if (payload.success !== true) {
+          throw new Error(payload.error || `Falha no bootstrap de ${mismatch.table}`);
+        }
+        if (payload?.bootstrapped) {
           didBootstrap = true;
           console.log(`🌱 Bootstrap concluído para ${mismatch.table}: ${payload.processed} registros.`);
         }
@@ -505,7 +589,8 @@ export class SyncClient {
 
     const syncRecord = update as SyncRecord;
     const eventId = syncRecord.eventId || this.generateEventId();
-    const { eventId: _ignored, ...record } = syncRecord;
+    const record = { ...syncRecord };
+    delete record.eventId;
     return { eventId, record };
   }
 
@@ -582,7 +667,9 @@ export class SyncClient {
         continue;
       }
 
-      const { _deleted: _ignoreDeleted, eventId: _ignoreEventId, ...normalized } = record;
+      const normalized = { ...record };
+      delete normalized._deleted;
+      delete normalized.eventId;
       tableState.set(record.id, normalized as SyncRecord);
     }
 

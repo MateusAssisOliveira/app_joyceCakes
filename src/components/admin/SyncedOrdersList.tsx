@@ -75,7 +75,7 @@ export function SyncedOrdersList() {
         }
       );
 
-      // Cleanup quando componente desmonta
+      // Limpeza quando o componente e desmontado
       return () => {
         console.log('🛑 Parando sincronização...');
         unsubscribe();
@@ -232,3 +232,4 @@ export function SyncedOrdersList() {
  * - Componente re-renderiza
  * - Usuário vê a mudança SEM RELOAD
  */
+

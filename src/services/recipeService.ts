@@ -2,11 +2,10 @@
 // CAMADA DE SERVIÇO PARA FICHAS TÉCNICAS (TECHNICAL SHEETS)
 
 import type { TechnicalSheet } from "@/types";
-import { collection, doc, Firestore, serverTimestamp, addDoc, updateDoc, getDocs, Timestamp } from "firebase/firestore";
+import { collection, doc, Firestore, serverTimestamp, addDoc, updateDoc, getDocs } from "firebase/firestore";
 import { errorEmitter } from "@/firebase/error-emitter";
 import { FirestorePermissionError } from "@/firebase/errors";
 import { serializeObject, setDocumentActive } from "./utils";
-import { updateDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 
 /**
  * Adiciona uma nova ficha técnica ao banco de dados. Por padrão, ela é criada como ativa.
@@ -24,7 +23,7 @@ export const addTechnicalSheet = (firestore: Firestore, sheetData: Omit<Technica
 
   return addDoc(sheetsCollection, fullSheetData)
     .then(() => {}) // Retorna Promise<void> no sucesso
-    .catch(async (serverError) => {
+    .catch(async () => {
       const permissionError = new FirestorePermissionError({
         path: sheetsCollection.path,
         operation: 'create',
@@ -46,7 +45,7 @@ export const updateTechnicalSheet = (firestore: Firestore, id: string, updatedDa
     const dataToUpdate = { ...updatedData };
 
     return updateDoc(sheetDocRef, dataToUpdate)
-      .catch(async (serverError) => {
+      .catch(async () => {
         const permissionError = new FirestorePermissionError({
             path: sheetDocRef.path,
             operation: 'update',

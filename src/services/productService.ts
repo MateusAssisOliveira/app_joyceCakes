@@ -8,12 +8,11 @@
 // - Fornecer uma função para buscar a lista de todos os produtos do Firestore.
 // - Isolar os componentes da implementação da fonte de dados.
 
-import { collection, getDocs, Firestore, doc, serverTimestamp, addDoc, updateDoc, Timestamp } from 'firebase/firestore';
+import { collection, getDocs, Firestore, doc, serverTimestamp, addDoc, updateDoc } from 'firebase/firestore';
 import type { Product } from '@/types';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
 import { serializeObject, setDocumentActive } from './utils';
-import { updateDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 
 /**
  * Adiciona um novo produto. Por padrão, ele é criado como ativo.
@@ -30,7 +29,7 @@ export const addProduct = (firestore: Firestore, productData: Partial<Omit<Produ
 
     return addDoc(productsCollection, fullProductData)
       .then(() => {}) // Retorna uma promessa resolvida em caso de sucesso.
-      .catch(async (serverError) => {
+      .catch(async () => {
         const permissionError = new FirestorePermissionError({
             path: productsCollection.path,
             operation: 'create',
@@ -50,7 +49,7 @@ export const addProduct = (firestore: Firestore, productData: Partial<Omit<Produ
 export const updateProduct = (firestore: Firestore, id: string, updatedData: Partial<Omit<Product, 'id' | 'createdAt' | 'isActive'>>): Promise<void> => {
     const productDocRef = doc(firestore, 'products', id);
     return updateDoc(productDocRef, updatedData)
-      .catch(async (serverError) => {
+      .catch(async () => {
         const permissionError = new FirestorePermissionError({
             path: productDocRef.path,
             operation: 'update',

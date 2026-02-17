@@ -1,5 +1,5 @@
 
-// LAYOUT RAIZ (ROOT LAYOUT)
+// LAYOUT RAIZ (LAYOUT RAIZ)
 //
 // Propósito:
 // Este arquivo define o layout raiz da aplicação. É o componente mais fundamental
@@ -66,3 +66,4 @@ export default function RootLayout({
     </html>
   );
 }
+

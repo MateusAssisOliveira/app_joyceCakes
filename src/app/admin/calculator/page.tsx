@@ -42,7 +42,13 @@ function SuppliesDataLoader() {
 
 export default function AdminCalculatorPage() {
   return (
-    <div className="w-full flex flex-col gap-8">
+    <div className="w-full flex flex-col gap-6">
+      <div className="glass-panel p-5 md:p-6">
+        <h2 className="font-headline text-2xl font-bold tracking-tight">Calculadora de Custos</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Simule preco, margem e custos antes de ajustar o catalogo.
+        </p>
+      </div>
        <Suspense fallback={
         <div className="flex flex-1 items-center justify-center">
           <Loader className="h-8 w-8 animate-spin text-primary" />

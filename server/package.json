@@ -4,8 +4,10 @@
   "description": "Servidor de sincronização para JoyceCakes - BD SQL",
   "main": "dist/index.js",
   "scripts": {
+    "predev": "powershell -ExecutionPolicy Bypass -File scripts/ensure-postgres.ps1",
     "dev": "ts-node src/index.ts",
     "build": "tsc",
+    "prestart": "powershell -ExecutionPolicy Bypass -File scripts/ensure-postgres.ps1",
     "start": "node dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

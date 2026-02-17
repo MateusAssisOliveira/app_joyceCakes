@@ -28,7 +28,7 @@ import { addOrder } from "@/services";
 import type { Supply, OrderItem } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useUser, useFirestore, useAuth } from "@/firebase";
+import { useUser, useFirestore } from "@/firebase";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 

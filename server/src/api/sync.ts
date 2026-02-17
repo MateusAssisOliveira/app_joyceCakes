@@ -525,7 +525,7 @@ async function fetchNewData(table: string, lastSync?: string): Promise<any[]> {
         [table]
       );
 
-  const deleted = deletedRows.map((row) => ({
+  const deleted = deletedRows.map((row: { record_id: string; deleted_at: string | Date }) => ({
     id: row.record_id,
     _deleted: true,
     updatedAt: new Date(row.deleted_at).toISOString(),

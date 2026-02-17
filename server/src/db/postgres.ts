@@ -7,13 +7,17 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 // Criar pool de conexões
-const pool = new Pool({
-  host: process.env.DB_HOST || 'localhost',
-  port: parseInt(process.env.DB_PORT || '5432'),
-  user: process.env.DB_USER || 'joycecakes',
-  password: process.env.DB_PASSWORD || 'password',
-  database: process.env.DB_NAME || 'joycecakes_db',
-});
+const pool = new Pool(
+  process.env.DATABASE_URL
+    ? { connectionString: process.env.DATABASE_URL }
+    : {
+        host: process.env.DB_HOST || 'localhost',
+        port: parseInt(process.env.DB_PORT || '5432', 10),
+        user: process.env.DB_USER || 'joycecakes',
+        password: process.env.DB_PASSWORD || 'password',
+        database: process.env.DB_NAME || 'joycecakes_db',
+      }
+);
 
 // Testar conexão
 pool.on('error', (err: Error) => {

@@ -21,13 +21,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
-import { Loader, AlertCircle, TrendingUp } from "lucide-react";
+import { Loader, TrendingUp } from "lucide-react";
 import type { Supply } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 import { useFirestore, useUser } from "@/firebase";
 import { updateSupply, getPriceHistory } from "@/services";
-import { format } from "date-fns";
-import { toDate } from "@/lib/timestamp-utils";
 import {
   Alert,
   AlertDescription,
@@ -125,7 +123,7 @@ export function SupplyQuickAddDialog({
         costPerUnit: newCost,
       };
 
-      // Prepare financial data if needed
+      // Prepara os dados financeiros, se necessario
       const financialData = {
         shouldRegister: shouldRegisterExpense && newCost > 0,
         userId: user?.uid || "",
@@ -159,7 +157,7 @@ export function SupplyQuickAddDialog({
     : "0";
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !isProcessing && onClose()}>
+    <Dialog open={isOpen} onOpenChange={() => !isProcessing && onClose()}>
       <DialogContent className="w-[95vw] max-w-md">
         <DialogHeader>
           <DialogTitle>Repor Estoque: {supply.name}</DialogTitle>
@@ -348,3 +346,4 @@ export function SupplyQuickAddDialog({
     </Dialog>
   );
 }
+

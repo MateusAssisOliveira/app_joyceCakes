@@ -74,20 +74,20 @@ export default function AdminPanel({
         <div className="h-full">
             <SidebarProvider>
                 <div className="group/sidebar-wrapper flex h-full w-full">
-                    <Sidebar>
-                        <SidebarHeader>
-                            <div className="flex items-center gap-3 p-3">
-                                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
+                    <Sidebar className="border-r border-sidebar-border/70">
+                        <SidebarHeader className="border-b border-sidebar-border/60 bg-sidebar/95">
+                            <div className="flex items-center gap-3 p-4">
+                                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/15 ring-1 ring-sidebar-accent">
                                     <CakeSlice className="h-6 w-6 text-primary" />
                                 </div>
                                 <div className="flex flex-col">
-                                    <span className="font-headline text-xl font-bold text-foreground">Doce Caixa</span>
-                                    <span className="text-xs text-muted-foreground">Painel PRO</span>
+                                    <span className="font-headline text-xl font-bold text-sidebar-foreground">Doce Caixa</span>
+                                    <span className="text-xs text-sidebar-foreground/75">Painel PRO</span>
                                 </div>
                             </div>
                         </SidebarHeader>
-                        <SidebarContent>
-                            <div className="px-3 pt-2 text-[11px] font-semibold uppercase tracking-wide text-sidebar-foreground/60">
+                        <SidebarContent className="bg-sidebar/95 px-2">
+                            <div className="px-3 pt-4 text-[11px] font-semibold uppercase tracking-[0.2em] text-sidebar-foreground/55">
                                 Menu principal
                             </div>
                             <SidebarMenu>
@@ -100,8 +100,8 @@ export default function AdminPanel({
                                     </SidebarMenuItem>
                                 ))}
                             </SidebarMenu>
-                            <Separator className="my-2 bg-sidebar-border/60" />
-                            <div className="px-3 pt-1 text-[11px] font-semibold uppercase tracking-wide text-sidebar-foreground/60">
+                            <Separator className="my-3 bg-sidebar-border/60" />
+                            <div className="px-3 pt-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-sidebar-foreground/55">
                                 Mais ferramentas
                             </div>
                             <SidebarMenu>
@@ -115,10 +115,10 @@ export default function AdminPanel({
                                 ))}
                             </SidebarMenu>
                         </SidebarContent>
-                        <SidebarFooter>
+                        <SidebarFooter className="border-t border-sidebar-border/60 bg-sidebar/95 px-2 pb-4">
                             <SidebarMenu>
                                 <SidebarMenuItem>
-                                <Button onClick={handleSignOut} variant="ghost" className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground rounded-xl">
+                                <Button onClick={handleSignOut} variant="ghost" className="w-full justify-start rounded-xl text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
                                     <LogOut />
                                     Sair do Painel
                                 </Button>
@@ -126,8 +126,8 @@ export default function AdminPanel({
                             </SidebarMenu>
                         </SidebarFooter>
                     </Sidebar>
-                    <SidebarInset>
-                        <header className="flex h-20 items-center justify-between px-4 sm:px-6 md:px-8 border-b border-border/50 bg-background/50 backdrop-blur-sm sticky top-0 z-30">
+                    <SidebarInset className="bg-transparent">
+                        <header className="sticky top-0 z-30 flex h-20 items-center justify-between border-b border-border/60 bg-background/80 px-4 backdrop-blur-xl sm:px-6 md:px-8">
                             <div className="flex items-center gap-2">
                                 <SidebarTrigger className="md:hidden"/>
                                 {pathname !== '/admin/dashboard' && (
@@ -139,23 +139,23 @@ export default function AdminPanel({
                             <div className="flex-1 flex justify-center">
                                 <DynamicHeader />
                             </div>
-                            <div className="flex items-center justify-end gap-4">
+                            <div className="flex items-center justify-end gap-3">
                                 <SyncStatusBadge />
-                                <Avatar className="h-10 w-10 border-2 border-primary/50 shadow-md">
+                                <Avatar className="h-10 w-10 border-2 border-primary/50 shadow-lg shadow-primary/20">
                                     <AvatarFallback className="bg-muted text-foreground font-bold">
                                         {user?.email ? user.email.charAt(0).toUpperCase() : <User />}
                                     </AvatarFallback>
                                 </Avatar>
                             </div>
                         </header>
-                         <main className="flex flex-1 flex-col">
-                            <div className="flex flex-1 p-4 pb-28 sm:p-6 md:p-8 w-full min-w-0 md:pb-8">
+                         <main className="flex flex-1 flex-col page-reveal">
+                            <div className="mx-auto flex w-full max-w-[1400px] min-w-0 flex-1 p-4 pb-28 sm:p-6 md:p-8 md:pb-8">
                                 <Suspense fallback={<Loading />}>
                                     {children}
                                 </Suspense>
                             </div>
                         </main>
-                        <nav className="fixed bottom-0 left-0 right-0 z-40 border-t bg-background/95 backdrop-blur-sm pb-safe md:hidden">
+                        <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-border/60 bg-background/95 pb-safe backdrop-blur-xl md:hidden">
                             <div className="grid grid-cols-5 gap-1 px-1 py-2">
                                 {primaryNav.map((item) => {
                                     const isActive = pathname.startsWith(item.href);

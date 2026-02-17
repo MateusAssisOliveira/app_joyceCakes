@@ -17,11 +17,11 @@ import type { Product, Order, OrderStatus, Supply } from '@/types';
 // Esta é a nossa fonte de dados simulada.
 // Em uma aplicação real, isso seria substituído por um banco de dados real.
 
-export let products: Product[] = []; // Removido para usar o Firebase
+export const products: Product[] = []; // Removido para usar o Firebase
 
-export let orders: Order[] = []; // Removido para usar o Firebase
+export const orders: Order[] = []; // Removido para usar o Firebase
 
-export let supplies: Supply[] = []; // Removido para usar o Firebase
+export const supplies: Supply[] = []; // Removido para usar o Firebase
 
 export const db = {
     products,

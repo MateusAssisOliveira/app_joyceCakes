@@ -1,8 +1,8 @@
-// UI DE CARREGAMENTO (LOADING UI)
+// UI DE CARREGAMENTO (TELA DE CARREGAMENTO)
 //
 // Propósito:
 // Este arquivo define um componente de carregamento que é exibido automaticamente pelo Next.js
-// enquanto os dados de uma página de servidor (Server Component) estão sendo carregados.
+// enquanto os dados de uma página de servidor (Componente de Servidor) estão sendo carregados.
 //
 // Responsabilidade:
 // - Fornecer feedback visual imediato ao usuário durante a navegação entre páginas.
@@ -24,3 +24,4 @@ export default function Loading() {
     </div>
   );
 }
+
