@@ -1,0 +1,25 @@
+[
+  {
+    "id": "receita-exemplo-1",
+    "name": "Receita Exemplo",
+    "description": "Descricao da receita",
+    "type": "base",
+    "components": [
+      {
+        "componentId": "supply-1",
+        "componentName": "Acucar",
+        "componentType": "supply",
+        "quantity": 100,
+        "unit": "g"
+      }
+    ],
+    "steps": "Passo 1, passo 2",
+    "yield": "1 unidade",
+    "totalCost": 10.5,
+    "suggestedPrice": 25,
+    "preparationTime": 30,
+    "laborCost": 3,
+    "fixedCost": 2,
+    "isActive": true
+  }
+]

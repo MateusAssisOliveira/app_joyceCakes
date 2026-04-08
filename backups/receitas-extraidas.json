@@ -1,0 +1,250 @@
+[
+  {
+    "id": "legacy-recipe-1",
+    "name": "Bolo de Chocolate",
+    "description": "Bolo simples de chocolate",
+    "type": "base",
+    "steps": "Misture todos os ingredientes secos. Adicione os líquidos e misture bem. Asse por 40 minutos.",
+    "preparationTime": 50,
+    "yield": "8",
+    "components": [
+      {
+        "componentId": "legacy-prod-1",
+        "componentName": "Farinha de trigo",
+        "componentType": "supply",
+        "quantity": 300,
+        "unit": "un"
+      },
+      {
+        "componentId": "legacy-prod-3",
+        "componentName": "Leite integral",
+        "componentType": "supply",
+        "quantity": 1,
+        "unit": "un"
+      },
+      {
+        "componentId": "legacy-prod-5",
+        "componentName": "Açúcar refinado",
+        "componentType": "supply",
+        "quantity": 200,
+        "unit": "un"
+      },
+      {
+        "componentId": "legacy-prod-6",
+        "componentName": "Chocolate em pó",
+        "componentType": "supply",
+        "quantity": 100,
+        "unit": "un"
+      },
+      {
+        "componentId": "legacy-prod-7",
+        "componentName": "Fermento em pó",
+        "componentType": "supply",
+        "quantity": 10,
+        "unit": "un"
+      },
+      {
+        "componentId": "legacy-prod-2",
+        "componentName": "Ovos grandes",
+        "componentType": "supply",
+        "quantity": 3,
+        "unit": "un"
+      }
+    ],
+    "totalCost": 1690,
+    "suggestedPrice": 3887,
+    "laborCost": 0,
+    "fixedCost": 0,
+    "isActive": true
+  },
+  {
+    "id": "legacy-recipe-2",
+    "name": "Panquecas",
+    "description": "Panquecas americanas",
+    "type": "base",
+    "steps": "Misture os ingredientes secos e líquidos separadamente. Combine e cozinhe em frigideira.",
+    "preparationTime": 30,
+    "yield": "12",
+    "components": [
+      {
+        "componentId": "legacy-prod-1",
+        "componentName": "Farinha de trigo",
+        "componentType": "supply",
+        "quantity": 200,
+        "unit": "un"
+      },
+      {
+        "componentId": "legacy-prod-2",
+        "componentName": "Ovos grandes",
+        "componentType": "supply",
+        "quantity": 2,
+        "unit": "un"
+      },
+      {
+        "componentId": "legacy-prod-3",
+        "componentName": "Leite integral",
+        "componentType": "supply",
+        "quantity": 250,
+        "unit": "un"
+      },
+      {
+        "componentId": "legacy-prod-9",
+        "componentName": "Óleo de soja",
+        "componentType": "supply",
+        "quantity": 30,
+        "unit": "un"
+      },
+      {
+        "componentId": "legacy-prod-8",
+        "componentName": "Sal refinado",
+        "componentType": "supply",
+        "quantity": 1,
+        "unit": "un"
+      }
+    ],
+    "totalCost": 1563.23,
+    "suggestedPrice": 3595.43,
+    "laborCost": 0,
+    "fixedCost": 0,
+    "isActive": true
+  },
+  {
+    "id": "legacy-recipe-3",
+    "name": "Pão de Ló",
+    "description": "Pão de ló simples",
+    "type": "base",
+    "steps": "Bata os ovos com açúcar até dobrar de volume. Adicione farinha delicadamente. Asse por 30 minutos.",
+    "preparationTime": 45,
+    "yield": "10",
+    "components": [
+      {
+        "componentId": "legacy-prod-1",
+        "componentName": "Farinha de trigo",
+        "componentType": "supply",
+        "quantity": 250,
+        "unit": "un"
+      },
+      {
+        "componentId": "legacy-prod-2",
+        "componentName": "Ovos grandes",
+        "componentType": "supply",
+        "quantity": 4,
+        "unit": "un"
+      },
+      {
+        "componentId": "legacy-prod-5",
+        "componentName": "Açúcar refinado",
+        "componentType": "supply",
+        "quantity": 150,
+        "unit": "un"
+      },
+      {
+        "componentId": "legacy-prod-7",
+        "componentName": "Fermento em pó",
+        "componentType": "supply",
+        "quantity": 10,
+        "unit": "un"
+      }
+    ],
+    "totalCost": 327.5,
+    "suggestedPrice": 753.25,
+    "laborCost": 0,
+    "fixedCost": 0,
+    "isActive": true
+  },
+  {
+    "id": "legacy-recipe-4",
+    "name": "Brigadeiro",
+    "description": "Brigadeiro tradicional",
+    "type": "base",
+    "steps": "Misture todos os ingredientes em uma panela e cozinhe em fogo baixo até desgrudar do fundo.",
+    "preparationTime": 25,
+    "yield": "30",
+    "components": [
+      {
+        "componentId": "legacy-prod-3",
+        "componentName": "Leite condensado",
+        "componentType": "supply",
+        "quantity": 200,
+        "unit": "un"
+      },
+      {
+        "componentId": "legacy-prod-6",
+        "componentName": "Chocolate em pó",
+        "componentType": "supply",
+        "quantity": 50,
+        "unit": "un"
+      },
+      {
+        "componentId": "legacy-prod-4",
+        "componentName": "Manteiga sem sal",
+        "componentType": "supply",
+        "quantity": 20,
+        "unit": "un"
+      }
+    ],
+    "totalCost": 1545.78,
+    "suggestedPrice": 3555.29,
+    "laborCost": 0,
+    "fixedCost": 0,
+    "isActive": true
+  },
+  {
+    "id": "legacy-recipe-5",
+    "name": "Cookies",
+    "description": "Cookies de chocolate",
+    "type": "base",
+    "steps": "Misture os ingredientes secos. Adicione manteiga e ovos. Forme bolinhas e asse por 15 minutos.",
+    "preparationTime": 30,
+    "yield": "24",
+    "components": [
+      {
+        "componentId": "legacy-prod-1",
+        "componentName": "Farinha de trigo",
+        "componentType": "supply",
+        "quantity": 300,
+        "unit": "un"
+      },
+      {
+        "componentId": "legacy-prod-4",
+        "componentName": "Manteiga sem sal",
+        "componentType": "supply",
+        "quantity": 150,
+        "unit": "un"
+      },
+      {
+        "componentId": "legacy-prod-5",
+        "componentName": "Açúcar refinado",
+        "componentType": "supply",
+        "quantity": 150,
+        "unit": "un"
+      },
+      {
+        "componentId": "legacy-prod-2",
+        "componentName": "Ovos grandes",
+        "componentType": "supply",
+        "quantity": 2,
+        "unit": "un"
+      },
+      {
+        "componentId": "legacy-prod-6",
+        "componentName": "Chocolate em pó",
+        "componentType": "supply",
+        "quantity": 100,
+        "unit": "un"
+      },
+      {
+        "componentId": "legacy-prod-10",
+        "componentName": "Canela em pó (opcional)",
+        "componentType": "supply",
+        "quantity": 5,
+        "unit": "un"
+      }
+    ],
+    "totalCost": 1630.49,
+    "suggestedPrice": 3750.13,
+    "laborCost": 0,
+    "fixedCost": 0,
+    "isActive": true
+  }
+]
