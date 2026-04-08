@@ -36,8 +36,14 @@ export function SyncedOrdersList() {
     console.log(`📍 Máquina ID: ${machineId}`);
 
     try {
-      const { firestore } = getSdks();
-      const ordersRef = collection(firestore, 'orders');
+      const { firestore, auth } = getSdks();
+      const tenantId = auth.currentUser?.uid;
+      if (!tenantId) {
+        setError("Usuario sem tenant ativo.");
+        setLoading(false);
+        return;
+      }
+      const ordersRef = collection(firestore, `tenants/${tenantId}/orders`);
 
       // 🔄 LISTENER - Atualiza quando há mudanças no Firestore
       const unsubscribe = onSnapshot(

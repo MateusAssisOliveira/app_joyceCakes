@@ -31,6 +31,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useUser, useFirestore } from "@/firebase";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useActiveTenant } from "@/hooks/use-active-tenant";
 
 
 type RecipeItem = {
@@ -54,6 +55,7 @@ export function CalculatorClient({ supplies }: CalculatorClientProps) {
   const router = useRouter();
   const firestore = useFirestore();
   const { user } = useUser();
+  const { activeTenantId } = useActiveTenant();
 
   const filteredSupplies = useMemo(() => {
     return supplies.filter((supply) =>
@@ -150,6 +152,7 @@ export function CalculatorClient({ supplies }: CalculatorClientProps) {
     try {
         await addOrder(firestore, {
           userId: user.uid,
+          tenantId: activeTenantId || undefined,
           customerName: "Pedido Personalizado",
           total: suggestedPrice,
           items: orderItems,

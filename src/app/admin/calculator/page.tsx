@@ -8,16 +8,19 @@ import { collection, query } from 'firebase/firestore';
 import type { Supply } from '@/types';
 import { Loader } from 'lucide-react';
 import { useMemo } from 'react';
+import { getTenantCollectionPath } from '@/lib/tenant';
+import { useActiveTenant } from '@/hooks/use-active-tenant';
 
 // Este componente agora busca os dados no cliente
 function SuppliesDataLoader() {
   const firestore = useFirestore();
   const { user } = useUser();
+  const { activeTenantId } = useActiveTenant();
   
   const suppliesQuery = useMemo(() => {
-    if (!firestore || !user) return null;
-    return query(collection(firestore, 'supplies'));
-  }, [firestore, user]);
+    if (!firestore || !activeTenantId) return null;
+    return query(collection(firestore, getTenantCollectionPath(activeTenantId, "supplies")));
+  }, [firestore, activeTenantId]);
 
   const { data: supplies, isLoading, error } = useCollection<Supply>(suppliesQuery);
 

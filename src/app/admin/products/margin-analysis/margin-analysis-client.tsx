@@ -1,20 +1,24 @@
 "use client";
 
 import { useMemo } from "react";
-import { useFirestore, useCollection } from "@/firebase";
+import { useFirestore, useCollection, useUser } from "@/firebase";
 import { collection, query } from "firebase/firestore";
 import type { Product } from "@/types";
 import { Loader } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { MarginAnalysis } from "@/components/admin/products/margin-analysis";
+import { getTenantCollectionPath } from "@/lib/tenant";
+import { useActiveTenant } from "@/hooks/use-active-tenant";
 
 export function MarginAnalysisClient() {
   const firestore = useFirestore();
+  const { user } = useUser();
+  const { activeTenantId } = useActiveTenant();
 
   const productsQuery = useMemo(() => {
-    if (!firestore) return null;
-    return query(collection(firestore, "products"));
-  }, [firestore]);
+    if (!firestore || !activeTenantId) return null;
+    return query(collection(firestore, getTenantCollectionPath(activeTenantId, "products")));
+  }, [firestore, activeTenantId]);
 
   const { data: products, isLoading } = useCollection<Product>(productsQuery);
 

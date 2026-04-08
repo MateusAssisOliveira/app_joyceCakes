@@ -44,6 +44,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useUser, useFirestore, errorEmitter, FirestorePermissionError } from "@/firebase";
 import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 import { NewOrderDialog } from "@/components/admin/orders/new-order-dialog";
+import { getTenantCollectionPath } from "@/lib/tenant";
+import { useActiveTenant } from "@/hooks/use-active-tenant";
 
 const getStatusVariant = (status: OrderStatus) => {
   switch (status) {
@@ -66,16 +68,18 @@ export function PointOfSaleClient({ products }: PointOfSaleClientProps) {
   
   const firestore = useFirestore();
   const { user } = useUser();
+  const { activeTenantId } = useActiveTenant();
 
   const [orders, setOrders] = useState<Order[]>([]);
   const [areOrdersLoading, setAreOrdersLoading] = useState(true);
 
   // Busca os pedidos em tempo real do Firestore
   useEffect(() => {
-    if (!firestore) return;
+    if (!firestore || !activeTenantId) return;
 
     setAreOrdersLoading(true);
-    const ordersQuery = query(collection(firestore, "orders"), orderBy("createdAt", "desc"));
+    const ordersPath = getTenantCollectionPath(activeTenantId, "orders");
+    const ordersQuery = query(collection(firestore, ordersPath), orderBy("createdAt", "desc"));
     
     const unsubscribe = onSnapshot(ordersQuery, (snapshot) => {
       const fetchedOrders = snapshot.docs.map(doc => {
@@ -92,7 +96,7 @@ export function PointOfSaleClient({ products }: PointOfSaleClientProps) {
     }, () => {
       // Cria e emite o erro contextual
       const permissionError = new FirestorePermissionError({
-          path: 'orders',
+          path: ordersPath,
           operation: 'list',
       });
       errorEmitter.emit('permission-error', permissionError);
@@ -101,13 +105,13 @@ export function PointOfSaleClient({ products }: PointOfSaleClientProps) {
 
     return () => unsubscribe(); // Limpa o listener ao desmontar o componente
 
-  }, [firestore]);
+  }, [firestore, activeTenantId]);
 
 
   const handleStatusChange = (orderId: string, newStatus: OrderStatus) => {
     if (!firestore) return;
     try {
-        updateOrderStatus(firestore, orderId, newStatus);
+        updateOrderStatus(firestore, orderId, newStatus, activeTenantId || undefined);
         toast({ title: "Status Atualizado!", description: `O status do pedido ${orderId} foi alterado.` });
     } catch(e: any) {
         toast({ variant: "destructive", title: "Erro", description: e.message });
@@ -151,10 +155,10 @@ export function PointOfSaleClient({ products }: PointOfSaleClientProps) {
                         Visualize e gerencie os pedidos recebidos ou inicie uma nova venda.
                     </CardDescription>
                   </div>
-                  <NewOrderDialog products={products || []} user={user} firestore={firestore} />
+                  <NewOrderDialog products={products || []} user={user} firestore={firestore} tenantId={activeTenantId || undefined} />
               </div>
             </CardHeader>
-            <CardContent className="flex-1">
+            <CardContent className="flex-1 px-3 pb-3 sm:px-6 sm:pb-6">
               <div className="space-y-3 md:hidden">
                 {orders?.map((order) => (
                   <div key={order.id} className="rounded-lg border p-3">
@@ -175,7 +179,7 @@ export function PointOfSaleClient({ products }: PointOfSaleClientProps) {
                         value={order.status}
                         onValueChange={(value: OrderStatus) => handleStatusChange(order.id, value)}
                       >
-                        <SelectTrigger id={`status-mobile-trigger-${order.id}`} className="h-10 w-full">
+                        <SelectTrigger id={`status-mobile-trigger-${order.id}`} className="tap-target w-full">
                           <Badge
                             variant={getStatusVariant(order.status)}
                             className={cn(
@@ -198,7 +202,7 @@ export function PointOfSaleClient({ products }: PointOfSaleClientProps) {
                       </Select>
                     </div>
                     <div className="mt-3 grid grid-cols-2 gap-2">
-                      <Button variant="outline" className="h-10" asChild>
+                      <Button variant="outline" className="tap-target" asChild>
                         <Link href={getEditOrderUrl(order)}>
                           <Pencil className="mr-2 h-4 w-4" />
                           Editar
@@ -211,7 +215,7 @@ export function PointOfSaleClient({ products }: PointOfSaleClientProps) {
                         <DialogTrigger asChild>
                           <Button
                             variant="outline"
-                            className="h-10"
+                            className="tap-target"
                             title="Visualizar Detalhes"
                             onClick={() => setSelectedOrder(order)}
                           >

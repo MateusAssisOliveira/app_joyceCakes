@@ -46,7 +46,9 @@ import { Input } from "@/components/ui/input";
 import { PlusCircle, Trash2, Search, Loader, Pencil, ArchiveRestore, Link as LinkIcon, Link2Off, BarChart3 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { inactivateProduct, reactivateProduct } from "@/services";
+import { getTenantCollectionPath } from "@/lib/tenant";
 import type { Product, TechnicalSheet, Supply } from "@/types";
+import { useActiveTenant } from "@/hooks/use-active-tenant";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { ProductForm } from "@/components/admin/products/product-form";
@@ -65,23 +67,24 @@ export function ProductsClient() {
 
   const firestore = useFirestore();
   const { user } = useUser();
+  const { activeTenantId } = useActiveTenant();
   
   const productsQuery = useMemo(() => {
-    if (!firestore || !user) return null;
-    return query(collection(firestore, 'products'));
-  }, [firestore, user]);
+    if (!firestore || !activeTenantId) return null;
+    return query(collection(firestore, getTenantCollectionPath(activeTenantId, "products")));
+  }, [firestore, activeTenantId]);
   const { data: products, isLoading: areProductsLoading } = useCollection<Product>(productsQuery);
 
   const suppliesQuery = useMemo(() => {
-    if (!firestore || !user) return null;
-    return query(collection(firestore, 'supplies'));
-  }, [firestore, user]);
+    if (!firestore || !activeTenantId) return null;
+    return query(collection(firestore, getTenantCollectionPath(activeTenantId, "supplies")));
+  }, [firestore, activeTenantId]);
   const { data: supplies, isLoading: areSuppliesLoading } = useCollection<Supply>(suppliesQuery);
 
   const sheetsQuery = useMemo(() => {
-    if (!firestore || !user) return null;
-    return query(collection(firestore, 'technical_sheets'));
-  }, [firestore, user]);
+    if (!firestore || !activeTenantId) return null;
+    return query(collection(firestore, getTenantCollectionPath(activeTenantId, "technical_sheets")));
+  }, [firestore, activeTenantId]);
   const { data: technicalSheets, isLoading: areSheetsLoading } = useCollection<TechnicalSheet>(sheetsQuery);
 
   const isLoading = areProductsLoading || areSuppliesLoading || areSheetsLoading;
@@ -126,8 +129,8 @@ export function ProductsClient() {
     if (!selectedProduct || !firestore) return;
 
     const actionPromise = viewMode === 'active' 
-        ? inactivateProduct(firestore, selectedProduct.id) 
-        : reactivateProduct(firestore, selectedProduct.id);
+        ? inactivateProduct(firestore, selectedProduct.id, activeTenantId || undefined) 
+        : reactivateProduct(firestore, selectedProduct.id, activeTenantId || undefined);
 
     try {
         await actionPromise;
@@ -137,7 +140,7 @@ export function ProductsClient() {
     } catch (error: any) {
         toast({ variant: "destructive", title: "Erro", description: error.message });
     }
-  }, [selectedProduct, firestore, viewMode, toast]);
+  }, [selectedProduct, firestore, viewMode, toast, activeTenantId]);
 
   return (
     <div className="w-full h-full flex flex-col">

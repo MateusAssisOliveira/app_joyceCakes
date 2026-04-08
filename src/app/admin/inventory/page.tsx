@@ -9,7 +9,7 @@ import { Loader } from 'lucide-react';
 export default function AdminInventoryPage() {
 
   return (
-    <div className="w-full h-full flex flex-col">
+    <div className="w-full h-full flex flex-col gap-4 sm:gap-6">
        <Suspense fallback={
         <div className="flex flex-1 items-center justify-center">
           <Loader className="h-8 w-8 animate-spin text-primary" />
@@ -20,4 +20,3 @@ export default function AdminInventoryPage() {
     </div>
   );
 }
-

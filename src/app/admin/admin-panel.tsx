@@ -14,6 +14,7 @@ import {
   Terminal,
   Calculator,
   Activity,
+  Building2,
   House,
   LogOut,
   DollarSign,
@@ -42,7 +43,8 @@ const primaryNav = [
 const secondaryNav = [
     { href: "/admin/products", label: "Produtos", icon: Package },
     { href: "/admin/calculator", label: "Calculadora", icon: Calculator },
-    { href: "/admin/operations", label: "Operações", icon: Activity },
+    { href: "/admin/operations", label: "Operacoes", icon: Activity },
+    { href: "/admin/tenants", label: "Tenants", icon: Building2 },
 ];
 
 export default function AdminPanel({
@@ -71,9 +73,9 @@ export default function AdminPanel({
     }
 
     return (
-        <div className="h-full">
+        <div className="min-h-screen-dynamic">
             <SidebarProvider>
-                <div className="group/sidebar-wrapper flex h-full w-full">
+                <div className="group/sidebar-wrapper flex min-h-screen-dynamic w-full">
                     <Sidebar className="border-r border-sidebar-border/70">
                         <SidebarHeader className="border-b border-sidebar-border/60 bg-sidebar/95">
                             <div className="flex items-center gap-3 p-4">
@@ -127,7 +129,7 @@ export default function AdminPanel({
                         </SidebarFooter>
                     </Sidebar>
                     <SidebarInset className="bg-transparent">
-                        <header className="sticky top-0 z-30 flex h-20 items-center justify-between border-b border-border/60 bg-background/80 px-4 backdrop-blur-xl sm:px-6 md:px-8">
+                        <header className="sticky top-0 z-30 flex h-20 items-center justify-between border-b border-border/60 bg-background/80 px-3 backdrop-blur-xl sm:px-6 md:px-8">
                             <div className="flex items-center gap-2">
                                 <SidebarTrigger className="md:hidden"/>
                                 {pathname !== '/admin/dashboard' && (
@@ -148,8 +150,8 @@ export default function AdminPanel({
                                 </Avatar>
                             </div>
                         </header>
-                         <main className="flex flex-1 flex-col page-reveal">
-                            <div className="mx-auto flex w-full max-w-[1400px] min-w-0 flex-1 p-4 pb-28 sm:p-6 md:p-8 md:pb-8">
+                        <main className="flex flex-1 flex-col page-reveal">
+                            <div className="mx-auto flex w-full max-w-[1400px] min-w-0 flex-1 p-3 pb-[calc(6.5rem+env(safe-area-inset-bottom))] sm:p-6 md:p-8 md:pb-8">
                                 <Suspense fallback={<Loading />}>
                                     {children}
                                 </Suspense>
@@ -165,11 +167,11 @@ export default function AdminPanel({
                                             asChild
                                             variant={isActive ? "default" : "ghost"}
                                             size="sm"
-                                            className="h-16 flex-col gap-1 rounded-xl text-[11px]"
+                                            className="tap-target h-14 flex-col gap-1 rounded-xl px-1 text-[10px] sm:text-[11px]"
                                         >
                                             <Link href={item.href}>
                                                 <item.icon className="h-4 w-4" />
-                                                <span>{item.label}</span>
+                                                <span className="truncate">{item.label}</span>
                                             </Link>
                                         </Button>
                                     );
@@ -182,3 +184,4 @@ export default function AdminPanel({
         </div>
     );
 }
+

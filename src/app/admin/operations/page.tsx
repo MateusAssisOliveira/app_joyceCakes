@@ -13,6 +13,8 @@ import { Label } from "@/components/ui/label";
 import { AlertTriangle, CheckCircle2, ClipboardList, HelpCircle, ShieldCheck, TrendingUp, Wrench } from "lucide-react";
 import { getSyncStatusSnapshot, subscribeSyncStatus, type SyncStatusSnapshot } from "@/lib/sync-status-store";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { getTenantCollectionPath } from "@/lib/tenant";
+import { useActiveTenant } from "@/hooks/use-active-tenant";
 
 type ReconcileHistoryItem = {
   id: number;
@@ -58,6 +60,8 @@ function CardTitleHelp({
 export default function OperationsPage() {
   const firestore = useFirestore();
   const { user } = useUser();
+  const { activeTenantId } = useActiveTenant();
+  const tenantId = activeTenantId;
   const [syncStatus, setSyncStatus] = useState<SyncStatusSnapshot>(getSyncStatusSnapshot());
   const [history, setHistory] = useState<ReconcileHistoryItem[]>([]);
   const [isHistoryLoading, setIsHistoryLoading] = useState(false);
@@ -73,15 +77,18 @@ export default function OperationsPage() {
   }, []);
 
   const ordersQuery = useMemo(() => {
-    if (!firestore || !user) return null;
-    return query(collection(firestore, "orders"), where("createdAt", ">=", Timestamp.fromDate(today)));
-  }, [firestore, user, today]);
+    if (!firestore || !tenantId) return null;
+    return query(
+      collection(firestore, getTenantCollectionPath(tenantId, "orders")),
+      where("createdAt", ">=", Timestamp.fromDate(today))
+    );
+  }, [firestore, tenantId, today]);
   const { data: todayOrdersData } = useCollection<Order>(ordersQuery);
 
   const suppliesQuery = useMemo(() => {
-    if (!firestore || !user) return null;
-    return query(collection(firestore, "supplies"), where("isActive", "==", true));
-  }, [firestore, user]);
+    if (!firestore || !tenantId) return null;
+    return query(collection(firestore, getTenantCollectionPath(tenantId, "supplies")), where("isActive", "==", true));
+  }, [firestore, tenantId]);
   const { data: suppliesData } = useCollection<Supply>(suppliesQuery);
 
   const userProfileRef = useMemo(() => {
@@ -91,19 +98,19 @@ export default function OperationsPage() {
   const { data: userProfile } = useDoc<UserProfile>(userProfileRef);
 
   const cashRegisterRef = useMemo(() => {
-    if (!firestore || !user?.uid || !userProfile?.activeCashRegisterId) return null;
-    return doc(firestore, `users/${user.uid}/cash_registers`, userProfile.activeCashRegisterId);
-  }, [firestore, user, userProfile]);
+    if (!firestore || !tenantId || !userProfile?.activeCashRegisterId) return null;
+    return doc(firestore, getTenantCollectionPath(tenantId, "cash_registers"), userProfile.activeCashRegisterId);
+  }, [firestore, tenantId, userProfile]);
   const { data: activeCashRegister } = useDoc<CashRegister>(cashRegisterRef);
 
   const movementsQuery = useMemo(() => {
-    if (!firestore || !user || !activeCashRegister) return null;
+    if (!firestore || !tenantId || !activeCashRegister) return null;
     return query(
-      collection(firestore, `users/${user.uid}/cash_registers/${activeCashRegister.id}/financial_movements`),
+      collection(firestore, `${getTenantCollectionPath(tenantId, "cash_registers")}/${activeCashRegister.id}/financial_movements`),
       orderBy("movementDate", "desc"),
       limit(200)
     );
-  }, [firestore, user, activeCashRegister]);
+  }, [firestore, tenantId, activeCashRegister]);
   const { data: movementsData } = useCollection<FinancialMovement>(movementsQuery);
 
   const todayOrders = useMemo(() => todayOrdersData ?? [], [todayOrdersData]);
@@ -490,3 +497,6 @@ export default function OperationsPage() {
     </div>
   );
 }
+
+
+

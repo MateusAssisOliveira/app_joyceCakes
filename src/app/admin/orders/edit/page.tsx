@@ -8,26 +8,29 @@ import { useUser, useCollection, useFirestore, useDoc } from '@/firebase';
 import { collection, query, doc } from 'firebase/firestore';
 import type { Order, Product } from "@/types";
 import { Loader } from "lucide-react";
+import { getTenantCollectionPath } from "@/lib/tenant";
+import { useActiveTenant } from "@/hooks/use-active-tenant";
 
 // Este componente agora busca os dados no cliente
 function OrderDataLoader() {
   const firestore = useFirestore();
   const { user } = useUser();
+  const { activeTenantId } = useActiveTenant();
   const searchParams = useSearchParams();
   const orderId = searchParams.get('id');
 
   // Busca os produtos
   const productsQuery = useMemo(() => {
-    if (!firestore || !user) return null;
-    return query(collection(firestore, "products"));
-  }, [firestore, user]);
+    if (!firestore || !activeTenantId) return null;
+    return query(collection(firestore, getTenantCollectionPath(activeTenantId, "products")));
+  }, [firestore, activeTenantId]);
   const { data: products, isLoading: areProductsLoading } = useCollection<Product>(productsQuery);
 
   // Busca o pedido específico
   const orderRef = useMemo(() => {
-    if (!firestore || !orderId) return null;
-    return doc(firestore, 'orders', orderId);
-  }, [firestore, orderId]);
+    if (!firestore || !orderId || !activeTenantId) return null;
+    return doc(firestore, getTenantCollectionPath(activeTenantId, "orders"), orderId);
+  }, [firestore, orderId, activeTenantId]);
   const { data: order, isLoading: isOrderLoading } = useDoc<Order>(orderRef);
 
   const isLoading = areProductsLoading || isOrderLoading;
@@ -41,7 +44,7 @@ function OrderDataLoader() {
     );
   }
 
-  return <EditOrderClient order={order} products={products || []} />;
+  return <EditOrderClient order={order} products={products || []} tenantId={activeTenantId || undefined} />;
 }
 
 export default function EditOrderPage() {

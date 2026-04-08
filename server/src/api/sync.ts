@@ -1,5 +1,5 @@
 // server/src/api/sync.ts
-// 🔄 Endpoint Principal de Sincronização
+// Endpoint principal de sincronizacao
 
 import express, { Request, Response, Router } from 'express';
 import { queryAll, queryOne, query } from '../db/postgres';
@@ -11,6 +11,7 @@ interface SyncRequest {
   table: string;
   lastSync?: string;
   machineId: string;
+  tenantId?: string;
   localUpdates?: any[];
 }
 
@@ -29,53 +30,154 @@ interface TableSummary {
 
 interface ReconcileRequest {
   machineId?: string;
+  tenantId?: string;
   clientSummary?: Record<string, { count?: number; latestUpdatedAt?: string | null }>;
 }
 
 interface BootstrapRequest {
   machineId: string;
+  tenantId?: string;
   localUpdates?: any[];
 }
 
-// Rotas permitidas para sincronização
-const allowedTables = ['products', 'orders', 'supplies', 'order_items'];
+const allowedTables = ['products', 'orders', 'supplies', 'order_items', 'technical_sheets'];
+const tenantScopedTables = new Set(allowedTables);
+const tableColumns: Record<string, Set<string>> = {
+  products: new Set([
+    'tenantid',
+    'name',
+    'description',
+    'price',
+    'costprice',
+    'category',
+    'imageurlid',
+    'stock_quantity',
+    'isactive',
+  ]),
+  orders: new Set([
+    'tenantid',
+    'ordernumber',
+    'customername',
+    'userid',
+    'cashregisterid',
+    'paymentmethod',
+    'total',
+    'totalcost',
+    'status',
+  ]),
+  supplies: new Set([
+    'tenantid',
+    'name',
+    'sku',
+    'category',
+    'type',
+    'stock',
+    'unit',
+    'costperunit',
+    'purchaseformat',
+    'packagecost',
+    'packagequantity',
+    'supplier',
+    'lastpurchasedate',
+    'expirationdate',
+    'minstock',
+    'isactive',
+  ]),
+  order_items: new Set([
+    'tenantid',
+    'order_id',
+    'product_id',
+    'quantity',
+    'price',
+  ]),
+  technical_sheets: new Set([
+    'tenantid',
+    'name',
+    'description',
+    'type',
+    'components',
+    'steps',
+    'yield',
+    'totalcost',
+    'suggestedprice',
+    'preparationtime',
+    'laborcost',
+    'fixedcost',
+    'isactive',
+  ]),
+};
+const diagnosticsFields: Record<string, string[]> = {
+  products: ['name', 'price', 'costprice', 'category', 'stock_quantity', 'isactive'],
+  orders: ['ordernumber', 'customername', 'paymentmethod', 'total', 'status'],
+  supplies: [
+    'name',
+    'type',
+    'category',
+    'stock',
+    'unit',
+    'costperunit',
+    'purchaseformat',
+    'packagecost',
+    'packagequantity',
+    'minstock',
+    'isactive',
+  ],
+  technical_sheets: ['name', 'components', 'totalcost', 'isactive'],
+};
 
-/**
- * GET /api/sync/reconcile
- * Obter resumo atual do servidor por tabela.
- */
+function normalizeTenantId(value: unknown): string | undefined {
+  if (typeof value !== 'string') return undefined;
+  const normalized = value.trim();
+  return normalized.length > 0 ? normalized : undefined;
+}
+
+function resolveTenantId(req: Request, body?: any): string | undefined {
+  return (
+    normalizeTenantId(body?.tenantId) ||
+    normalizeTenantId(req.query?.tenantId) ||
+    normalizeTenantId(req.header('x-tenant-id'))
+  );
+}
+
+function tenantWhereClause(
+  table: string,
+  tenantId: string | undefined,
+  startParamIndex: number,
+  column = 'tenantId'
+): { sql: string; params: unknown[] } {
+  if (!tenantId || !tenantScopedTables.has(table)) {
+    return { sql: '', params: [] };
+  }
+  return {
+    sql: ` AND ${column} = $${startParamIndex}`,
+    params: [tenantId],
+  };
+}
+
 router.get('/reconcile', async (req: Request, res: Response) => {
   try {
-    const serverSummary = await buildServerSummary();
+    const tenantId = resolveTenantId(req);
+    const serverSummary = await buildServerSummary(tenantId);
     res.json({
       success: true,
       serverSummary,
+      tenantId: tenantId || null,
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error('❌ Erro ao reconciliar (GET):', error);
+    console.error('Erro ao reconciliar (GET):', error);
     res.status(500).json({
       success: false,
-      error: error instanceof Error ? error.message : 'Erro na reconciliação',
+      error: error instanceof Error ? error.message : 'Erro na reconciliacao',
     });
   }
 });
 
-/**
- * POST /api/sync/reconcile
- * Comparar snapshot do cliente com estado do servidor.
- *
- * Body:
- * {
- *   "clientSummary": {
- *     "products": { "count": 10, "latestUpdatedAt": "2026-02-11T18:00:00.000Z" }
- *   }
- * }
- */
 router.post('/reconcile', async (req: Request, res: Response) => {
   try {
     const { machineId, clientSummary = {} }: ReconcileRequest = req.body || {};
-    const serverSummary = await buildServerSummary();
+    const tenantId = resolveTenantId(req, req.body);
+    const serverSummary = await buildServerSummary(tenantId);
 
     const mismatches = serverSummary
       .map((serverTable) => {
@@ -94,9 +196,7 @@ router.post('/reconcile', async (req: Request, res: Response) => {
           normalizeTimestamp(clientTable.latestUpdatedAt) !==
           normalizeTimestamp(serverTable.latestUpdatedAt);
 
-        if (!countMismatch && !latestMismatch) {
-          return null;
-        }
+        if (!countMismatch && !latestMismatch) return null;
 
         return {
           table: serverTable.table,
@@ -116,6 +216,7 @@ router.post('/reconcile', async (req: Request, res: Response) => {
 
     await persistReconcileResult({
       machineId: machineId || null,
+      tenantId: tenantId || null,
       serverSummary,
       mismatches: mismatches as Array<Record<string, unknown>>,
       isConsistent: mismatches.length === 0,
@@ -124,23 +225,20 @@ router.post('/reconcile', async (req: Request, res: Response) => {
     res.json({
       success: true,
       isConsistent: mismatches.length === 0,
+      tenantId: tenantId || null,
       serverSummary,
       mismatches,
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error('❌ Erro ao reconciliar (POST):', error);
+    console.error('Erro ao reconciliar (POST):', error);
     res.status(500).json({
       success: false,
-      error: error instanceof Error ? error.message : 'Erro na reconciliação',
+      error: error instanceof Error ? error.message : 'Erro na reconciliacao',
     });
   }
 });
 
-/**
- * GET /api/sync/reconcile/history?limit=20&machineId=machine-1&onlyInconsistent=true
- * Consultar histórico de reconciliações para auditoria.
- */
 router.get('/reconcile/history', async (req: Request, res: Response) => {
   try {
     const { limit, machineId, onlyInconsistent } = req.query as {
@@ -149,6 +247,7 @@ router.get('/reconcile/history', async (req: Request, res: Response) => {
       onlyInconsistent?: string;
     };
 
+    const tenantId = resolveTenantId(req);
     const parsedLimit = Math.min(Math.max(parseInt(limit || '20', 10), 1), 200);
     const where: string[] = [];
     const params: unknown[] = [];
@@ -158,6 +257,11 @@ router.get('/reconcile/history', async (req: Request, res: Response) => {
       where.push(`machine_id = $${params.length}`);
     }
 
+    if (tenantId) {
+      params.push(tenantId);
+      where.push(`tenant_id = $${params.length}`);
+    }
+
     if (onlyInconsistent === 'true') {
       where.push('is_consistent = false');
     }
@@ -165,7 +269,7 @@ router.get('/reconcile/history', async (req: Request, res: Response) => {
     params.push(parsedLimit);
     const whereClause = where.length ? `WHERE ${where.join(' AND ')}` : '';
     const rows = await queryAll(
-      `SELECT id, machine_id, is_consistent, mismatches_count, server_summary, mismatches, created_at
+      `SELECT id, machine_id, tenant_id, is_consistent, mismatches_count, server_summary, mismatches, created_at
        FROM reconcile_log
        ${whereClause}
        ORDER BY created_at DESC
@@ -180,29 +284,75 @@ router.get('/reconcile/history', async (req: Request, res: Response) => {
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error('❌ Erro ao buscar histórico de reconciliação:', error);
+    console.error('Erro ao buscar historico de reconciliacao:', error);
     res.status(500).json({
       success: false,
-      error: error instanceof Error ? error.message : 'Erro ao buscar histórico',
+      error: error instanceof Error ? error.message : 'Erro ao buscar historico',
     });
   }
 });
 
-/**
- * POST /api/sync/bootstrap/:table
- * Bootstrap inicial (one-shot) de uma tabela quando o servidor ainda está vazio.
- */
+router.get('/diagnostics', async (req: Request, res: Response) => {
+  try {
+    const tenantId = resolveTenantId(req);
+    const output: Record<string, unknown> = {};
+
+    for (const table of allowedTables) {
+      const where = tenantId && tenantScopedTables.has(table) ? 'WHERE tenantId = $1' : '';
+      const params = tenantId && tenantScopedTables.has(table) ? [tenantId] : [];
+      const base = await queryOne(
+        `SELECT COUNT(*)::int AS total, MAX(updatedAt) AS latest_updated_at FROM ${table} ${where}`,
+        params
+      );
+
+      const required = diagnosticsFields[table] || [];
+      const missingByField: Record<string, number> = {};
+
+      for (const field of required) {
+        const missing = await queryOne(
+          `SELECT COUNT(*)::int AS missing
+           FROM ${table}
+           ${where ? `${where} AND` : 'WHERE'}
+           (${field} IS NULL OR (CAST(${field} AS TEXT) = ''))`,
+          params
+        );
+        missingByField[field] = missing?.missing ?? 0;
+      }
+
+      output[table] = {
+        total: base?.total ?? 0,
+        latestUpdatedAt: base?.latest_updated_at ? new Date(base.latest_updated_at).toISOString() : null,
+        missingByField,
+      };
+    }
+
+    res.json({
+      success: true,
+      tenantId: tenantId || null,
+      diagnostics: output,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error('Erro ao gerar diagnostico:', error);
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Erro ao gerar diagnostico',
+    });
+  }
+});
+
 router.post('/bootstrap/:table', async (req: Request, res: Response) => {
   try {
     const { table } = req.params;
     const { machineId, localUpdates = [] }: BootstrapRequest = req.body || {};
+    const tenantId = resolveTenantId(req, req.body);
 
     if (!allowedTables.includes(table)) {
-      return res.status(400).json({ success: false, error: 'Tabela inválida' });
+      return res.status(400).json({ success: false, error: 'Tabela invalida' });
     }
 
     if (!machineId) {
-      return res.status(400).json({ success: false, error: 'machineId é obrigatório' });
+      return res.status(400).json({ success: false, error: 'machineId e obrigatorio' });
     }
 
     const bootstrapState = await queryOne(
@@ -211,30 +361,27 @@ router.post('/bootstrap/:table', async (req: Request, res: Response) => {
     );
 
     if (bootstrapState?.status === 'completed') {
-      return res.json({
-        success: true,
-        bootstrapped: false,
-        reason: 'already_completed',
-      });
+      return res.json({ success: true, bootstrapped: false, reason: 'already_completed' });
     }
 
     if (bootstrapState?.status === 'in_progress' && bootstrapState.machine_id !== machineId) {
-      return res.json({
-        success: true,
-        bootstrapped: false,
-        reason: 'locked_by_other_machine',
-      });
+      return res.json({ success: true, bootstrapped: false, reason: 'locked_by_other_machine' });
     }
 
     await query(
-      `INSERT INTO bootstrap_state (table_name, status, machine_id, started_at, records_count)
-       VALUES ($1, 'in_progress', $2, NOW(), 0)
+      `INSERT INTO bootstrap_state (table_name, status, tenant_id, machine_id, started_at, records_count)
+       VALUES ($1, 'in_progress', $2, $3, NOW(), 0)
        ON CONFLICT (table_name)
-       DO UPDATE SET status = 'in_progress', machine_id = $2, started_at = NOW()`,
-      [table, machineId]
+       DO UPDATE SET status = 'in_progress', tenant_id = $2, machine_id = $3, started_at = NOW()`,
+      [table, tenantId || null, machineId]
     );
 
-    const currentCountRow = await queryOne(`SELECT COUNT(*)::int AS count FROM ${table}`);
+    const countTenantFilter = tenantWhereClause(table, tenantId, 1);
+    const currentCountRow = await queryOne(
+      `SELECT COUNT(*)::int AS count FROM ${table} WHERE 1=1${countTenantFilter.sql}`,
+      [...countTenantFilter.params]
+    );
+
     if ((currentCountRow?.count ?? 0) > 0) {
       await query(
         `UPDATE bootstrap_state
@@ -242,11 +389,7 @@ router.post('/bootstrap/:table', async (req: Request, res: Response) => {
          WHERE table_name = $1`,
         [table, currentCountRow.count]
       );
-      return res.json({
-        success: true,
-        bootstrapped: false,
-        reason: 'server_not_empty',
-      });
+      return res.json({ success: true, bootstrapped: false, reason: 'server_not_empty' });
     }
 
     let processed = 0;
@@ -261,7 +404,7 @@ router.post('/bootstrap/:table', async (req: Request, res: Response) => {
       }
 
       try {
-        const { recordId } = await upsertRecord(table, record, machineId);
+        const { recordId } = await upsertRecord(table, record, machineId, tenantId);
         if (eventId) {
           await markEventProcessed(eventId, table, recordId, machineId);
         }
@@ -289,7 +432,7 @@ router.post('/bootstrap/:table', async (req: Request, res: Response) => {
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error('❌ Erro no bootstrap inicial:', error);
+    console.error('Erro no bootstrap inicial:', error);
     return res.status(500).json({
       success: false,
       error: error instanceof Error ? error.message : 'Erro no bootstrap',
@@ -297,44 +440,30 @@ router.post('/bootstrap/:table', async (req: Request, res: Response) => {
   }
 });
 
-/**
- * POST /api/sync/:table
- * Sincronizar uma tabela específica
- *
- * Body:
- * {
- *   "lastSync": "2026-02-06T10:00:00Z",
- *   "machineId": "machine-1",
- *   "localUpdates": [...]
- * }
- */
 router.post('/:table', async (req: Request, res: Response) => {
   try {
     const { table } = req.params;
     const { lastSync, machineId, localUpdates = [] }: SyncRequest = req.body;
+    const tenantId = resolveTenantId(req, req.body);
 
-    // Validar tabela (contra SQL injection)
     if (!allowedTables.includes(table)) {
-      return res.status(400).json({ error: 'Tabela inválida' });
+      return res.status(400).json({ error: 'Tabela invalida' });
     }
 
-    console.log(`🔄 Sincronizando: ${table} (máquina: ${machineId})`);
+    console.log(`Sincronizando: ${table} (maquina: ${machineId}, tenant: ${tenantId || 'GLOBAL'})`);
 
-    // 1️⃣ Inserir/atualizar dados locais no servidor
     const conflicts: any[] = [];
-    
+
     for (const update of localUpdates) {
       const { eventId, record } = normalizeUpdate(update);
 
       if (eventId) {
         const alreadyProcessed = await isEventProcessed(eventId);
-        if (alreadyProcessed) {
-          continue;
-        }
+        if (alreadyProcessed) continue;
       }
 
       try {
-        const { recordId, action } = await upsertRecord(table, record, machineId);
+        const { recordId, action } = await upsertRecord(table, record, machineId, tenantId);
 
         if (eventId) {
           await markEventProcessed(eventId, table, recordId, machineId);
@@ -344,81 +473,74 @@ router.post('/:table', async (req: Request, res: Response) => {
           conflicts.push({
             id: recordId,
             error: 'Registro mais recente no servidor',
-            resolution: 'skipped_stale'
+            resolution: 'skipped_stale',
           });
         }
       } catch (error) {
         conflicts.push({
           id: record?.id,
           error: error instanceof Error ? error.message : 'Erro desconhecido',
-          resolution: 'skipped'
+          resolution: 'skipped',
         });
       }
     }
 
-    // 2️⃣ Buscar dados novos desde lastSync
-    const syncedData = await fetchNewData(table, lastSync);
+    const syncedData = await fetchNewData(table, lastSync, tenantId);
 
     const response: SyncResponse = {
       success: true,
       synced: syncedData,
       conflicts,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     res.json(response);
   } catch (error) {
-    console.error('❌ Erro ao sincronizar:', error);
+    console.error('Erro ao sincronizar:', error);
     res.status(500).json({
       success: false,
-      error: error instanceof Error ? error.message : 'Erro na sincronização'
+      error: error instanceof Error ? error.message : 'Erro na sincronizacao',
     });
   }
 });
 
-/**
- * GET /api/sync/:table?lastSync=2026-02-06T10:00:00Z
- * Apenas obter dados novos (sem enviar updates)
- */
 router.get('/:table', async (req: Request, res: Response) => {
   try {
     const { table } = req.params;
     const { lastSync } = req.query as { lastSync?: string };
+    const tenantId = resolveTenantId(req);
 
-    // Validar tabela
     if (!allowedTables.includes(table)) {
-      return res.status(400).json({ error: 'Tabela inválida' });
+      return res.status(400).json({ error: 'Tabela invalida' });
     }
 
-    console.log(`📥 Obtendo dados de: ${table} desde ${lastSync || 'sempre'}`);
+    console.log(`Obtendo dados de: ${table} desde ${lastSync || 'sempre'} (tenant: ${tenantId || 'GLOBAL'})`);
 
-    const data = await fetchNewData(table, lastSync);
+    const data = await fetchNewData(table, lastSync, tenantId);
 
     res.json({
       success: true,
       data,
       count: data.length,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error('❌ Erro ao buscar dados:', error);
+    console.error('Erro ao buscar dados:', error);
     res.status(500).json({
       success: false,
-      error: error instanceof Error ? error.message : 'Erro ao buscar dados'
+      error: error instanceof Error ? error.message : 'Erro ao buscar dados',
     });
   }
 });
 
-/**
- * Inserir ou atualizar registro
- */
 async function upsertRecord(
   table: string,
   record: any,
-  machineId: string
+  machineId: string,
+  tenantId?: string
 ): Promise<{ recordId: string; action: 'UPDATE' | 'INSERT' | 'SKIP_STALE' | 'DELETE' }> {
   if (!record || typeof record !== 'object') {
-    throw new Error('Registro inválido para sincronização');
+    throw new Error('Registro invalido para sincronizacao');
   }
 
   if (record._op === 'delete') {
@@ -426,18 +548,24 @@ async function upsertRecord(
       throw new Error('Delete sem id');
     }
 
-    await query(`DELETE FROM ${table} WHERE id = $1`, [record.id]);
+    const delTenantFilter = tenantWhereClause(table, tenantId, 2);
     await query(
-      `INSERT INTO deleted_records (table_name, record_id, machine_id, deleted_at)
-       VALUES ($1, $2, $3, NOW())
-       ON CONFLICT (table_name, record_id)
-       DO UPDATE SET deleted_at = EXCLUDED.deleted_at, machine_id = EXCLUDED.machine_id`,
-      [table, record.id, machineId]
+      `DELETE FROM ${table} WHERE id = $1${delTenantFilter.sql}`,
+      [record.id, ...delTenantFilter.params]
     );
+
     await query(
-      `INSERT INTO sync_log (table_name, record_id, action, machine_id)
-       VALUES ($1, $2, $3, $4)`,
-      [table, record.id, 'DELETE', machineId]
+      `INSERT INTO deleted_records (table_name, record_id, tenant_id, machine_id, deleted_at)
+       VALUES ($1, $2, $3, $4, NOW())
+       ON CONFLICT (table_name, record_id)
+       DO UPDATE SET deleted_at = EXCLUDED.deleted_at, machine_id = EXCLUDED.machine_id, tenant_id = EXCLUDED.tenant_id`,
+      [table, record.id, tenantId || null, machineId]
+    );
+
+    await query(
+      `INSERT INTO sync_log (table_name, record_id, tenant_id, action, machine_id)
+       VALUES ($1, $2, $3, $4, $5)`,
+      [table, record.id, tenantId || null, 'DELETE', machineId]
     );
 
     return { recordId: record.id, action: 'DELETE' };
@@ -445,43 +573,47 @@ async function upsertRecord(
 
   const incomingUpdatedAt = record.updatedAt ? new Date(record.updatedAt) : null;
 
-  const columns = Object.keys(record)
-    .filter(k => k !== 'id' && k !== 'createdAt' && k !== 'eventId' && k !== 'updatedAt')
-    .concat('updatedAt');
-  
-  const values = Object.values(record)
-    .filter((_, i) => !Object.keys(record)[i].match(/^(id|createdAt|eventId|updatedAt)$/))
-    .concat(new Date());
-
-  // Garantir que ID existe
   if (!record.id) {
     record.id = uuidv4();
   }
 
-  // Verificar se já existe
+  if (tenantId && tenantScopedTables.has(table) && !record.tenantId) {
+    record.tenantId = tenantId;
+  }
+
+  const allowedColumns = tableColumns[table] || new Set<string>();
+  const sourceKeys = Object.keys(record).filter((k) => {
+    if (k === 'id' || k === 'createdAt' || k === 'eventId' || k === 'updatedAt') {
+      return false;
+    }
+    return allowedColumns.has(k.toLowerCase());
+  });
+  const columns = [...sourceKeys, 'updatedAt'];
+  const values = [...sourceKeys.map((k) => record[k]), new Date()];
+
+  const existsTenantFilter = tenantWhereClause(table, tenantId, 2);
   const existing = await queryOne(
-    `SELECT id, updatedAt FROM ${table} WHERE id = $1`,
-    [record.id]
+    `SELECT id, updatedAt FROM ${table} WHERE id = $1${existsTenantFilter.sql}`,
+    [record.id, ...existsTenantFilter.params]
   );
 
   if (existing) {
     if (incomingUpdatedAt && existing.updatedat && existing.updatedat > incomingUpdatedAt) {
       await query(
-        `INSERT INTO sync_log (table_name, record_id, action, machine_id)
-         VALUES ($1, $2, $3, $4)`,
-        [table, record.id, 'SKIP_STALE', machineId]
+        `INSERT INTO sync_log (table_name, record_id, tenant_id, action, machine_id)
+         VALUES ($1, $2, $3, $4, $5)`,
+        [table, record.id, tenantId || null, 'SKIP_STALE', machineId]
       );
       return { recordId: record.id, action: 'SKIP_STALE' };
     }
 
-    // UPDATE
     const setClause = columns.map((col, i) => `${col} = $${i + 1}`).join(', ');
+    const updateTenantFilter = tenantWhereClause(table, tenantId, columns.length + 2);
     await query(
-      `UPDATE ${table} SET ${setClause} WHERE id = $${columns.length + 1}`,
-      [...values, record.id]
+      `UPDATE ${table} SET ${setClause} WHERE id = $${columns.length + 1}${updateTenantFilter.sql}`,
+      [...values, record.id, ...updateTenantFilter.params]
     );
   } else {
-    // INSERT
     const placeholders = Array.from({ length: columns.length + 1 }, (_, i) => `$${i + 1}`).join(', ');
     const cols = [...columns, 'id'].join(', ');
     await query(
@@ -490,39 +622,37 @@ async function upsertRecord(
     );
   }
 
-  // Se o registro foi recriado/atualizado, remove tombstone antigo
   await query(
     `DELETE FROM deleted_records WHERE table_name = $1 AND record_id = $2`,
     [table, record.id]
   );
 
-  // Log de sincronização
   await query(
-    `INSERT INTO sync_log (table_name, record_id, action, machine_id)
-     VALUES ($1, $2, $3, $4)`,
-    [table, record.id, existing ? 'UPDATE' : 'INSERT', machineId]
+    `INSERT INTO sync_log (table_name, record_id, tenant_id, action, machine_id)
+     VALUES ($1, $2, $3, $4, $5)`,
+    [table, record.id, tenantId || null, existing ? 'UPDATE' : 'INSERT', machineId]
   );
 
   return { recordId: record.id, action: existing ? 'UPDATE' : 'INSERT' };
 }
 
-/**
- * Buscar dados novos desde um timestamp
- */
-async function fetchNewData(table: string, lastSync?: string): Promise<any[]> {
+async function fetchNewData(table: string, lastSync?: string, tenantId?: string): Promise<any[]> {
   const deletedRows = lastSync
     ? await queryAll(
         `SELECT record_id, deleted_at FROM deleted_records
-         WHERE table_name = $1 AND deleted_at > $2
+         WHERE table_name = $1
+           AND ($2::text IS NULL OR tenant_id = $2)
+           AND deleted_at > $3
          ORDER BY deleted_at DESC`,
-        [table, lastSync]
+        [table, tenantId || null, lastSync]
       )
     : await queryAll(
         `SELECT record_id, deleted_at FROM deleted_records
          WHERE table_name = $1
+           AND ($2::text IS NULL OR tenant_id = $2)
          ORDER BY deleted_at DESC
          LIMIT 1000`,
-        [table]
+        [table, tenantId || null]
       );
 
   const deleted = deletedRows.map((row: { record_id: string; deleted_at: string | Date }) => ({
@@ -532,20 +662,36 @@ async function fetchNewData(table: string, lastSync?: string): Promise<any[]> {
   }));
 
   if (!lastSync) {
-    // Se não tem lastSync, retorna todos (primeira sincronização)
-    const rows = await queryAll(`SELECT * FROM ${table} ORDER BY updatedAt DESC LIMIT 1000`);
+    const rows = tenantId
+      ? await queryAll(
+          `SELECT * FROM ${table}
+           WHERE tenantId = $1
+           ORDER BY updatedAt DESC
+           LIMIT 1000`,
+          [tenantId]
+        )
+      : await queryAll(`SELECT * FROM ${table} ORDER BY updatedAt DESC LIMIT 1000`);
+
     const data = [...rows, ...deleted];
     data.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
     return data;
   }
 
-  // Retorna apenas o que foi modificado depois de lastSync
-  const updatedRows = await queryAll(
-    `SELECT * FROM ${table} 
-     WHERE updatedAt > $1 
-     ORDER BY updatedAt DESC`,
-    [lastSync]
-  );
+  const updatedRows = tenantId
+    ? await queryAll(
+        `SELECT * FROM ${table}
+         WHERE updatedAt > $1
+           AND tenantId = $2
+         ORDER BY updatedAt DESC`,
+        [lastSync, tenantId]
+      )
+    : await queryAll(
+        `SELECT * FROM ${table}
+         WHERE updatedAt > $1
+         ORDER BY updatedAt DESC`,
+        [lastSync]
+      );
+
   const data = [...updatedRows, ...deleted];
   data.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
   return data;
@@ -569,10 +715,7 @@ function normalizeUpdate(update: any): { eventId?: string; record: any } {
 }
 
 async function isEventProcessed(eventId: string): Promise<boolean> {
-  const existing = await queryOne(
-    'SELECT event_id FROM sync_events WHERE event_id = $1',
-    [eventId]
-  );
+  const existing = await queryOne('SELECT event_id FROM sync_events WHERE event_id = $1', [eventId]);
   return Boolean(existing);
 }
 
@@ -589,13 +732,21 @@ async function markEventProcessed(
   );
 }
 
-async function buildServerSummary(): Promise<TableSummary[]> {
+async function buildServerSummary(tenantId?: string): Promise<TableSummary[]> {
   const summaries: TableSummary[] = [];
 
   for (const table of allowedTables) {
-    const row = await queryOne(
-      `SELECT COUNT(*)::int AS count, MAX(updatedAt) AS latest_updated_at FROM ${table}`
-    );
+    const row = tenantId
+      ? await queryOne(
+          `SELECT COUNT(*)::int AS count, MAX(updatedAt) AS latest_updated_at
+           FROM ${table}
+           WHERE tenantId = $1`,
+          [tenantId]
+        )
+      : await queryOne(
+          `SELECT COUNT(*)::int AS count, MAX(updatedAt) AS latest_updated_at FROM ${table}`
+        );
+
     summaries.push({
       table,
       count: row?.count ?? 0,
@@ -608,15 +759,17 @@ async function buildServerSummary(): Promise<TableSummary[]> {
 
 async function persistReconcileResult(input: {
   machineId: string | null;
+  tenantId: string | null;
   isConsistent: boolean;
   serverSummary: TableSummary[];
   mismatches: Array<Record<string, unknown>>;
 }): Promise<void> {
   await query(
-    `INSERT INTO reconcile_log (machine_id, is_consistent, mismatches_count, server_summary, mismatches)
-     VALUES ($1, $2, $3, $4::jsonb, $5::jsonb)`,
+    `INSERT INTO reconcile_log (machine_id, tenant_id, is_consistent, mismatches_count, server_summary, mismatches)
+     VALUES ($1, $2, $3, $4, $5::jsonb, $6::jsonb)`,
     [
       input.machineId,
+      input.tenantId,
       input.isConsistent,
       input.mismatches.length,
       JSON.stringify(input.serverSummary),
@@ -626,13 +779,9 @@ async function persistReconcileResult(input: {
 }
 
 function normalizeTimestamp(ts?: string | null): string | null {
-  if (!ts) {
-    return null;
-  }
+  if (!ts) return null;
   const date = new Date(ts);
-  if (Number.isNaN(date.getTime())) {
-    return null;
-  }
+  if (Number.isNaN(date.getTime())) return null;
   return date.toISOString();
 }
 

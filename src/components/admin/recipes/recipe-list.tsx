@@ -55,7 +55,7 @@ export function RecipeList({ isLoading, recipes, onEditRecipe, onUpdate }: Recip
       const result = recipes.filter(recipe => {
           const isRecipeActive = recipe.isActive !== false;
           const matchesViewMode = viewMode === 'active' ? isRecipeActive : !isRecipeActive;
-          const isBaseType = recipe.type === 'base';
+          const isBaseType = !recipe.type || recipe.type === 'base';
           return matchesViewMode && isBaseType;
       });
       return result;

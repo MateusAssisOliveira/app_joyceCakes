@@ -5,11 +5,13 @@ import { useMemo } from "react";
 import { collection, query, Timestamp, where } from "firebase/firestore";
 import { DollarSign, Loader, PackageSearch, ShoppingBag, TrendingUp } from "lucide-react";
 import { useCollection, useFirestore, useUser } from "@/firebase";
+import { getTenantCollectionPath } from "@/lib/tenant";
 import { MetricCard } from "@/components/admin/metric-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Order, Supply } from "@/types";
+import { useActiveTenant } from "@/hooks/use-active-tenant";
 
 const COMPLETED_ORDER_STATUS = new Set(["Entregue", "Pronto para Retirada"]);
 
@@ -24,6 +26,7 @@ function toDate(value: unknown): Date {
 export default function DashboardPage() {
   const firestore = useFirestore();
   const { user } = useUser();
+  const { activeTenantId } = useActiveTenant();
 
   const todayStart = useMemo(() => {
     const date = new Date();
@@ -32,14 +35,17 @@ export default function DashboardPage() {
   }, []);
 
   const todayOrdersQuery = useMemo(() => {
-    if (!firestore || !user) return null;
-    return query(collection(firestore, "orders"), where("createdAt", ">=", Timestamp.fromDate(todayStart)));
-  }, [firestore, user, todayStart]);
+    if (!firestore || !activeTenantId) return null;
+    return query(
+      collection(firestore, getTenantCollectionPath(activeTenantId, "orders")),
+      where("createdAt", ">=", Timestamp.fromDate(todayStart))
+    );
+  }, [firestore, activeTenantId, todayStart]);
 
   const suppliesQuery = useMemo(() => {
-    if (!firestore || !user) return null;
-    return query(collection(firestore, "supplies"), where("isActive", "==", true));
-  }, [firestore, user]);
+    if (!firestore || !activeTenantId) return null;
+    return query(collection(firestore, getTenantCollectionPath(activeTenantId, "supplies")), where("isActive", "==", true));
+  }, [firestore, activeTenantId]);
 
   const { data: orders, isLoading: isOrdersLoading } = useCollection<Order>(todayOrdersQuery);
   const { data: supplies, isLoading: isSuppliesLoading } = useCollection<Supply>(suppliesQuery);

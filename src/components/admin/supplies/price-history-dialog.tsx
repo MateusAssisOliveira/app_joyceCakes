@@ -26,6 +26,7 @@ import type { Supply, PriceVariation } from "@/types";
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { toDate } from '@/lib/timestamp-utils';
+import { useActiveTenant } from "@/hooks/use-active-tenant";
 
 type PriceHistoryDialogProps = {
   supply: Supply;
@@ -37,11 +38,12 @@ export function PriceHistoryDialog({ supply, isOpen, onClose }: PriceHistoryDial
   const [history, setHistory] = useState<PriceVariation[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const firestore = useFirestore();
+  const { activeTenantId } = useActiveTenant();
 
   useEffect(() => {
     if (isOpen && firestore) {
       setIsLoading(true);
-      getPriceHistory(firestore, supply.id)
+      getPriceHistory(firestore, supply.id, activeTenantId || undefined)
       .then(data => {
         const sortedData = data.sort((a, b) => {
           const ad = toDate(a.date)?.getTime() ?? 0;
@@ -53,7 +55,7 @@ export function PriceHistoryDialog({ supply, isOpen, onClose }: PriceHistoryDial
         .catch(err => console.error(err))
         .finally(() => setIsLoading(false));
     }
-  }, [isOpen, firestore, supply.id]);
+  }, [isOpen, firestore, supply.id, activeTenantId]);
   
   const getDate = (item: PriceVariation) => {
       const d = toDate(item.date);

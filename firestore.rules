@@ -1,11 +1,7 @@
-
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // ---------------------------------------------------------------------
-    // Helper Functions
-    // ---------------------------------------------------------------------
     function isSignedIn() {
       return request.auth != null;
     }
@@ -14,48 +10,150 @@ service cloud.firestore {
       return isSignedIn() && request.auth.uid == userId;
     }
 
-    // ---------------------------------------------------------------------
-    // Collection Rules
-    // ---------------------------------------------------------------------
-    
-    // As coleções globais são acessíveis por qualquer funcionário (usuário autenticado).
-    match /products/{productId} { allow get, list, write: if isSignedIn(); }
-    
-    match /supplies/{supplyId} { 
-      allow get, list, write: if isSignedIn();
-      // Histórico de preços só pode ser lido ou criado, nunca alterado ou excluído.
-      match /price_history/{priceHistoryId} {
-        allow get, list: if isSignedIn();
-        allow create: if isSignedIn();
-        allow update, delete: if false;
-      }
+    function tenantDocPath(tenantId) {
+      return /databases/$(database)/documents/tenants/$(tenantId);
     }
 
-    match /financial_categories/{financialCategoryId} { allow get, list, write: if isSignedIn(); }
-    match /technical_sheets/{sheetId} { allow get, list, write: if isSignedIn(); }
-    match /orders/{orderId} {
-      allow get, list, write: if isSignedIn();
-      match /order_items/{orderItemId} {
-        allow get, list, write: if isSignedIn();
-      }
+    function memberDocPath(tenantId, uid) {
+      return /databases/$(database)/documents/tenants/$(tenantId)/members/$(uid);
     }
 
-    // Acesso aos dados do usuário.
+    function isTenantMember(tenantId) {
+      return isSignedIn() && exists(memberDocPath(tenantId, request.auth.uid));
+    }
+
+    function isTenantOwner(tenantId) {
+      return isTenantMember(tenantId)
+        && get(memberDocPath(tenantId, request.auth.uid)).data.role == 'owner';
+    }
+
+    function isTenantCreator(tenantId) {
+      return isSignedIn() && (
+        (exists(tenantDocPath(tenantId))
+          && get(tenantDocPath(tenantId)).data.ownerUserId == request.auth.uid)
+        ||
+        (existsAfter(tenantDocPath(tenantId))
+          && getAfter(tenantDocPath(tenantId)).data.ownerUserId == request.auth.uid)
+      );
+    }
+
+    function isTenantRootOwner(tenantId) {
+      return isSignedIn() && (
+        (exists(tenantDocPath(tenantId))
+          && get(tenantDocPath(tenantId)).data.ownerUserId == request.auth.uid)
+        ||
+        request.auth.uid == tenantId
+      );
+    }
+
     match /users/{userId} {
-      // Qualquer usuário autenticado pode ler o documento de perfil de outro usuário
-      // para encontrar seu caixa ativo, mas só o dono pode escrever no seu próprio perfil.
-      allow get: if isSignedIn();
-      allow list: if isSignedIn(); // Permite listar usuários, se necessário
-      allow write: if isOwner(userId);
+      allow get, create, update: if isOwner(userId);
+      allow list, delete: if false;
 
-      // Regras para a subcoleção de caixas.
-      // A operação 'list' foi removida e substituída por 'get' no documento principal do usuário.
       match /cash_registers/{cashRegisterId} {
-        allow get, create, update, delete: if isOwner(userId);
-        
-        // Regra para a sub-subcoleção de movimentações financeiras.
+        allow get, list: if isOwner(userId);
+        allow create, update, delete: if false;
+
         match /financial_movements/{movementId} {
-          allow get, list, create, update, delete: if isOwner(userId);
+          allow get, list: if isOwner(userId);
+          allow create, update, delete: if false;
+        }
+      }
+
+      match /{document=**} {
+        allow read, write: if false;
+      }
+    }
+
+    match /products/{docId} {
+      allow get, list: if isSignedIn();
+      allow create, update, delete: if false;
+    }
+
+    match /orders/{docId} {
+      allow get, list: if isSignedIn();
+      allow create, update, delete: if false;
+    }
+
+    match /technical_sheets/{docId} {
+      allow get, list: if isSignedIn();
+      allow create, update, delete: if false;
+    }
+
+    match /financial_categories/{docId} {
+      allow get, list: if isSignedIn();
+      allow create, update, delete: if false;
+    }
+
+    match /supplies/{supplyId} {
+      allow get, list: if isSignedIn();
+      allow create, update, delete: if false;
+
+      match /price_history/{docId} {
+        allow get, list: if isSignedIn();
+        allow create, update, delete: if false;
+      }
+    }
+
+    match /tenants/{tenantId} {
+      allow create: if isSignedIn() && request.resource.data.ownerUserId == request.auth.uid;
+      allow get: if isTenantMember(tenantId) || isTenantRootOwner(tenantId);
+      allow list: if false;
+      allow update: if isTenantOwner(tenantId)
+        || (isSignedIn() && resource.data.ownerUserId == request.auth.uid)
+        || (isSignedIn() && request.auth.uid == tenantId);
+      allow delete: if isTenantOwner(tenantId);
+
+      match /members/{memberUserId} {
+        allow get, list: if isTenantMember(tenantId) || isTenantRootOwner(tenantId);
+        allow create: if isTenantOwner(tenantId)
+          || isTenantCreator(tenantId)
+          || (isSignedIn()
+            && request.auth.uid == tenantId
+            && request.auth.uid == memberUserId
+            && request.resource.data.role == 'owner');
+        allow update: if isTenantOwner(tenantId)
+          || (isSignedIn()
+            && request.auth.uid == tenantId
+            && request.auth.uid == memberUserId
+            && request.resource.data.role == 'owner');
+        allow delete: if isTenantOwner(tenantId);
+      }
+
+      match /products/{productId} {
+        allow get, list, create, update, delete: if isTenantMember(tenantId) || isTenantRootOwner(tenantId);
+      }
+
+      match /supplies/{supplyId} {
+        allow get, list, create, update, delete: if isTenantMember(tenantId) || isTenantRootOwner(tenantId);
+
+        match /price_history/{priceHistoryId} {
+          allow get, list, create: if isTenantMember(tenantId) || isTenantRootOwner(tenantId);
+          allow update, delete: if false;
+        }
+      }
+
+      match /financial_categories/{financialCategoryId} {
+        allow get, list, create, update, delete: if isTenantMember(tenantId) || isTenantRootOwner(tenantId);
+      }
+
+      match /technical_sheets/{sheetId} {
+        allow get, list, create, update, delete: if isTenantMember(tenantId) || isTenantRootOwner(tenantId);
+      }
+
+      match /orders/{orderId} {
+        allow get, list, create, update, delete: if isTenantMember(tenantId) || isTenantRootOwner(tenantId);
+
+        match /order_items/{orderItemId} {
+          allow get, list, create, update, delete: if isTenantMember(tenantId) || isTenantRootOwner(tenantId);
+        }
+      }
+
+      match /cash_registers/{cashRegisterId} {
+        allow get, list, create, update, delete: if isTenantMember(tenantId) || isTenantRootOwner(tenantId);
+
+        match /financial_movements/{movementId} {
+          allow get, list, create, update, delete: if isTenantMember(tenantId) || isTenantRootOwner(tenantId);
         }
       }
     }

@@ -37,6 +37,7 @@ import { Search, Loader, ArrowRight } from "lucide-react";
 import type { Supply } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 import { SupplyFormDialog } from "@/components/admin/supplies/supply-form-dialog";
 import { SupplyQuickAddDialog } from "@/components/admin/supplies/supply-quick-add-dialog";
@@ -45,10 +46,52 @@ import { SupplyActions } from "@/components/admin/supplies/supply-actions";
 import { SupplyTable } from "@/components/admin/supplies/supply-table";
 import { collection, query } from 'firebase/firestore';
 import Papa from "papaparse";
+import { getTenantCollectionPath } from "@/lib/tenant";
+import { useActiveTenant } from "@/hooks/use-active-tenant";
 
 
 type SortKey = keyof Supply | '';
 type SortDirection = 'asc' | 'desc';
+
+const PACKAGING_KEYWORDS = [
+  "embal",
+  "caixa",
+  "pote",
+  "bandeja",
+  "tampa",
+  "saco",
+  "sacola",
+  "frasco",
+  "garrafa",
+  "forma",
+  "papel",
+  "adesivo",
+  "fita",
+  "tag",
+  "copo",
+  "colher",
+  "prato",
+];
+
+function resolveSupplyType(supply: Supply): "ingredient" | "packaging" {
+  if (supply.type === "packaging" || supply.type === "ingredient") {
+    return supply.type;
+  }
+
+  const haystack = [
+    supply.name,
+    supply.category,
+    supply.sku,
+    supply.purchaseFormat,
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+  return PACKAGING_KEYWORDS.some((keyword) => haystack.includes(keyword))
+    ? "packaging"
+    : "ingredient";
+}
 
 export function InventoryClient() {
   const [selectedSupplyId, setSelectedSupplyId] = useState<string | null>(null);
@@ -67,11 +110,12 @@ export function InventoryClient() {
 
   const firestore = useFirestore();
   const { user } = useUser();
+  const { activeTenantId } = useActiveTenant();
   
   const suppliesQuery = useMemo(() => {
-    if (!firestore || !user) return null;
-    return query(collection(firestore, 'supplies'));
-  }, [firestore, user]);
+    if (!firestore || !activeTenantId) return null;
+    return query(collection(firestore, getTenantCollectionPath(activeTenantId, "supplies")));
+  }, [firestore, activeTenantId]);
 
   const { data: allSupplies, isLoading } = useCollection<Supply>(suppliesQuery);
   
@@ -108,7 +152,8 @@ export function InventoryClient() {
 
   const filteredSupplies = useMemo(() => {
     return sortedSupplies.filter(s => {
-        const matchesType = activeTab === 'all' || s.type === activeTab;
+        const resolvedType = resolveSupplyType(s);
+        const matchesType = activeTab === 'all' || resolvedType === activeTab;
         const isItemActive = s.isActive !== false;
         const matchesViewMode = viewMode === 'active' ? isItemActive : !isItemActive;
         const nameMatches = s.name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -157,10 +202,10 @@ export function InventoryClient() {
     
     try {
         if (supplyToEdit) {
-            await updateSupply(firestore, supplyToEdit.id, dataToSave, { ...financialData, userId: user.uid });
+            await updateSupply(firestore, supplyToEdit.id, dataToSave, { ...financialData, userId: user.uid, tenantId: activeTenantId || undefined }, activeTenantId || undefined);
             toast({ title: "Item Atualizado!" });
         } else {
-            await addSupply(firestore, dataToSave, { ...financialData, userId: user.uid });
+            await addSupply(firestore, dataToSave, { ...financialData, userId: user.uid, tenantId: activeTenantId || undefined }, activeTenantId || undefined);
             toast({ title: "Item Adicionado!" });
         }
         handleCloseFormDialog();
@@ -174,8 +219,8 @@ export function InventoryClient() {
     if (!selectedSupply || !firestore) return;
     
     const actionPromise = viewMode === 'active' 
-      ? inactivateSupply(firestore, selectedSupply.id)
-      : reactivateSupply(firestore, selectedSupply.id);
+      ? inactivateSupply(firestore, selectedSupply.id, activeTenantId || undefined)
+      : reactivateSupply(firestore, selectedSupply.id, activeTenantId || undefined);
       
     try {
         await actionPromise;
@@ -185,7 +230,7 @@ export function InventoryClient() {
     } catch (error: any) {
         toast({ variant: "destructive", title: "Erro", description: error.message });
     }
-  }, [selectedSupply, firestore, viewMode, toast]);
+  }, [selectedSupply, firestore, viewMode, toast, activeTenantId]);
   
   const onImportSuccess = async () => {
     setIsImportDialogOpen(false);
@@ -233,15 +278,15 @@ export function InventoryClient() {
                     archiveButtonLabel={viewMode === 'active' ? 'Arquivar' : 'Reativar'}
                  />
             </div>
-            <div className="mt-4 flex flex-col-reverse sm:flex-row items-center gap-2">
-                <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as any)}>
-                    <TabsList>
+            <div className="mt-4 flex flex-col-reverse sm:flex-row items-stretch sm:items-center gap-2">
+                <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as any)} className="w-full sm:w-auto">
+                    <TabsList className="w-full sm:w-auto grid grid-cols-3 sm:flex">
                         <TabsTrigger value="all">Todos</TabsTrigger>
                         <TabsTrigger value="ingredient">Ingredientes</TabsTrigger>
                         <TabsTrigger value="packaging">Embalagens</TabsTrigger>
                     </TabsList>
                 </Tabs>
-                <div className="flex-1 flex w-full sm:justify-end gap-2">
+                <div className="flex-1 flex w-full sm:justify-end gap-2 flex-col sm:flex-row">
                      <div className="relative w-full sm:w-auto sm:min-w-64">
                         <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                         <Input
@@ -254,7 +299,7 @@ export function InventoryClient() {
                         />
                     </div>
                     <Select value={viewMode} onValueChange={(value: "active" | "archived") => setViewMode(value)}>
-                        <SelectTrigger id="inventory-view-mode" name="inventory-view-mode" className="w-full sm:w-[180px]">
+                        <SelectTrigger id="inventory-view-mode" name="inventory-view-mode" className="w-full sm:w-[190px]">
                             <SelectValue placeholder="Ver status" />
                         </SelectTrigger>
                         <SelectContent>
@@ -266,6 +311,13 @@ export function InventoryClient() {
             </div>
         </CardHeader>
         <CardContent className="flex-1 flex flex-col min-h-0">
+          <Alert className="mb-4">
+            <AlertTitle>Fluxo sugerido</AlertTitle>
+            <AlertDescription>
+              Use <strong>Cadastrar Item</strong> quando o ingrediente ou embalagem ainda não existe.
+              Use <strong>Repor Estoque</strong> quando o item já existe e você só quer registrar nova compra ou entrada.
+            </AlertDescription>
+          </Alert>
           {isLoading ? (
             <div className="flex flex-1 items-center justify-center">
               <Loader className="h-8 w-8 animate-spin text-primary" />

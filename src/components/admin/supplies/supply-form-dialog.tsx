@@ -58,6 +58,7 @@ export function SupplyFormDialog({ isOpen, onClose, onSave, supply, defaultType 
     stock: 0,
     unit: "un" as "kg" | "g" | "L" | "ml" | "un",
     costPerUnit: 0,
+    purchaseFormat: "unidade" as "unidade" | "pacote" | "caixa" | "garrafa" | "saco" | "lata" | "frasco",
     packageCost: undefined as number | undefined,
     packageQuantity: undefined as number | undefined,
     sku: "",
@@ -103,6 +104,7 @@ export function SupplyFormDialog({ isOpen, onClose, onSave, supply, defaultType 
           stock: supply.stock || 0,
           unit: supply.unit || "un",
           costPerUnit: supply.costPerUnit || 0,
+          purchaseFormat: supply.purchaseFormat || "unidade",
           packageCost: supply.packageCost,
           packageQuantity: supply.packageQuantity,
           sku: supply.sku || "",
@@ -126,6 +128,7 @@ export function SupplyFormDialog({ isOpen, onClose, onSave, supply, defaultType 
           stock: 0,
           unit: "un",
           costPerUnit: 0,
+          purchaseFormat: "unidade",
           packageCost: undefined,
           packageQuantity: undefined,
           sku: "",
@@ -267,8 +270,35 @@ export function SupplyFormDialog({ isOpen, onClose, onSave, supply, defaultType 
                         <Input id="package-cost" name="package-cost" type="number" placeholder="Ex: 50.00" value={formData.packageCost || ''} onChange={(e) => setFormData({...formData, packageCost: parseFloat(e.target.value) || undefined})} step="0.01" min="0" disabled={isProcessing}/>
                     </div>
                     <div className="grid gap-2">
-                        <Label htmlFor="package-quantity">Unidades Compradas</Label>
-                        <Input id="package-quantity" name="package-quantity" type="number" placeholder="Ex: 100" value={formData.packageQuantity || ''} onChange={(e) => setFormData({...formData, packageQuantity: parseInt(e.target.value) || undefined})} min="1" disabled={isProcessing}/>
+                        <Label htmlFor="purchase-format">Formato da Compra</Label>
+                        <Select
+                          name="purchase-format"
+                          value={formData.purchaseFormat}
+                          onValueChange={(value: "unidade" | "pacote" | "caixa" | "garrafa" | "saco" | "lata" | "frasco") =>
+                            setFormData({ ...formData, purchaseFormat: value })
+                          }
+                          disabled={isProcessing}
+                        >
+                          <SelectTrigger id="purchase-format">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="unidade">Unidade</SelectItem>
+                            <SelectItem value="pacote">Pacote</SelectItem>
+                            <SelectItem value="caixa">Caixa</SelectItem>
+                            <SelectItem value="garrafa">Garrafa</SelectItem>
+                            <SelectItem value="saco">Saco</SelectItem>
+                            <SelectItem value="lata">Lata</SelectItem>
+                            <SelectItem value="frasco">Frasco</SelectItem>
+                          </SelectContent>
+                        </Select>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="grid gap-2">
+                        <Label htmlFor="package-quantity">Quantidade por {formData.purchaseFormat} ({formData.unit})</Label>
+                        <Input id="package-quantity" name="package-quantity" type="number" placeholder={`Ex: ${formData.unit === "kg" || formData.unit === "L" ? "1.5" : "100"}`} value={formData.packageQuantity || ''} onChange={(e) => setFormData({...formData, packageQuantity: parseFloat(e.target.value) || undefined})} min="0.000001" step="any" disabled={isProcessing}/>
                     </div>
                 </div>
 

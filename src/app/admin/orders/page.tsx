@@ -7,16 +7,19 @@ import { collection, query } from 'firebase/firestore';
 import type { Product } from '@/types';
 import { Loader } from "lucide-react";
 import { useMemo } from 'react';
+import { getTenantCollectionPath } from '@/lib/tenant';
+import { useActiveTenant } from '@/hooks/use-active-tenant';
 
 // Este componente agora busca os produtos no cliente
 function ProductsDataLoader() {
   const firestore = useFirestore();
   const { user } = useUser();
+  const { activeTenantId } = useActiveTenant();
 
   const productsQuery = useMemo(() => {
-    if (!firestore || !user) return null;
-    return query(collection(firestore, "products"));
-  }, [firestore, user]);
+    if (!firestore || !activeTenantId) return null;
+    return query(collection(firestore, getTenantCollectionPath(activeTenantId, "products")));
+  }, [firestore, activeTenantId]);
 
   const { data: products, isLoading } = useCollection<Product>(productsQuery);
 
@@ -38,7 +41,7 @@ function ProductsDataLoader() {
 
 export default function PointOfSalePage() {
   return (
-    <div className="w-full h-full flex flex-col gap-8">
+    <div className="w-full h-full flex flex-col gap-4 sm:gap-6">
         <ProductsDataLoader />
     </div>
   );

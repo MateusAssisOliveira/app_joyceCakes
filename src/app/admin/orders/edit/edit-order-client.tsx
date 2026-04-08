@@ -34,9 +34,10 @@ import { useToast } from "@/hooks/use-toast";
 type EditOrderClientProps = {
   order: Order | null;
   products: Product[];
+  tenantId?: string;
 };
 
-export function EditOrderClient({ order, products }: EditOrderClientProps) {
+export function EditOrderClient({ order, products, tenantId }: EditOrderClientProps) {
   const firestore = useFirestore();
   const { toast } = useToast();
 
@@ -151,7 +152,7 @@ export function EditOrderClient({ order, products }: EditOrderClientProps) {
       await updateOrder(firestore, order.id, {
         items,
         total,
-      });
+      }, tenantId);
 
       toast({
         title: "Pedido atualizado",

@@ -19,6 +19,7 @@ import { addSuppliesInBatch } from "@/services";
 import type { Supply } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 import Papa from 'papaparse';
+import { useActiveTenant } from "@/hooks/use-active-tenant";
 
 type ImportDialogProps = {
   isOpen: boolean;
@@ -32,6 +33,7 @@ export function SupplyImportDialog({ isOpen, onClose, onSuccess, defaultType }: 
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
   const firestore = useFirestore();
+  const { activeTenantId } = useActiveTenant();
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -98,7 +100,7 @@ export function SupplyImportDialog({ isOpen, onClose, onSuccess, defaultType }: 
             }
             
             try {
-                await addSuppliesInBatch(firestore, suppliesToImport);
+                await addSuppliesInBatch(firestore, suppliesToImport, activeTenantId || undefined);
                 onSuccess();
             } catch (error: any) {
                 console.error("Erro ao importar em massa:", error);

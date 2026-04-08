@@ -6,6 +6,7 @@ import { setSyncStatusPatch } from "@/lib/sync-status-store";
 export type SyncConfig = {
   serverUrl: string;
   machineId: string;
+  tenantId?: string;
   syncApiKey?: string;
   autoBootstrap: boolean;
   autoSync: boolean;
@@ -128,6 +129,7 @@ export class SyncClient {
               table,
               lastSync,
               machineId: this.config.machineId,
+              tenantId: this.config.tenantId,
               localUpdates: updatesWithEventId,
             }),
           }),
@@ -170,6 +172,9 @@ export class SyncClient {
       if (lastSync) {
         url.searchParams.set('lastSync', lastSync);
       }
+      if (this.config.tenantId) {
+        url.searchParams.set('tenantId', this.config.tenantId);
+      }
 
       const response = await this.requestWithRetry(
         () => fetch(url.toString(), { headers: this.getJsonHeaders() }),
@@ -202,7 +207,7 @@ export class SyncClient {
    * Iniciar sincronização automática
    */
   private startAutoSync(): void {
-    const tables = ['products', 'orders', 'supplies'];
+    const tables = ['products', 'orders', 'supplies', 'technical_sheets'];
 
     this.syncInterval = setInterval(async () => {
       for (const table of tables) {
@@ -250,6 +255,7 @@ export class SyncClient {
           headers: this.getJsonHeaders(),
           body: JSON.stringify({
             machineId: this.config.machineId,
+            tenantId: this.config.tenantId,
             clientSummary,
           }),
         }),
@@ -279,6 +285,7 @@ export class SyncClient {
             headers: this.getJsonHeaders(),
             body: JSON.stringify({
               machineId: this.config.machineId,
+              tenantId: this.config.tenantId,
               clientSummary,
             }),
           }),
@@ -442,6 +449,9 @@ export class SyncClient {
     if (this.config.syncApiKey) {
       headers['x-api-key'] = this.config.syncApiKey;
     }
+    if (this.config.tenantId) {
+      headers['x-tenant-id'] = this.config.tenantId;
+    }
 
     return headers;
   }
@@ -481,6 +491,7 @@ export class SyncClient {
               headers: this.getJsonHeaders(),
               body: JSON.stringify({
                 machineId: this.config.machineId,
+                tenantId: this.config.tenantId,
                 localUpdates,
               }),
             }),
@@ -524,7 +535,7 @@ export class SyncClient {
 
     if (this.config.divergenceStrategy === "full_resync") {
       this.resetLastSync();
-      for (const table of ["products", "orders", "supplies", "order_items"]) {
+      for (const table of ["products", "orders", "supplies", "order_items", "technical_sheets"]) {
         await this.safeFetch(table);
       }
       return;
@@ -609,6 +620,7 @@ export class SyncClient {
     return {
       serverUrl: config.serverUrl || 'http://localhost:4000',
       machineId: config.machineId || this.generateMachineId(),
+      tenantId: config.tenantId,
       syncApiKey: config.syncApiKey,
       autoBootstrap: config.autoBootstrap ?? true,
       autoSync: config.autoSync !== false,

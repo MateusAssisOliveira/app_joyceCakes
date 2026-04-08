@@ -41,6 +41,8 @@ export function FirebaseClientProvider({ children }: FirebaseClientProviderProps
       hasSyncServer && process.env.NEXT_PUBLIC_SYNC_AUTO_RECONCILE === 'true';
 
     const setup = async () => {
+      const activeTenantId =
+        typeof window !== 'undefined' ? window.localStorage.getItem('activeTenantId') || undefined : undefined;
       let canReachSyncServer = false;
       if (hasSyncServer) {
         const controller = new AbortController();
@@ -61,6 +63,7 @@ export function FirebaseClientProvider({ children }: FirebaseClientProviderProps
 
       const syncClient = initSyncClient({
         serverUrl,
+        tenantId: activeTenantId,
         syncApiKey: process.env.NEXT_PUBLIC_SYNC_API_KEY,
         autoBootstrap: process.env.NEXT_PUBLIC_SYNC_AUTO_BOOTSTRAP !== 'false',
         autoSync: configuredAutoSync && canReachSyncServer,

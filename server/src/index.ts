@@ -29,7 +29,7 @@ app.use(cors({
   origin: corsOrigin,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'x-api-key']
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-api-key', 'x-tenant-id']
 }));
 
 app.use(express.json());
@@ -102,9 +102,11 @@ async function start() {
       console.log(`   POST   /api/sync/products`);
       console.log(`   POST   /api/sync/orders`);
       console.log(`   POST   /api/sync/supplies`);
+      console.log(`   POST   /api/sync/technical_sheets`);
       console.log(`   POST   /api/sync/reconcile`);
       console.log(`   GET    /api/sync/reconcile`);
       console.log(`   GET    /api/sync/reconcile/history`);
+      console.log(`   GET    /api/sync/diagnostics`);
       console.log(`   POST   /api/sync/bootstrap/:table`);
       console.log(`   GET    /api/products`);
       console.log(`   POST   /api/products`);

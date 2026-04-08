@@ -16,3 +16,6 @@ export * from './recipeService';
 export * from './financialMovementService';
 export * from './userService';
 export * from './utils';
+export * from './tenantService';
+export * from './tenantManagementService';
+export * from './legacyMigrationService';

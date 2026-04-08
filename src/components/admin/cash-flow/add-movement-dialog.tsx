@@ -27,14 +27,16 @@ import { addFinancialMovement } from '@/services';
 import type { CashRegister, Product } from '@/types';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useActiveTenant } from '@/hooks/use-active-tenant';
 
 type AddMovementDialogProps = {
   cashRegister: CashRegister;
   products: Product[];
 };
 
-const incomeCategories = ["Venda de Produto", "Aporte"];
-const expenseCategories = ["Compra de Insumos", "Custo de Produto Vendido", "Despesa Fixa", "Retirada/Pró-labore", "Outras Despesas"];
+const incomeCategories = ['Venda de Produto', 'Aporte'];
+const expenseCategories = ['Compra de Insumos', 'Custo de Produto Vendido', 'Despesa Fixa', 'Retirada/Pró-labore', 'Outras Despesas'];
 
 export function AddMovementDialog({ cashRegister, products }: AddMovementDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -47,6 +49,7 @@ export function AddMovementDialog({ cashRegister, products }: AddMovementDialogP
   const [isProductPopoverOpen, setIsProductPopoverOpen] = useState(false);
 
   const firestore = useFirestore();
+  const { activeTenantId } = useActiveTenant();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -70,7 +73,7 @@ export function AddMovementDialog({ cashRegister, products }: AddMovementDialogP
   const handleAddMovement = async () => {
     if (!firestore) return;
     if (amount <= 0 || !description || !category) {
-      toast({ variant: 'destructive', title: 'Campos Inválidos', description: 'Preencha valor, descrição e categoria.' });
+      toast({ variant: 'destructive', title: 'Campos inválidos', description: 'Preencha valor, descrição e categoria.' });
       return;
     }
 
@@ -82,8 +85,14 @@ export function AddMovementDialog({ cashRegister, products }: AddMovementDialogP
         description,
         category,
         paymentMethod,
+      }, activeTenantId || undefined);
+      toast({
+        title: 'Movimentação Registrada!',
+        description: `${type === 'income' ? 'Entrada' : 'Saída'} de ${amount.toLocaleString('pt-BR', {
+          style: 'currency',
+          currency: 'BRL',
+        })} registrada com sucesso.`,
       });
-      toast({ title: 'Movimentação Registrada!', description: `${type === 'income' ? 'Entrada' : 'Saída'} de ${amount.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})} registrada com sucesso.` });
       resetForm();
       setIsOpen(false);
     } catch (error: any) {
@@ -102,94 +111,140 @@ export function AddMovementDialog({ cashRegister, products }: AddMovementDialogP
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className="w-full sm:w-auto"><PlusCircle className="mr-2 h-4 w-4" /> Nova Movimentação</Button>
+        <Button className="w-full sm:w-auto tap-target">
+          <PlusCircle className="mr-2 h-4 w-4" /> Nova Movimentação
+        </Button>
       </DialogTrigger>
-      <DialogContent className="w-[95vw] max-w-md">
-        <DialogHeader>
+      <DialogContent className="w-[95vw] max-w-md max-h-[92dvh] overflow-hidden p-0">
+        <DialogHeader className="px-4 pt-4 sm:px-6 sm:pt-6">
           <DialogTitle>Registrar Movimentação</DialogTitle>
         </DialogHeader>
-        <Tabs value={type} onValueChange={(v) => setType(v as any)} className="w-full pt-4">
-          <TabsList className="grid w-full grid-cols-2 h-auto">
-            <TabsTrigger value="income">Entrada</TabsTrigger>
-            <TabsTrigger value="expense">Saída</TabsTrigger>
-          </TabsList>
-          
-          <div className="grid gap-4 py-4">
-             {type === 'income' && (
-              <div className="grid gap-2">
-                <Label htmlFor="product-search">Buscar Produto (Opcional)</Label>
-                <Popover open={isProductPopoverOpen} onOpenChange={setIsProductPopoverOpen}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      aria-expanded={isProductPopoverOpen}
-                      className="w-full justify-between font-normal"
-                    >
-                      <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
-                      Selecione um produto...
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
-                    <Command>
-                      <CommandInput placeholder="Buscar produto..." />
-                      <CommandList>
-                        <CommandEmpty>Nenhum produto encontrado.</CommandEmpty>
-                        <CommandGroup>
-                          {products.map((product) => (
-                            <CommandItem
-                              key={product.id}
-                              onSelect={() => handleProductSelect(product)}
-                            >
-                              {product.name}
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-              </div>
-            )}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+        <div className="overflow-y-auto px-4 pb-4 sm:px-6">
+          <Tabs value={type} onValueChange={(v) => setType(v as any)} className="w-full pt-4">
+            <TabsList className="grid w-full grid-cols-2 h-auto">
+              <TabsTrigger value="income" className="tap-target">Entrada</TabsTrigger>
+              <TabsTrigger value="expense" className="tap-target">Saída</TabsTrigger>
+            </TabsList>
+
+            <div className="grid gap-4 py-4">
+              <Alert>
+                <AlertDescription>
+                  Esta tela registra movimentacao no <strong>caixa</strong> imediatamente. Nao altera custo tecnico de receita/produto.
+                </AlertDescription>
+              </Alert>
+
+              {type === 'income' && (
                 <div className="grid gap-2">
-                    <Label htmlFor="amount">Valor</Label>
-                    <Input id="amount" name="amount" type="number" placeholder="R$ 0,00" value={amount || ''} onChange={(e) => setAmount(parseFloat(e.target.value) || 0)} autoFocus />
+                  <Label htmlFor="product-search">Buscar Produto (Opcional)</Label>
+                  <Popover open={isProductPopoverOpen} onOpenChange={setIsProductPopoverOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={isProductPopoverOpen}
+                        className="w-full justify-between font-normal tap-target"
+                      >
+                        <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
+                        Selecione um produto...
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
+                      <Command>
+                        <CommandInput placeholder="Buscar produto..." />
+                        <CommandList>
+                          <CommandEmpty>Nenhum produto encontrado.</CommandEmpty>
+                          <CommandGroup>
+                            {products.map((product) => (
+                              <CommandItem
+                                key={product.id}
+                                onSelect={() => handleProductSelect(product)}
+                              >
+                                {product.name}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
                 </div>
-                 <div className="grid gap-2">
-                    <Label htmlFor="payment-method">Método</Label>
-                    <Select name="payment-method" value={paymentMethod} onValueChange={setPaymentMethod}>
-                        <SelectTrigger id="payment-method"><SelectValue /></SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="Dinheiro">Dinheiro</SelectItem>
-                            <SelectItem value="PIX">PIX</SelectItem>
-                            <SelectItem value="Cartão de Crédito">Cartão de Crédito</SelectItem>
-                            <SelectItem value="Cartão de Débito">Cartão de Débito</SelectItem>
-                            <SelectItem value="Transferência">Transferência</SelectItem>
-                        </SelectContent>
-                    </Select>
+              )}
+              {type === 'expense' && category === 'Compra de Insumos' && (
+                <Alert>
+                  <AlertDescription>
+                    Se for reposicao real de estoque, prefira registrar em <strong>Estoque</strong> para atualizar custo tecnico e, opcionalmente, gerar esta saida no caixa.
+                  </AlertDescription>
+                </Alert>
+              )}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="amount">Valor</Label>
+                  <Input
+                    id="amount"
+                    name="amount"
+                    type="number"
+                    placeholder="R$ 0,00"
+                    value={amount || ''}
+                    onChange={(e) => setAmount(parseFloat(e.target.value) || 0)}
+                    autoFocus
+                  />
                 </div>
-            </div>
-            <div className="grid gap-2">
+                <div className="grid gap-2">
+                  <Label htmlFor="payment-method">Método</Label>
+                  <Select name="payment-method" value={paymentMethod} onValueChange={setPaymentMethod}>
+                    <SelectTrigger id="payment-method" className="tap-target"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Dinheiro">Dinheiro</SelectItem>
+                      <SelectItem value="PIX">PIX</SelectItem>
+                      <SelectItem value="Cartão de Crédito">Cartão de Crédito</SelectItem>
+                      <SelectItem value="Cartão de Débito">Cartão de Débito</SelectItem>
+                      <SelectItem value="Transferência">Transferência</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="grid gap-2">
                 <Label htmlFor="description">Descrição</Label>
-                <Input id="description" name="description" placeholder={type === 'income' ? 'Ex: Venda de bolo no balcão' : 'Ex: Compra de embalagens'} value={description} onChange={(e) => setDescription(e.target.value)} />
-            </div>
-             <div className="grid gap-2">
+                <Input
+                  id="description"
+                  name="description"
+                  placeholder={type === 'income' ? 'Ex: Venda de bolo no balcão' : 'Ex: Compra de embalagens'}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+              </div>
+              <div className="grid gap-2">
                 <Label htmlFor="category">Categoria</Label>
                 <Select name="category" value={category} onValueChange={setCategory}>
-                    <SelectTrigger id="category"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                        {(type === 'income' ? incomeCategories : expenseCategories).map(cat => (
-                            <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                        ))}
-                    </SelectContent>
+                  <SelectTrigger id="category" className="tap-target"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {(type === 'income' ? incomeCategories : expenseCategories).map((cat) => (
+                      <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                    ))}
+                  </SelectContent>
                 </Select>
+              </div>
+              <div className="rounded border p-3 text-sm">
+                <p className="text-muted-foreground">Resumo do lancamento</p>
+                <p><strong>Tipo:</strong> {type === 'income' ? 'Entrada' : 'Saida'}</p>
+                <p><strong>Categoria:</strong> {category}</p>
+                <p>
+                  <strong>Valor:</strong>{' '}
+                  {(amount || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                </p>
+                <p className="text-muted-foreground">
+                  Impacto no saldo: {type === 'income' ? '+' : '-'}
+                  {(amount || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                </p>
+              </div>
             </div>
-          </div>
-        </Tabs>
-        <DialogFooter className="flex-col sm:flex-row">
-          <Button className="w-full sm:w-auto" variant="outline" onClick={() => setIsOpen(false)} disabled={isProcessing}>Cancelar</Button>
-          <Button className="w-full sm:w-auto" onClick={handleAddMovement} disabled={isProcessing}>
+          </Tabs>
+        </div>
+
+        <DialogFooter className="border-t px-4 py-3 sm:px-6 flex-col sm:flex-row">
+          <Button className="w-full sm:w-auto tap-target" variant="outline" onClick={() => setIsOpen(false)} disabled={isProcessing}>Cancelar</Button>
+          <Button className="w-full sm:w-auto tap-target" onClick={handleAddMovement} disabled={isProcessing}>
             {isProcessing && <Loader className="mr-2 h-4 w-4 animate-spin" />}
             {isProcessing ? 'Registrando...' : 'Registrar'}
           </Button>

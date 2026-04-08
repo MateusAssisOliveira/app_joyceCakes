@@ -28,7 +28,9 @@ import type { Supply, TechnicalSheet, TechnicalSheetComponent, Product } from "@
 import { useToast } from "@/hooks/use-toast";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useFirestore } from "@/firebase";
+import { useActiveTenant } from "@/hooks/use-active-tenant";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -40,12 +42,20 @@ type ProductFormProps = {
 };
 
 export function ProductForm({ product, supplies, baseSheets, onSaveSuccess }: ProductFormProps) {
+  const parseNumericInput = (value: string) => {
+    const normalized = value.replace(",", ".").trim();
+    const parsed = Number(normalized);
+    return Number.isFinite(parsed) ? parsed : 0;
+  };
+
   const [components, setComponents] = useState<Omit<TechnicalSheetComponent, 'lossFactor'>[]>([]);
   const [productName, setProductName] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
   
+  const [pricingMode, setPricingMode] = useState<"markup" | "price">("markup");
   const [markup, setMarkup] = useState(150);
+  const [manualPriceInput, setManualPriceInput] = useState("0");
   const [searchTerm, setSearchTerm] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [preparationTime, setPreparationTime] = useState(0);
@@ -57,6 +67,7 @@ export function ProductForm({ product, supplies, baseSheets, onSaveSuccess }: Pr
 
   const { toast } = useToast();
   const firestore = useFirestore();
+  const { activeTenantId } = useActiveTenant();
 
   useEffect(() => {
     if (product) {
@@ -76,6 +87,7 @@ export function ProductForm({ product, supplies, baseSheets, onSaveSuccess }: Pr
       } else {
         setMarkup(150);
       }
+      setManualPriceInput(String(price || 0));
 
     } else {
       setProductName("");
@@ -86,6 +98,8 @@ export function ProductForm({ product, supplies, baseSheets, onSaveSuccess }: Pr
       setLaborCost(0);
       setFixedCost(0);
       setMarkup(150);
+      setPricingMode("markup");
+      setManualPriceInput("0");
     }
   }, [product]);
 
@@ -194,9 +208,14 @@ export function ProductForm({ product, supplies, baseSheets, onSaveSuccess }: Pr
 
   const totalCost = useMemo(() => materialCost + totalLaborCost + fixedCost, [materialCost, totalLaborCost, fixedCost]);
 
+  const manualPrice = useMemo(() => parseNumericInput(manualPriceInput), [manualPriceInput]);
+
   const suggestedPrice = useMemo(() => {
+    if (pricingMode === "price") {
+      return manualPrice;
+    }
     return totalCost * (1 + (markup / 100));
-  }, [totalCost, markup]);
+  }, [pricingMode, totalCost, markup, manualPrice]);
   
   const profit = useMemo(() => suggestedPrice - totalCost, [suggestedPrice, totalCost]);
 
@@ -205,14 +224,23 @@ export function ProductForm({ product, supplies, baseSheets, onSaveSuccess }: Pr
     return (profit / suggestedPrice) * 100;
   }, [profit, suggestedPrice]);
 
+  const impliedMarkup = useMemo(() => {
+    if (totalCost <= 0) return 0;
+    return ((suggestedPrice / totalCost) - 1) * 100;
+  }, [suggestedPrice, totalCost]);
+
   const handleSaveProduct = async () => {
     if (!firestore) return;
     if (!productName.trim()) {
         toast({ variant: "destructive", title: "Nome do Produto Inválido" });
         return;
     }
-     if (markup < 0) {
+     if (pricingMode === "markup" && markup < 0) {
         toast({ variant: "destructive", title: "Markup Inválido", description: "O markup não pode ser negativo." });
+        return;
+    }
+    if (pricingMode === "price" && manualPrice < 0) {
+        toast({ variant: "destructive", title: "Preço Inválido", description: "O preço final não pode ser negativo." });
         return;
     }
 
@@ -233,10 +261,10 @@ export function ProductForm({ product, supplies, baseSheets, onSaveSuccess }: Pr
       };
 
       if (product && product.id) {
-        await updateProduct(firestore, product.id, productData);
+        await updateProduct(firestore, product.id, productData, activeTenantId || undefined);
         toast({ title: "Produto Atualizado!", description: `"${productName}" foi atualizado.` });
       } else {
-        await addProduct(firestore, productData);
+        await addProduct(firestore, productData, activeTenantId || undefined);
         toast({ title: "Produto Adicionado!", description: `"${productName}" foi adicionado ao catálogo.` });
       }
       
@@ -437,22 +465,106 @@ export function ProductForm({ product, supplies, baseSheets, onSaveSuccess }: Pr
                         <Input id="fixed-cost" type="number" value={fixedCost} onChange={e => setFixedCost(parseFloat(e.target.value) || 0)} />
                     </div>
                 </div>
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base">Transparência de Custo</CardTitle>
+                    <CardDescription>Como o custo final está sendo formado.</CardDescription>
+                  </CardHeader>
+                  <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                    <div className="sm:col-span-2">
+                      <Alert>
+                        <AlertDescription>
+                          Esta tela calcula custo e margem. Nao cria entrada no caixa ate a venda acontecer.
+                        </AlertDescription>
+                      </Alert>
+                    </div>
+                    <div className="rounded border p-3">
+                      <p className="text-muted-foreground">Materiais</p>
+                      <p className="font-semibold">
+                        {materialCost.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                      </p>
+                    </div>
+                    <div className="rounded border p-3">
+                      <p className="text-muted-foreground">Mão de obra</p>
+                      <p className="font-semibold">
+                        {totalLaborCost.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                      </p>
+                    </div>
+                    <div className="rounded border p-3">
+                      <p className="text-muted-foreground">Custos fixos / admin</p>
+                      <p className="font-semibold">
+                        {fixedCost.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                      </p>
+                    </div>
+                    <div className="rounded border p-3">
+                      <p className="text-muted-foreground">Custo final</p>
+                      <p className="font-bold">
+                        {totalCost.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
             </div>
             
             <div className="flex flex-col items-stretch gap-6 pt-6 border-t mt-auto bg-background">
-                 <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+                 <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
                     <div className="flex flex-col gap-2"><Label>Custo Final</Label><p className="font-bold text-lg">{totalCost.toLocaleString("pt-BR", { style: "currency", currency: "BRL"})}</p></div>
                     <div className="flex flex-col gap-2">
-                        <Label htmlFor="markup" className="flex items-center gap-1.5">
-                            Markup (%)
+                        <Label className="flex items-center gap-2">Modo de Preço</Label>
+                        <div className="flex rounded-md border p-1">
+                          <Button
+                            type="button"
+                            variant={pricingMode === "markup" ? "default" : "ghost"}
+                            size="sm"
+                            className="flex-1"
+                            onClick={() => setPricingMode("markup")}
+                          >
+                            Por Markup
+                          </Button>
+                          <Button
+                            type="button"
+                            variant={pricingMode === "price" ? "default" : "ghost"}
+                            size="sm"
+                            className="flex-1"
+                            onClick={() => setPricingMode("price")}
+                          >
+                            Por Preço
+                          </Button>
+                        </div>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                        <Label htmlFor={pricingMode === "markup" ? "markup" : "manual-price"} className="flex items-center gap-1.5">
+                            {pricingMode === "markup" ? "Markup (%)" : "Preço de Venda (R$)"}
                             <TooltipProvider>
                             <Tooltip>
                                 <TooltipTrigger asChild><Info className="h-3 w-3 text-muted-foreground"/></TooltipTrigger>
-                                <TooltipContent><p>Margem de lucro sobre o CUSTO.</p></TooltipContent>
+                                <TooltipContent>
+                                  <p>
+                                    {pricingMode === "markup"
+                                      ? "Defina o percentual sobre o custo."
+                                      : "Defina o preço final e veja margem/markup automáticos."}
+                                  </p>
+                                </TooltipContent>
                             </Tooltip>
                             </TooltipProvider>
                         </Label>
-                        <Input id="markup" type="number" value={markup} onChange={e => setMarkup(parseFloat(e.target.value) || 0)} placeholder="150"/>
+                        {pricingMode === "markup" ? (
+                          <Input
+                            id="markup"
+                            type="number"
+                            value={markup}
+                            onChange={e => setMarkup(parseFloat(e.target.value) || 0)}
+                            placeholder="150"
+                          />
+                        ) : (
+                          <Input
+                            id="manual-price"
+                            type="number"
+                            value={manualPriceInput}
+                            onChange={e => setManualPriceInput(e.target.value)}
+                            placeholder="25.00"
+                          />
+                        )}
                     </div>
                     <div className="flex flex-col gap-2"><Label>Lucro Previsto</Label><p className="font-bold text-lg text-emerald-600">{isFinite(profit) ? profit.toLocaleString("pt-BR", { style: "currency", currency: "BRL"}) : "---"}</p></div>
                     <div className="flex flex-col gap-2">
@@ -466,8 +578,16 @@ export function ProductForm({ product, supplies, baseSheets, onSaveSuccess }: Pr
                             </TooltipProvider>
                         </Label>
                         <p className="font-bold text-lg text-blue-600">{isFinite(finalMargin) ? finalMargin.toFixed(2) + '%' : "---"}</p>
+                        <p className="text-xs text-muted-foreground">
+                          Markup equivalente: {isFinite(impliedMarkup) ? impliedMarkup.toFixed(2) : "0.00"}%
+                        </p>
                     </div>
-                    <div className="flex flex-col gap-2"><Label>Preço de Venda</Label><p className="font-headline text-2xl font-bold text-primary">{isFinite(suggestedPrice) ? suggestedPrice.toLocaleString("pt-BR", { style: "currency", currency: "BRL"}) : "Inválido"}</p></div>
+                    <div className="flex flex-col gap-2">
+                      <Label>Preço de Venda</Label>
+                      <p className="font-headline text-2xl font-bold text-primary">
+                        {isFinite(suggestedPrice) ? suggestedPrice.toLocaleString("pt-BR", { style: "currency", currency: "BRL"}) : "Inválido"}
+                      </p>
+                    </div>
                 </div>
                 <div className="flex justify-end gap-2 mt-2">
                     <Button className="w-full sm:w-auto" onClick={handleSaveProduct} disabled={isProcessing}>

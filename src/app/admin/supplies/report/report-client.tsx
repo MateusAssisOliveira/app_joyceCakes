@@ -32,6 +32,48 @@ import { Badge } from "@/components/ui/badge";
 import type { Supply } from "@/types";
 import { cn } from "@/lib/utils";
 import { format } from 'date-fns';
+import { getTenantCollectionPath } from "@/lib/tenant";
+import { useActiveTenant } from "@/hooks/use-active-tenant";
+
+const PACKAGING_KEYWORDS = [
+  "embal",
+  "caixa",
+  "pote",
+  "bandeja",
+  "tampa",
+  "saco",
+  "sacola",
+  "frasco",
+  "garrafa",
+  "forma",
+  "papel",
+  "adesivo",
+  "fita",
+  "tag",
+  "copo",
+  "colher",
+  "prato",
+];
+
+function resolveSupplyType(supply: Supply): "ingredient" | "packaging" {
+  if (supply.type === "packaging" || supply.type === "ingredient") {
+    return supply.type;
+  }
+
+  const haystack = [
+    supply.name,
+    supply.category,
+    supply.sku,
+    supply.purchaseFormat,
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+  return PACKAGING_KEYWORDS.some((keyword) => haystack.includes(keyword))
+    ? "packaging"
+    : "ingredient";
+}
 
 export function SuppliesReportClient() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -40,11 +82,12 @@ export function SuppliesReportClient() {
   
   const firestore = useFirestore();
   const { user, isUserLoading } = useUser();
+  const { activeTenantId } = useActiveTenant();
   
   const suppliesCollection = useMemo(() => {
-    if (!firestore || !user) return null;
-    return query(collection(firestore, 'supplies'));
-  }, [firestore, user]);
+    if (!firestore || !activeTenantId) return null;
+    return query(collection(firestore, getTenantCollectionPath(activeTenantId, "supplies")));
+  }, [firestore, activeTenantId]);
 
   const { data: supplies, isLoading } = useCollection<Supply>(suppliesCollection);
 
@@ -59,7 +102,8 @@ export function SuppliesReportClient() {
             matchesViewMode = !isItemActive;
         }
 
-        const matchesType = typeFilter === 'all' || s.type === typeFilter;
+        const resolvedType = resolveSupplyType(s);
+        const matchesType = typeFilter === 'all' || resolvedType === typeFilter;
         
         const matchesSearch = 
             s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -134,6 +178,7 @@ export function SuppliesReportClient() {
             <div className="space-y-3 md:hidden">
               {filteredSupplies.map((supply) => {
                 const purchaseDate = getDate(supply.lastPurchaseDate);
+                const resolvedType = resolveSupplyType(supply);
                 return (
                   <div key={supply.id} className="rounded-lg border p-3">
                     <div className="flex items-start justify-between gap-2">
@@ -144,8 +189,8 @@ export function SuppliesReportClient() {
                     </div>
                     <div className="mt-2 flex items-center justify-between text-sm">
                       <Badge variant="outline" className="flex items-center gap-1.5 w-fit font-normal">
-                        {supply.type === 'packaging' ? <Package className="h-3 w-3"/> : <FlaskConical className="h-3 w-3" />}
-                        {supply.type === 'packaging' ? 'Embalagem' : 'Ingrediente'}
+                        {resolvedType === 'packaging' ? <Package className="h-3 w-3"/> : <FlaskConical className="h-3 w-3" />}
+                        {resolvedType === 'packaging' ? 'Embalagem' : 'Ingrediente'}
                       </Badge>
                       <Badge variant={supply.minStock != null && supply.stock < supply.minStock ? "destructive" : "secondary"}>
                         {supply.stock} {supply.unit}
@@ -191,13 +236,14 @@ export function SuppliesReportClient() {
                   <TableBody>
                       {filteredSupplies && filteredSupplies.map((supply) => {
                         const purchaseDate = getDate(supply.lastPurchaseDate);
+                        const resolvedType = resolveSupplyType(supply);
                         return (
                           <TableRow key={supply.id}>
                               <TableCell className="font-medium">{supply.name}</TableCell>
                               <TableCell>
                                 <Badge variant="outline" className="flex items-center gap-1.5 w-fit font-normal">
-                                  {supply.type === 'packaging' ? <Package className="h-3 w-3"/> : <FlaskConical className="h-3 w-3" />}
-                                  {supply.type === 'packaging' ? 'Embalagem' : 'Ingrediente'}
+                                  {resolvedType === 'packaging' ? <Package className="h-3 w-3"/> : <FlaskConical className="h-3 w-3" />}
+                                  {resolvedType === 'packaging' ? 'Embalagem' : 'Ingrediente'}
                                 </Badge>
                               </TableCell>
                               <TableCell>

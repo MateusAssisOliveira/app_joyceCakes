@@ -1,126 +1,113 @@
-
-// CAMADA DE SERVIÇO PARA MOVIMENTAÇÕES FINANCEIRAS
-
 import type { FinancialMovement, CashRegister } from "@/types";
 import { collection, doc, Firestore, serverTimestamp, addDoc, updateDoc, getDocs, query, where, limit } from "firebase/firestore";
 import { errorEmitter } from "@/firebase/error-emitter";
 import { FirestorePermissionError } from "@/firebase/errors";
 import { updateUserProfile } from "./userService";
+import { getTenantCollectionPath, resolveTenantIdOrThrow } from "@/lib/tenant";
 
-/**
- * Abre um novo caixa para o usuário e atualiza o perfil do usuário com o ID do caixa ativo.
- * @param firestore Instância do Firestore.
- * @param userId O ID do usuário.
- * @param initialBalance O saldo inicial do caixa.
- */
-export const openCashRegister = (firestore: Firestore, userId: string, initialBalance: number): Promise<void> => {
-    const cashRegisterCollection = collection(firestore, `users/${userId}/cash_registers`);
-    
-    const newRegisterData = {
-        userId,
-        initialBalance,
-        openingDate: serverTimestamp(),
-        status: 'open',
-        closingDate: null,
-        finalBalance: null,
-        totalSales: 0,
-        totalExpenses: 0,
-    };
-
-    const openRegisterQuery = query(
-        cashRegisterCollection,
-        where('status', '==', 'open'),
-        limit(1)
-    );
-
-    return getDocs(openRegisterQuery)
-      .then(async (snapshot) => {
-        if (!snapshot.empty) {
-            throw new Error("Já existe um caixa aberto para este usuário.");
-        }
-      })
-      .then(() => addDoc(cashRegisterCollection, newRegisterData))
-      .then(async (docRef) => {
-        // Após criar o caixa, atualiza o perfil do usuário com o ID do novo caixa.
-        await updateUserProfile(firestore, userId, { activeCashRegisterId: docRef.id });
-      })
-      .catch(async () => {
-        const permissionError = new FirestorePermissionError({
-            path: cashRegisterCollection.path,
-            operation: 'create',
-            requestResourceData: newRegisterData
-        });
-        errorEmitter.emit('permission-error', permissionError);
-        throw permissionError; // Propaga o erro para o chamador se necessário
-      });
-};
-
-/**
- * Fecha um caixa existente e limpa o ID do caixa ativo do perfil do usuário.
- * @param firestore Instância do Firestore.
- * @param userId O ID do usuário.
- * @param registerId O ID do caixa a ser fechado.
- * @param finalBalance O saldo final calculado.
- */
-export const closeCashRegister = (firestore: Firestore, userId: string, registerId: string, finalBalance: number): Promise<void> => {
-    const registerDocRef = doc(firestore, `users/${userId}/cash_registers`, registerId);
-
-    const updatedData = {
-        status: 'closed',
-        closingDate: serverTimestamp(),
-        finalBalance: finalBalance,
-    };
-
-    return updateDoc(registerDocRef, updatedData)
-      .then(async () => {
-        // Após fechar o caixa, limpa o campo do perfil do usuário.
-        await updateUserProfile(firestore, userId, { activeCashRegisterId: null });
-      })
-      .catch(async () => {
-        const permissionError = new FirestorePermissionError({
-            path: registerDocRef.path,
-            operation: 'update',
-            requestResourceData: updatedData
-        });
-        errorEmitter.emit('permission-error', permissionError);
-        throw permissionError;
-      });
-};
-
-/**
- * Adiciona uma nova movimentação financeira a um caixa.
- * @param firestore Instância do Firestore.
- * @param cashRegister O objeto do caixa ativo.
- * @param movementData Os dados da movimentação.
- */
-export const addFinancialMovement = (
-    firestore: Firestore, 
-    cashRegister: CashRegister, 
-    movementData: Omit<FinancialMovement, 'id' | 'movementDate' | 'cashRegisterId'>
+export const openCashRegister = (
+  firestore: Firestore,
+  userId: string,
+  initialBalance: number,
+  tenantId?: string
 ): Promise<void> => {
-    if (!cashRegister.userId) {
-        const error = new Error("ID do usuário não encontrado no caixa.");
-        return Promise.reject(error);
-    }
-    const movementsCollection = collection(firestore, `users/${cashRegister.userId}/cash_registers/${cashRegister.id}/financial_movements`);
-    
-    const fullMovementData = {
-        ...movementData,
-        cashRegisterId: cashRegister.id,
-        movementDate: serverTimestamp(),
-    };
+  const currentTenantId = resolveTenantIdOrThrow(tenantId || userId);
+  const cashRegisterCollection = collection(firestore, getTenantCollectionPath(currentTenantId, "cash_registers"));
 
-    return addDoc(movementsCollection, fullMovementData)
-      .then(() => {})
-      .catch(async () => {
-        const permissionError = new FirestorePermissionError({
-            path: movementsCollection.path,
-            operation: 'create',
-            requestResourceData: fullMovementData
-        });
-        errorEmitter.emit('permission-error', permissionError);
-        throw permissionError;
+  const newRegisterData = {
+    userId,
+    tenantId: currentTenantId,
+    initialBalance,
+    openingDate: serverTimestamp(),
+    status: "open",
+    closingDate: null,
+    finalBalance: null,
+    totalSales: 0,
+    totalExpenses: 0,
+  };
+
+  const openRegisterQuery = query(cashRegisterCollection, where("status", "==", "open"), limit(1));
+
+  return getDocs(openRegisterQuery)
+    .then(async (snapshot) => {
+      if (!snapshot.empty) {
+        throw new Error("Ja existe um caixa aberto para este tenant.");
+      }
+    })
+    .then(() => addDoc(cashRegisterCollection, newRegisterData))
+    .then(async (docRef) => {
+      await updateUserProfile(firestore, userId, { activeCashRegisterId: docRef.id, activeTenantId: currentTenantId });
+    })
+    .catch(async () => {
+      const permissionError = new FirestorePermissionError({
+        path: cashRegisterCollection.path,
+        operation: "create",
+        requestResourceData: newRegisterData,
       });
+      errorEmitter.emit("permission-error", permissionError);
+      throw permissionError;
+    });
 };
 
-    
+export const closeCashRegister = (
+  firestore: Firestore,
+  userId: string,
+  registerId: string,
+  finalBalance: number,
+  tenantId?: string
+): Promise<void> => {
+  const currentTenantId = resolveTenantIdOrThrow(tenantId || userId);
+  const registerDocRef = doc(firestore, getTenantCollectionPath(currentTenantId, "cash_registers"), registerId);
+
+  const updatedData = {
+    status: "closed",
+    closingDate: serverTimestamp(),
+    finalBalance,
+  };
+
+  return updateDoc(registerDocRef, updatedData)
+    .then(async () => {
+      await updateUserProfile(firestore, userId, { activeCashRegisterId: null, activeTenantId: currentTenantId });
+    })
+    .catch(async () => {
+      const permissionError = new FirestorePermissionError({
+        path: registerDocRef.path,
+        operation: "update",
+        requestResourceData: updatedData,
+      });
+      errorEmitter.emit("permission-error", permissionError);
+      throw permissionError;
+    });
+};
+
+export const addFinancialMovement = (
+  firestore: Firestore,
+  cashRegister: CashRegister,
+  movementData: Omit<FinancialMovement, "id" | "movementDate" | "cashRegisterId">,
+  tenantId?: string
+): Promise<void> => {
+  const currentTenantId = resolveTenantIdOrThrow(tenantId || cashRegister.userId);
+  const movementsCollection = collection(
+    firestore,
+    `${getTenantCollectionPath(currentTenantId, "cash_registers")}/${cashRegister.id}/financial_movements`
+  );
+
+  const fullMovementData = {
+    ...movementData,
+    cashRegisterId: cashRegister.id,
+    tenantId: currentTenantId,
+    movementDate: serverTimestamp(),
+  };
+
+  return addDoc(movementsCollection, fullMovementData)
+    .then(() => {})
+    .catch(async () => {
+      const permissionError = new FirestorePermissionError({
+        path: movementsCollection.path,
+        operation: "create",
+        requestResourceData: fullMovementData,
+      });
+      errorEmitter.emit("permission-error", permissionError);
+      throw permissionError;
+    });
+};

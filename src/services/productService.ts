@@ -1,103 +1,81 @@
-
-// CAMADA DE SERVIÇO PARA PRODUTOS (PRODUCTS)
-//
-// Propósito:
-// Este arquivo abstrai a lógica de acesso a dados para os produtos.
-//
-// Responsabilidade:
-// - Fornecer uma função para buscar a lista de todos os produtos do Firestore.
-// - Isolar os componentes da implementação da fonte de dados.
-
 import { collection, getDocs, Firestore, doc, serverTimestamp, addDoc, updateDoc } from 'firebase/firestore';
 import type { Product } from '@/types';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
 import { serializeObject, setDocumentActive } from './utils';
+import { getTenantCollectionPath, resolveTenantIdOrThrow } from '@/lib/tenant';
 
-/**
- * Adiciona um novo produto. Por padrão, ele é criado como ativo.
- * @param firestore Instância do Firestore.
- * @param productData Os dados do novo produto (sem o id).
- */
-export const addProduct = (firestore: Firestore, productData: Partial<Omit<Product, 'id' | 'createdAt' | 'isActive'>>): Promise<void> => {
-    const productsCollection = collection(firestore, "products");
-    const fullProductData = {
-        ...productData,
-        isActive: true,
-        createdAt: serverTimestamp(),
-    };
+export const addProduct = (
+  firestore: Firestore,
+  productData: Partial<Omit<Product, 'id' | 'createdAt' | 'isActive'>>,
+  tenantId?: string
+): Promise<void> => {
+  const currentTenantId = resolveTenantIdOrThrow(tenantId);
+  const productsCollection = collection(firestore, getTenantCollectionPath(currentTenantId, 'products'));
+  const fullProductData = {
+    ...productData,
+    tenantId: currentTenantId,
+    isActive: true,
+    createdAt: serverTimestamp(),
+  };
 
-    return addDoc(productsCollection, fullProductData)
-      .then(() => {}) // Retorna uma promessa resolvida em caso de sucesso.
-      .catch(async () => {
-        const permissionError = new FirestorePermissionError({
-            path: productsCollection.path,
-            operation: 'create',
-            requestResourceData: fullProductData,
-        });
-        errorEmitter.emit('permission-error', permissionError);
-        throw permissionError; // Relança o erro para o chamador saber da falha.
+  return addDoc(productsCollection, fullProductData)
+    .then(() => {})
+    .catch(async () => {
+      const permissionError = new FirestorePermissionError({
+        path: productsCollection.path,
+        operation: 'create',
+        requestResourceData: fullProductData,
+      });
+      errorEmitter.emit('permission-error', permissionError);
+      throw permissionError;
     });
 };
 
-/**
- * Atualiza um produto existente.
- * @param firestore Instância do Firestore.
- * @param id O ID do produto a ser atualizado.
- * @param updatedData Os novos dados para o produto.
- */
-export const updateProduct = (firestore: Firestore, id: string, updatedData: Partial<Omit<Product, 'id' | 'createdAt' | 'isActive'>>): Promise<void> => {
-    const productDocRef = doc(firestore, 'products', id);
-    return updateDoc(productDocRef, updatedData)
-      .catch(async () => {
-        const permissionError = new FirestorePermissionError({
-            path: productDocRef.path,
-            operation: 'update',
-            requestResourceData: updatedData,
-        });
-        errorEmitter.emit('permission-error', permissionError);
-        throw permissionError; // Relança o erro para o chamador.
+export const updateProduct = (
+  firestore: Firestore,
+  id: string,
+  updatedData: Partial<Omit<Product, 'id' | 'createdAt' | 'isActive'>>,
+  tenantId?: string
+): Promise<void> => {
+  const currentTenantId = resolveTenantIdOrThrow(tenantId);
+  const productDocRef = doc(firestore, getTenantCollectionPath(currentTenantId, 'products'), id);
+  return updateDoc(productDocRef, updatedData).catch(async () => {
+    const permissionError = new FirestorePermissionError({
+      path: productDocRef.path,
+      operation: 'update',
+      requestResourceData: updatedData,
     });
+    errorEmitter.emit('permission-error', permissionError);
+    throw permissionError;
+  });
 };
 
-/**
- * Inativa (soft delete) um produto, marcando `isActive` como false.
- * @param firestore Instância do Firestore.
- * @param id O ID do produto a ser inativado.
- */
-export const inactivateProduct = (firestore: Firestore, id: string): void => {
-    setDocumentActive(firestore, 'products', id, false);
+export const inactivateProduct = (firestore: Firestore, id: string, tenantId?: string): void => {
+  const currentTenantId = resolveTenantIdOrThrow(tenantId);
+  setDocumentActive(firestore, getTenantCollectionPath(currentTenantId, 'products'), id, false);
 };
 
-/**
- * Reativa um produto, marcando `isActive` como true.
- * @param firestore Instância do Firestore.
- * @param id O ID do produto a ser reativado.
- */
-export const reactivateProduct = (firestore: Firestore, id: string): void => {
-    setDocumentActive(firestore, 'products', id, true);
+export const reactivateProduct = (firestore: Firestore, id: string, tenantId?: string): void => {
+  const currentTenantId = resolveTenantIdOrThrow(tenantId);
+  setDocumentActive(firestore, getTenantCollectionPath(currentTenantId, 'products'), id, true);
 };
 
-
-/**
- * Retorna uma lista de todos os produtos do Firestore.
- */
-export const getProducts = async (firestore: Firestore): Promise<Product[]> => {
-    const productsCollection = collection(firestore, 'products');
-    try {
-        const snapshot = await getDocs(productsCollection);
-        if (snapshot.empty) {
-            console.warn("Nenhum produto encontrado no Firestore. Considere popular o banco de dados.");
-            return [];
-        }
-        return snapshot.docs.map(doc => {
-            const data = doc.data();
-            const docWithId = { id: doc.id, ...data };
-            // Garante que todos os Timestamps sejam convertidos para strings antes de retornar.
-            return serializeObject(docWithId) as Product;
-        });
-    } catch (error) {
-        // Apenas relança o erro original. O cliente tratará de criar o erro contextual.
-        throw error;
+export const getProducts = async (firestore: Firestore, tenantId?: string): Promise<Product[]> => {
+  const currentTenantId = resolveTenantIdOrThrow(tenantId);
+  const productsCollection = collection(firestore, getTenantCollectionPath(currentTenantId, 'products'));
+  try {
+    const snapshot = await getDocs(productsCollection);
+    if (snapshot.empty) {
+      console.warn('Nenhum produto encontrado no Firestore.');
+      return [];
     }
+    return snapshot.docs.map((item) => {
+      const data = item.data();
+      const docWithId = { id: item.id, ...data };
+      return serializeObject(docWithId) as Product;
+    });
+  } catch (error) {
+    throw error;
+  }
 };

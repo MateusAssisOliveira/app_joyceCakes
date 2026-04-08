@@ -1,23 +1,30 @@
-
-// ARQUIVO DE DEFINIÇÕES DE TIPOS (TYPESCRIPT)
-//
-// Propósito:
-// Este arquivo centraliza todas as definições de tipos e interfaces TypeScript
-// que são usadas em múltiplas partes da aplicação.
-//
-// Responsabilidade:
-// - Definir a "forma" dos objetos de dados (ex: `Product`, `Order`, `Supply`).
-// - Garantir a consistência e a segurança de tipos em todo o projeto, ajudando a
-//   prevenir erros durante o desenvolvimento.
-
 import { Timestamp } from "firebase/firestore";
 import { LucideIcon } from "lucide-react";
 
-// Permitir strings ISO, Date ou Firestore Timestamp em entradas/seed
 export type DateLike = string | Date | Timestamp;
+
+export type TenantRole = "owner" | "admin" | "staff";
+
+export type Tenant = {
+  id: string;
+  name: string;
+  ownerUserId: string;
+  createdAt?: DateLike;
+  updatedAt?: DateLike;
+};
+
+export type TenantMember = {
+  id: string;
+  userId: string;
+  role: TenantRole;
+  status: "active" | "invited" | "disabled";
+  createdAt?: DateLike;
+  updatedAt?: DateLike;
+};
 
 export type Product = {
   id: string;
+  tenantId?: string;
   name: string;
   description: string;
   price: number;
@@ -45,16 +52,15 @@ export type DashboardMetric = {
 
 export type FinancialMovement = {
   id: string;
+  tenantId?: string;
   cashRegisterId: string;
   type: "income" | "expense";
   category: string;
   description: string;
   amount: number;
   paymentMethod: string;
-  // Legacy data uses `date`; some code expects `movementDate` — aceitar ambos
   date?: DateLike;
   movementDate?: DateLike;
-  // Legacy field names in mocks
   value?: number;
   method?: string;
   orderId?: string;
@@ -62,6 +68,7 @@ export type FinancialMovement = {
 
 export type CashRegister = {
   id: string;
+  tenantId?: string;
   userId: string;
   openingDate: DateLike;
   closingDate: DateLike | null;
@@ -89,9 +96,9 @@ export type OrderItem = {
 
 export type Order = {
   id: string;
+  tenantId?: string;
   orderNumber: string;
   createdAt: DateLike;
-  // Algumas telas usam `customerName`/`date` — manter opcionais para compatibilidade
   customerName?: string;
   date?: DateLike;
   userId: string;
@@ -105,6 +112,7 @@ export type Order = {
 
 export type Supply = {
   id: string;
+  tenantId?: string;
   name: string;
   sku: string;
   category: string;
@@ -112,6 +120,7 @@ export type Supply = {
   stock: number;
   unit: "kg" | "g" | "L" | "ml" | "un";
   costPerUnit: number;
+  purchaseFormat?: "unidade" | "pacote" | "caixa" | "garrafa" | "saco" | "lata" | "frasco";
   packageCost?: number;
   packageQuantity?: number;
   supplier?: string;
@@ -128,11 +137,12 @@ export type TechnicalSheetComponent = {
   componentType: "supply" | "sheet" | "packaging";
   quantity: number;
   unit: string;
-  lossFactor?: number; // some seed data included this on components
+  lossFactor?: number;
 };
 
 export type TechnicalSheet = {
   id: string;
+  tenantId?: string;
   name: string;
   description: string;
   type: "base";
@@ -153,7 +163,10 @@ export type UserProfile = {
   id: string;
   email: string;
   name: string;
+  role?: TenantRole;
+  activeTenantId?: string | null;
   activeCashRegisterId?: string | null;
+  legacyMigrationV1Done?: boolean;
 };
 
 export type CartItem = {

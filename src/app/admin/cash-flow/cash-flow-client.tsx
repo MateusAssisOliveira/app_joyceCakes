@@ -12,6 +12,7 @@ import { CashFlowMetrics } from '@/components/admin/cash-flow/cash-flow-metrics'
 import { RecentMovementsTable } from '@/components/admin/cash-flow/recent-movements-table';
 import { Loader } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import { getTenantCollectionPath } from '@/lib/tenant';
 
 export function CashFlowClient() {
   const firestore = useFirestore();
@@ -24,28 +25,32 @@ export function CashFlowClient() {
   }, [firestore, user]);
   
   const { data: userProfile, isLoading: isProfileLoading } = useDoc<UserProfile>(userProfileRef);
+  const tenantId = userProfile?.activeTenantId || user?.uid || null;
 
   // 2. Com o ID obtido, faz um 'get' direto no documento do caixa ativo
   const activeCashRegisterRef = useMemo(() => {
-    if (!firestore || !user?.uid || !userProfile?.activeCashRegisterId) return null;
-    return doc(firestore, `users/${user.uid}/cash_registers`, userProfile.activeCashRegisterId);
-  }, [firestore, user, userProfile]);
+    if (!firestore || !tenantId || !userProfile?.activeCashRegisterId) return null;
+    return doc(firestore, getTenantCollectionPath(tenantId, "cash_registers"), userProfile.activeCashRegisterId);
+  }, [firestore, tenantId, userProfile]);
 
   const { data: activeCashRegister, isLoading: isRegisterLoading } = useDoc<CashRegister>(activeCashRegisterRef);
   
   // 3. Busca as movimentações do caixa ativo
   const movementsQuery = useMemo(() => {
-    if (!firestore || !user?.uid || !activeCashRegister) return null;
-    return collection(firestore, `users/${user.uid}/cash_registers/${activeCashRegister.id}/financial_movements`);
-  }, [firestore, user, activeCashRegister]);
+    if (!firestore || !tenantId || !activeCashRegister) return null;
+    return collection(
+      firestore,
+      `${getTenantCollectionPath(tenantId, "cash_registers")}/${activeCashRegister.id}/financial_movements`
+    );
+  }, [firestore, tenantId, activeCashRegister]);
 
   const { data: movements, isLoading: areMovementsLoading } = useCollection<FinancialMovement>(movementsQuery);
   
   // 4. Busca os produtos para o diálogo de nova movimentação
   const productsQuery = useMemo(() => {
-    if (!firestore) return null;
-    return query(collection(firestore, 'products'));
-  }, [firestore]);
+    if (!firestore || !tenantId) return null;
+    return query(collection(firestore, getTenantCollectionPath(tenantId, "products")));
+  }, [firestore, tenantId]);
   
   const { data: products, isLoading: areProductsLoading } = useCollection<Product>(productsQuery);
   
@@ -118,12 +123,12 @@ export function CashFlowClient() {
   const activeProducts = products?.filter(p => p.isActive !== false) || [];
 
   return (
-    <div className="w-full flex flex-col gap-8">
+    <div className="w-full flex flex-col gap-4 sm:gap-6">
       <CashFlowHeader register={activeCashRegister} finalBalance={metrics.finalBalance} />
       <CashFlowMetrics metrics={metrics} />
       <Card>
-        <CardContent className="pt-6">
-          <div className="flex justify-end mb-4">
+        <CardContent className="px-3 pb-3 pt-4 sm:px-6 sm:pb-6 sm:pt-6">
+          <div className="mb-4 flex justify-stretch sm:justify-end">
              <AddMovementDialog cashRegister={activeCashRegister} products={activeProducts} />
           </div>
           <RecentMovementsTable movements={movements || []} />
