@@ -25,11 +25,10 @@ import { Separator } from "@/components/ui/separator";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarTrigger, SidebarProvider } from '@/components/ui/sidebar';
 import { ActiveLink } from '@/app/admin/active-link';
 import DynamicHeader from '@/app/admin/dynamic-header';
-import { useUser, useAuth } from '@/firebase';
+import { useSupabase } from '@/supabase';
 import { SidebarInset } from '@/components/ui/sidebar';
 import { SyncStatusBadge } from '@/components/admin/sync-status-badge';
 import { useRouter } from 'next/navigation';
-import { signOut } from 'firebase/auth';
 import Loading from '@/app/admin/loading';
 
 const primaryNav = [
@@ -53,8 +52,7 @@ export default function AdminPanel({
     children: React.ReactNode;
 }) {
     const pathname = usePathname();
-    const { user } = useUser();
-    const auth = useAuth();
+    const { user, client } = useSupabase();
     const router = useRouter();
 
     useEffect(() => {
@@ -66,9 +64,7 @@ export default function AdminPanel({
 
 
     const handleSignOut = async () => {
-        if (auth) {
-            await signOut(auth);
-        }
+        await client.auth.signOut();
         router.push('/');
     }
 
