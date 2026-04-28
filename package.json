@@ -6,7 +6,7 @@
     "dev": "next dev --turbopack",
     "dev:lan": "next dev --turbopack -H 0.0.0.0 -p 3000",
     "dev:all": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev-all.ps1",
-    "clean:next": "powershell -NoProfile -Command \"if (Test-Path .next) { Remove-Item -Recurse -Force .next }\"",
+    "clean:next": "node -e \"const fs=require('fs'); if (fs.existsSync('.next')) fs.rmSync('.next',{recursive:true,force:true});\"",
     "build": "npm run clean:next && next build",
     "start": "next start",
     "lint": "next lint",
