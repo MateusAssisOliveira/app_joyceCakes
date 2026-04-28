@@ -173,7 +173,7 @@ export const addOrder = async (firestore: Firestore, newOrderData: NewOrderData)
     total: totalRevenue,
     orderNumber,
     status: "Pendente",
-    createdAt: serverTimestamp() as Timestamp,
+    createdAt: serverTimestamp(),
     cashRegisterId: activeCashRegister.id,
     totalCost,
   };

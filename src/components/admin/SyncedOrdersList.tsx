@@ -52,7 +52,7 @@ export function SyncedOrdersList() {
           console.log(`✅ Dados sincronizados!`);
           console.log(`📦 Total de pedidos: ${snapshot.docs.length}`);
 
-          const ordersData: Order[] = snapshot.docs.map((doc) => {
+          const ordersData: Order[] = snapshot.docs.map((doc: any) => {
             const data = doc.data();
             return {
               id: doc.id,

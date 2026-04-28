@@ -25,7 +25,7 @@ export function setupRealtimeListener<T extends { id: string }>(
     const unsubscribe = onSnapshot(
       collectionRef,
       (snapshot) => {
-        const data: T[] = snapshot.docs.map(doc => ({
+        const data: T[] = snapshot.docs.map((doc: any) => ({
           id: doc.id,
           ...doc.data()
         } as T));

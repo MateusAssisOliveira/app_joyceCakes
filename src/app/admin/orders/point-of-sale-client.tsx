@@ -82,7 +82,7 @@ export function PointOfSaleClient({ products }: PointOfSaleClientProps) {
     const ordersQuery = query(collection(firestore, ordersPath), orderBy("createdAt", "desc"));
     
     const unsubscribe = onSnapshot(ordersQuery, (snapshot) => {
-      const fetchedOrders = snapshot.docs.map(doc => {
+      const fetchedOrders = snapshot.docs.map((doc: any) => {
         const data = doc.data();
         return {
           id: doc.id,

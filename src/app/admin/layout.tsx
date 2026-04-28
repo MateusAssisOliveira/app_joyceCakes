@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { SupabaseProvider, useSupabase } from '@/supabase';
 import AdminPanel from '@/app/admin/admin-panel';
 import { Loader } from 'lucide-react';
+import { FirebaseClientProvider } from '@/firebase';
 
 function ProtectedAdminLayout({ children }: { children: React.ReactNode }) {
   const { user, isLoading: isUserLoading } = useSupabase();
@@ -41,7 +42,9 @@ export default function AdminLayout({
 }) {
   return (
     <SupabaseProvider>
-      <ProtectedAdminLayout>{children}</ProtectedAdminLayout>
+      <FirebaseClientProvider>
+        <ProtectedAdminLayout>{children}</ProtectedAdminLayout>
+      </FirebaseClientProvider>
     </SupabaseProvider>
   );
 }

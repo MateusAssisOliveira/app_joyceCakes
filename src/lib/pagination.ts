@@ -164,4 +164,4 @@ export class CollectionCache<T> {
 }
 
 // Re-export common Firestore types for convenience
-export { DocumentSnapshot };
+export type { DocumentSnapshot };
