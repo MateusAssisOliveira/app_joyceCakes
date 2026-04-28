@@ -24,7 +24,7 @@ import { Separator } from "@/components/ui/separator";
 import { Loader, TrendingUp } from "lucide-react";
 import type { Supply } from "@/types";
 import { useToast } from "@/hooks/use-toast";
-import { useFirestore, useUser } from "@/firebase";
+import { useUser } from "@/firebase";
 import { updateSupply, getPriceHistory } from "@/services";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useActiveTenant } from "@/hooks/use-active-tenant";
@@ -79,7 +79,6 @@ export function SupplyQuickAddDialog({
   });
 
   const { toast } = useToast();
-  const firestore = useFirestore();
   const { user } = useUser();
   const { activeTenantId } = useActiveTenant();
 
@@ -138,8 +137,8 @@ export function SupplyQuickAddDialog({
   ]);
 
   useEffect(() => {
-    if (isOpen && firestore && supply?.id) {
-      getPriceHistory(firestore, supply.id, activeTenantId || undefined)
+    if (isOpen && supply?.id) {
+      getPriceHistory(null, supply.id, activeTenantId || undefined)
         .then((history) => {
           if (history.length > 0) {
             setLastPrice(history[0].costPerUnit);
@@ -147,7 +146,7 @@ export function SupplyQuickAddDialog({
         })
         .catch((err) => console.error("Erro ao carregar historico de preco:", err));
     }
-  }, [isOpen, firestore, supply?.id, activeTenantId]);
+  }, [isOpen, supply?.id, activeTenantId]);
 
   useEffect(() => {
     const newPrice = parseNumericInput(newCostPerUnit);
@@ -215,8 +214,6 @@ export function SupplyQuickAddDialog({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!firestore) return;
-
     if (!supplyName.trim()) {
       toast({
         variant: "destructive",
@@ -326,7 +323,7 @@ export function SupplyQuickAddDialog({
         amount: totalPurchaseCost,
       };
 
-      await updateSupply(firestore, supply.id, updateData, financialData, activeTenantId || undefined);
+      await updateSupply(null, supply.id, updateData, financialData, activeTenantId || undefined);
 
       toast({ title: "Estoque atualizado com sucesso!" });
       onSuccess?.();

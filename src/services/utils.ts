@@ -1,56 +1,97 @@
+import { getSupabaseBrowserClient } from "@/lib/supabase/client";
+import { isFirebaseTimestamp, isDateInstance } from "@/lib/timestamp-utils";
 
-import { Firestore, doc } from 'firebase/firestore';
-import { isFirebaseTimestamp, isDateInstance } from '@/lib/timestamp-utils';
-import { updateDocumentNonBlocking } from '@/firebase';
+const TABLE_NAMES = new Set([
+  "products",
+  "supplies",
+  "technical_sheets",
+  "cash_registers",
+  "financial_movements",
+  "profiles",
+  "tenants",
+  "tenant_members",
+  "supply_price_history",
+  "orders",
+]);
 
-/**
- * Ativa ou desativa um documento no Firestore (soft delete)
- * Função genérica reutilizável para qualquer coleção
- *
- * @param firestore - Instância do Firestore
- * @param collectionName - Nome da coleção (supplies, technical_sheets, products, etc)
- * @param id - ID do documento
- * @param isActive - true para ativar, false para desativar
- */
-export const setDocumentActive = (
-  firestore: Firestore,
+function resolveTableName(collectionName: string) {
+  const normalized = collectionName.replace(/^\/+|\/+$/g, "");
+  if (TABLE_NAMES.has(normalized)) {
+    return { table: normalized, filters: [] as Array<{ column: string; value: string }> };
+  }
+
+  const segments = normalized.split("/");
+  if (segments[0] === "tenants" && segments.length >= 3) {
+    const tenantId = segments[1];
+    const collection = segments[2];
+
+    if (collection === "supplies" && segments[4] === "price_history") {
+      return {
+        table: "supply_price_history",
+        filters: [
+          { column: "tenantId", value: tenantId },
+          { column: "supplyId", value: segments[3] },
+        ],
+      };
+    }
+
+    if (collection === "cash_registers" && segments[4] === "financial_movements") {
+      return {
+        table: "financial_movements",
+        filters: [
+          { column: "tenantId", value: tenantId },
+          { column: "cashRegisterId", value: segments[3] },
+        ],
+      };
+    }
+
+    return {
+      table: collection,
+      filters: [{ column: "tenantId", value: tenantId }],
+    };
+  }
+
+  throw new Error(`Colecao nao suportada para Supabase: ${collectionName}`);
+}
+
+export const setDocumentActive = async (
+  _firestore: unknown,
   collectionName: string,
   id: string,
   isActive: boolean
-): void => {
-  const docRef = doc(firestore, collectionName, id);
-  updateDocumentNonBlocking(docRef, { isActive });
+): Promise<void> => {
+  const client = getSupabaseBrowserClient();
+  const { table, filters } = resolveTableName(collectionName);
+
+  let request = client.from(table).update({ isActive });
+  for (const filter of filters) {
+    request = request.eq(filter.column, filter.value);
+  }
+  request = request.eq("id", id);
+
+  const { error } = await request;
+  if (error) {
+    throw error;
+  }
 };
 
-/**
- * Recursively converts Firestore Timestamps within an object to ISO date strings.
- * This is crucial for making Firestore data serializable and safe to pass from
- * Server Components to Client Components in Next.js.
- *
- * @param obj The object (or array) to process.
- * @returns A new object with all Timestamps converted to ISO strings.
- */
 export function serializeObject<T>(obj: T): T {
-  if (obj === null || obj === undefined || typeof obj !== 'object') {
+  if (obj === null || obj === undefined || typeof obj !== "object") {
     return obj;
   }
 
-  // Handle Firestore Timestamps
   if (isFirebaseTimestamp(obj)) {
     return obj.toDate().toISOString() as unknown as T;
   }
-  
-  // Handle native Date objects
+
   if (isDateInstance(obj)) {
     return obj.toISOString() as unknown as T;
   }
 
-  // Handle arrays by recursively serializing each item
   if (Array.isArray(obj)) {
-    return obj.map(item => serializeObject(item)) as unknown as T;
+    return obj.map((item) => serializeObject(item)) as unknown as T;
   }
 
-  // Handle objects by recursively serializing each value
   const newObj = {} as { [key: string]: any };
   for (const key in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, key)) {

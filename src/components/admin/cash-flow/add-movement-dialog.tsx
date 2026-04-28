@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useFirestore } from '@/firebase';
 import {
   Dialog,
   DialogContent,
@@ -48,7 +47,6 @@ export function AddMovementDialog({ cashRegister, products }: AddMovementDialogP
   const [paymentMethod, setPaymentMethod] = useState('Dinheiro');
   const [isProductPopoverOpen, setIsProductPopoverOpen] = useState(false);
 
-  const firestore = useFirestore();
   const { activeTenantId } = useActiveTenant();
   const { toast } = useToast();
 
@@ -71,7 +69,6 @@ export function AddMovementDialog({ cashRegister, products }: AddMovementDialogP
   };
 
   const handleAddMovement = async () => {
-    if (!firestore) return;
     if (amount <= 0 || !description || !category) {
       toast({ variant: 'destructive', title: 'Campos inválidos', description: 'Preencha valor, descrição e categoria.' });
       return;
@@ -79,7 +76,7 @@ export function AddMovementDialog({ cashRegister, products }: AddMovementDialogP
 
     setIsProcessing(true);
     try {
-      await addFinancialMovement(firestore, cashRegister, {
+      await addFinancialMovement(null, cashRegister, {
         type,
         amount,
         description,

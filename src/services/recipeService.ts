@@ -1,83 +1,72 @@
-import type { TechnicalSheet } from "@/types";
-import { collection, doc, Firestore, serverTimestamp, addDoc, updateDoc, getDocs } from "firebase/firestore";
-import { errorEmitter } from "@/firebase/error-emitter";
-import { FirestorePermissionError } from "@/firebase/errors";
-import { serializeObject, setDocumentActive } from "./utils";
+import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { getTenantCollectionPath, resolveTenantIdOrThrow } from "@/lib/tenant";
+import type { TechnicalSheet } from "@/types";
+import { serializeObject, setDocumentActive } from "./utils";
 
-export const addTechnicalSheet = (
-  firestore: Firestore,
+export async function addTechnicalSheet(
+  _firestore: unknown,
   sheetData: Omit<TechnicalSheet, "id" | "createdAt" | "isActive">,
   tenantId?: string
-): Promise<void> => {
+): Promise<void> {
+  const client = getSupabaseBrowserClient();
   const currentTenantId = resolveTenantIdOrThrow(tenantId);
-  const sheetsCollection = collection(firestore, getTenantCollectionPath(currentTenantId, "technical_sheets"));
 
-  const fullSheetData = {
+  const { error } = await client.from("technical_sheets").insert({
     ...sheetData,
     tenantId: currentTenantId,
     isActive: true,
-    createdAt: serverTimestamp(),
-  };
+    createdAt: new Date().toISOString(),
+  });
 
-  return addDoc(sheetsCollection, fullSheetData)
-    .then(() => {})
-    .catch(async () => {
-      const permissionError = new FirestorePermissionError({
-        path: sheetsCollection.path,
-        operation: "create",
-        requestResourceData: fullSheetData,
-      });
-      errorEmitter.emit("permission-error", permissionError);
-      throw permissionError;
-    });
-};
+  if (error) throw error;
+}
 
-export const updateTechnicalSheet = (
-  firestore: Firestore,
+export async function updateTechnicalSheet(
+  _firestore: unknown,
   id: string,
   updatedData: Partial<Omit<TechnicalSheet, "id" | "createdAt" | "isActive">>,
   tenantId?: string
-): Promise<void> => {
+): Promise<void> {
+  const client = getSupabaseBrowserClient();
   const currentTenantId = resolveTenantIdOrThrow(tenantId);
-  const sheetDocRef = doc(firestore, getTenantCollectionPath(currentTenantId, "technical_sheets"), id);
-  const dataToUpdate = { ...updatedData };
 
-  return updateDoc(sheetDocRef, dataToUpdate).catch(async () => {
-    const permissionError = new FirestorePermissionError({
-      path: sheetDocRef.path,
-      operation: "update",
-      requestResourceData: dataToUpdate,
-    });
-    errorEmitter.emit("permission-error", permissionError);
-    throw permissionError;
-  });
-};
+  const { error } = await client
+    .from("technical_sheets")
+    .update(updatedData)
+    .eq("tenantId", currentTenantId)
+    .eq("id", id);
 
-export const inactivateTechnicalSheet = (firestore: Firestore, id: string, tenantId?: string): void => {
+  if (error) throw error;
+}
+
+export async function inactivateTechnicalSheet(
+  _firestore: unknown,
+  id: string,
+  tenantId?: string
+): Promise<void> {
   const currentTenantId = resolveTenantIdOrThrow(tenantId);
-  setDocumentActive(firestore, getTenantCollectionPath(currentTenantId, "technical_sheets"), id, false);
-};
+  await setDocumentActive(null, getTenantCollectionPath(currentTenantId, "technical_sheets"), id, false);
+}
 
-export const reactivateTechnicalSheet = (firestore: Firestore, id: string, tenantId?: string): void => {
+export async function reactivateTechnicalSheet(
+  _firestore: unknown,
+  id: string,
+  tenantId?: string
+): Promise<void> {
   const currentTenantId = resolveTenantIdOrThrow(tenantId);
-  setDocumentActive(firestore, getTenantCollectionPath(currentTenantId, "technical_sheets"), id, true);
-};
+  await setDocumentActive(null, getTenantCollectionPath(currentTenantId, "technical_sheets"), id, true);
+}
 
-export const getTechnicalSheets = async (firestore: Firestore, tenantId?: string): Promise<TechnicalSheet[]> => {
+export async function getTechnicalSheets(_firestore: unknown, tenantId?: string): Promise<TechnicalSheet[]> {
+  const client = getSupabaseBrowserClient();
   const currentTenantId = resolveTenantIdOrThrow(tenantId);
-  const sheetsCollection = collection(firestore, getTenantCollectionPath(currentTenantId, "technical_sheets"));
-  try {
-    const snapshot = await getDocs(sheetsCollection);
-    if (snapshot.empty) {
-      return [];
-    }
-    return snapshot.docs.map((item) => {
-      const data = item.data();
-      const docWithId = { id: item.id, ...data };
-      return serializeObject(docWithId) as TechnicalSheet;
-    });
-  } catch (error) {
-    throw error;
-  }
-};
+
+  const { data, error } = await client
+    .from("technical_sheets")
+    .select("*")
+    .eq("tenantId", currentTenantId);
+
+  if (error) throw error;
+
+  return serializeObject((data ?? []) as TechnicalSheet[]);
+}

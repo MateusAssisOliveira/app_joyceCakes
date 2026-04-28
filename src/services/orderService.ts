@@ -1,22 +1,10 @@
 import type { Order, OrderItem, OrderStatus, Product, CashRegister } from "@/types";
-import {
-  collection,
-  doc,
-  Firestore,
-  serverTimestamp,
-  writeBatch,
-  getDocs,
-  getDoc,
-  updateDoc,
-  query,
-  where,
-  limit,
-  Timestamp,
-} from "firebase/firestore";
+import { getSupabaseBrowserClient } from "@/lib/supabase/client";
+import { serializeObject } from "./utils";
 import { getProducts } from "./productService";
 import { errorEmitter } from "@/firebase/error-emitter";
 import { FirestorePermissionError } from "@/firebase/errors";
-import { getTenantCollectionPath, resolveTenantIdOrThrow } from "@/lib/tenant";
+import { resolveTenantIdOrThrow } from "@/lib/tenant";
 
 type ProcessPolicy = {
   allowUnknownProducts: boolean;
@@ -129,22 +117,24 @@ type NewOrderData = Omit<Order, "id" | "orderNumber" | "createdAt" | "status" | 
   tenantId?: string;
 };
 
-export const addOrder = async (firestore: Firestore, newOrderData: NewOrderData): Promise<void> => {
+export const addOrder = async (newOrderData: NewOrderData): Promise<void> => {
   const currentTenantId = resolveTenantIdOrThrow(newOrderData.tenantId || newOrderData.userId);
-  const cashRegisterQuery = query(
-    collection(firestore, getTenantCollectionPath(currentTenantId, "cash_registers")),
-    where("status", "==", "open"),
-    limit(1)
-  );
+  const client = getSupabaseBrowserClient();
 
-  const registerSnap = await getDocs(cashRegisterQuery);
+  const { data: activeCashRegister, error: cashError } = await client
+    .from("cash_registers")
+    .select("*")
+    .eq("tenantId", currentTenantId)
+    .eq("status", "open")
+    .limit(1)
+    .maybeSingle();
 
-  if (registerSnap.empty) {
+  if (cashError) throw cashError;
+  if (!activeCashRegister) {
     throw new Error("Nenhum caixa aberto encontrado. Abra um caixa antes de registrar uma venda.");
   }
-  const activeCashRegister = { id: registerSnap.docs[0].id, ...registerSnap.docs[0].data() } as CashRegister;
 
-  const products = await getProducts(firestore, currentTenantId);
+  const products = await getProducts(null, currentTenantId);
 
   const { totalCost, totalRevenue, normalizedItems, stockAdjustments, available, message } = await processOrderItemsWithPolicy(
     products,
@@ -159,13 +149,6 @@ export const addOrder = async (firestore: Firestore, newOrderData: NewOrderData)
   }
 
   const orderNumber = `PED-${Date.now()}`;
-  const ordersCollection = collection(firestore, getTenantCollectionPath(currentTenantId, "orders"));
-  const orderRef = doc(ordersCollection);
-  const movementsCollection = collection(
-    firestore,
-    `${getTenantCollectionPath(currentTenantId, "cash_registers")}/${activeCashRegister.id}/financial_movements`
-  );
-
   const fullOrderData: Omit<Order, "id"> = {
     ...newOrderData,
     tenantId: currentTenantId,
@@ -173,255 +156,340 @@ export const addOrder = async (firestore: Firestore, newOrderData: NewOrderData)
     total: totalRevenue,
     orderNumber,
     status: "Pendente",
-    createdAt: serverTimestamp(),
+    createdAt: new Date().toISOString(),
     cashRegisterId: activeCashRegister.id,
     totalCost,
   };
   delete (fullOrderData as any).allowUnknownProducts;
 
-  try {
-    const batch = writeBatch(firestore);
-    batch.set(orderRef, fullOrderData);
+  const { data: insertedOrder, error: orderError } = await client
+    .from("orders")
+    .insert(fullOrderData)
+    .select("id")
+    .maybeSingle();
 
-    for (const [productId, reservedQty] of stockAdjustments.entries()) {
-      const product = products.find((p) => p.id === productId);
-      if (!product || product.stock_quantity === undefined) {
-        continue;
-      }
-      const updatedStock = (Number(product.stock_quantity) || 0) - reservedQty;
-      batch.update(doc(firestore, getTenantCollectionPath(currentTenantId, "products"), productId), {
-        stock_quantity: updatedStock,
-      });
-    }
+  if (orderError) throw orderError;
+  if (!insertedOrder?.id) {
+    throw new Error("Falha ao criar pedido.");
+  }
 
-    const incomeRef = doc(movementsCollection);
-    batch.set(incomeRef, {
+  const movementEntries = [
+    {
       type: "income",
       amount: totalRevenue,
       category: "Venda de Produto",
       description: `Venda do Pedido ${orderNumber}`,
       paymentMethod: newOrderData.paymentMethod,
-      orderId: orderRef.id,
+      orderId: insertedOrder.id,
       cashRegisterId: activeCashRegister.id,
       tenantId: currentTenantId,
-      movementDate: serverTimestamp(),
-    });
+      movementDate: new Date().toISOString(),
+    },
+  ];
 
-    if (totalCost > 0) {
-      const expenseRef = doc(movementsCollection);
-      batch.set(expenseRef, {
-        type: "expense",
-        amount: totalCost,
-        category: "Custo de Produto Vendido",
-        description: `Custo do Pedido ${orderNumber}`,
-        paymentMethod: newOrderData.paymentMethod,
-        orderId: orderRef.id,
-        cashRegisterId: activeCashRegister.id,
-        tenantId: currentTenantId,
-        movementDate: serverTimestamp(),
-      });
+  if (totalCost > 0) {
+    movementEntries.push({
+      type: "expense",
+      amount: totalCost,
+      category: "Custo de Produto Vendido",
+      description: `Custo do Pedido ${orderNumber}`,
+      paymentMethod: newOrderData.paymentMethod,
+      orderId: insertedOrder.id,
+      cashRegisterId: activeCashRegister.id,
+      tenantId: currentTenantId,
+      movementDate: new Date().toISOString(),
+    });
+  }
+
+  const stockUpdatePromises: Promise<any>[] = [];
+  for (const [productId, reservedQty] of stockAdjustments.entries()) {
+    const product = products.find((p) => p.id === productId);
+    if (!product || product.stock_quantity === undefined) {
+      continue;
     }
+    const updatedStock = (Number(product.stock_quantity) || 0) - reservedQty;
+    stockUpdatePromises.push(
+      client
+        .from("products")
+        .update({ stock_quantity: updatedStock })
+        .eq("tenantId", currentTenantId)
+        .eq("id", productId)
+    );
+  }
 
-    await batch.commit();
-  } catch {
-    const permissionError = new FirestorePermissionError({
-      path: ordersCollection.path,
-      operation: "create",
-      requestResourceData: fullOrderData,
-    });
-    errorEmitter.emit("permission-error", permissionError);
-    throw permissionError;
+  const { error: movementError } = await client.from("financial_movements").insert(movementEntries);
+  if (movementError) throw movementError;
+
+  const cashRegisterUpdate = await client
+    .from("cash_registers")
+    .update({
+      totalSales: (Number(activeCashRegister.totalSales) || 0) + totalRevenue,
+      totalExpenses: (Number(activeCashRegister.totalExpenses) || 0) + totalCost,
+    })
+    .eq("tenantId", currentTenantId)
+    .eq("id", activeCashRegister.id);
+
+  if (cashRegisterUpdate.error) throw cashRegisterUpdate.error;
+
+  if (stockUpdatePromises.length > 0) {
+    const stockResults = await Promise.all(stockUpdatePromises);
+    const stockError = stockResults.find((result) => result.error)?.error;
+    if (stockError) throw stockError;
   }
 };
 
-export const updateOrder = (
-  firestore: Firestore,
+export const updateOrder = async (
   orderId: string,
   updatedData: { items: OrderItem[]; total: number },
   tenantId?: string
 ): Promise<void> => {
   const currentTenantId = resolveTenantIdOrThrow(tenantId);
-  const orderRef = doc(firestore, getTenantCollectionPath(currentTenantId, "orders"), orderId);
-  return getDoc(orderRef)
-    .then(async (orderSnap) => {
-      if (!orderSnap.exists()) {
-        throw new Error("Pedido nao encontrado para atualizacao.");
-      }
-      const existingOrder = { id: orderSnap.id, ...orderSnap.data() } as Order;
-      const products = await getProducts(firestore, currentTenantId);
-      const processed = await processOrderItemsWithPolicy(products, updatedData.items, {
-        allowUnknownProducts: true,
-      });
+  const client = getSupabaseBrowserClient();
 
-      if (!processed.available) {
-        throw new Error(processed.message);
-      }
+  const { data: existingOrder, error: existingOrderError } = await client
+    .from("orders")
+    .select("*")
+    .eq("tenantId", currentTenantId)
+    .eq("id", orderId)
+    .maybeSingle();
 
-      const batch = writeBatch(firestore);
-      batch.update(orderRef, {
-        items: processed.normalizedItems,
-        total: processed.totalRevenue,
-        totalCost: processed.totalCost,
-      });
+  if (existingOrderError) throw existingOrderError;
+  if (!existingOrder) {
+    throw new Error("Pedido nao encontrado para atualizacao.");
+  }
 
-      const previousQtyByProduct = new Map<string, number>();
-      for (const item of existingOrder.items || []) {
-        const qty = Number(item.quantity) || 0;
-        previousQtyByProduct.set(item.productId, (previousQtyByProduct.get(item.productId) || 0) + qty);
-      }
+  const products = await getProducts(null, currentTenantId);
+  const processed = await processOrderItemsWithPolicy(products, updatedData.items, {
+    allowUnknownProducts: true,
+  });
 
-      const newQtyByProduct = new Map<string, number>();
-      for (const item of processed.normalizedItems) {
-        const qty = Number(item.quantity) || 0;
-        newQtyByProduct.set(item.productId, (newQtyByProduct.get(item.productId) || 0) + qty);
-      }
+  if (!processed.available) {
+    throw new Error(processed.message);
+  }
 
-      const allProductIds = new Set<string>([
-        ...Array.from(previousQtyByProduct.keys()),
-        ...Array.from(newQtyByProduct.keys()),
-      ]);
+  const previousQtyByProduct = new Map<string, number>();
+  for (const item of existingOrder.items || []) {
+    const qty = Number(item.quantity) || 0;
+    previousQtyByProduct.set(item.productId, (previousQtyByProduct.get(item.productId) || 0) + qty);
+  }
 
-      for (const productId of allProductIds) {
-        const product = products.find((p) => p.id === productId);
-        if (!product || product.stock_quantity === undefined) continue;
+  const newQtyByProduct = new Map<string, number>();
+  for (const item of processed.normalizedItems) {
+    const qty = Number(item.quantity) || 0;
+    newQtyByProduct.set(item.productId, (newQtyByProduct.get(item.productId) || 0) + qty);
+  }
 
-        const previousQty = previousQtyByProduct.get(productId) || 0;
-        const newQty = newQtyByProduct.get(productId) || 0;
-        const deltaQty = newQty - previousQty;
-        if (deltaQty === 0) continue;
+  const stockUpdatePromises: Promise<any>[] = [];
+  const cashRegisterTotalsUpdate = {
+    totalSales: 0,
+    totalExpenses: 0,
+    shouldUpdate: false,
+  };
 
-        const currentStock = Number(product.stock_quantity) || 0;
-        const nextStock = currentStock - deltaQty;
-        if (nextStock < 0) {
-          throw new Error(
-            `Estoque insuficiente para o produto "${product.name}" ao editar pedido. Necessario adicional: ${deltaQty}, Disponivel: ${currentStock}`
-          );
-        }
+  const allProductIds = new Set<string>([
+    ...Array.from(previousQtyByProduct.keys()),
+    ...Array.from(newQtyByProduct.keys()),
+  ]);
 
-        batch.update(doc(firestore, getTenantCollectionPath(currentTenantId, "products"), productId), {
-          stock_quantity: nextStock,
-        });
-      }
+  for (const productId of allProductIds) {
+    const product = products.find((p) => p.id === productId);
+    if (!product || product.stock_quantity === undefined) continue;
 
-      if (existingOrder.cashRegisterId) {
-        const movementPath = `${getTenantCollectionPath(currentTenantId, "cash_registers")}/${existingOrder.cashRegisterId}/financial_movements`;
-        const movementCollection = collection(firestore, movementPath);
-        const movementSnapshot = await getDocs(query(movementCollection, where("orderId", "==", orderId)));
+    const previousQty = previousQtyByProduct.get(productId) || 0;
+    const newQty = newQtyByProduct.get(productId) || 0;
+    const deltaQty = newQty - previousQty;
+    if (deltaQty === 0) continue;
 
-        let incomeHandled = false;
-        let expenseHandled = false;
-        movementSnapshot.docs.forEach((movementDoc) => {
-          const data = movementDoc.data() as any;
-          if (data.type === "income" && !incomeHandled) {
-            batch.update(movementDoc.ref, {
+    const currentStock = Number(product.stock_quantity) || 0;
+    const nextStock = currentStock - deltaQty;
+    if (nextStock < 0) {
+      throw new Error(
+        `Estoque insuficiente para o produto "${product.name}" ao editar pedido. Necessario adicional: ${deltaQty}, Disponivel: ${currentStock}`
+      );
+    }
+
+    stockUpdatePromises.push(
+      client
+        .from("products")
+        .update({ stock_quantity: nextStock })
+        .eq("tenantId", currentTenantId)
+        .eq("id", productId)
+    );
+  }
+
+  const { error: updateOrderError } = await client
+    .from("orders")
+    .update({
+      items: processed.normalizedItems,
+      total: processed.totalRevenue,
+      totalCost: processed.totalCost,
+    })
+    .eq("tenantId", currentTenantId)
+    .eq("id", orderId);
+
+  if (updateOrderError) throw updateOrderError;
+
+  if (stockUpdatePromises.length > 0) {
+    const stockResults = await Promise.all(stockUpdatePromises);
+    const stockError = stockResults.find((result) => result.error)?.error;
+    if (stockError) throw stockError;
+  }
+
+  if (existingOrder.cashRegisterId) {
+    const { data: movements, error: movementsError } = await client
+      .from("financial_movements")
+      .select("*")
+      .eq("tenantId", currentTenantId)
+      .eq("orderId", orderId);
+
+    if (movementsError) throw movementsError;
+
+    let incomeHandled = false;
+    let expenseHandled = false;
+    const movementRequests: Promise<any>[] = [];
+
+    for (const movement of movements ?? []) {
+      if (movement.type === "income" && !incomeHandled) {
+        incomeHandled = true;
+        movementRequests.push(
+          client
+            .from("financial_movements")
+            .update({
               amount: processed.totalRevenue,
               description: `Venda do Pedido ${existingOrder.orderNumber}`,
-            });
-            incomeHandled = true;
-            return;
-          }
-
-          if (data.type === "expense" && !expenseHandled) {
-            if (processed.totalCost > 0) {
-              batch.update(movementDoc.ref, {
-                amount: processed.totalCost,
-                description: `Custo do Pedido ${existingOrder.orderNumber}`,
-              });
-            } else {
-              batch.update(movementDoc.ref, {
-                amount: 0,
-                description: `Custo do Pedido ${existingOrder.orderNumber}`,
-              });
-            }
-            expenseHandled = true;
-          }
-        });
-
-        if (!incomeHandled) {
-          const incomeRef = doc(movementCollection);
-          batch.set(incomeRef, {
-            cashRegisterId: existingOrder.cashRegisterId,
-            type: "income",
-            category: "Venda de Produto",
-            description: `Venda do Pedido ${existingOrder.orderNumber}`,
-            amount: processed.totalRevenue,
-            paymentMethod: existingOrder.paymentMethod,
-            orderId,
-            tenantId: currentTenantId,
-            movementDate: serverTimestamp(),
-          });
-        }
-
-        if (!expenseHandled && processed.totalCost > 0) {
-          const expenseRef = doc(movementCollection);
-          batch.set(expenseRef, {
-            cashRegisterId: existingOrder.cashRegisterId,
-            type: "expense",
-            category: "Custo de Produto Vendido",
-            description: `Custo do Pedido ${existingOrder.orderNumber}`,
-            amount: processed.totalCost,
-            paymentMethod: existingOrder.paymentMethod,
-            orderId,
-            tenantId: currentTenantId,
-            movementDate: serverTimestamp(),
-          });
-        }
+            })
+            .eq("tenantId", currentTenantId)
+            .eq("id", movement.id)
+        );
+        continue;
       }
 
-      await batch.commit();
-    })
-    .catch(async (serverError) => {
-      if (serverError instanceof Error && !(serverError as any).code) {
-        throw serverError;
+      if (movement.type === "expense" && !expenseHandled) {
+        expenseHandled = true;
+        movementRequests.push(
+          client
+            .from("financial_movements")
+            .update({
+              amount: processed.totalCost > 0 ? processed.totalCost : 0,
+              description: `Custo do Pedido ${existingOrder.orderNumber}`,
+            })
+            .eq("tenantId", currentTenantId)
+            .eq("id", movement.id)
+        );
       }
-      const permissionError = new FirestorePermissionError({
-        path: orderRef.path,
-        operation: "update",
-        requestResourceData: updatedData,
-      });
-      errorEmitter.emit("permission-error", permissionError);
-      throw permissionError;
-    });
+    }
+
+    if (!incomeHandled) {
+      movementRequests.push(
+        client.from("financial_movements").insert({
+          type: "income",
+          category: "Venda de Produto",
+          description: `Venda do Pedido ${existingOrder.orderNumber}`,
+          amount: processed.totalRevenue,
+          paymentMethod: existingOrder.paymentMethod,
+          orderId,
+          cashRegisterId: existingOrder.cashRegisterId,
+          tenantId: currentTenantId,
+          movementDate: new Date().toISOString(),
+        })
+      );
+    }
+
+    if (!expenseHandled && processed.totalCost > 0) {
+      movementRequests.push(
+        client.from("financial_movements").insert({
+          type: "expense",
+          category: "Custo de Produto Vendido",
+          description: `Custo do Pedido ${existingOrder.orderNumber}`,
+          amount: processed.totalCost,
+          paymentMethod: existingOrder.paymentMethod,
+          orderId,
+          cashRegisterId: existingOrder.cashRegisterId,
+          tenantId: currentTenantId,
+          movementDate: new Date().toISOString(),
+        })
+      );
+    }
+
+    if (movementRequests.length > 0) {
+      const movementResults = await Promise.all(movementRequests);
+      const movementError = movementResults.find((result) => result.error)?.error;
+      if (movementError) throw movementError;
+    }
+
+    const salesDelta = Number(processed.totalRevenue) - Number(existingOrder.total || 0);
+    const expensesDelta = Number(processed.totalCost) - Number(existingOrder.totalCost || 0);
+
+    if (salesDelta !== 0 || expensesDelta !== 0) {
+      const cashRegisterUpdate = await client
+        .from("cash_registers")
+        .update({})
+        .eq("tenantId", currentTenantId)
+        .eq("id", existingOrder.cashRegisterId)
+        .increment("totalSales", salesDelta)
+        .increment("totalExpenses", expensesDelta);
+
+      if (cashRegisterUpdate.error) {
+        throw cashRegisterUpdate.error;
+      }
+    }
+  }
 };
 
-export const updateOrderStatus = (
-  firestore: Firestore,
+export const updateOrderStatus = async (
   orderId: string,
   status: OrderStatus,
   tenantId?: string
-): void => {
+): Promise<void> => {
   const currentTenantId = resolveTenantIdOrThrow(tenantId);
-  const orderRef = doc(firestore, getTenantCollectionPath(currentTenantId, "orders"), orderId);
-  const updatedData = { status };
+  const client = getSupabaseBrowserClient();
 
-  updateDoc(orderRef, updatedData).catch(async () => {
+  const { error } = await client
+    .from("orders")
+    .update({ status })
+    .eq("tenantId", currentTenantId)
+    .eq("id", orderId);
+
+  if (error) {
     const permissionError = new FirestorePermissionError({
-      path: orderRef.path,
+      path: `orders/${orderId}`,
       operation: "update",
-      requestResourceData: updatedData,
+      requestResourceData: { status },
     });
     errorEmitter.emit("permission-error", permissionError);
     throw permissionError;
-  });
+  }
 };
 
-export const getOrders = async (firestore: Firestore, tenantId?: string): Promise<Order[]> => {
+export const getOrders = async (tenantId?: string): Promise<Order[]> => {
   const currentTenantId = resolveTenantIdOrThrow(tenantId);
-  const ordersCollection = collection(firestore, getTenantCollectionPath(currentTenantId, "orders"));
-  try {
-    const snapshot = await getDocs(ordersCollection);
-    if (snapshot.empty) {
-      return [];
-    }
-    return snapshot.docs.map((item) => {
-      const data = item.data();
-      return {
-        id: item.id,
-        ...data,
-        createdAt: data.createdAt instanceof Timestamp ? data.createdAt.toDate() : new Date(),
-      } as Order;
-    });
-  } catch (error) {
-    throw error;
-  }
+  const client = getSupabaseBrowserClient();
+
+  const { data, error } = await client
+    .from("orders")
+    .select("*")
+    .eq("tenantId", currentTenantId)
+    .order("createdAt", { ascending: false });
+
+  if (error) throw error;
+
+  return serializeObject((data ?? []) as Order[]);
+};
+
+export const getOrderById = async (
+  orderId: string,
+  tenantId?: string
+): Promise<Order | null> => {
+  const currentTenantId = resolveTenantIdOrThrow(tenantId);
+  const client = getSupabaseBrowserClient();
+
+  const { data, error } = await client
+    .from("orders")
+    .select("*")
+    .eq("tenantId", currentTenantId)
+    .eq("id", orderId)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data ? serializeObject(data as Order) : null;
 };

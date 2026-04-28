@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useFirestore } from '@/firebase';
 import {
   Dialog,
   DialogContent,
@@ -16,30 +15,29 @@ import { Label } from '@/components/ui/label';
 import { Loader } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { openCashRegister } from '@/services';
-import type { User } from 'firebase/auth';
+import type { AppUser } from '@/supabase';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useActiveTenant } from '@/hooks/use-active-tenant';
 
 type OpenCashRegisterDialogProps = {
-  user: User | null;
+  user: AppUser | null;
 };
 
 export function OpenCashRegisterDialog({ user }: OpenCashRegisterDialogProps) {
   const [initialBalance, setInitialBalance] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
-  const firestore = useFirestore();
   const { toast } = useToast();
   const { activeTenantId } = useActiveTenant();
 
   const handleOpenRegister = async () => {
-    if (!firestore || !user) {
+    if (!user) {
       toast({ variant: 'destructive', title: 'Erro', description: 'Usuario ou conexao nao encontrados.' });
       return;
     }
 
     setIsProcessing(true);
     try {
-      await openCashRegister(firestore, user.uid, initialBalance, activeTenantId || undefined);
+      await openCashRegister(null, user.uid, initialBalance, activeTenantId || undefined);
       toast({ title: 'Caixa aberto', description: 'Voce ja pode registrar movimentacoes.' });
     } catch (error: any) {
       toast({ variant: 'destructive', title: 'Erro ao abrir caixa', description: error.message });

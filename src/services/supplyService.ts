@@ -1,25 +1,9 @@
-import type { Supply, CashRegister, PriceVariation } from '@/types';
-import { toDate } from '@/lib/timestamp-utils';
-import { setDocumentActive, serializeObject } from './utils';
-import {
-  collection,
-  doc,
-  Firestore,
-  serverTimestamp,
-  Timestamp,
-  writeBatch,
-  getDocs,
-  addDoc,
-  updateDoc,
-  query,
-  where,
-  limit,
-  getDoc,
-  orderBy,
-  deleteField,
-} from 'firebase/firestore';
-import { addFinancialMovement } from './financialMovementService';
-import { getSupplyPriceHistoryPath, getTenantCollectionPath, resolveTenantIdOrThrow } from '@/lib/tenant';
+import { getSupabaseBrowserClient } from "@/lib/supabase/client";
+import { toDate } from "@/lib/timestamp-utils";
+import { getSupplyPriceHistoryPath, getTenantCollectionPath, resolveTenantIdOrThrow } from "@/lib/tenant";
+import type { CashRegister, PriceVariation, Supply } from "@/types";
+import { addFinancialMovement } from "./financialMovementService";
+import { serializeObject, setDocumentActive } from "./utils";
 
 type FinancialRegistrationData = {
   shouldRegister: boolean;
@@ -40,64 +24,82 @@ const stripUndefinedFields = <T extends Record<string, any>>(data: T): T => {
   return cleaned as T;
 };
 
-const addPriceHistoryEntry = (firestore: Firestore, tenantId: string, supplyId: string, cost: number, supplier?: string) => {
-  const historyCollectionRef = collection(firestore, getSupplyPriceHistoryPath(tenantId, supplyId));
-  addDoc(historyCollectionRef, {
-    date: serverTimestamp(),
-    costPerUnit: cost,
-    supplier: supplier || '',
-  });
-};
+async function findOpenCashRegister(tenantId: string): Promise<CashRegister | null> {
+  const client = getSupabaseBrowserClient();
+  const { data, error } = await client
+    .from("cash_registers")
+    .select("*")
+    .eq("tenantId", tenantId)
+    .eq("status", "open")
+    .limit(1)
+    .maybeSingle();
 
-export const addSupply = async (
-  firestore: Firestore,
-  supplyData: Omit<Supply, 'id' | 'createdAt' | 'isActive'>,
+  if (error) throw error;
+  return (data as CashRegister | null) ?? null;
+}
+
+async function addPriceHistoryEntry(
+  tenantId: string,
+  supplyId: string,
+  cost: number,
+  supplier?: string
+) {
+  const client = getSupabaseBrowserClient();
+  const { error } = await client.from("supply_price_history").insert({
+    tenantId,
+    supplyId,
+    date: new Date().toISOString(),
+    costPerUnit: cost,
+    supplier: supplier || "",
+  });
+
+  if (error) throw error;
+}
+
+export async function addSupply(
+  _firestore: unknown,
+  supplyData: Omit<Supply, "id" | "createdAt" | "isActive">,
   financialData?: FinancialRegistrationData,
   tenantId?: string
-) => {
+) {
+  const client = getSupabaseBrowserClient();
   const currentTenantId = resolveTenantIdOrThrow(tenantId || financialData?.tenantId || financialData?.userId);
-  const suppliesCollection = collection(firestore, getTenantCollectionPath(currentTenantId, 'supplies'));
 
   const dataWithTimestamp = stripUndefinedFields({
     ...supplyData,
     tenantId: currentTenantId,
     isActive: true,
-    createdAt: serverTimestamp(),
-    lastPurchaseDate: (() => {
-      const d = toDate(supplyData.lastPurchaseDate);
-      return d ? Timestamp.fromDate(d) : serverTimestamp();
-    })(),
-    expirationDate: (() => {
-      const d = toDate(supplyData.expirationDate);
-      return d ? Timestamp.fromDate(d) : undefined;
-    })(),
+    createdAt: new Date().toISOString(),
+    lastPurchaseDate: toDate(supplyData.lastPurchaseDate)?.toISOString() ?? new Date().toISOString(),
+    expirationDate: toDate(supplyData.expirationDate)?.toISOString() ?? undefined,
     packageCost: supplyData.packageCost ?? undefined,
     packageQuantity: supplyData.packageQuantity ?? undefined,
   });
 
-  const newDocRef = await addDoc(suppliesCollection, dataWithTimestamp);
-  addPriceHistoryEntry(firestore, currentTenantId, newDocRef.id, dataWithTimestamp.costPerUnit, dataWithTimestamp.supplier);
+  const { data, error } = await client
+    .from("supplies")
+    .insert(dataWithTimestamp)
+    .select("id")
+    .single();
+
+  if (error) throw error;
+
+  await addPriceHistoryEntry(currentTenantId, data.id, dataWithTimestamp.costPerUnit, dataWithTimestamp.supplier);
 
   if (financialData?.shouldRegister && financialData.amount > 0) {
-    const cashRegisterQuery = query(
-      collection(firestore, getTenantCollectionPath(currentTenantId, 'cash_registers')),
-      where('status', '==', 'open'),
-      limit(1)
-    );
-    const registerSnap = await getDocs(cashRegisterQuery);
-    if (registerSnap.empty) {
-      console.warn('Nenhum caixa aberto. A despesa da compra nao foi registrada.');
-      return;
+    const activeCashRegister = await findOpenCashRegister(currentTenantId);
+    if (!activeCashRegister) {
+      console.warn("Nenhum caixa aberto. A despesa da compra nao foi registrada.");
+      return data;
     }
-    const activeCashRegister = { id: registerSnap.docs[0].id, ...registerSnap.docs[0].data() } as CashRegister;
 
     await addFinancialMovement(
-      firestore,
+      null,
       activeCashRegister,
       {
-        type: 'expense',
+        type: "expense",
         amount: financialData.amount,
-        category: 'Compra de Insumos',
+        category: "Compra de Insumos",
         description: financialData.description || `Compra de ${supplyData.name}`,
         paymentMethod: financialData.paymentMethod,
       },
@@ -105,158 +107,125 @@ export const addSupply = async (
     );
   }
 
-  return newDocRef;
-};
+  return data;
+}
 
-export const addSuppliesInBatch = async (
-  firestore: Firestore,
-  suppliesData: Omit<Supply, 'id' | 'createdAt' | 'isActive'>[],
+export async function addSuppliesInBatch(
+  _firestore: unknown,
+  suppliesData: Omit<Supply, "id" | "createdAt" | "isActive">[],
   tenantId?: string
-) => {
-  const currentTenantId = resolveTenantIdOrThrow(tenantId);
-  const batch = writeBatch(firestore);
-  const suppliesCollection = collection(firestore, getTenantCollectionPath(currentTenantId, 'supplies'));
+) {
+  await Promise.all(suppliesData.map((supply) => addSupply(null, supply, undefined, tenantId)));
+}
 
-  suppliesData.forEach((supplyData) => {
-    const newDocRef = doc(suppliesCollection);
-    const dataWithTimestamp = stripUndefinedFields({
-      ...supplyData,
-      tenantId: currentTenantId,
-      isActive: true,
-      createdAt: serverTimestamp(),
-      lastPurchaseDate: (() => {
-        const d = toDate(supplyData.lastPurchaseDate);
-        return d ? Timestamp.fromDate(d) : undefined;
-      })(),
-      expirationDate: (() => {
-        const d = toDate(supplyData.expirationDate);
-        return d ? Timestamp.fromDate(d) : undefined;
-      })(),
-    });
-    batch.set(newDocRef, dataWithTimestamp);
-
-    const historyCollectionRef = doc(collection(firestore, getSupplyPriceHistoryPath(currentTenantId, newDocRef.id)));
-    batch.set(historyCollectionRef, {
-      date: serverTimestamp(),
-      costPerUnit: supplyData.costPerUnit,
-      supplier: supplyData.supplier || '',
-    });
-  });
-
-  await batch.commit();
-};
-
-export const updateSupply = async (
-  firestore: Firestore,
+export async function updateSupply(
+  _firestore: unknown,
   id: string,
-  updatedData: Partial<Omit<Supply, 'id' | 'createdAt' | 'isActive'>>,
+  updatedData: Partial<Omit<Supply, "id" | "createdAt" | "isActive">>,
   financialData?: FinancialRegistrationData,
   tenantId?: string
-) => {
+) {
+  const client = getSupabaseBrowserClient();
   const currentTenantId = resolveTenantIdOrThrow(tenantId || financialData?.tenantId || financialData?.userId);
-  const supplyDocRef = doc(firestore, getTenantCollectionPath(currentTenantId, 'supplies'), id);
 
-  const oldDocSnap = await getDoc(supplyDocRef);
-  const oldData = oldDocSnap.data() as Supply;
+  const { data: oldData, error: loadError } = await client
+    .from("supplies")
+    .select("*")
+    .eq("tenantId", currentTenantId)
+    .eq("id", id)
+    .maybeSingle();
 
-  const dataToUpdate: any = { ...updatedData };
+  if (loadError) throw loadError;
 
-  if (dataToUpdate.lastPurchaseDate) {
-    const d = toDate(dataToUpdate.lastPurchaseDate);
-    dataToUpdate.lastPurchaseDate = d ? Timestamp.fromDate(d) : deleteField();
-  } else {
-    dataToUpdate.lastPurchaseDate = deleteField();
-  }
-
-  if (dataToUpdate.expirationDate) {
-    const d = toDate(dataToUpdate.expirationDate);
-    dataToUpdate.expirationDate = d ? Timestamp.fromDate(d) : deleteField();
-  } else {
-    dataToUpdate.expirationDate = deleteField();
-  }
-
-  dataToUpdate.packageCost = dataToUpdate.packageCost ?? deleteField();
-  dataToUpdate.packageQuantity = dataToUpdate.packageQuantity ?? deleteField();
-
-  Object.keys(dataToUpdate).forEach((key) => {
-    if (dataToUpdate[key] === undefined) {
-      delete dataToUpdate[key];
-    }
+  const sanitizedDataToUpdate = stripUndefinedFields({
+    ...updatedData,
+    lastPurchaseDate:
+      updatedData.lastPurchaseDate === undefined
+        ? null
+        : toDate(updatedData.lastPurchaseDate)?.toISOString() ?? null,
+    expirationDate:
+      updatedData.expirationDate === undefined
+        ? null
+        : toDate(updatedData.expirationDate)?.toISOString() ?? null,
+    packageCost: updatedData.packageCost ?? null,
+    packageQuantity: updatedData.packageQuantity ?? null,
   });
 
-  const sanitizedDataToUpdate = stripUndefinedFields(dataToUpdate);
-  await updateDoc(supplyDocRef, sanitizedDataToUpdate);
+  const { error } = await client
+    .from("supplies")
+    .update(sanitizedDataToUpdate)
+    .eq("tenantId", currentTenantId)
+    .eq("id", id);
 
-  if (oldData && oldData.costPerUnit !== sanitizedDataToUpdate.costPerUnit) {
-    addPriceHistoryEntry(firestore, currentTenantId, id, sanitizedDataToUpdate.costPerUnit, sanitizedDataToUpdate.supplier);
+  if (error) throw error;
+
+  if (oldData && oldData.costPerUnit !== sanitizedDataToUpdate.costPerUnit && sanitizedDataToUpdate.costPerUnit) {
+    await addPriceHistoryEntry(
+      currentTenantId,
+      id,
+      sanitizedDataToUpdate.costPerUnit,
+      sanitizedDataToUpdate.supplier
+    );
   }
 
   if (financialData?.shouldRegister && financialData.amount > 0) {
-    const cashRegisterQuery = query(
-      collection(firestore, getTenantCollectionPath(currentTenantId, 'cash_registers')),
-      where('status', '==', 'open'),
-      limit(1)
-    );
-    const registerSnap = await getDocs(cashRegisterQuery);
-    if (registerSnap.empty) {
-      console.warn('Nenhum caixa aberto. A despesa da compra nao foi registrada.');
+    const activeCashRegister = await findOpenCashRegister(currentTenantId);
+    if (!activeCashRegister) {
+      console.warn("Nenhum caixa aberto. A despesa da compra nao foi registrada.");
       return;
     }
-    const activeCashRegister = { id: registerSnap.docs[0].id, ...registerSnap.docs[0].data() } as CashRegister;
 
     await addFinancialMovement(
-      firestore,
+      null,
       activeCashRegister,
       {
-        type: 'expense',
+        type: "expense",
         amount: financialData.amount,
-        category: 'Compra de Insumos',
+        category: "Compra de Insumos",
         description: financialData.description || `Compra de ${sanitizedDataToUpdate.name}`,
         paymentMethod: financialData.paymentMethod,
       },
       currentTenantId
     );
   }
-};
+}
 
-export const inactivateSupply = (firestore: Firestore, id: string, tenantId?: string): void => {
+export async function inactivateSupply(_firestore: unknown, id: string, tenantId?: string): Promise<void> {
   const currentTenantId = resolveTenantIdOrThrow(tenantId);
-  setDocumentActive(firestore, getTenantCollectionPath(currentTenantId, 'supplies'), id, false);
-};
+  await setDocumentActive(null, getTenantCollectionPath(currentTenantId, "supplies"), id, false);
+}
 
-export const reactivateSupply = (firestore: Firestore, id: string, tenantId?: string): void => {
+export async function reactivateSupply(_firestore: unknown, id: string, tenantId?: string): Promise<void> {
   const currentTenantId = resolveTenantIdOrThrow(tenantId);
-  setDocumentActive(firestore, getTenantCollectionPath(currentTenantId, 'supplies'), id, true);
-};
+  await setDocumentActive(null, getTenantCollectionPath(currentTenantId, "supplies"), id, true);
+}
 
-export const getSupplies = async (firestore: Firestore, tenantId?: string): Promise<Supply[]> => {
+export async function getSupplies(_firestore: unknown, tenantId?: string): Promise<Supply[]> {
+  const client = getSupabaseBrowserClient();
   const currentTenantId = resolveTenantIdOrThrow(tenantId);
-  const suppliesCollection = collection(firestore, getTenantCollectionPath(currentTenantId, 'supplies'));
-  try {
-    const snapshot = await getDocs(suppliesCollection);
-    if (snapshot.empty) {
-      return [];
-    }
-    return snapshot.docs.map((item) => {
-      const data = item.data();
-      const docWithId = { id: item.id, ...data };
-      return serializeObject(docWithId) as Supply;
-    });
-  } catch (error) {
-    throw error;
-  }
-};
 
-export const getPriceHistory = async (firestore: Firestore, supplyId: string, tenantId?: string): Promise<PriceVariation[]> => {
+  const { data, error } = await client.from("supplies").select("*").eq("tenantId", currentTenantId);
+  if (error) throw error;
+
+  return serializeObject((data ?? []) as Supply[]);
+}
+
+export async function getPriceHistory(
+  _firestore: unknown,
+  supplyId: string,
+  tenantId?: string
+): Promise<PriceVariation[]> {
+  const client = getSupabaseBrowserClient();
   const currentTenantId = resolveTenantIdOrThrow(tenantId);
-  const historyCollection = collection(firestore, getSupplyPriceHistoryPath(currentTenantId, supplyId));
-  try {
-    const snapshot = await getDocs(query(historyCollection, orderBy('date', 'desc')));
-    if (snapshot.empty) {
-      return [];
-    }
-    return snapshot.docs.map((item) => ({ id: item.id, ...item.data() } as PriceVariation));
-  } catch (error) {
-    throw error;
-  }
-};
+
+  const { data, error } = await client
+    .from("supply_price_history")
+    .select("*")
+    .eq("tenantId", currentTenantId)
+    .eq("supplyId", supplyId)
+    .order("date", { ascending: false });
+
+  if (error) throw error;
+
+  return (data ?? []) as PriceVariation[];
+}

@@ -3,7 +3,6 @@
 "use client";
 
 import { useState } from "react";
-import { useFirestore } from "@/firebase";
 import {
   Dialog,
   DialogContent,
@@ -32,7 +31,6 @@ export function SupplyImportDialog({ isOpen, onClose, onSuccess, defaultType }: 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
-  const firestore = useFirestore();
   const { activeTenantId } = useActiveTenant();
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,7 +61,7 @@ export function SupplyImportDialog({ isOpen, onClose, onSuccess, defaultType }: 
   };
 
   const handleImport = () => {
-    if (!selectedFile || !firestore) {
+    if (!selectedFile) {
       toast({ variant: 'destructive', title: 'Nenhum arquivo selecionado', description: 'Por favor, escolha um arquivo CSV para importar.' });
       return;
     }
@@ -100,7 +98,7 @@ export function SupplyImportDialog({ isOpen, onClose, onSuccess, defaultType }: 
             }
             
             try {
-                await addSuppliesInBatch(firestore, suppliesToImport, activeTenantId || undefined);
+                await addSuppliesInBatch(null, suppliesToImport, activeTenantId || undefined);
                 onSuccess();
             } catch (error: any) {
                 console.error("Erro ao importar em massa:", error);

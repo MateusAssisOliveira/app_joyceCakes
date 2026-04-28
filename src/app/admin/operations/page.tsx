@@ -2,9 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { collection, query, where, Timestamp, orderBy, limit, doc } from "firebase/firestore";
-import { useCollection, useDoc, useFirestore, useUser } from "@/firebase";
-import type { CashRegister, FinancialMovement, Order, Supply, UserProfile } from "@/types";
+import { getOrders, getSupplies, getCashRegisterById, getFinancialMovements } from "@/services";
+import type { CashRegister, FinancialMovement, Order, Supply } from "@/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,7 +12,6 @@ import { Label } from "@/components/ui/label";
 import { AlertTriangle, CheckCircle2, ClipboardList, HelpCircle, ShieldCheck, TrendingUp, Wrench } from "lucide-react";
 import { getSyncStatusSnapshot, subscribeSyncStatus, type SyncStatusSnapshot } from "@/lib/sync-status-store";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { getTenantCollectionPath } from "@/lib/tenant";
 import { useActiveTenant } from "@/hooks/use-active-tenant";
 
 type ReconcileHistoryItem = {
@@ -58,14 +56,20 @@ function CardTitleHelp({
 }
 
 export default function OperationsPage() {
-  const firestore = useFirestore();
-  const { user } = useUser();
-  const { activeTenantId } = useActiveTenant();
+  const { activeTenantId, userProfile } = useActiveTenant();
   const tenantId = activeTenantId;
   const [syncStatus, setSyncStatus] = useState<SyncStatusSnapshot>(getSyncStatusSnapshot());
   const [history, setHistory] = useState<ReconcileHistoryItem[]>([]);
   const [isHistoryLoading, setIsHistoryLoading] = useState(false);
   const [historyError, setHistoryError] = useState<string | null>(null);
+  const [isOrdersLoading, setIsOrdersLoading] = useState(true);
+  const [isSuppliesLoading, setIsSuppliesLoading] = useState(true);
+  const [isCashRegisterLoading, setIsCashRegisterLoading] = useState(true);
+  const [isMovementsLoading, setIsMovementsLoading] = useState(true);
+  const [ordersData, setOrdersData] = useState<Order[]>([]);
+  const [suppliesData, setSuppliesData] = useState<Supply[]>([]);
+  const [activeCashRegister, setActiveCashRegister] = useState<CashRegister | null>(null);
+  const [movementsData, setMovementsData] = useState<FinancialMovement[]>([]);
   const [simPrice, setSimPrice] = useState("35");
   const [simCost, setSimCost] = useState("12");
   const [simCostDelta, setSimCostDelta] = useState("10");
@@ -76,46 +80,127 @@ export default function OperationsPage() {
     return d;
   }, []);
 
-  const ordersQuery = useMemo(() => {
-    if (!firestore || !tenantId) return null;
-    return query(
-      collection(firestore, getTenantCollectionPath(tenantId, "orders")),
-      where("createdAt", ">=", Timestamp.fromDate(today))
-    );
-  }, [firestore, tenantId, today]);
-  const { data: todayOrdersData } = useCollection<Order>(ordersQuery);
+  useEffect(() => {
+    let active = true;
+    if (!tenantId) {
+      setOrdersData([]);
+      setIsOrdersLoading(false);
+      return;
+    }
 
-  const suppliesQuery = useMemo(() => {
-    if (!firestore || !tenantId) return null;
-    return query(collection(firestore, getTenantCollectionPath(tenantId, "supplies")), where("isActive", "==", true));
-  }, [firestore, tenantId]);
-  const { data: suppliesData } = useCollection<Supply>(suppliesQuery);
+    setIsOrdersLoading(true);
 
-  const userProfileRef = useMemo(() => {
-    if (!firestore || !user?.uid) return null;
-    return doc(firestore, `users/${user.uid}`);
-  }, [firestore, user]);
-  const { data: userProfile } = useDoc<UserProfile>(userProfileRef);
+    const loadOrders = async () => {
+      try {
+        const fetchedOrders = await getOrders(tenantId);
+        if (!active) return;
+        setOrdersData(
+          fetchedOrders.filter((order) => {
+            const createdAt = new Date(order.createdAt || "");
+            return createdAt >= today;
+          })
+        );
+      } catch (error) {
+        console.error("Falha ao carregar pedidos:", error);
+        if (!active) return;
+        setOrdersData([]);
+      } finally {
+        if (!active) return;
+        setIsOrdersLoading(false);
+      }
+    };
 
-  const cashRegisterRef = useMemo(() => {
-    if (!firestore || !tenantId || !userProfile?.activeCashRegisterId) return null;
-    return doc(firestore, getTenantCollectionPath(tenantId, "cash_registers"), userProfile.activeCashRegisterId);
-  }, [firestore, tenantId, userProfile]);
-  const { data: activeCashRegister } = useDoc<CashRegister>(cashRegisterRef);
+    loadOrders();
+  }, [tenantId, today]);
 
-  const movementsQuery = useMemo(() => {
-    if (!firestore || !tenantId || !activeCashRegister) return null;
-    return query(
-      collection(firestore, `${getTenantCollectionPath(tenantId, "cash_registers")}/${activeCashRegister.id}/financial_movements`),
-      orderBy("movementDate", "desc"),
-      limit(200)
-    );
-  }, [firestore, tenantId, activeCashRegister]);
-  const { data: movementsData } = useCollection<FinancialMovement>(movementsQuery);
+  useEffect(() => {
+    let active = true;
+    if (!tenantId) {
+      setSuppliesData([]);
+      setIsSuppliesLoading(false);
+      return;
+    }
 
-  const todayOrders = useMemo(() => todayOrdersData ?? [], [todayOrdersData]);
-  const supplies = useMemo(() => suppliesData ?? [], [suppliesData]);
-  const movements = useMemo(() => movementsData ?? [], [movementsData]);
+    setIsSuppliesLoading(true);
+
+    const loadSupplies = async () => {
+      try {
+        const fetchedSupplies = await getSupplies(null, tenantId);
+        if (!active) return;
+        setSuppliesData(fetchedSupplies.filter((supply) => supply.isActive !== false));
+      } catch (error) {
+        console.error("Falha ao carregar insumos:", error);
+        if (!active) return;
+        setSuppliesData([]);
+      } finally {
+        if (!active) return;
+        setIsSuppliesLoading(false);
+      }
+    };
+
+    loadSupplies();
+  }, [tenantId]);
+
+  useEffect(() => {
+    let active = true;
+    const cashRegisterId = userProfile?.activeCashRegisterId;
+    if (!tenantId || !cashRegisterId) {
+      setActiveCashRegister(null);
+      setIsCashRegisterLoading(false);
+      return;
+    }
+
+    setIsCashRegisterLoading(true);
+
+    const loadCashRegister = async () => {
+      try {
+        const fetchedCashRegister = await getCashRegisterById(null, cashRegisterId, tenantId);
+        if (!active) return;
+        setActiveCashRegister(fetchedCashRegister);
+      } catch (error) {
+        console.error("Falha ao carregar caixa ativo:", error);
+        if (!active) return;
+        setActiveCashRegister(null);
+      } finally {
+        if (!active) return;
+        setIsCashRegisterLoading(false);
+      }
+    };
+
+    loadCashRegister();
+  }, [tenantId, userProfile?.activeCashRegisterId]);
+
+  useEffect(() => {
+    let active = true;
+    if (!tenantId || !activeCashRegister?.id) {
+      setMovementsData([]);
+      setIsMovementsLoading(false);
+      return;
+    }
+
+    setIsMovementsLoading(true);
+
+    const loadMovements = async () => {
+      try {
+        const fetchedMovements = await getFinancialMovements(null, activeCashRegister.id, tenantId);
+        if (!active) return;
+        setMovementsData(fetchedMovements);
+      } catch (error) {
+        console.error("Falha ao carregar movimentos financeiros:", error);
+        if (!active) return;
+        setMovementsData([]);
+      } finally {
+        if (!active) return;
+        setIsMovementsLoading(false);
+      }
+    };
+
+    loadMovements();
+  }, [tenantId, activeCashRegister?.id]);
+
+  const todayOrders = useMemo(() => ordersData, [ordersData]);
+  const supplies = useMemo(() => suppliesData, [suppliesData]);
+  const movements = useMemo(() => movementsData, [movementsData]);
 
   useEffect(() => subscribeSyncStatus(setSyncStatus), []);
 

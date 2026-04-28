@@ -28,9 +28,9 @@ import { Separator } from "@/components/ui/separator";
 import { Loader, Calendar as CalendarIcon, Info } from "lucide-react";
 import type { Supply } from "@/types";
 import { useToast } from "@/hooks/use-toast";
-import { Timestamp } from 'firebase/firestore';
 import { cn } from "@/lib/utils";
 import { format } from 'date-fns';
+import { toDate } from "@/lib/timestamp-utils";
 import {
   Tooltip,
   TooltipContent,
@@ -110,8 +110,8 @@ export function SupplyFormDialog({ isOpen, onClose, onSave, supply, defaultType 
           sku: supply.sku || "",
           supplier: supply.supplier || "",
           minStock: supply.minStock || 0,
-          lastPurchaseDate: supply.lastPurchaseDate instanceof Timestamp ? supply.lastPurchaseDate.toDate() : (supply.lastPurchaseDate as Date | undefined),
-          expirationDate: supply.expirationDate instanceof Timestamp ? supply.expirationDate.toDate() : (supply.expirationDate as Date | undefined),
+          lastPurchaseDate: toDate(supply.lastPurchaseDate) ?? undefined,
+          expirationDate: toDate(supply.expirationDate) ?? undefined,
         });
          // Ao editar, desabilitar por padrão o registro financeiro para evitar duplicatas.
          setFinancialData({

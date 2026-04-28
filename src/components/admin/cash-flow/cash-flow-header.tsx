@@ -2,7 +2,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useFirestore, useUser } from '@/firebase';
+import { useUser } from '@/firebase';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -35,7 +35,6 @@ export function CashFlowHeader({ register, finalBalance }: CashFlowHeaderProps) 
   const [isClosing, setIsClosing] = useState(false);
   const [countedBalanceInput, setCountedBalanceInput] = useState(finalBalance.toFixed(2));
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
-  const firestore = useFirestore();
   const { user } = useUser();
   const { activeTenantId } = useActiveTenant();
   const { toast } = useToast();
@@ -45,11 +44,11 @@ export function CashFlowHeader({ register, finalBalance }: CashFlowHeaderProps) 
   const closingDifference = safeCountedBalance - finalBalance;
 
   const handleCloseRegister = async () => {
-    if (!firestore || !user?.uid) return;
+    if (!user?.uid) return;
 
     setIsClosing(true);
     try {
-      await closeCashRegister(firestore, user.uid, register.id, safeCountedBalance, activeTenantId || undefined);
+      await closeCashRegister(null, user.uid, register.id, safeCountedBalance, activeTenantId || undefined);
       toast({
         title: 'Caixa Fechado',
         description: `Fechado com saldo informado: ${safeCountedBalance.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`,

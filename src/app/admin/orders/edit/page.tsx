@@ -1,40 +1,64 @@
 
 'use client';
 
-import { useMemo, Suspense } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from 'next/navigation';
 import { EditOrderClient } from "./edit-order-client";
-import { useUser, useCollection, useFirestore, useDoc } from '@/firebase';
-import { collection, query, doc } from 'firebase/firestore';
+import { getProducts, getOrderById } from '@/services';
 import type { Order, Product } from "@/types";
 import { Loader } from "lucide-react";
-import { getTenantCollectionPath } from "@/lib/tenant";
 import { useActiveTenant } from "@/hooks/use-active-tenant";
 
 // Este componente agora busca os dados no cliente
 function OrderDataLoader() {
-  const firestore = useFirestore();
-  const { user } = useUser();
   const { activeTenantId } = useActiveTenant();
   const searchParams = useSearchParams();
   const orderId = searchParams.get('id');
+  const [products, setProducts] = useState<Product[]>([]);
+  const [order, setOrder] = useState<Order | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Busca os produtos
-  const productsQuery = useMemo(() => {
-    if (!firestore || !activeTenantId) return null;
-    return query(collection(firestore, getTenantCollectionPath(activeTenantId, "products")));
-  }, [firestore, activeTenantId]);
-  const { data: products, isLoading: areProductsLoading } = useCollection<Product>(productsQuery);
+  useEffect(() => {
+    let active = true;
 
-  // Busca o pedido específico
-  const orderRef = useMemo(() => {
-    if (!firestore || !orderId || !activeTenantId) return null;
-    return doc(firestore, getTenantCollectionPath(activeTenantId, "orders"), orderId);
-  }, [firestore, orderId, activeTenantId]);
-  const { data: order, isLoading: isOrderLoading } = useDoc<Order>(orderRef);
+    const loadData = async () => {
+      if (!activeTenantId || !orderId) {
+        setProducts([]);
+        setOrder(null);
+        setIsLoading(false);
+        return;
+      }
 
-  const isLoading = areProductsLoading || isOrderLoading;
-  
+      setIsLoading(true);
+
+      try {
+        const [productsResult, orderResult] = await Promise.all([
+          getProducts(null, activeTenantId),
+          getOrderById(orderId, activeTenantId),
+        ]);
+
+        if (!active) return;
+
+        setProducts(productsResult);
+        setOrder(orderResult);
+      } catch (error) {
+        console.error("Falha ao carregar pedido ou produtos:", error);
+        if (!active) return;
+        setProducts([]);
+        setOrder(null);
+      } finally {
+        if (!active) return;
+        setIsLoading(false);
+      }
+    };
+
+    loadData();
+
+    return () => {
+      active = false;
+    };
+  }, [activeTenantId, orderId]);
+
   if (isLoading) {
     return (
       <div className="flex h-full w-full flex-col items-center justify-center gap-4">
@@ -44,7 +68,7 @@ function OrderDataLoader() {
     );
   }
 
-  return <EditOrderClient order={order} products={products || []} tenantId={activeTenantId || undefined} />;
+  return <EditOrderClient order={order} products={products} tenantId={activeTenantId || undefined} />;
 }
 
 export default function EditOrderPage() {

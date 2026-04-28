@@ -1,53 +1,54 @@
-import type { User } from 'firebase/auth';
-import {
-  Firestore,
-  collection,
-  collectionGroup,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  serverTimestamp,
-  setDoc,
-  where,
-  writeBatch,
-} from 'firebase/firestore';
-import { updateUserProfile } from './userService';
-import type { Tenant, TenantMember, TenantRole } from '@/types';
-import { getTenantMemberPath } from '@/lib/tenant';
+import { getSupabaseBrowserClient } from "@/lib/supabase/client";
+import type { Tenant, TenantMember, TenantRole } from "@/types";
+import { updateUserProfile } from "./userService";
+
+type TenantUser = {
+  uid?: string;
+  id?: string;
+};
 
 export async function createTenant(
-  firestore: Firestore,
-  user: User,
+  firestore: unknown,
+  user: TenantUser,
   tenantName: string
 ): Promise<string> {
-  const tenantRef = doc(collection(firestore, 'tenants'));
-  const tenantId = tenantRef.id;
-  const memberRef = doc(firestore, getTenantMemberPath(tenantId, user.uid));
+  const client = getSupabaseBrowserClient();
+  const userId = user.uid ?? user.id;
 
-  const batch = writeBatch(firestore);
-  batch.set(tenantRef, {
-    name: tenantName,
-    ownerUserId: user.uid,
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp(),
+  if (!userId) {
+    throw new Error("Usuario nao identificado para criar tenant.");
+  }
+
+  const { data: tenant, error: tenantError } = await client
+    .from("tenants")
+    .insert({
+      name: tenantName,
+      owner_user_id: userId,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    })
+    .select("id")
+    .single();
+
+  if (tenantError) throw tenantError;
+
+  const { error: memberError } = await client.from("tenant_members").insert({
+    tenantId: tenant.id,
+    userId,
+    role: "owner",
+    status: "active",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   });
-  batch.set(memberRef, {
-    userId: user.uid,
-    role: 'owner',
-    status: 'active',
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp(),
-  });
-  await batch.commit();
+  if (memberError) throw memberError;
 
-  await updateUserProfile(firestore, user.uid, { activeTenantId: tenantId });
+  await updateUserProfile(firestore, userId, { activeTenantId: tenant.id });
 
-  return tenantId;
+  return tenant.id;
 }
 
 export async function switchActiveTenant(
-  firestore: Firestore,
+  firestore: unknown,
   userId: string,
   tenantId: string
 ): Promise<void> {
@@ -55,53 +56,61 @@ export async function switchActiveTenant(
 }
 
 export async function inviteTenantMemberByUid(
-  firestore: Firestore,
+  _firestore: unknown,
   tenantId: string,
   targetUserId: string,
   role: TenantRole
 ): Promise<void> {
-  const targetRef = doc(firestore, getTenantMemberPath(tenantId, targetUserId));
-  await setDoc(
-    targetRef,
+  const client = getSupabaseBrowserClient();
+  const { error } = await client.from("tenant_members").upsert(
     {
+      tenantId,
       userId: targetUserId,
       role,
-      status: 'active',
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
+      status: "active",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     },
-    { merge: true }
+    { onConflict: "tenantId,userId", ignoreDuplicates: false }
   );
+
+  if (error) throw error;
 }
 
-export async function listUserTenants(firestore: Firestore, userId: string): Promise<Tenant[]> {
-  const membershipsQuery = query(
-    collectionGroup(firestore, 'members'),
-    where('userId', '==', userId),
-    where('status', '==', 'active')
-  );
+export async function listUserTenants(_firestore: unknown, userId: string): Promise<Tenant[]> {
+  const client = getSupabaseBrowserClient();
+  const { data, error } = await client
+    .from("tenant_members")
+    .select('role,status,tenants!inner(id,name,owner_user_id,"createdAt","updatedAt")')
+    .eq("userId", userId)
+    .eq("status", "active");
 
-  const membershipsSnapshot = await getDocs(membershipsQuery);
-  const tenants = await Promise.all(
-    membershipsSnapshot.docs.map(async (memberDoc) => {
-      const tenantRef = memberDoc.ref.parent.parent;
-      if (!tenantRef) return null;
-      const tenantSnapshot = await getDoc(tenantRef);
-      if (!tenantSnapshot.exists()) return null;
-      return {
-        id: tenantSnapshot.id,
-        ...(tenantSnapshot.data() as Omit<Tenant, 'id'>),
-      } as Tenant;
-    })
-  );
+  if (error) throw error;
 
-  return tenants.filter((tenant): tenant is Tenant => Boolean(tenant));
+  return (data ?? []).map((row: any) => ({
+    id: row.tenants.id,
+    name: row.tenants.name,
+    ownerUserId: row.tenants.owner_user_id,
+    createdAt: row.tenants.createdAt,
+    updatedAt: row.tenants.updatedAt,
+  }));
 }
 
-export async function getTenantMembers(firestore: Firestore, tenantId: string): Promise<TenantMember[]> {
-  const snapshot = await getDocs(collection(firestore, `tenants/${tenantId}/members`));
-  return snapshot.docs.map((memberDoc) => ({
-    id: memberDoc.id,
-    ...(memberDoc.data() as Omit<TenantMember, 'id'>),
+export async function getTenantMembers(_firestore: unknown, tenantId: string): Promise<TenantMember[]> {
+  const client = getSupabaseBrowserClient();
+  const { data, error } = await client
+    .from("tenant_members")
+    .select("*")
+    .eq("tenantId", tenantId);
+
+  if (error) throw error;
+
+  return (data ?? []).map((member: any) => ({
+    id: member.userId,
+    userId: member.userId,
+    role: member.role,
+    status: member.status,
+    createdAt: member.createdAt,
+    updatedAt: member.updatedAt,
   }));
 }

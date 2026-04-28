@@ -1,33 +1,30 @@
-
-// CAMADA DE SERVIÇO PARA USUÁRIOS
-
-import { doc, Firestore, setDoc } from "firebase/firestore";
-import { errorEmitter } from "@/firebase/error-emitter";
-import { FirestorePermissionError } from "@/firebase/errors";
+import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import type { UserProfile } from "@/types";
 
-/**
- * Cria ou atualiza o documento de perfil de um usuário.
- * @param firestore Instância do Firestore.
- * @param userId O ID do usuário.
- * @param data Os dados a serem atualizados no perfil.
- */
-export const updateUserProfile = (firestore: Firestore, userId: string, data: Partial<UserProfile>): Promise<void> => {
-    const userDocRef = doc(firestore, `users/${userId}`);
+export async function updateUserProfile(
+  _firestore: unknown,
+  userId: string,
+  data: Partial<UserProfile>
+): Promise<void> {
+  const client = getSupabaseBrowserClient();
+  const payload: Record<string, any> = {};
 
-    // Usamos setDoc com { merge: true } para criar o documento se não existir,
-    // ou mesclar os novos dados se ele já existir.
-    return setDoc(userDocRef, data, { merge: true })
-      .catch(async () => {
-          const permissionError = new FirestorePermissionError({
-              path: userDocRef.path,
-              operation: 'write', // 'write' cobre create e update
-              requestResourceData: data
-          });
-          errorEmitter.emit('permission-error', permissionError);
-          // Relançamos o erro para que o chamador saiba que a operação falhou
-          throw permissionError;
-      });
-};
+  if (data.email !== undefined) payload.email = data.email;
+  if (data.name !== undefined) payload.name = data.name;
+  if (data.activeTenantId !== undefined) payload.active_tenant_id = data.activeTenantId;
+  if (data.activeCashRegisterId !== undefined) {
+    payload.active_cash_register_id = data.activeCashRegisterId;
+  }
 
-    
+  const { error } = await client.from("profiles").upsert(
+    {
+      user_id: userId,
+      ...payload,
+    },
+    { onConflict: "user_id", ignoreDuplicates: false }
+  );
+
+  if (error) {
+    throw error;
+  }
+}

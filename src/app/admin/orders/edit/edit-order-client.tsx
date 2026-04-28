@@ -27,7 +27,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { Order, OrderItem, Product } from "@/types";
-import { useFirestore } from "@/firebase";
 import { updateOrder } from "@/services";
 import { useToast } from "@/hooks/use-toast";
 
@@ -38,7 +37,6 @@ type EditOrderClientProps = {
 };
 
 export function EditOrderClient({ order, products, tenantId }: EditOrderClientProps) {
-  const firestore = useFirestore();
   const { toast } = useToast();
 
   const [items, setItems] = useState<OrderItem[]>(() => order?.items ?? []);
@@ -127,15 +125,6 @@ export function EditOrderClient({ order, products, tenantId }: EditOrderClientPr
   };
 
   const handleSave = async () => {
-    if (!firestore) {
-      toast({
-        variant: "destructive",
-        title: "Erro ao salvar",
-        description: "Conexão com o banco de dados não encontrada.",
-      });
-      return;
-    }
-
     if (items.length === 0) {
       toast({
         variant: "destructive",
@@ -149,7 +138,7 @@ export function EditOrderClient({ order, products, tenantId }: EditOrderClientPr
     setIsSaving(true);
 
     try {
-      await updateOrder(firestore, order.id, {
+      await updateOrder(order.id, {
         items,
         total,
       }, tenantId);

@@ -32,13 +32,12 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 type NewOrderDialogProps = {
   products: Product[];
   user: any;
-  firestore: any;
   tenantId?: string;
 };
 
 type WizardStep = 1 | 2 | 3;
 
-export function NewOrderDialog({ products, user, firestore, tenantId }: NewOrderDialogProps) {
+export function NewOrderDialog({ products, user, tenantId }: NewOrderDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [step, setStep] = useState<WizardStep>(1);
   const [newOrderItems, setNewOrderItems] = useState<OrderItem[]>([]);
@@ -138,7 +137,7 @@ export function NewOrderDialog({ products, user, firestore, tenantId }: NewOrder
   };
 
   const handleCreateOrder = async () => {
-    if (!firestore || !user) return;
+    if (!user) return;
     if (newOrderItems.length === 0) {
       toast({
         variant: 'destructive',
@@ -158,7 +157,7 @@ export function NewOrderDialog({ products, user, firestore, tenantId }: NewOrder
 
     setIsProcessingOrder(true);
     try {
-      await addOrder(firestore, {
+      await addOrder({
         userId: user.uid,
         tenantId,
         customerName,

@@ -13,11 +13,16 @@ function LoginPageContent() {
   const router = useRouter();
   const { client, user, isLoading: isUserLoading } = useSupabase();
   const [error, setError] = useState<string | null>(null);
+  const [errorDetails, setErrorDetails] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState(process.env.NEXT_PUBLIC_DEFAULT_LOGIN_EMAIL || "");
   const [password, setPassword] = useState("");
+  const [connectionStatus, setConnectionStatus] = useState<"checking" | "ok" | "error">("checking");
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+  const supabaseHost = supabaseUrl ? new URL(supabaseUrl).host : "nao configurado";
 
   useEffect(() => {
     if (!isUserLoading && user) {
@@ -25,14 +30,35 @@ function LoginPageContent() {
     }
   }, [user, isUserLoading, router]);
 
+  useEffect(() => {
+    let active = true;
+
+    client.auth
+      .getSession()
+      .then(({ error }) => {
+        if (!active) return;
+        setConnectionStatus(error ? "error" : "ok");
+      })
+      .catch(() => {
+        if (!active) return;
+        setConnectionStatus("error");
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [client]);
+
   const handleLogin = async () => {
     if (!email.trim() || !password.trim()) {
       setError("Informe email e senha.");
+      setErrorDetails(null);
       return;
     }
 
     setIsLoggingIn(true);
     setError(null);
+    setErrorDetails(null);
     setInfo(null);
 
     try {
@@ -45,7 +71,19 @@ function LoginPageContent() {
       }
     } catch (err: any) {
       const msg = typeof err?.message === "string" ? err.message : "Falha no login.";
-      setError(msg.toLowerCase().includes("invalid") ? "Email ou senha invalidos." : `Erro de autenticacao: ${msg}`);
+      const code = typeof err?.code === "string" ? err.code : null;
+      const lowered = msg.toLowerCase();
+      const isInvalidCredentials =
+        code === "invalid_credentials" ||
+        lowered.includes("invalid login credentials") ||
+        lowered.includes("invalid credentials");
+
+      setError(
+        isInvalidCredentials
+          ? "Email ou senha invalidos para este projeto Supabase."
+          : `Erro de autenticacao: ${msg}`
+      );
+      setErrorDetails(code ? `codigo: ${code}` : msg);
       setIsLoggingIn(false);
     }
   };
@@ -53,15 +91,18 @@ function LoginPageContent() {
   const handleSignUp = async () => {
     if (!email.trim() || !password.trim()) {
       setError("Informe email e senha.");
+      setErrorDetails(null);
       return;
     }
     if (password.trim().length < 6) {
       setError("A senha precisa ter pelo menos 6 caracteres.");
+      setErrorDetails(null);
       return;
     }
 
     setIsLoggingIn(true);
     setError(null);
+    setErrorDetails(null);
     setInfo(null);
 
     try {
@@ -83,6 +124,7 @@ function LoginPageContent() {
     } catch (err: any) {
       const msg = typeof err?.message === "string" ? err.message : "Falha ao criar conta.";
       setError(`Erro ao criar conta: ${msg}`);
+      setErrorDetails(typeof err?.code === "string" ? `codigo: ${err.code}` : msg);
       setIsLoggingIn(false);
     }
   };
@@ -170,6 +212,18 @@ function LoginPageContent() {
           </div>
           {info && <p className="text-sm font-medium text-muted-foreground">{info}</p>}
           {error && <p className="text-sm font-medium text-destructive">{error}</p>}
+          {errorDetails && <p className="text-xs text-muted-foreground">Detalhe tecnico: {errorDetails}</p>}
+          <div className="rounded-md border bg-muted/50 p-3 text-xs text-muted-foreground">
+            <p>Projeto Supabase: {supabaseHost}</p>
+            <p>
+              Conexao auth:{" "}
+              {connectionStatus === "checking"
+                ? "verificando"
+                : connectionStatus === "ok"
+                  ? "ok"
+                  : "falhou"}
+            </p>
+          </div>
         </CardContent>
         <CardFooter>
           <Button

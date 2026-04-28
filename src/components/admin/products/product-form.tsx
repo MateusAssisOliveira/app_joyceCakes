@@ -27,7 +27,6 @@ import { addProduct, updateProduct } from "@/services";
 import type { Supply, TechnicalSheet, TechnicalSheetComponent, Product } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useFirestore } from "@/firebase";
 import { useActiveTenant } from "@/hooks/use-active-tenant";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -66,7 +65,6 @@ export function ProductForm({ product, supplies, baseSheets, onSaveSuccess }: Pr
   const [sheetsPage, setSheetsPage] = useState(1);
 
   const { toast } = useToast();
-  const firestore = useFirestore();
   const { activeTenantId } = useActiveTenant();
 
   useEffect(() => {
@@ -230,7 +228,6 @@ export function ProductForm({ product, supplies, baseSheets, onSaveSuccess }: Pr
   }, [suggestedPrice, totalCost]);
 
   const handleSaveProduct = async () => {
-    if (!firestore) return;
     if (!productName.trim()) {
         toast({ variant: "destructive", title: "Nome do Produto Inválido" });
         return;
@@ -261,10 +258,10 @@ export function ProductForm({ product, supplies, baseSheets, onSaveSuccess }: Pr
       };
 
       if (product && product.id) {
-        await updateProduct(firestore, product.id, productData, activeTenantId || undefined);
+        await updateProduct(null, product.id, productData, activeTenantId || undefined);
         toast({ title: "Produto Atualizado!", description: `"${productName}" foi atualizado.` });
       } else {
-        await addProduct(firestore, productData, activeTenantId || undefined);
+        await addProduct(null, productData, activeTenantId || undefined);
         toast({ title: "Produto Adicionado!", description: `"${productName}" foi adicionado ao catálogo.` });
       }
       

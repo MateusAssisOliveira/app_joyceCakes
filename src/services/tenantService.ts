@@ -1,46 +1,55 @@
-import type { User } from "firebase/auth";
-import { Firestore, doc, serverTimestamp, setDoc } from "firebase/firestore";
-import { getTenantMemberPath } from "@/lib/tenant";
+import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 
-export async function ensureTenantBootstrap(firestore: Firestore, user: User): Promise<void> {
-  const tenantId = user.uid;
-  const tenantRef = doc(firestore, `tenants/${tenantId}`);
-  const tenantMemberRef = doc(firestore, getTenantMemberPath(tenantId, user.uid));
-  const userRef = doc(firestore, `users/${user.uid}`);
+type BootstrapUser = {
+  uid?: string;
+  id?: string;
+  displayName?: string | null;
+  email?: string | null;
+};
+
+export async function ensureTenantBootstrap(_firestore: unknown, user: BootstrapUser): Promise<void> {
+  const client = getSupabaseBrowserClient();
+  const userId = user.uid ?? user.id;
+
+  if (!userId) {
+    throw new Error("Usuario nao identificado para bootstrap do tenant.");
+  }
 
   const displayName = user.displayName || user.email?.split("@")[0] || "Minha Confeitaria";
 
-  await setDoc(
-    tenantRef,
+  const { error: tenantError } = await client.from("tenants").upsert(
     {
+      id: userId,
       name: displayName,
-      ownerUserId: user.uid,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
+      owner_user_id: userId,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     },
-    { merge: true }
+    { onConflict: "id", ignoreDuplicates: false }
   );
+  if (tenantError) throw tenantError;
 
-  await setDoc(
-    tenantMemberRef,
+  const { error: memberError } = await client.from("tenant_members").upsert(
     {
-      userId: user.uid,
+      tenantId: userId,
+      userId,
       role: "owner",
       status: "active",
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     },
-    { merge: true }
+    { onConflict: "tenantId,userId", ignoreDuplicates: false }
   );
+  if (memberError) throw memberError;
 
-  await setDoc(
-    userRef,
+  const { error: profileError } = await client.from("profiles").upsert(
     {
+      user_id: userId,
       email: user.email || "",
       name: user.displayName || "",
-      activeTenantId: tenantId,
-      updatedAt: serverTimestamp(),
+      active_tenant_id: userId,
     },
-    { merge: true }
+    { onConflict: "user_id", ignoreDuplicates: false }
   );
+  if (profileError) throw profileError;
 }

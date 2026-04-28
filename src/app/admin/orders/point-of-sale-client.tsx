@@ -34,17 +34,15 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Eye, Printer, Pencil, Loader } from "lucide-react";
-import { updateOrderStatus } from "@/services";
+import { updateOrderStatus, getOrders } from "@/services";
 import type { Order, OrderStatus, Product } from "@/types";
 import { OrderReceipt } from "@/components/admin/order-receipt";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
-import { useUser, useFirestore, errorEmitter, FirestorePermissionError } from "@/firebase";
-import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
+import { useUser } from "@/firebase";
 import { NewOrderDialog } from "@/components/admin/orders/new-order-dialog";
-import { getTenantCollectionPath } from "@/lib/tenant";
 import { useActiveTenant } from "@/hooks/use-active-tenant";
 
 const getStatusVariant = (status: OrderStatus) => {
@@ -66,55 +64,52 @@ export function PointOfSaleClient({ products }: PointOfSaleClientProps) {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const { toast } = useToast();
   
-  const firestore = useFirestore();
   const { user } = useUser();
   const { activeTenantId } = useActiveTenant();
 
   const [orders, setOrders] = useState<Order[]>([]);
   const [areOrdersLoading, setAreOrdersLoading] = useState(true);
 
-  // Busca os pedidos em tempo real do Firestore
   useEffect(() => {
-    if (!firestore || !activeTenantId) return;
+    let active = true;
+    if (!activeTenantId) {
+      setOrders([]);
+      setAreOrdersLoading(false);
+      return;
+    }
 
     setAreOrdersLoading(true);
-    const ordersPath = getTenantCollectionPath(activeTenantId, "orders");
-    const ordersQuery = query(collection(firestore, ordersPath), orderBy("createdAt", "desc"));
-    
-    const unsubscribe = onSnapshot(ordersQuery, (snapshot) => {
-      const fetchedOrders = snapshot.docs.map((doc: any) => {
-        const data = doc.data();
-        return {
-          id: doc.id,
-          ...data,
-          // Garante que createdAt seja um objeto Date
-          createdAt: (data.createdAt as any).toDate ? (data.createdAt as any).toDate() : new Date(),
-        } as Order;
-      });
-      setOrders(fetchedOrders);
-      setAreOrdersLoading(false);
-    }, () => {
-      // Cria e emite o erro contextual
-      const permissionError = new FirestorePermissionError({
-          path: ordersPath,
-          operation: 'list',
-      });
-      errorEmitter.emit('permission-error', permissionError);
-      setAreOrdersLoading(false);
-    });
 
-    return () => unsubscribe(); // Limpa o listener ao desmontar o componente
+    const loadOrders = async () => {
+      try {
+        const fetchedOrders = await getOrders(activeTenantId);
+        if (!active) return;
+        setOrders(fetchedOrders);
+      } catch (error) {
+        console.error("Falha ao carregar pedidos:", error);
+        if (!active) return;
+        setOrders([]);
+      } finally {
+        if (!active) return;
+        setAreOrdersLoading(false);
+      }
+    };
 
-  }, [firestore, activeTenantId]);
+    loadOrders();
+    const interval = window.setInterval(loadOrders, 10000);
+    return () => {
+      active = false;
+      window.clearInterval(interval);
+    };
+  }, [activeTenantId]);
 
 
-  const handleStatusChange = (orderId: string, newStatus: OrderStatus) => {
-    if (!firestore) return;
+  const handleStatusChange = async (orderId: string, newStatus: OrderStatus) => {
     try {
-        updateOrderStatus(firestore, orderId, newStatus, activeTenantId || undefined);
-        toast({ title: "Status Atualizado!", description: `O status do pedido ${orderId} foi alterado.` });
-    } catch(e: any) {
-        toast({ variant: "destructive", title: "Erro", description: e.message });
+      await updateOrderStatus(orderId, newStatus, activeTenantId || undefined);
+      toast({ title: "Status Atualizado!", description: `O status do pedido ${orderId} foi alterado.` });
+    } catch (e: any) {
+      toast({ variant: "destructive", title: "Erro", description: e.message });
     }
   };
   
@@ -155,7 +150,7 @@ export function PointOfSaleClient({ products }: PointOfSaleClientProps) {
                         Visualize e gerencie os pedidos recebidos ou inicie uma nova venda.
                     </CardDescription>
                   </div>
-                  <NewOrderDialog products={products || []} user={user} firestore={firestore} tenantId={activeTenantId || undefined} />
+                  <NewOrderDialog products={products || []} user={user} tenantId={activeTenantId || undefined} />
               </div>
             </CardHeader>
             <CardContent className="flex-1 px-3 pb-3 sm:px-6 sm:pb-6">

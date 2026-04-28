@@ -20,7 +20,6 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Loader, TrendingUp } from "lucide-react";
-import { useFirestore } from "@/firebase";
 import { getPriceHistory } from "@/services";
 import type { Supply, PriceVariation } from "@/types";
 import { format } from 'date-fns';
@@ -37,13 +36,12 @@ type PriceHistoryDialogProps = {
 export function PriceHistoryDialog({ supply, isOpen, onClose }: PriceHistoryDialogProps) {
   const [history, setHistory] = useState<PriceVariation[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const firestore = useFirestore();
   const { activeTenantId } = useActiveTenant();
 
   useEffect(() => {
-    if (isOpen && firestore) {
+    if (isOpen) {
       setIsLoading(true);
-      getPriceHistory(firestore, supply.id, activeTenantId || undefined)
+      getPriceHistory(null, supply.id, activeTenantId || undefined)
       .then(data => {
         const sortedData = data.sort((a, b) => {
           const ad = toDate(a.date)?.getTime() ?? 0;
@@ -55,7 +53,7 @@ export function PriceHistoryDialog({ supply, isOpen, onClose }: PriceHistoryDial
         .catch(err => console.error(err))
         .finally(() => setIsLoading(false));
     }
-  }, [isOpen, firestore, supply.id, activeTenantId]);
+  }, [isOpen, supply.id, activeTenantId]);
   
   const getDate = (item: PriceVariation) => {
       const d = toDate(item.date);

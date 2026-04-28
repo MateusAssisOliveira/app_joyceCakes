@@ -28,7 +28,7 @@ import { addOrder } from "@/services";
 import type { Supply, OrderItem } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useUser, useFirestore } from "@/firebase";
+import { useUser } from "@/firebase";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useActiveTenant } from "@/hooks/use-active-tenant";
@@ -53,7 +53,6 @@ export function CalculatorClient({ supplies }: CalculatorClientProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const { toast } = useToast();
   const router = useRouter();
-  const firestore = useFirestore();
   const { user } = useUser();
   const { activeTenantId } = useActiveTenant();
 
@@ -128,7 +127,7 @@ export function CalculatorClient({ supplies }: CalculatorClientProps) {
 
 
   const handleSaveAsOrder = async () => {
-    if (!firestore || !user) {
+    if (!user) {
         toast({ variant: "destructive", title: "Erro", description: "Usuário não autenticado. Por favor, recarregue a página." });
         return;
     }
@@ -150,7 +149,7 @@ export function CalculatorClient({ supplies }: CalculatorClientProps) {
     });
     
     try {
-        await addOrder(firestore, {
+        await addOrder({
           userId: user.uid,
           tenantId: activeTenantId || undefined,
           customerName: "Pedido Personalizado",

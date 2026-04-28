@@ -1,7 +1,8 @@
-import { Timestamp } from "firebase/firestore";
 import { LucideIcon } from "lucide-react";
 
-export type DateLike = string | Date | Timestamp;
+export type TimestampLike = { toDate(): Date };
+
+export type DateLike = string | Date | TimestampLike;
 
 export type TenantRole = "owner" | "admin" | "staff";
 
