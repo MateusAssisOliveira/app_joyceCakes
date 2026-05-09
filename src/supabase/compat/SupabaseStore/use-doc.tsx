@@ -5,12 +5,12 @@ import {
   DocumentReference,
   onSnapshot,
   DocumentData,
-  FirestoreError,
+  SupabaseStoreError,
   DocumentSnapshot,
   Timestamp,
-} from 'firebase/firestore';
-import { errorEmitter } from '@/firebase/error-emitter';
-import { FirestorePermissionError } from '@/firebase/errors';
+} from '@/supabase/compat/SupabaseStore';
+import { errorEmitter } from '@/supabase/compat/error-emitter';
+import { SupabaseStorePermissionError } from '@/supabase/compat/errors';
 
 /** Utility type to add an 'id' field to a given type T. */
 type WithId<T> = T & { id: string };
@@ -22,11 +22,11 @@ type WithId<T> = T & { id: string };
 export interface UseDocResult<T> {
   data: WithId<T> | null; // Document data with ID, or null.
   isLoading: boolean;       // True if loading.
-  error: FirestoreError | Error | null; // Error object, or null.
+  error: SupabaseStoreError | Error | null; // Error object, or null.
 }
 
 /**
- * Recursively converts Firestore Timestamps to JavaScript Date objects.
+ * Recursively converts SupabaseStore Timestamps to JavaScript Date objects.
  * @param obj The object to process.
  * @returns A new object with Timestamps converted to Dates.
  */
@@ -52,7 +52,7 @@ function convertTimestamps(obj: any): any {
 
 
 /**
- * React hook to subscribe to a single Firestore document in real-time.
+ * React hook to subscribe to a single SupabaseStore document in real-time.
  * Handles nullable references.
  * 
  * IMPORTANT! YOU MUST MEMOIZE the inputted docRef or BAD THINGS WILL HAPPEN
@@ -62,7 +62,7 @@ function convertTimestamps(obj: any): any {
  *
  * @template T Optional type for document data. Defaults to any.
  * @param {DocumentReference<DocumentData> | null | undefined} docRef -
- * The Firestore DocumentReference. Waits if null/undefined.
+ * The SupabaseStore DocumentReference. Waits if null/undefined.
  * @param {object} [options] - Optional options object.
  * @param {T | null} [options.initialData] - Optional initial data to avoid loading state.
  * @returns {UseDocResult<T>} Object with data, isLoading, error.
@@ -75,7 +75,7 @@ export function useDoc<T = any>(
 
   const [data, setData] = useState<StateDataType>(options?.initialData || null);
   const [isLoading, setIsLoading] = useState<boolean>(!options?.initialData);
-  const [error, setError] = useState<FirestoreError | Error | null>(null);
+  const [error, setError] = useState<SupabaseStoreError | Error | null>(null);
 
   useEffect(() => {
     if (!docRef) {
@@ -102,7 +102,7 @@ export function useDoc<T = any>(
         setIsLoading(false);
       },
       async () => {
-        const contextualError = new FirestorePermissionError({
+        const contextualError = new SupabaseStorePermissionError({
           operation: 'get',
           path: docRef.path,
         })

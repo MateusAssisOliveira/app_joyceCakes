@@ -12,7 +12,7 @@
  */
 
 import { createLogger } from './logger';
-import { FirestorePermissionError } from '@/firebase/errors';
+import { SupabaseStorePermissionError } from '@/supabase/compat/errors';
 
 const logger = createLogger('ErrorHandler');
 
@@ -59,8 +59,8 @@ export function classifyError(error: unknown, context?: string): AppError {
     );
   }
 
-  // Firebase permission error
-  if (error instanceof FirestorePermissionError) {
+  // Supabase permission error
+  if (error instanceof SupabaseStorePermissionError) {
     return new AppError(
       ErrorType.PERMISSION_DENIED,
       'Você não tem permissão para realizar esta ação.',
@@ -69,7 +69,7 @@ export function classifyError(error: unknown, context?: string): AppError {
     );
   }
 
-  // Firebase not-found error
+  // Supabase not-found error
   if (error instanceof Error && error.message.includes('não encontrado')) {
     return new AppError(
       ErrorType.NOT_FOUND,

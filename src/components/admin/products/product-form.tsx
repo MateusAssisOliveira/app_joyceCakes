@@ -36,11 +36,11 @@ const ITEMS_PER_PAGE = 5;
 type ProductFormProps = {
   product: Product | null;
   supplies: Supply[];
-  baseSheets: TechnicalSheet[];
+  sheets: TechnicalSheet[];
   onSaveSuccess: () => void;
 };
 
-export function ProductForm({ product, supplies, baseSheets, onSaveSuccess }: ProductFormProps) {
+export function ProductForm({ product, supplies, sheets, onSaveSuccess }: ProductFormProps) {
   const parseNumericInput = (value: string) => {
     const normalized = value.replace(",", ".").trim();
     const parsed = Number(normalized);
@@ -109,10 +109,10 @@ export function ProductForm({ product, supplies, baseSheets, onSaveSuccess }: Pr
   }, [supplies, searchTerm]);
 
   const filteredSheets = useMemo(() => {
-    return baseSheets.filter((sheet) =>
+    return sheets.filter((sheet) =>
       sheet.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
-  }, [baseSheets, searchTerm]);
+  }, [sheets, searchTerm]);
 
   const totalSuppliesPages = Math.ceil(filteredSupplies.length / ITEMS_PER_PAGE);
   const paginatedSupplies = useMemo(() => {
@@ -183,17 +183,17 @@ export function ProductForm({ product, supplies, baseSheets, onSaveSuccess }: Pr
         rawCost = component.quantity * costPerBaseUnit;
 
     } else {
-        const sheet = baseSheets.find(s => s.id === component.componentId);
-        if (!sheet || !sheet.yield) return 0;
-        
-        const yieldAmount = parseFloat(sheet.yield.replace(/[^0-9,.]/g, '').replace(',', '.'));
-        if(isNaN(yieldAmount) || yieldAmount === 0) return 0;
+      const sheet = sheets.find(s => s.id === component.componentId);
+      if (!sheet || !sheet.yield) return 0;
 
-        const costPerGramOfSheet = sheet.totalCost / yieldAmount;
-        rawCost = component.quantity * costPerGramOfSheet;
+      const yieldAmount = parseFloat(sheet.yield.replace(/[^0-9,.]/g, '').replace(',', '.'));
+      if (isNaN(yieldAmount) || yieldAmount === 0) return 0;
+
+      const costPerGramOfSheet = sheet.totalCost / yieldAmount;
+      rawCost = component.quantity * costPerGramOfSheet;
     }
     return rawCost;
-  }, [supplies, baseSheets]);
+  }, [supplies, sheets]);
 
   const materialCost = useMemo(() => {
     return components.reduce((total, item) => total + getCost(item), 0);

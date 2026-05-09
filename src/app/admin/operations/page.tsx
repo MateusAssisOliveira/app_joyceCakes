@@ -62,10 +62,6 @@ export default function OperationsPage() {
   const [history, setHistory] = useState<ReconcileHistoryItem[]>([]);
   const [isHistoryLoading, setIsHistoryLoading] = useState(false);
   const [historyError, setHistoryError] = useState<string | null>(null);
-  const [isOrdersLoading, setIsOrdersLoading] = useState(true);
-  const [isSuppliesLoading, setIsSuppliesLoading] = useState(true);
-  const [isCashRegisterLoading, setIsCashRegisterLoading] = useState(true);
-  const [isMovementsLoading, setIsMovementsLoading] = useState(true);
   const [ordersData, setOrdersData] = useState<Order[]>([]);
   const [suppliesData, setSuppliesData] = useState<Supply[]>([]);
   const [activeCashRegister, setActiveCashRegister] = useState<CashRegister | null>(null);
@@ -81,14 +77,11 @@ export default function OperationsPage() {
   }, []);
 
   useEffect(() => {
-    let active = true;
+    const active = true;
     if (!tenantId) {
       setOrdersData([]);
-      setIsOrdersLoading(false);
       return;
     }
-
-    setIsOrdersLoading(true);
 
     const loadOrders = async () => {
       try {
@@ -96,7 +89,11 @@ export default function OperationsPage() {
         if (!active) return;
         setOrdersData(
           fetchedOrders.filter((order) => {
-            const createdAt = new Date(order.createdAt || "");
+            const createdAt = order.createdAt
+              ? (typeof order.createdAt === 'object' && 'toDate' in order.createdAt)
+                ? order.createdAt.toDate()
+                : new Date(order.createdAt)
+              : new Date();
             return createdAt >= today;
           })
         );
@@ -105,8 +102,6 @@ export default function OperationsPage() {
         if (!active) return;
         setOrdersData([]);
       } finally {
-        if (!active) return;
-        setIsOrdersLoading(false);
       }
     };
 
@@ -114,14 +109,11 @@ export default function OperationsPage() {
   }, [tenantId, today]);
 
   useEffect(() => {
-    let active = true;
+    const active = true;
     if (!tenantId) {
       setSuppliesData([]);
-      setIsSuppliesLoading(false);
       return;
     }
-
-    setIsSuppliesLoading(true);
 
     const loadSupplies = async () => {
       try {
@@ -133,8 +125,6 @@ export default function OperationsPage() {
         if (!active) return;
         setSuppliesData([]);
       } finally {
-        if (!active) return;
-        setIsSuppliesLoading(false);
       }
     };
 
@@ -142,15 +132,12 @@ export default function OperationsPage() {
   }, [tenantId]);
 
   useEffect(() => {
-    let active = true;
+    const active = true;
     const cashRegisterId = userProfile?.activeCashRegisterId;
     if (!tenantId || !cashRegisterId) {
       setActiveCashRegister(null);
-      setIsCashRegisterLoading(false);
       return;
     }
-
-    setIsCashRegisterLoading(true);
 
     const loadCashRegister = async () => {
       try {
@@ -162,8 +149,6 @@ export default function OperationsPage() {
         if (!active) return;
         setActiveCashRegister(null);
       } finally {
-        if (!active) return;
-        setIsCashRegisterLoading(false);
       }
     };
 
@@ -171,14 +156,11 @@ export default function OperationsPage() {
   }, [tenantId, userProfile?.activeCashRegisterId]);
 
   useEffect(() => {
-    let active = true;
+    const active = true;
     if (!tenantId || !activeCashRegister?.id) {
       setMovementsData([]);
-      setIsMovementsLoading(false);
       return;
     }
-
-    setIsMovementsLoading(true);
 
     const loadMovements = async () => {
       try {
@@ -190,8 +172,6 @@ export default function OperationsPage() {
         if (!active) return;
         setMovementsData([]);
       } finally {
-        if (!active) return;
-        setIsMovementsLoading(false);
       }
     };
 

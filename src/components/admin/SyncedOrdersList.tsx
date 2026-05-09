@@ -4,8 +4,8 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { getSdks } from '@/firebase/index';
-import { collection, onSnapshot, Timestamp } from 'firebase/firestore';
+import { getSdks } from '@/supabase/compat/index';
+import { collection, onSnapshot, Timestamp } from '@/supabase/compat/SupabaseStore';
 
 interface Order {
   id: string;
@@ -36,16 +36,16 @@ export function SyncedOrdersList() {
     console.log(`📍 Máquina ID: ${machineId}`);
 
     try {
-      const { firestore, auth } = getSdks();
+      const { SupabaseStore, auth } = getSdks();
       const tenantId = auth.currentUser?.uid;
       if (!tenantId) {
         setError("Usuario sem tenant ativo.");
         setLoading(false);
         return;
       }
-      const ordersRef = collection(firestore, `tenants/${tenantId}/orders`);
+      const ordersRef = collection(SupabaseStore, `tenants/${tenantId}/orders`);
 
-      // 🔄 LISTENER - Atualiza quando há mudanças no Firestore
+      // 🔄 LISTENER - Atualiza quando há mudanças no SupabaseStore
       const unsubscribe = onSnapshot(
         ordersRef,
         (snapshot) => {
@@ -97,7 +97,7 @@ export function SyncedOrdersList() {
     return (
       <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
         <p className="text-blue-800">
-          ⏳ Conectando ao Firestore... (Máquina: {machineId})
+          ⏳ Conectando ao SupabaseStore... (Máquina: {machineId})
         </p>
       </div>
     );
@@ -110,11 +110,11 @@ export function SyncedOrdersList() {
         <p className="text-sm text-red-600 mt-2">
           Verifique:
           <br />
-          - Se está logado no Firebase
+          - Se está logado no Supabase
           <br />
-          - Se tem permissão de leitura no Firestore
+          - Se tem permissão de leitura no SupabaseStore
           <br />
-          - Se o projeto Firebase está ativo
+          - Se o projeto Supabase está ativo
         </p>
       </div>
     );
@@ -209,7 +209,7 @@ export function SyncedOrdersList() {
               totalOrders: orders.length,
               machineId,
               lastSync: new Date().toLocaleTimeString('pt-BR'),
-              firebaseConnected: true,
+              SupabaseConnected: true,
             },
             null,
             2
@@ -232,7 +232,7 @@ export function SyncedOrdersList() {
  * 3. Pronto! Abre em 2 máquinas e vê sincronização em tempo real.
  *
  * O que acontece internamente:
- * - onSnapshot() monitora a coleção 'orders' no Firestore
+ * - onSnapshot() monitora a coleção 'orders' no SupabaseStore
  * - Quando há mudança (novo pedido, edição, etc), callback é acionado
  * - Estado React atualiza automaticamente
  * - Componente re-renderiza

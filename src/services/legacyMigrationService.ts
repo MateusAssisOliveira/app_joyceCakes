@@ -1,11 +1,11 @@
 import {
-  Firestore,
+  SupabaseStore,
   collection,
   doc,
   getDocs,
   serverTimestamp,
   writeBatch,
-} from 'firebase/firestore';
+} from '@/supabase/compat/SupabaseStore';
 import { getSupplyPriceHistoryPath, getTenantCollectionPath } from '@/lib/tenant';
 import { updateUserProfile } from './userService';
 
@@ -126,7 +126,7 @@ async function commitInChunks<T>(items: T[], writeChunk: (chunk: T[]) => Promise
 }
 
 async function loadLegacyTechnicalSheets(
-  firestore: Firestore,
+  SupabaseStore: SupabaseStore,
   userId: string
 ): Promise<Array<{ id: string; data: Record<string, any> }>> {
   const sourcePaths = [
@@ -142,7 +142,7 @@ async function loadLegacyTechnicalSheets(
 
   for (const path of sourcePaths) {
     try {
-      const snapshot = await getDocs(collection(firestore, path));
+      const snapshot = await getDocs(collection(SupabaseStore, path));
       for (const docSnap of snapshot.docs) {
         if (!uniqueById.has(docSnap.id)) {
           uniqueById.set(docSnap.id, docSnap.data() as Record<string, any>);
@@ -157,7 +157,7 @@ async function loadLegacyTechnicalSheets(
 }
 
 export async function migrateLegacyDataToTenant(
-  firestore: Firestore,
+  SupabaseStore: SupabaseStore,
   userId: string,
   tenantId: string
 ): Promise<MigrationResult> {
@@ -181,13 +181,13 @@ export async function migrateLegacyDataToTenant(
   ] as const;
 
   for (const item of rootCollections) {
-    const snapshot = await getDocs(collection(firestore, item.path));
+    const snapshot = await getDocs(collection(SupabaseStore, item.path));
     const docs = snapshot.docs;
 
     await commitInChunks(docs, async (chunk) => {
-      const batch = writeBatch(firestore);
+      const batch = writeBatch(SupabaseStore);
       for (const legacyDoc of chunk) {
-        const targetRef = doc(firestore, getTenantCollectionPath(tenantId, item.path as any), legacyDoc.id);
+        const targetRef = doc(SupabaseStore, getTenantCollectionPath(tenantId, item.path as any), legacyDoc.id);
         const rawData = legacyDoc.data() as Record<string, any>;
         const payload =
           item.path === 'technical_sheets'
@@ -210,13 +210,13 @@ export async function migrateLegacyDataToTenant(
 
     if (item.path === 'supplies') {
       for (const supplyDoc of docs) {
-        const historySnapshot = await getDocs(collection(firestore, `supplies/${supplyDoc.id}/price_history`));
+        const historySnapshot = await getDocs(collection(SupabaseStore, `supplies/${supplyDoc.id}/price_history`));
         const historyDocs = historySnapshot.docs;
 
         await commitInChunks(historyDocs, async (chunk) => {
-          const batch = writeBatch(firestore);
+          const batch = writeBatch(SupabaseStore);
           for (const historyDoc of chunk) {
-            const targetHistoryRef = doc(firestore, getSupplyPriceHistoryPath(tenantId, supplyDoc.id), historyDoc.id);
+            const targetHistoryRef = doc(SupabaseStore, getSupplyPriceHistoryPath(tenantId, supplyDoc.id), historyDoc.id);
             batch.set(targetHistoryRef, historyDoc.data(), { merge: true });
           }
           await batch.commit();
@@ -229,12 +229,12 @@ export async function migrateLegacyDataToTenant(
 
   // Compatibilidade com nomes antigos de colecao de receitas.
   if (result.technicalSheets === 0) {
-    const legacySheets = await loadLegacyTechnicalSheets(firestore, userId);
+    const legacySheets = await loadLegacyTechnicalSheets(SupabaseStore, userId);
     await commitInChunks(legacySheets, async (chunk) => {
-      const batch = writeBatch(firestore);
+      const batch = writeBatch(SupabaseStore);
       for (const legacyDoc of chunk) {
         const targetRef = doc(
-          firestore,
+          SupabaseStore,
           getTenantCollectionPath(tenantId, 'technical_sheets'),
           legacyDoc.id
         );
@@ -246,13 +246,13 @@ export async function migrateLegacyDataToTenant(
     });
   }
 
-  const legacyCashRegisters = await getDocs(collection(firestore, `users/${userId}/cash_registers`));
+  const legacyCashRegisters = await getDocs(collection(SupabaseStore, `users/${userId}/cash_registers`));
   const cashRegisterDocs = legacyCashRegisters.docs;
 
   await commitInChunks(cashRegisterDocs, async (chunk) => {
-    const batch = writeBatch(firestore);
+    const batch = writeBatch(SupabaseStore);
     for (const registerDoc of chunk) {
-      const targetRef = doc(firestore, getTenantCollectionPath(tenantId, 'cash_registers'), registerDoc.id);
+      const targetRef = doc(SupabaseStore, getTenantCollectionPath(tenantId, 'cash_registers'), registerDoc.id);
       batch.set(
         targetRef,
         {
@@ -270,15 +270,15 @@ export async function migrateLegacyDataToTenant(
 
   for (const registerDoc of cashRegisterDocs) {
     const movementSnapshot = await getDocs(
-      collection(firestore, `users/${userId}/cash_registers/${registerDoc.id}/financial_movements`)
+      collection(SupabaseStore, `users/${userId}/cash_registers/${registerDoc.id}/financial_movements`)
     );
     const movementDocs = movementSnapshot.docs;
 
     await commitInChunks(movementDocs, async (chunk) => {
-      const batch = writeBatch(firestore);
+      const batch = writeBatch(SupabaseStore);
       for (const movementDoc of chunk) {
         const targetRef = doc(
-          firestore,
+          SupabaseStore,
           `${getTenantCollectionPath(tenantId, 'cash_registers')}/${registerDoc.id}/financial_movements`,
           movementDoc.id
         );
@@ -298,7 +298,7 @@ export async function migrateLegacyDataToTenant(
     result.financialMovements += movementDocs.length;
   }
 
-  await updateUserProfile(firestore, userId, {
+  await updateUserProfile(SupabaseStore, userId, {
     activeTenantId: tenantId,
     legacyMigrationV1Done: true,
   });
@@ -336,7 +336,7 @@ async function fetchSyncServerTableSafe(
 }
 
 export async function importSyncServerDataToTenant(
-  firestore: Firestore,
+  SupabaseStore: SupabaseStore,
   userId: string,
   tenantId: string
 ): Promise<SyncServerImportResult> {
@@ -355,10 +355,10 @@ export async function importSyncServerDataToTenant(
   ]);
 
   await commitInChunks(products, async (chunk) => {
-    const batch = writeBatch(firestore);
+    const batch = writeBatch(SupabaseStore);
     for (const item of chunk) {
       if (!item?.id) continue;
-      const targetRef = doc(firestore, getTenantCollectionPath(tenantId, 'products'), String(item.id));
+      const targetRef = doc(SupabaseStore, getTenantCollectionPath(tenantId, 'products'), String(item.id));
       const createdAt = pickFirst(item, ['createdAt', 'createdat', 'updatedAt', 'updatedat']);
       const productData = removeUndefinedFields({
         name: toStringValue(pickFirst(item, ['name']), 'Sem nome'),
@@ -384,10 +384,10 @@ export async function importSyncServerDataToTenant(
   });
 
   await commitInChunks(supplies, async (chunk) => {
-    const batch = writeBatch(firestore);
+    const batch = writeBatch(SupabaseStore);
     for (const item of chunk) {
       if (!item?.id) continue;
-      const targetRef = doc(firestore, getTenantCollectionPath(tenantId, 'supplies'), String(item.id));
+      const targetRef = doc(SupabaseStore, getTenantCollectionPath(tenantId, 'supplies'), String(item.id));
       const packageCost = pickFirst(item, ['packageCost', 'packagecost', 'package_cost']);
       const packageQuantity = pickFirst(item, ['packageQuantity', 'packagequantity', 'package_quantity']);
       const normalizedUnit = normalizeSupplyUnit(pickFirst(item, ['unit']));
@@ -431,10 +431,10 @@ export async function importSyncServerDataToTenant(
   });
 
   await commitInChunks(orders, async (chunk) => {
-    const batch = writeBatch(firestore);
+    const batch = writeBatch(SupabaseStore);
     for (const item of chunk) {
       if (!item?.id) continue;
-      const targetRef = doc(firestore, getTenantCollectionPath(tenantId, 'orders'), String(item.id));
+      const targetRef = doc(SupabaseStore, getTenantCollectionPath(tenantId, 'orders'), String(item.id));
       const createdAt = pickFirst(item, ['createdAt', 'createdat', 'updatedAt', 'updatedat']) ?? serverTimestamp();
       const paymentMethod = toStringValue(
         pickFirst(item, ['paymentMethod', 'paymentmethod']),
@@ -469,11 +469,11 @@ export async function importSyncServerDataToTenant(
   });
 
   await commitInChunks(technicalSheetsFromSync, async (chunk) => {
-    const batch = writeBatch(firestore);
+    const batch = writeBatch(SupabaseStore);
     for (const item of chunk) {
       if (!item?.id) continue;
       const targetRef = doc(
-        firestore,
+        SupabaseStore,
         getTenantCollectionPath(tenantId, 'technical_sheets'),
         String(item.id)
       );
@@ -485,16 +485,16 @@ export async function importSyncServerDataToTenant(
   });
 
   // O sync server atual nao possui tabela technical_sheets.
-  // Para nao perder receitas, migra de colecoes legadas do Firestore quando existirem.
+  // Para nao perder receitas, migra de colecoes legadas do SupabaseStore quando existirem.
   const legacySheets = result.technicalSheets === 0
-    ? await loadLegacyTechnicalSheets(firestore, userId)
+    ? await loadLegacyTechnicalSheets(SupabaseStore, userId)
     : [];
 
   await commitInChunks(legacySheets, async (chunk) => {
-    const batch = writeBatch(firestore);
+    const batch = writeBatch(SupabaseStore);
     for (const legacyDoc of chunk) {
       const targetRef = doc(
-        firestore,
+        SupabaseStore,
         getTenantCollectionPath(tenantId, 'technical_sheets'),
         legacyDoc.id
       );
@@ -507,7 +507,7 @@ export async function importSyncServerDataToTenant(
     await batch.commit();
   });
 
-  await updateUserProfile(firestore, userId, {
+  await updateUserProfile(SupabaseStore, userId, {
     activeTenantId: tenantId,
   });
 

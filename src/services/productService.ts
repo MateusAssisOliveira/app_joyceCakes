@@ -4,7 +4,7 @@ import type { Product } from "@/types";
 import { serializeObject, setDocumentActive } from "./utils";
 
 export async function addProduct(
-  _firestore: unknown,
+  _SupabaseStore: unknown,
   productData: Partial<Omit<Product, "id" | "createdAt" | "isActive">>,
   tenantId?: string
 ): Promise<void> {
@@ -22,7 +22,7 @@ export async function addProduct(
 }
 
 export async function updateProduct(
-  _firestore: unknown,
+  _SupabaseStore: unknown,
   id: string,
   updatedData: Partial<Omit<Product, "id" | "createdAt" | "isActive">>,
   tenantId?: string
@@ -39,17 +39,17 @@ export async function updateProduct(
   if (error) throw error;
 }
 
-export async function inactivateProduct(_firestore: unknown, id: string, tenantId?: string): Promise<void> {
+export async function inactivateProduct(_SupabaseStore: unknown, id: string, tenantId?: string): Promise<void> {
   const currentTenantId = resolveTenantIdOrThrow(tenantId);
   await setDocumentActive(null, getTenantCollectionPath(currentTenantId, "products"), id, false);
 }
 
-export async function reactivateProduct(_firestore: unknown, id: string, tenantId?: string): Promise<void> {
+export async function reactivateProduct(_SupabaseStore: unknown, id: string, tenantId?: string): Promise<void> {
   const currentTenantId = resolveTenantIdOrThrow(tenantId);
   await setDocumentActive(null, getTenantCollectionPath(currentTenantId, "products"), id, true);
 }
 
-export async function getProducts(_firestore: unknown, tenantId?: string): Promise<Product[]> {
+export async function getProducts(_SupabaseStore: unknown, tenantId?: string): Promise<Product[]> {
   const client = getSupabaseBrowserClient();
   const currentTenantId = resolveTenantIdOrThrow(tenantId);
 

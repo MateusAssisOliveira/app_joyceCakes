@@ -24,7 +24,7 @@ import { Separator } from "@/components/ui/separator";
 import { Loader, TrendingUp } from "lucide-react";
 import type { Supply } from "@/types";
 import { useToast } from "@/hooks/use-toast";
-import { useUser } from "@/firebase";
+import { useUser } from "@/supabase/compat";
 import { updateSupply, getPriceHistory } from "@/services";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useActiveTenant } from "@/hooks/use-active-tenant";
@@ -130,9 +130,14 @@ export function SupplyQuickAddDialog({
     isOpen,
     supply?.name,
     supply?.costPerUnit,
+    supply?.category,
+    supply?.minStock,
     supply?.packageCost,
     supply?.packageQuantity,
     supply?.purchaseFormat,
+    supply?.sku,
+    supply?.supplier,
+    supply?.type,
     supply?.unit,
   ]);
 

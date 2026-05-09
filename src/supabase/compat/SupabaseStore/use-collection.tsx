@@ -5,13 +5,13 @@ import {
   Query,
   onSnapshot,
   DocumentData,
-  FirestoreError,
+  SupabaseStoreError,
   QuerySnapshot,
   CollectionReference,
   Timestamp,
-} from 'firebase/firestore';
-import { errorEmitter } from '@/firebase/error-emitter';
-import { FirestorePermissionError } from '@/firebase/errors';
+} from '@/supabase/compat/SupabaseStore';
+import { errorEmitter } from '@/supabase/compat/error-emitter';
+import { SupabaseStorePermissionError } from '@/supabase/compat/errors';
 
 /** Utility type to add an 'id' field to a given type T. */
 export type WithId<T> = T & { id: string };
@@ -23,11 +23,11 @@ export type WithId<T> = T & { id: string };
 export interface UseCollectionResult<T> {
   data: WithId<T>[] | null; // Document data with ID, or null.
   isLoading: boolean;       // True if loading.
-  error: FirestoreError | Error | null; // Error object, or null.
+  error: SupabaseStoreError | Error | null; // Error object, or null.
 }
 
 /* Internal implementation of Query:
-  https://github.com/firebase/firebase-js-sdk/blob/c5f08a9bc5da0d2b0207802c972d53724ccef055/packages/firestore/src/lite-api/reference.ts#L143
+  https://github.com/Supabase/Supabase-js-sdk/blob/c5f08a9bc5da0d2b0207802c972d53724ccef055/packages/SupabaseStore/src/lite-api/reference.ts#L143
 */
 export interface InternalQuery extends Query<DocumentData> {
   _query: {
@@ -39,7 +39,7 @@ export interface InternalQuery extends Query<DocumentData> {
 }
 
 /**
- * Recursively converts Firestore Timestamps to JavaScript Date objects.
+ * Recursively converts SupabaseStore Timestamps to JavaScript Date objects.
  * @param obj The object to process.
  * @returns A new object with Timestamps converted to Dates.
  */
@@ -64,7 +64,7 @@ function convertTimestamps(obj: any): any {
 }
 
 /**
- * React hook to subscribe to a Firestore collection or query in real-time.
+ * React hook to subscribe to a SupabaseStore collection or query in real-time.
  * Handles nullable references/queries.
  * 
  *
@@ -74,7 +74,7 @@ function convertTimestamps(obj: any): any {
  *  
  * @template T Optional type for document data. Defaults to any.
  * @param {CollectionReference<DocumentData> | Query<DocumentData> | null | undefined} targetRefOrQuery -
- * The Firestore CollectionReference or Query. Waits if null/undefined.
+ * The SupabaseStore CollectionReference or Query. Waits if null/undefined.
  * @param {object} [options] - Optional options object.
  * @param {T[] | null} [options.initialData] - Optional initial data to avoid loading state.
  * @returns {UseCollectionResult<T>} Object with data, isLoading, error.
@@ -88,7 +88,7 @@ export function useCollection<T = any>(
 
   const [data, setData] = useState<StateDataType>(options?.initialData || null);
   const [isLoading, setIsLoading] = useState<boolean>(!options?.initialData);
-  const [error, setError] = useState<FirestoreError | Error | null>(null);
+  const [error, setError] = useState<SupabaseStoreError | Error | null>(null);
 
   useEffect(() => {
     if (!targetRefOrQuery) {
@@ -116,7 +116,7 @@ export function useCollection<T = any>(
       async () => {
         const path = "path" in targetRefOrQuery ? targetRefOrQuery.path : (targetRefOrQuery as InternalQuery)._query.path.canonicalString();
 
-        const contextualError = new FirestorePermissionError({
+        const contextualError = new SupabaseStorePermissionError({
           operation: 'list',
           path,
         });

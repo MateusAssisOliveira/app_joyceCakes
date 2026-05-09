@@ -7,7 +7,7 @@ const DELETE_FIELD_SENTINEL = "__delete_field__";
 const POLL_INTERVAL_MS = 2500;
 
 export type DocumentData = Record<string, any>;
-export type Firestore = { kind: "supabase-firestore" };
+export type SupabaseStore = { kind: "supabase-SupabaseStore" };
 export type SetOptions = { merge?: boolean };
 export type OrderByDirection = "asc" | "desc";
 export type WhereFilterOp = "==" | ">=" | "<=" | ">" | "<";
@@ -20,7 +20,7 @@ export type DocumentReference<T = DocumentData> = {
 export type CollectionReference<T = DocumentData> = {
   kind: "collection";
   path: string;
-  parent: DocumentReference | null;
+  parent: DocumentReference<T> | null;
 };
 export type QueryConstraint =
   | { type: "where"; field: string; op: WhereFilterOp; value: any }
@@ -31,6 +31,7 @@ export type Query<T = DocumentData> = {
   kind: "query";
   path: string;
   constraints: QueryConstraint[];
+  readonly __type?: T;
   _query: {
     path: {
       canonicalString(): string;
@@ -39,7 +40,7 @@ export type Query<T = DocumentData> = {
   };
 };
 
-export class FirestoreError extends Error {}
+export class SupabaseStoreError extends Error {}
 
 export class Timestamp {
   private readonly value: Date;
@@ -333,7 +334,7 @@ async function fetchRows<T = DocumentData>(
 
   const { data, error } = await request;
   if (error) {
-    throw new FirestoreError(error.message);
+    throw new SupabaseStoreError(error.message);
   }
 
   const rows = (data ?? []) as Record<string, any>[];
@@ -357,7 +358,7 @@ async function fetchDoc<T = DocumentData>(ref: DocumentReference<T>): Promise<Do
 
   const { data, error } = await request.maybeSingle();
   if (error) {
-    throw new FirestoreError(error.message);
+    throw new SupabaseStoreError(error.message);
   }
 
   return createDocumentSnapshot<T>(toCanonicalPath(ref.path).split("/").slice(0, -1).join("/"), data ?? null, resolution.idColumn, resolution.idValue);
@@ -412,7 +413,7 @@ async function upsertRecord(path: string, id: string | undefined, payload: Recor
     .upsert(next, { onConflict, ignoreDuplicates: false });
 
   if (error) {
-    throw new FirestoreError(error.message);
+    throw new SupabaseStoreError(error.message);
   }
 
   if (options?.merge === false && resolution.table !== "profiles") {
@@ -420,8 +421,8 @@ async function upsertRecord(path: string, id: string | undefined, payload: Recor
   }
 }
 
-export function getFirestore(): Firestore {
-  return { kind: "supabase-firestore" };
+export function getSupabaseStore(): SupabaseStore {
+  return { kind: "supabase-SupabaseStore" };
 }
 
 export function serverTimestamp() {
@@ -433,13 +434,13 @@ export function deleteField() {
 }
 
 export function collection<T = DocumentData>(
-  _firestoreOrRef: Firestore | DocumentReference | CollectionReference,
+  _SupabaseStoreOrRef: SupabaseStore | DocumentReference | CollectionReference,
   ...pathSegments: string[]
 ): CollectionReference<T> {
   const path = toCanonicalPath(
     pathSegments.length > 0
       ? pathSegments.join("/")
-      : (_firestoreOrRef as CollectionReference).path
+      : (_SupabaseStoreOrRef as CollectionReference).path
   );
   const segments = path.split("/");
   const parent =
@@ -458,16 +459,16 @@ export function collection<T = DocumentData>(
   return { kind: "collection", path, parent };
 }
 
-export function collectionGroup(_firestore: Firestore, groupId: string): CollectionReference {
+export function collectionGroup(_SupabaseStore: SupabaseStore, groupId: string): CollectionReference {
   return { kind: "collection", path: `**/${groupId}`, parent: null };
 }
 
 export function doc<T = DocumentData>(
-  firestoreOrCollection: Firestore | CollectionReference<T>,
+  SupabaseStoreOrCollection: SupabaseStore | CollectionReference<T>,
   ...pathSegments: string[]
 ): DocumentReference<T> {
-  if ((firestoreOrCollection as CollectionReference<T>).kind === "collection") {
-    const collectionRef = firestoreOrCollection as CollectionReference<T>;
+  if ((SupabaseStoreOrCollection as CollectionReference<T>).kind === "collection") {
+    const collectionRef = SupabaseStoreOrCollection as CollectionReference<T>;
     const id = pathSegments[0] ?? crypto.randomUUID();
     return { kind: "doc", path: `${collectionRef.path}/${id}`, id, parent: collectionRef };
   }
@@ -557,7 +558,7 @@ export async function updateDoc<T = DocumentData>(ref: DocumentReference<T>, dat
 
   const { error } = await request;
   if (error) {
-    throw new FirestoreError(error.message);
+    throw new SupabaseStoreError(error.message);
   }
 }
 
@@ -572,11 +573,12 @@ export async function deleteDoc<T = DocumentData>(ref: DocumentReference<T>) {
 
   const { error } = await request;
   if (error) {
-    throw new FirestoreError(error.message);
+    throw new SupabaseStoreError(error.message);
   }
 }
 
-export function writeBatch(_firestore: Firestore) {
+export function writeBatch(supabaseStore: SupabaseStore) {
+  void supabaseStore;
   const operations: Array<() => Promise<void>> = [];
 
   return {

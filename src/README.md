@@ -8,7 +8,7 @@ Cada pasta tem um propósito único. Para o mapa completo, veja **[docs/ESTRUTUR
 | **components/** | Componentes reutilizáveis (formulários, dialogs, tabelas, gráficos). Não define rotas. |
 | **services/** | Lógica de negócio e acesso a dados (pedidos, produtos, caixa, etc.). |
 | **types/** | Tipos TypeScript do projeto. |
-| **firebase/** | Config e hooks do Firebase (auth, Firestore). |
+| **Supabase/** | Config e hooks do Supabase (auth, SupabaseStore). |
 | **lib/** | Utilitários gerais. |
 | **data/** | Dados mock / em memória. |
 | **hooks/** | Hooks React reutilizáveis. |

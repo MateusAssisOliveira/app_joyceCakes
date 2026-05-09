@@ -2,29 +2,29 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { Supply, TechnicalSheet } from "@/types";
-import { useUser, useFirestore, useCollection } from "@/firebase";
+import { useUser, useSupabaseStore, useCollection } from "@/supabase/compat";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RecipeForm } from "@/components/admin/recipes/recipe-form";
 import { RecipeList } from "@/components/admin/recipes/recipe-list";
 import { RecipeFormDialog } from "@/components/admin/recipes/recipe-form-dialog";
 import { Loader } from "lucide-react";
-import { collection, query } from "firebase/firestore";
+import { collection, query } from "@/supabase/compat/SupabaseStore";
 import { getTenantCollectionPath } from "@/lib/tenant";
 import { useActiveTenant } from "@/hooks/use-active-tenant";
 
 export function RecipesClient() {
-  const firestore = useFirestore();
+  const SupabaseStore = useSupabaseStore();
   const { user } = useUser();
   const { activeTenantId } = useActiveTenant();
 
   const suppliesQuery = useMemo(() => {
-    if (!firestore || !activeTenantId) return null;
+    if (!SupabaseStore || !activeTenantId) return null;
     console.log("[Recipes] query supplies", {
       tenantId: activeTenantId,
       path: getTenantCollectionPath(activeTenantId, "supplies"),
     });
-    return query(collection(firestore, getTenantCollectionPath(activeTenantId, "supplies")));
-  }, [firestore, activeTenantId]);
+    return query(collection(SupabaseStore, getTenantCollectionPath(activeTenantId, "supplies")));
+  }, [SupabaseStore, activeTenantId]);
 
   const {
     data: supplies,
@@ -33,13 +33,13 @@ export function RecipesClient() {
   } = useCollection<Supply>(suppliesQuery);
 
   const sheetsQuery = useMemo(() => {
-    if (!firestore || !activeTenantId) return null;
+    if (!SupabaseStore || !activeTenantId) return null;
     console.log("[Recipes] query technical_sheets", {
       tenantId: activeTenantId,
       path: getTenantCollectionPath(activeTenantId, "technical_sheets"),
     });
-    return query(collection(firestore, getTenantCollectionPath(activeTenantId, "technical_sheets")));
-  }, [firestore, activeTenantId]);
+    return query(collection(SupabaseStore, getTenantCollectionPath(activeTenantId, "technical_sheets")));
+  }, [SupabaseStore, activeTenantId]);
 
   const {
     data: savedSheets,
@@ -77,9 +77,9 @@ export function RecipesClient() {
     console.log("[Recipes] init", {
       userId: user?.uid ?? null,
       tenantId: activeTenantId ?? null,
-      hasFirestore: Boolean(firestore),
+      hasSupabaseStore: Boolean(SupabaseStore),
     });
-  }, [user?.uid, activeTenantId, firestore]);
+  }, [user?.uid, activeTenantId, SupabaseStore]);
 
   useEffect(() => {
     console.log("[Recipes] loading state", {

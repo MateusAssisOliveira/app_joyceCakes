@@ -1,8 +1,8 @@
 /**
- * Firestore Pagination Helpers
+ * SupabaseStore Pagination Helpers
  * 
  * Propósito:
- * Fornecer utilities para paginação eficiente de dados no Firestore.
+ * Fornecer utilities para paginação eficiente de dados no SupabaseStore.
  * 
  * Responsabilidade:
  * - Implementar cursor-based pagination
@@ -11,7 +11,7 @@
  */
 
 import {
-  Firestore,
+  SupabaseStore,
   Query,
   query,
   limit,
@@ -25,7 +25,7 @@ import {
   DocumentSnapshot,
   QueryConstraint,
   OrderByDirection,
-} from 'firebase/firestore';
+} from '@/supabase/compat/SupabaseStore';
 import { createLogger } from './logger';
 
 const logger = createLogger('Pagination');
@@ -88,7 +88,7 @@ export async function executePaginatedQuery<T extends DocumentData = DocumentDat
  * Wrapper para queries comuns com ordenação padrão
  */
 export async function getPaginatedCollection<T extends DocumentData = DocumentData>(
-  firestore: Firestore,
+  SupabaseStore: SupabaseStore,
   collectionName: string,
   pageSize: number = 20,
   constraints?: QueryConstraint[],
@@ -107,7 +107,7 @@ export async function getPaginatedCollection<T extends DocumentData = DocumentDa
 
   const queryConstraints = constraints_array.length > 0 ? constraints_array : [];
 
-  const collRef = collection(firestore, collectionName) as CollectionReference<T>;
+  const collRef = collection(SupabaseStore, collectionName) as CollectionReference<T>;
   const q = query(collRef, ...queryConstraints);
 
   return executePaginatedQuery<T>(q, pageSize);
@@ -163,5 +163,5 @@ export class CollectionCache<T> {
   }
 }
 
-// Re-export common Firestore types for convenience
+// Re-export common SupabaseStore types for convenience
 export type { DocumentSnapshot };

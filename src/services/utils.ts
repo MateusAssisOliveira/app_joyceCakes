@@ -1,5 +1,5 @@
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
-import { isFirebaseTimestamp, isDateInstance } from "@/lib/timestamp-utils";
+import { isSupabaseTimestamp, isDateInstance } from "@/lib/timestamp-utils";
 
 const TABLE_NAMES = new Set([
   "products",
@@ -55,7 +55,7 @@ function resolveTableName(collectionName: string) {
 }
 
 export const setDocumentActive = async (
-  _firestore: unknown,
+  _SupabaseStore: unknown,
   collectionName: string,
   id: string,
   isActive: boolean
@@ -80,7 +80,7 @@ export function serializeObject<T>(obj: T): T {
     return obj;
   }
 
-  if (isFirebaseTimestamp(obj)) {
+  if (isSupabaseTimestamp(obj)) {
     return obj.toDate().toISOString() as unknown as T;
   }
 

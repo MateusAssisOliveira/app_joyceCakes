@@ -5,7 +5,7 @@ type TimestampLike = {
   toDate(): Date;
 };
 
-export function isFirebaseTimestamp(value: unknown): value is TimestampLike {
+export function isSupabaseTimestamp(value: unknown): value is TimestampLike {
   return Boolean(
     value &&
       typeof value === "object" &&
@@ -19,7 +19,7 @@ export function isDateInstance(value: unknown): value is Date {
 }
 
 export function toIsoString(value: unknown): string {
-  if (isFirebaseTimestamp(value)) {
+  if (isSupabaseTimestamp(value)) {
     return value.toDate().toISOString();
   }
   if (isDateInstance(value)) {
@@ -32,7 +32,7 @@ export function toIsoString(value: unknown): string {
 }
 
 export function toDate(value: unknown): Date | null {
-  if (isFirebaseTimestamp(value)) {
+  if (isSupabaseTimestamp(value)) {
     return value.toDate();
   }
   if (isDateInstance(value)) {

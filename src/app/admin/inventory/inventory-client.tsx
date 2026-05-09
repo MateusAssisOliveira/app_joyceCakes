@@ -4,7 +4,7 @@
 
 import { useState, useMemo, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { useUser, useFirestore, useCollection } from '@/firebase';
+import { useUser, useSupabaseStore, useCollection } from '@/supabase/compat';
 import { inactivateSupply, reactivateSupply, addSupply, updateSupply } from "@/services";
 import {
   Card,
@@ -44,7 +44,7 @@ import { SupplyQuickAddDialog } from "@/components/admin/supplies/supply-quick-a
 import { SupplyImportDialog } from "@/components/admin/supplies/supply-import-dialog";
 import { SupplyActions } from "@/components/admin/supplies/supply-actions";
 import { SupplyTable } from "@/components/admin/supplies/supply-table";
-import { collection, query } from 'firebase/firestore';
+import { collection, query } from '@/supabase/compat/SupabaseStore';
 import Papa from "papaparse";
 import { getTenantCollectionPath } from "@/lib/tenant";
 import { useActiveTenant } from "@/hooks/use-active-tenant";
@@ -108,14 +108,14 @@ export function InventoryClient() {
   const [sortKey, setSortKey] = useState<SortKey>('name');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
 
-  const firestore = useFirestore();
+  const SupabaseStore = useSupabaseStore();
   const { user } = useUser();
   const { activeTenantId } = useActiveTenant();
   
   const suppliesQuery = useMemo(() => {
-    if (!firestore || !activeTenantId) return null;
-    return query(collection(firestore, getTenantCollectionPath(activeTenantId, "supplies")));
-  }, [firestore, activeTenantId]);
+    if (!SupabaseStore || !activeTenantId) return null;
+    return query(collection(SupabaseStore, getTenantCollectionPath(activeTenantId, "supplies")));
+  }, [SupabaseStore, activeTenantId]);
 
   const { data: allSupplies, isLoading } = useCollection<Supply>(suppliesQuery);
   
@@ -195,17 +195,17 @@ export function InventoryClient() {
     formData: Omit<Supply, 'id' | 'createdAt' | 'isActive'>,
     financialData: { shouldRegister: boolean; paymentMethod: string; description: string, amount: number; }
     ) => {
-    if (!firestore || !user) return;
+    if (!SupabaseStore || !user) return;
     
     const defaultType = activeTab === 'all' ? 'ingredient' : activeTab;
     const dataToSave = { ...formData, type: formData.type || defaultType };
     
     try {
         if (supplyToEdit) {
-            await updateSupply(firestore, supplyToEdit.id, dataToSave, { ...financialData, userId: user.uid, tenantId: activeTenantId || undefined }, activeTenantId || undefined);
+            await updateSupply(SupabaseStore, supplyToEdit.id, dataToSave, { ...financialData, userId: user.uid, tenantId: activeTenantId || undefined }, activeTenantId || undefined);
             toast({ title: "Item Atualizado!" });
         } else {
-            await addSupply(firestore, dataToSave, { ...financialData, userId: user.uid, tenantId: activeTenantId || undefined }, activeTenantId || undefined);
+            await addSupply(SupabaseStore, dataToSave, { ...financialData, userId: user.uid, tenantId: activeTenantId || undefined }, activeTenantId || undefined);
             toast({ title: "Item Adicionado!" });
         }
         handleCloseFormDialog();
@@ -216,11 +216,11 @@ export function InventoryClient() {
   };
   
   const handleConfirmAction = useCallback(async () => {
-    if (!selectedSupply || !firestore) return;
+    if (!selectedSupply || !SupabaseStore) return;
     
     const actionPromise = viewMode === 'active' 
-      ? inactivateSupply(firestore, selectedSupply.id, activeTenantId || undefined)
-      : reactivateSupply(firestore, selectedSupply.id, activeTenantId || undefined);
+      ? inactivateSupply(SupabaseStore, selectedSupply.id, activeTenantId || undefined)
+      : reactivateSupply(SupabaseStore, selectedSupply.id, activeTenantId || undefined);
       
     try {
         await actionPromise;
@@ -230,7 +230,7 @@ export function InventoryClient() {
     } catch (error: any) {
         toast({ variant: "destructive", title: "Erro", description: error.message });
     }
-  }, [selectedSupply, firestore, viewMode, toast, activeTenantId]);
+  }, [selectedSupply, SupabaseStore, viewMode, toast, activeTenantId]);
   
   const onImportSuccess = async () => {
     setIsImportDialogOpen(false);

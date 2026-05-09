@@ -7,7 +7,7 @@ type BootstrapUser = {
   email?: string | null;
 };
 
-export async function ensureTenantBootstrap(_firestore: unknown, user: BootstrapUser): Promise<void> {
+export async function ensureTenantBootstrap(_SupabaseStore: unknown, user: BootstrapUser): Promise<void> {
   const client = getSupabaseBrowserClient();
   const userId = user.uid ?? user.id;
 

@@ -2,7 +2,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useUser } from '@/firebase';
+import { useUser } from '@/supabase/compat';
 import {
   AlertDialog,
   AlertDialogAction,

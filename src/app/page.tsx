@@ -16,7 +16,7 @@ function LoginPageContent() {
   const [errorDetails, setErrorDetails] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
-  const [mode, setMode] = useState<"login" | "signup">("login");
+  const [mode, setMode] = useState<"login" | "signup" | "reset">("login");
   const [email, setEmail] = useState(process.env.NEXT_PUBLIC_DEFAULT_LOGIN_EMAIL || "");
   const [password, setPassword] = useState("");
   const [connectionStatus, setConnectionStatus] = useState<"checking" | "ok" | "error">("checking");
@@ -129,6 +129,36 @@ function LoginPageContent() {
     }
   };
 
+  const handlePasswordReset = async () => {
+    if (!email.trim()) {
+      setError("Informe o email para recuperar a senha.");
+      setErrorDetails(null);
+      return;
+    }
+
+    setIsLoggingIn(true);
+    setError(null);
+    setErrorDetails(null);
+    setInfo(null);
+
+    try {
+      const { error } = await client.auth.resetPasswordForEmail(email.trim(), {
+        redirectTo: typeof window !== "undefined" ? `${window.location.origin}/` : undefined,
+      });
+      if (error) {
+        throw error;
+      }
+      setInfo("Enviamos as instrucoes de recuperacao para o email informado.");
+      setMode("login");
+    } catch (err: any) {
+      const msg = typeof err?.message === "string" ? err.message : "Falha ao solicitar recuperacao.";
+      setError(`Erro ao recuperar senha: ${msg}`);
+      setErrorDetails(typeof err?.code === "string" ? `codigo: ${err.code}` : msg);
+    } finally {
+      setIsLoggingIn(false);
+    }
+  };
+
   if (isUserLoading || user) {
     return (
       <div className="flex h-screen w-full flex-col items-center justify-center gap-4 bg-background">
@@ -146,7 +176,9 @@ function LoginPageContent() {
           <CardDescription>
             {mode === "login"
               ? "Entre com sua conta para acessar o painel."
-              : "Crie sua conta para começar a usar o sistema."}
+              : mode === "signup"
+                ? "Crie sua conta para comecar a usar o sistema."
+                : "Informe seu email para receber as instrucoes."}
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4">
@@ -188,28 +220,43 @@ function LoginPageContent() {
               autoComplete="email"
             />
           </div>
-          <div className="grid gap-2">
-            <Label htmlFor="password">Senha</Label>
-            <Input
-              id="password"
-              name="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              disabled={isLoggingIn}
-              autoComplete={mode === "signup" ? "new-password" : "current-password"}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  if (mode === "login") {
-                    handleLogin();
-                  } else {
-                    handleSignUp();
+          {mode !== "reset" && (
+            <div className="grid gap-2">
+              <Label htmlFor="password">Senha</Label>
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={isLoggingIn}
+                autoComplete={mode === "signup" ? "new-password" : "current-password"}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    if (mode === "login") {
+                      handleLogin();
+                    } else {
+                      handleSignUp();
+                    }
                   }
-                }
-              }}
-            />
-          </div>
+                }}
+              />
+            </div>
+          )}
+          <Button
+            type="button"
+            variant="link"
+            className="h-auto justify-self-start p-0 text-xs"
+            onClick={() => {
+              setMode(mode === "reset" ? "login" : "reset");
+              setError(null);
+              setInfo(null);
+            }}
+            disabled={isLoggingIn}
+          >
+            {mode === "reset" ? "Voltar para login" : "Esqueci minha senha"}
+          </Button>
           {info && <p className="text-sm font-medium text-muted-foreground">{info}</p>}
           {error && <p className="text-sm font-medium text-destructive">{error}</p>}
           {errorDetails && <p className="text-xs text-muted-foreground">Detalhe tecnico: {errorDetails}</p>}
@@ -228,11 +275,17 @@ function LoginPageContent() {
         <CardFooter>
           <Button
             className="w-full"
-            onClick={mode === "login" ? handleLogin : handleSignUp}
+            onClick={
+              mode === "login"
+                ? handleLogin
+                : mode === "signup"
+                  ? handleSignUp
+                  : handlePasswordReset
+            }
             disabled={isLoggingIn}
           >
             {isLoggingIn && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {mode === "login" ? "Entrar" : "Criar conta"}
+            {mode === "login" ? "Entrar" : mode === "signup" ? "Criar conta" : "Recuperar senha"}
           </Button>
         </CardFooter>
       </Card>

@@ -31,7 +31,7 @@ import { Edit, Trash, Loader, ArchiveRestore } from "lucide-react";
 import { inactivateTechnicalSheet, reactivateTechnicalSheet } from "@/services";
 import type { TechnicalSheet } from "@/types";
 import { useToast } from "@/hooks/use-toast";
-import { useFirestore } from "@/firebase";
+import { useSupabaseStore } from "@/supabase/compat";
 
 type RecipesListProps = {
     isLoading: boolean;
@@ -45,7 +45,7 @@ export function RecipeList({ isLoading, recipes, onEditRecipe, onUpdate }: Recip
     const [selectedRecipeId, setSelectedRecipeId] = useState<string | null>(null);
     const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
     const { toast } = useToast();
-    const firestore = useFirestore();
+    const SupabaseStore = useSupabaseStore();
 
     const filteredRecipes = useMemo(() => {
       if (!recipes) {
@@ -70,14 +70,14 @@ export function RecipeList({ isLoading, recipes, onEditRecipe, onUpdate }: Recip
     }, [viewMode]);
     
     const handleConfirmAction = useCallback(async () => {
-        if(!selectedRecipe || !firestore) return;
+        if(!selectedRecipe || !SupabaseStore) return;
         
         try {
             if (viewMode === 'active') {
-                await inactivateTechnicalSheet(firestore, selectedRecipe.id);
+                await inactivateTechnicalSheet(SupabaseStore, selectedRecipe.id);
                 toast({ title: "Receita Arquivada!" });
             } else {
-                await reactivateTechnicalSheet(firestore, selectedRecipe.id);
+                await reactivateTechnicalSheet(SupabaseStore, selectedRecipe.id);
                 toast({ title: "Receita Reativada!" });
             }
             setSelectedRecipeId(null);
@@ -86,7 +86,7 @@ export function RecipeList({ isLoading, recipes, onEditRecipe, onUpdate }: Recip
         } catch (error: any) {
             toast({ variant: "destructive", title: "Erro", description: error.message });
         }
-    }, [selectedRecipe, firestore, viewMode, toast, onUpdate]);
+    }, [selectedRecipe, SupabaseStore, viewMode, toast, onUpdate]);
 
     return (
         <>

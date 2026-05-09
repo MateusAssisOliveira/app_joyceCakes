@@ -41,7 +41,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
-import { useUser } from "@/firebase";
+import { useUser } from "@/supabase/compat";
 import { NewOrderDialog } from "@/components/admin/orders/new-order-dialog";
 import { useActiveTenant } from "@/hooks/use-active-tenant";
 

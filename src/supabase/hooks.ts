@@ -153,14 +153,18 @@ export function useSupabaseCollection<T = any>(
   options: CollectionOptions = {}
 ): HookResult<T[]> {
   const { client } = useSupabase();
-  const enabled = options.enabled ?? true;
+  const { enabled: enabledOption, filters, orderBy, limit, select } = options;
+  const enabled = enabledOption ?? true;
   const optionsKey = JSON.stringify({
-    filters: options.filters ?? [],
-    orderBy: options.orderBy ?? null,
-    limit: options.limit ?? null,
-    select: options.select ?? "*",
+    filters: filters ?? [],
+    orderBy: orderBy ?? null,
+    limit: limit ?? null,
+    select: select ?? "*",
   });
-  const stableOptions = useMemo(() => options, [optionsKey]);
+  const stableOptions = useMemo<CollectionOptions>(
+    () => ({ enabled, filters, orderBy, limit, select }),
+    [enabled, filters, limit, orderBy, select]
+  );
 
   const [data, setData] = useState<T[] | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(enabled);
@@ -205,14 +209,18 @@ export function useSupabaseDocument<T = any>(
   options: DocumentOptions = {}
 ): HookResult<T> {
   const { client } = useSupabase();
-  const enabled = (options.enabled ?? true) && Boolean(id);
+  const { enabled: enabledOption, filters, idColumn, select } = options;
+  const enabled = (enabledOption ?? true) && Boolean(id);
   const optionsKey = JSON.stringify({
     id,
-    filters: options.filters ?? [],
-    idColumn: options.idColumn ?? "id",
-    select: options.select ?? "*",
+    filters: filters ?? [],
+    idColumn: idColumn ?? "id",
+    select: select ?? "*",
   });
-  const stableOptions = useMemo(() => options, [optionsKey]);
+  const stableOptions = useMemo<DocumentOptions>(
+    () => ({ enabled, filters, idColumn, select }),
+    [enabled, filters, idColumn, select]
+  );
 
   const [data, setData] = useState<T | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(enabled);

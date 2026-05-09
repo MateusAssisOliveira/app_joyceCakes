@@ -101,7 +101,7 @@ export function useActiveTenant() {
     return () => {
       ignore = true;
     };
-  }, [client, user, userId]);
+  }, [client, hasTriedBackfill, user, userId]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;

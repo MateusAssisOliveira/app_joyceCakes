@@ -3,8 +3,8 @@
 
 import { Suspense } from 'react';
 import { CalculatorClient } from "./calculator-client";
-import { useUser, useCollection, useFirestore } from '@/firebase';
-import { collection, query } from 'firebase/firestore';
+import { useCollection, useSupabaseStore } from '@/supabase/compat';
+import { collection, query } from '@/supabase/compat/SupabaseStore';
 import type { Supply } from '@/types';
 import { Loader } from 'lucide-react';
 import { useMemo } from 'react';
@@ -13,14 +13,13 @@ import { useActiveTenant } from '@/hooks/use-active-tenant';
 
 // Este componente agora busca os dados no cliente
 function SuppliesDataLoader() {
-  const firestore = useFirestore();
-  const { user } = useUser();
+  const SupabaseStore = useSupabaseStore();
   const { activeTenantId } = useActiveTenant();
   
   const suppliesQuery = useMemo(() => {
-    if (!firestore || !activeTenantId) return null;
-    return query(collection(firestore, getTenantCollectionPath(activeTenantId, "supplies")));
-  }, [firestore, activeTenantId]);
+    if (!SupabaseStore || !activeTenantId) return null;
+    return query(collection(SupabaseStore, getTenantCollectionPath(activeTenantId, "supplies")));
+  }, [SupabaseStore, activeTenantId]);
 
   const { data: supplies, isLoading, error } = useCollection<Supply>(suppliesQuery);
 

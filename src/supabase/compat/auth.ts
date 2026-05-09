@@ -131,6 +131,7 @@ export function onAuthStateChanged(
 }
 
 export async function signInAnonymously(_auth: Auth) {
+  void _auth;
   throw new Error("Login anonimo nao e suportado na migracao para Supabase.");
 }
 

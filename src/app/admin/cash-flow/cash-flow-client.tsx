@@ -2,8 +2,8 @@
 'use client';
 
 import { useMemo } from 'react';
-import { useUser, useDoc, useFirestore, useCollection } from '@/firebase';
-import { doc, collection, query } from 'firebase/firestore';
+import { useUser, useDoc, useSupabaseStore, useCollection } from '@/supabase/compat';
+import { doc, collection, query } from '@/supabase/compat/SupabaseStore';
 import type { CashRegister, FinancialMovement, UserProfile, Product } from '@/types';
 import { OpenCashRegisterDialog } from '@/components/admin/cash-flow/open-cash-register-dialog';
 import { AddMovementDialog } from '@/components/admin/cash-flow/add-movement-dialog';
@@ -15,42 +15,42 @@ import { Card, CardContent } from '@/components/ui/card';
 import { getTenantCollectionPath } from '@/lib/tenant';
 
 export function CashFlowClient() {
-  const firestore = useFirestore();
+  const SupabaseStore = useSupabaseStore();
   const { user } = useUser(); // O layout já protege, então user não será nulo aqui.
 
   // 1. Busca o documento de perfil do usuário para obter o ID do caixa ativo
   const userProfileRef = useMemo(() => {
-    if (!firestore || !user?.uid) return null;
-    return doc(firestore, `users/${user.uid}`);
-  }, [firestore, user]);
+    if (!SupabaseStore || !user?.uid) return null;
+    return doc(SupabaseStore, `users/${user.uid}`);
+  }, [SupabaseStore, user]);
   
   const { data: userProfile, isLoading: isProfileLoading } = useDoc<UserProfile>(userProfileRef);
   const tenantId = userProfile?.activeTenantId || user?.uid || null;
 
   // 2. Com o ID obtido, faz um 'get' direto no documento do caixa ativo
   const activeCashRegisterRef = useMemo(() => {
-    if (!firestore || !tenantId || !userProfile?.activeCashRegisterId) return null;
-    return doc(firestore, getTenantCollectionPath(tenantId, "cash_registers"), userProfile.activeCashRegisterId);
-  }, [firestore, tenantId, userProfile]);
+    if (!SupabaseStore || !tenantId || !userProfile?.activeCashRegisterId) return null;
+    return doc(SupabaseStore, getTenantCollectionPath(tenantId, "cash_registers"), userProfile.activeCashRegisterId);
+  }, [SupabaseStore, tenantId, userProfile]);
 
   const { data: activeCashRegister, isLoading: isRegisterLoading } = useDoc<CashRegister>(activeCashRegisterRef);
   
   // 3. Busca as movimentações do caixa ativo
   const movementsQuery = useMemo(() => {
-    if (!firestore || !tenantId || !activeCashRegister) return null;
+    if (!SupabaseStore || !tenantId || !activeCashRegister) return null;
     return collection(
-      firestore,
+      SupabaseStore,
       `${getTenantCollectionPath(tenantId, "cash_registers")}/${activeCashRegister.id}/financial_movements`
     );
-  }, [firestore, tenantId, activeCashRegister]);
+  }, [SupabaseStore, tenantId, activeCashRegister]);
 
   const { data: movements, isLoading: areMovementsLoading } = useCollection<FinancialMovement>(movementsQuery);
   
   // 4. Busca os produtos para o diálogo de nova movimentação
   const productsQuery = useMemo(() => {
-    if (!firestore || !tenantId) return null;
-    return query(collection(firestore, getTenantCollectionPath(tenantId, "products")));
-  }, [firestore, tenantId]);
+    if (!SupabaseStore || !tenantId) return null;
+    return query(collection(SupabaseStore, getTenantCollectionPath(tenantId, "products")));
+  }, [SupabaseStore, tenantId]);
   
   const { data: products, isLoading: areProductsLoading } = useCollection<Product>(productsQuery);
   

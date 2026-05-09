@@ -2,7 +2,7 @@ import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import type { UserProfile } from "@/types";
 
 export async function updateUserProfile(
-  _firestore: unknown,
+  _SupabaseStore: unknown,
   userId: string,
   data: Partial<UserProfile>
 ): Promise<void> {

@@ -25,7 +25,7 @@ import { Loader, PlusCircle, Search, Trash2 } from "lucide-react";
 import { updateTechnicalSheet } from "@/services";
 import type { Supply, TechnicalSheet, TechnicalSheetComponent } from "@/types";
 import { useToast } from "@/hooks/use-toast";
-import { useFirestore } from "@/firebase";
+import { useSupabaseStore } from "@/supabase/compat";
 import { useActiveTenant } from "@/hooks/use-active-tenant";
 
 type RecipeFormDialogProps = {
@@ -72,7 +72,7 @@ export function RecipeFormDialog({
   const [selectedSupplyId, setSelectedSupplyId] = useState<string | null>(null);
   const [ingredientQuantityInput, setIngredientQuantityInput] = useState("");
   const { toast } = useToast();
-  const firestore = useFirestore();
+  const SupabaseStore = useSupabaseStore();
   const { activeTenantId } = useActiveTenant();
 
   const availableSupplies = useMemo(() => {
@@ -214,7 +214,7 @@ export function RecipeFormDialog({
   }, [components, getCost, formData.lossFactor]);
 
   const handleUpdateRecipe = async () => {
-    if (!firestore || !recipe || !formData.name) return;
+    if (!SupabaseStore || !recipe || !formData.name) return;
     if (components.length === 0) {
       toast({ variant: "destructive", title: "Receita vazia", description: "Adicione ingredientes a receita." });
       return;
@@ -234,7 +234,7 @@ export function RecipeFormDialog({
         suggestedPrice: 0,
       };
 
-      await updateTechnicalSheet(firestore, recipe.id, dataToUpdate, activeTenantId || undefined);
+      await updateTechnicalSheet(SupabaseStore, recipe.id, dataToUpdate, activeTenantId || undefined);
 
       toast({ title: "Receita Atualizada!", description: `"${formData.name}" foi atualizada.` });
       onSaveSuccess();

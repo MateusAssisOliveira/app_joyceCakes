@@ -1,4 +1,4 @@
-import { getAuth } from "firebase/auth";
+import { getAuth } from "@/supabase/compat/auth";
 
 export type TenantScopedCollection =
   | "products"

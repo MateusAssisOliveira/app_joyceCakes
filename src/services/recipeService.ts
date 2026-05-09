@@ -4,7 +4,7 @@ import type { TechnicalSheet } from "@/types";
 import { serializeObject, setDocumentActive } from "./utils";
 
 export async function addTechnicalSheet(
-  _firestore: unknown,
+  _SupabaseStore: unknown,
   sheetData: Omit<TechnicalSheet, "id" | "createdAt" | "isActive">,
   tenantId?: string
 ): Promise<void> {
@@ -22,7 +22,7 @@ export async function addTechnicalSheet(
 }
 
 export async function updateTechnicalSheet(
-  _firestore: unknown,
+  _SupabaseStore: unknown,
   id: string,
   updatedData: Partial<Omit<TechnicalSheet, "id" | "createdAt" | "isActive">>,
   tenantId?: string
@@ -40,7 +40,7 @@ export async function updateTechnicalSheet(
 }
 
 export async function inactivateTechnicalSheet(
-  _firestore: unknown,
+  _SupabaseStore: unknown,
   id: string,
   tenantId?: string
 ): Promise<void> {
@@ -49,7 +49,7 @@ export async function inactivateTechnicalSheet(
 }
 
 export async function reactivateTechnicalSheet(
-  _firestore: unknown,
+  _SupabaseStore: unknown,
   id: string,
   tenantId?: string
 ): Promise<void> {
@@ -57,7 +57,7 @@ export async function reactivateTechnicalSheet(
   await setDocumentActive(null, getTenantCollectionPath(currentTenantId, "technical_sheets"), id, true);
 }
 
-export async function getTechnicalSheets(_firestore: unknown, tenantId?: string): Promise<TechnicalSheet[]> {
+export async function getTechnicalSheets(_SupabaseStore: unknown, tenantId?: string): Promise<TechnicalSheet[]> {
   const client = getSupabaseBrowserClient();
   const currentTenantId = resolveTenantIdOrThrow(tenantId);
 

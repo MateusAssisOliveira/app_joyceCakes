@@ -8,9 +8,9 @@ import {
   CollectionReference,
   DocumentReference,
   SetOptions,
-} from 'firebase/firestore';
-import { errorEmitter } from '@/firebase/error-emitter';
-import {FirestorePermissionError} from '@/firebase/errors';
+} from '@/supabase/compat/SupabaseStore';
+import { errorEmitter } from '@/supabase/compat/error-emitter';
+import {SupabaseStorePermissionError} from '@/supabase/compat/errors';
 
 /**
  * Initiates a setDoc operation for a document reference.
@@ -20,7 +20,7 @@ export function setDocumentNonBlocking(docRef: DocumentReference, data: any, opt
   setDoc(docRef, data, options).catch(() => {
     errorEmitter.emit(
       'permission-error',
-      new FirestorePermissionError({
+      new SupabaseStorePermissionError({
         path: docRef.path,
         operation: 'write', // or 'create'/'update' based on options
         requestResourceData: data,
@@ -46,7 +46,7 @@ export function addDocumentNonBlocking(colRef: CollectionReference, data: any, o
     .catch(() => {
       errorEmitter.emit(
         'permission-error',
-        new FirestorePermissionError({
+        new SupabaseStorePermissionError({
           path: colRef.path,
           operation: 'create',
           requestResourceData: data,
@@ -65,7 +65,7 @@ export function updateDocumentNonBlocking(docRef: DocumentReference, data: any) 
     .catch(() => {
       errorEmitter.emit(
         'permission-error',
-        new FirestorePermissionError({
+        new SupabaseStorePermissionError({
           path: docRef.path,
           operation: 'update',
           requestResourceData: data,
@@ -84,7 +84,7 @@ export function deleteDocumentNonBlocking(docRef: DocumentReference) {
     .catch(() => {
       errorEmitter.emit(
         'permission-error',
-        new FirestorePermissionError({
+        new SupabaseStorePermissionError({
           path: docRef.path,
           operation: 'delete',
         })

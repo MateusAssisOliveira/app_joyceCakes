@@ -1,17 +1,17 @@
-Ôªø# JoyceCakes - Guia Completo do Usu√°rio
+# JoyceCakes - Guia Completo do Usu·rio
 
 Este README agora funciona como manual de uso do sistema.
 
-## 1. O que √© o JoyceCakes
+## 1. O que È o JoyceCakes
 
-O JoyceCakes √© um sistema de gest√£o para confeitaria com foco em opera√ß√£o di√°ria:
+O JoyceCakes È um sistema de gest„o para confeitaria com foco em operaÁ„o di·ria:
 
 - vendas (PDV)
 - controle de estoque (ingredientes e embalagens)
-- receitas/fichas t√©cnicas
+- receitas/fichas tÈcnicas
 - produtos finais e margem de lucro
 - fluxo de caixa
-- sincroniza√ß√£o entre m√°quinas
+- sincronizaÁ„o entre m·quinas
 
 ## 2. Acesso ao sistema
 
@@ -21,12 +21,12 @@ A tela inicial mostra o card de login com:
 
 - campo `Email` (preenchido automaticamente)
 - campo `Senha` (preenchido automaticamente)
-- bot√£o `Entrar`
+- bot„o `Entrar`
 
-A√ß√£o do bot√£o `Entrar`:
+AÁ„o do bot„o `Entrar`:
 
-- autentica no Firebase com usu√°rio de teste
-- se o usu√°rio n√£o existir, cria automaticamente
+- autentica no Supabase com usuario de teste
+- se o usu·rio n„o existir, cria automaticamente
 - redireciona para `/admin/dashboard`
 
 ## 2.2 Barra lateral do painel (`/admin/*`)
@@ -43,43 +43,43 @@ Mais ferramentas:
 
 - `Produtos`
 - `Calculadora`
-- `Opera√ß√µes`
+- `OperaÁıes`
 
 Outros controles:
 
-- bot√£o casa (√≠cone): volta para dashboard
-- bot√£o `Sair do Painel`: encerra a sess√£o
-- badge de sincroniza√ß√£o (quando aplic√°vel): mostra estados de sync
+- bot„o casa (Ìcone): volta para dashboard
+- bot„o `Sair do Painel`: encerra a sess„o
+- badge de sincronizaÁ„o (quando aplic·vel): mostra estados de sync
 
-## 3. Fluxo recomendado de uso di√°rio
+## 3. Fluxo recomendado de uso di·rio
 
 1. Abrir caixa em `Financeiro`.
-2. Conferir alertas em `Dashboard` e `Opera√ß√µes`.
+2. Conferir alertas em `Dashboard` e `OperaÁıes`.
 3. Repor estoque em `Estoque`.
 4. Registrar vendas em `Vendas`.
-5. Acompanhar margem em `Produtos` e `An√°lise de Margens`.
+5. Acompanhar margem em `Produtos` e `An·lise de Margens`.
 6. Fechar caixa no final do dia.
 
-## 4. P√°gina por p√°gina (com bot√µes e a√ß√µes)
+## 4. P·gina por p·gina (com botıes e aÁıes)
 
 ## 4.1 Dashboard (`/admin/dashboard`)
 
 Objetivo:
 
-- vis√£o r√°pida de vendas do dia, lucro, pedidos pendentes e itens com estoque baixo
+- vis„o r·pida de vendas do dia, lucro, pedidos pendentes e itens com estoque baixo
 
-Bot√µes:
+Botıes:
 
 - `Ir para Vendas`: abre `/admin/orders`
 - `Ver Estoque`: abre `/admin/inventory`
 - `Abrir Vendas`: atalho para lista de pedidos
 - `Abrir Estoque`: atalho para itens a repor
 
-A√ß√µes na tela:
+AÁıes na tela:
 
-- cards mostram m√©tricas do dia
-- lista `Pedidos para resolver agora` destaca pend√™ncias
-- lista `Estoque para repor` destaca itens no m√≠nimo/abaixo
+- cards mostram mÈtricas do dia
+- lista `Pedidos para resolver agora` destaca pendÍncias
+- lista `Estoque para repor` destaca itens no mÌnimo/abaixo
 
 ## 4.2 Receitas (`/admin/recipes`)
 
@@ -92,31 +92,31 @@ Abas:
 
 Objetivo:
 
-- criar ficha t√©cnica base para usar em produtos
+- criar ficha tÈcnica base para usar em produtos
 
 Campos principais:
 
 - `Nome da Receita`
-- `Breve Descri√ß√£o`
+- `Breve DescriÁ„o`
 - `Modo de Preparo`
 - `Rendimento Final da Receita`
 - `Fator de Perda da Receita (%)`
 
-Se√ß√£o `Ingredientes Dispon√≠veis`:
+SeÁ„o `Ingredientes DisponÌveis`:
 
 - busca `Buscar ingrediente...`
-- bot√£o/√≠cone `Adicionar` em cada insumo
-- pagina√ß√£o `Anterior` e `Pr√≥ximo`
+- bot„o/Ìcone `Adicionar` em cada insumo
+- paginaÁ„o `Anterior` e `PrÛximo`
 
-Se√ß√£o `Ingredientes da Receita`:
+SeÁ„o `Ingredientes da Receita`:
 
 - ajuste de quantidade por item
-- bot√£o de remover (√≠cone lixeira)
+- bot„o de remover (Ìcone lixeira)
 
-Rodap√©:
+RodapÈ:
 
-- bot√£o `Limpar Formul√°rio`: limpa todos os campos
-- bot√£o `Salvar Receita`: grava a ficha t√©cnica
+- bot„o `Limpar Formul·rio`: limpa todos os campos
+- bot„o `Salvar Receita`: grava a ficha tÈcnica
 
 ### 4.2.2 Aba Gerenciar Receitas
 
@@ -124,19 +124,19 @@ Objetivo:
 
 - consultar, editar, arquivar e reativar receitas
 
-Bot√µes:
+Botıes:
 
-- `Editar`: abre edi√ß√£o da receita selecionada
+- `Editar`: abre ediÁ„o da receita selecionada
 - `Arquivar` ou `Reativar`: altera disponibilidade da receita
 
 Filtros:
 
 - seletor `Ver Ativas` / `Ver Arquivadas`
 
-A√ß√µes:
+AÁıes:
 
 - clique em um card para selecionar a receita
-- confirma√ß√£o obrigat√≥ria para arquivar/reativar
+- confirmaÁ„o obrigatÛria para arquivar/reativar
 
 ## 4.3 Estoque (`/admin/inventory`)
 
@@ -144,13 +144,13 @@ Objetivo:
 
 - gerenciar todos os insumos (ingredientes e embalagens)
 
-Barra de a√ß√µes:
+Barra de aÁıes:
 
-- bot√£o `Novo Item`: abre cadastro completo
-- bot√£o `A√ß√µes`:
+- bot„o `Novo Item`: abre cadastro completo
+- bot„o `AÁıes`:
   - `Repor Estoque`
   - `Arquivar` ou `Reativar`
-- bot√£o `Consultas`:
+- bot„o `Consultas`:
   - `Importar via CSV`
   - `Exportar para Excel (CSV)`
 
@@ -163,70 +163,70 @@ Filtros:
 Tabela:
 
 - clique simples: seleciona item
-- duplo clique: abre reposi√ß√£o r√°pida (edi√ß√£o operacional)
-- ordena√ß√£o por cabe√ßalho (quando dispon√≠vel)
+- duplo clique: abre reposiÁ„o r·pida (ediÁ„o operacional)
+- ordenaÁ„o por cabeÁalho (quando disponÌvel)
 
-Rodap√©:
+RodapÈ:
 
-- bot√£o `Ver Relat√≥rio Completo`: abre `/admin/supplies/report`
+- bot„o `Ver RelatÛrio Completo`: abre `/admin/supplies/report`
 
 ### 4.3.1 Cadastro completo de item (modal `Adicionar Novo Item`/`Editar Item`)
 
 Campos:
 
-- nome, categoria, tipo, estoque atual, estoque m√≠nimo, unidade
+- nome, categoria, tipo, estoque atual, estoque mÌnimo, unidade
 - custo da compra por pacote (custo total + unidades)
-- custo por unidade (autom√°tico quando pacote √© informado)
+- custo por unidade (autom·tico quando pacote È informado)
 - fornecedor, SKU, data da compra, validade
 
 Financeiro:
 
 - checkbox `Registrar esta compra no Fluxo de Caixa`
 - se marcado, habilita:
-  - `M√©todo de Pagamento`
+  - `MÈtodo de Pagamento`
   - valor da despesa (preenchido automaticamente)
 
-Bot√µes:
+Botıes:
 
 - `Cancelar`
 - `Salvar`
 
-### 4.3.2 Reposi√ß√£o r√°pida (modal `Repor Estoque`)
+### 4.3.2 ReposiÁ„o r·pida (modal `Repor Estoque`)
 
 Campos:
 
 - `Quantidade a adicionar`
 - `Novo custo`
-- exibi√ß√£o de √∫ltimo custo e varia√ß√£o de pre√ßo
+- exibiÁ„o de ˙ltimo custo e variaÁ„o de preÁo
 
 Financeiro:
 
 - checkbox `Registrar custo no Fluxo de Caixa`
-- m√©todo de pagamento
+- mÈtodo de pagamento
 - custo total calculado
 
-Bot√µes:
+Botıes:
 
 - `Cancelar`
 - `Confirmar`
 
-### 4.3.3 Importa√ß√£o CSV
+### 4.3.3 ImportaÁ„o CSV
 
 Passo 1:
 
-- bot√£o `Baixar Modelo (.csv)`
+- bot„o `Baixar Modelo (.csv)`
 
 Passo 2:
 
 - campo de arquivo para CSV
-- bot√£o `Importar Arquivo`
-- bot√£o `Cancelar`
+- bot„o `Importar Arquivo`
+- bot„o `Cancelar`
 
-## 4.4 Relat√≥rio de Estoque (`/admin/supplies/report`)
+## 4.4 RelatÛrio de Estoque (`/admin/supplies/report`)
 
 Objetivo:
 
-- vis√£o anal√≠tica com filtros detalhados
+- vis„o analÌtica com filtros detalhados
 
 Filtros:
 
@@ -234,18 +234,18 @@ Filtros:
 - tipo: `Todos os Tipos`, `Ingredientes`, `Embalagens`
 - status: `Todos os Status`, `Ver Ativos`, `Ver Arquivados`
 
-A√ß√µes:
+AÁıes:
 
-- atualiza√ß√£o autom√°tica conforme filtros
-- exibe estoque, custo, fornecedor, √∫ltima compra e status
+- atualizaÁ„o autom·tica conforme filtros
+- exibe estoque, custo, fornecedor, ˙ltima compra e status
 
 ## 4.5 Vendas / PDV (`/admin/orders`)
 
 Objetivo:
 
-- criar pedidos e acompanhar status da produ√ß√£o/entrega
+- criar pedidos e acompanhar status da produÁ„o/entrega
 
-Bot√£o principal:
+Bot„o principal:
 
 - `Novo Pedido`
 
@@ -257,12 +257,12 @@ Etapas:
 2. `Cliente`
 3. `Confirmar`
 
-Bot√µes e a√ß√µes:
+Botıes e aÁıes:
 
 - `+` no produto: adiciona item
 - `-` e `+` no item: ajusta quantidade
 - lixeira: remove item
-- `Proximo`: avan√ßa etapa
+- `Proximo`: avanÁa etapa
 - `Voltar`: retorna etapa
 - `Cancelar`: fecha sem salvar
 - `Finalizar Pedido`: cria pedido
@@ -271,11 +271,11 @@ Campos importantes:
 
 - busca `Buscar produto...`
 - `Nome do Cliente`
-- `M√©todo de Pagamento`
+- `MÈtodo de Pagamento`
 
 ### 4.5.2 Lista de pedidos
 
-A√ß√µes por pedido:
+AÁıes por pedido:
 
 - seletor de `Status`: altera entre
   - `Pendente`
@@ -283,90 +283,90 @@ A√ß√µes por pedido:
   - `Pronto para Retirada`
   - `Entregue`
   - `Cancelado`
-- bot√£o `Editar`
-- bot√£o `Detalhes`
+- bot„o `Editar`
+- bot„o `Detalhes`
 
 No modal de detalhes:
 
-- bot√£o `Fechar`
-- bot√£o `Imprimir`
+- bot„o `Fechar`
+- bot„o `Imprimir`
 
-## 4.6 Edi√ß√£o de pedido (`/admin/orders/edit?id=...`)
+## 4.6 EdiÁ„o de pedido (`/admin/orders/edit?id=...`)
 
 Objetivo:
 
 - alterar itens e quantidades do pedido
 
-A√ß√µes:
+AÁıes:
 
 - trocar produto via seletor
 - alterar quantidade
 - remover item
-- bot√£o `Adicionar item`
-- bot√£o `Salvar altera√ß√µes`
+- bot„o `Adicionar item`
+- bot„o `Salvar alteraÁıes`
 
 Importante:
 
-- esta tela altera conte√∫do e total do pedido
-- n√£o altera status nem fechamento de caixa
+- esta tela altera conte˙do e total do pedido
+- n„o altera status nem fechamento de caixa
 
 ## 4.7 Financeiro (`/admin/cash-flow`)
 
 ## 4.7.1 Abertura de caixa
 
-Se n√£o houver caixa aberto, aparece modal obrigat√≥rio:
+Se n„o houver caixa aberto, aparece modal obrigatÛrio:
 
 - campo `Valor Inicial (Troco)`
-- bot√£o `Abrir Caixa`
+- bot„o `Abrir Caixa`
 
 ## 4.7.2 Caixa aberto
 
-Bot√µes:
+Botıes:
 
-- `Nova Movimenta√ß√£o`
+- `Nova MovimentaÁ„o`
 - `Fechar Caixa`
 
-### Nova Movimenta√ß√£o
+### Nova MovimentaÁ„o
 
 Abas:
 
 - `Entrada`
-- `Sa√≠da`
+- `SaÌda`
 
 Campos:
 
 - (entrada) `Buscar Produto (Opcional)`
 - `Valor`
-- `M√©todo`
-- `Descri√ß√£o`
+- `MÈtodo`
+- `DescriÁ„o`
 - `Categoria`
 
-Bot√µes:
+Botıes:
 
 - `Cancelar`
 - `Registrar`
 
 ### Fechamento de caixa
 
-- bot√£o `Fechar Caixa`
-- confirma√ß√£o `Confirmar Fechamento`
+- bot„o `Fechar Caixa`
+- confirmaÁ„o `Confirmar Fechamento`
 - ao confirmar, registra saldo final calculado
 
-Tabela de movimenta√ß√µes:
+Tabela de movimentaÁıes:
 
-- mostra descri√ß√£o, categoria, m√©todo, data e valor
+- mostra descriÁ„o, categoria, mÈtodo, data e valor
 - valores positivos/negativos por tipo
 
 ## 4.8 Produtos (`/admin/products`)
 
 Objetivo:
 
-- montar e manter cat√°logo de produtos finais
+- montar e manter cat·logo de produtos finais
 
-Barra de a√ß√µes:
+Barra de aÁıes:
 
 - `Adicionar`
-- `An√°lise de Margens`
+- `An·lise de Margens`
 - `Editar`
 - `Arquivar` ou `Reativar`
 
@@ -380,24 +380,24 @@ Tabela/cards:
 - clique para selecionar
 - duplo clique para editar
 
-### 4.8.1 Formul√°rio de produto (montagem)
+### 4.8.1 Formul·rio de produto (montagem)
 
-Se√ß√µes:
+SeÁıes:
 
-- dados do produto (nome, categoria, descri√ß√£o)
-- componentes dispon√≠veis (insumos e receitas base)
+- dados do produto (nome, categoria, descriÁ„o)
+- componentes disponÌveis (insumos e receitas base)
 - componentes do produto (quantidades e custos)
-- custos operacionais (tempo, m√£o de obra, custo fixo)
-- c√°lculo de markup, lucro, margem e pre√ßo de venda
+- custos operacionais (tempo, m„o de obra, custo fixo)
+- c·lculo de markup, lucro, margem e preÁo de venda
 
-Bot√µes principais:
+Botıes principais:
 
 - `Adicionar` componente
-- pagina√ß√£o `Anterior` / `Pr√≥ximo`
+- paginaÁ„o `Anterior` / `PrÛximo`
 - remover componente (lixeira)
-- `Salvar Produto` ou `Salvar Altera√ß√µes`
+- `Salvar Produto` ou `Salvar AlteraÁıes`
 
-## 4.9 An√°lise de Margens (`/admin/products/margin-analysis`)
+## 4.9 An·lise de Margens (`/admin/products/margin-analysis`)
 
 Objetivo:
 
@@ -405,15 +405,15 @@ Objetivo:
 
 O que a tela mostra:
 
-- margem m√©dia geral
+- margem mÈdia geral
 - quantidade de produtos com margem alta e baixa
-- alerta quando h√° margem baixa
-- gr√°fico top 10 de margem
-- tabela detalhada com pre√ßo, custo, lucro/unidade e status
+- alerta quando h· margem baixa
+- gr·fico top 10 de margem
+- tabela detalhada com preÁo, custo, lucro/unidade e status
 
 Filtros:
 
-- seletor de categoria (`Todas Categorias` e categorias espec√≠ficas)
+- seletor de categoria (`Todas Categorias` e categorias especÌficas)
 
 ## 4.10 Calculadora (`/admin/calculator`)
 
@@ -421,12 +421,12 @@ Objetivo:
 
 - montar item personalizado com base em insumos e gerar pedido
 
-A√ß√µes:
+AÁıes:
 
 - buscar insumos
 - adicionar/remover insumos
 - definir quantidade de cada item
-- definir `M√©todo de Pagamento`
+- definir `MÈtodo de Pagamento`
 - definir `Markup (%)`
 
 Resultado:
@@ -434,91 +434,91 @@ Resultado:
 - custo total
 - lucro previsto
 - margem final
-- pre√ßo final de venda
+- preÁo final de venda
 
-Bot√£o final:
+Bot„o final:
 
 - `Salvar como Pedido Personalizado`
 
-## 4.11 Opera√ß√µes (`/admin/operations`)
+## 4.11 OperaÁıes (`/admin/operations`)
 
 Objetivo:
 
-- painel de decis√£o r√°pida para opera√ß√£o e sa√∫de t√©cnica
+- painel de decis„o r·pida para operaÁ„o e sa˙de tÈcnica
 
 Cards principais:
 
 - `O que comprar hoje`
 - `Prioridades agora`
-- `Simular pre√ßo e margem`
-- `Sincroniza√ß√£o entre dispositivos`
-- `Sa√∫de t√©cnica`
+- `Simular preÁo e margem`
+- `SincronizaÁ„o entre dispositivos`
+- `Sa˙de tÈcnica`
 - `Fechamento do dia`
 
-Bot√µes √∫teis:
+Botıes ˙teis:
 
-- `Gerar a√ß√£o no estoque`
+- `Gerar aÁ„o no estoque`
 - `Abrir estoque` / `Ver auditoria` / `Ir para pedidos`
-- `Abrir an√°lise completa`
-- `Atualizar diagn√≥stico`
+- `Abrir an·lise completa`
+- `Atualizar diagnÛstico`
 
 ## 5. Estados e indicadores importantes
 
 ## 5.1 Status de pedido
 
 - `Pendente`: pedido recebido
-- `Em Preparo`: em produ√ß√£o
+- `Em Preparo`: em produÁ„o
 - `Pronto para Retirada`: pronto para entrega/retirada
-- `Entregue`: conclu√≠do
-- `Cancelado`: encerrado sem conclus√£o
+- `Entregue`: concluÌdo
+- `Cancelado`: encerrado sem conclus„o
 
-## 5.2 Sync badge (cabe√ßalho)
+## 5.2 Sync badge (cabeÁalho)
 
 Pode exibir:
 
 - `Sincronizando`
-- `Com Diverg√™ncia`
+- `Com DivergÍncia`
 - `Offline/Erro`
 
-Se nada cr√≠tico estiver acontecendo, o badge fica oculto.
+Se nada crÌtico estiver acontecendo, o badge fica oculto.
 
-## 6. Boas pr√°ticas de opera√ß√£o
+## 6. Boas pr·ticas de operaÁ„o
 
-- abra o caixa antes de registrar movimenta√ß√µes
-- mantenha estoque m√≠nimo configurado em todos os itens cr√≠ticos
-- use reposi√ß√£o r√°pida para compras recorrentes
+- abra o caixa antes de registrar movimentaÁıes
+- mantenha estoque mÌnimo configurado em todos os itens crÌticos
+- use reposiÁ„o r·pida para compras recorrentes
 - registre despesas no caixa ao repor estoque
-- revise margem de produtos com frequ√™ncia
-- fa√ßa reconcilia√ß√£o/sync e backup peri√≥dico
+- revise margem de produtos com frequÍncia
+- faÁa reconciliaÁ„o/sync e backup periÛdico
 
 ## 7. Problemas comuns
 
-- N√£o consigo salvar pedido: verifique se h√° itens e cliente informado.
-- N√£o aparece item no PDV: confirme se o produto est√° ativo.
-- Estoque n√£o atualiza: confira sincroniza√ß√£o e permiss√µes.
-- Diverg√™ncia no sync: abra `Opera√ß√µes` e revise auditoria recente.
+- N„o consigo salvar pedido: verifique se h· itens e cliente informado.
+- N„o aparece item no PDV: confirme se o produto est· ativo.
+- Estoque n„o atualiza: confira sincronizaÁ„o e permissıes.
+- DivergÍncia no sync: abra `OperaÁıes` e revise auditoria recente.
 
-## 8. Links r√°pidos
+## 8. Links r·pidos
 
 - Dashboard: `/admin/dashboard`
 - Receitas: `/admin/recipes`
 - Estoque: `/admin/inventory`
-- Relat√≥rio de estoque: `/admin/supplies/report`
+- RelatÛrio de estoque: `/admin/supplies/report`
 - Vendas: `/admin/orders`
 - Financeiro: `/admin/cash-flow`
 - Produtos: `/admin/products`
-- An√°lise de margens: `/admin/products/margin-analysis`
+- An·lise de margens: `/admin/products/margin-analysis`
 - Calculadora: `/admin/calculator`
-- Opera√ß√µes: `/admin/operations`
+- OperaÁıes: `/admin/operations`
 
-## 9. Documenta√ß√£o complementar
+## 9. DocumentaÁ„o complementar
 
-- √çndice de docs: [`docs/README.md`](docs/README.md)
+- Õndice de docs: [`docs/README.md`](docs/README.md)
 - Manual de transporte de dados: [`docs/TRANSPORTE_DE_DADOS.md`](docs/TRANSPORTE_DE_DADOS.md)
 - Setup do sync server: [`docs/deployment/setup-sync-server.md`](docs/deployment/setup-sync-server.md)
-- Guia multi-m√°quinas: [`docs/deployment/multi-machine.md`](docs/deployment/multi-machine.md)
+- Guia multi-m·quinas: [`docs/deployment/multi-machine.md`](docs/deployment/multi-machine.md)
 - Changelog: [`docs/reference/changelog.md`](docs/reference/changelog.md)
 
 ---
 
-√öltima atualiza√ß√£o: 18/02/2026
+⁄ltima atualizaÁ„o: 18/02/2026

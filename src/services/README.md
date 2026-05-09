@@ -1,6 +1,6 @@
 # Pasta `services/` – Lógica de negócio e acesso a dados
 
-Cada arquivo cuida de **um domínio**. A UI chama essas funções; não acessa Firebase/dados diretamente.
+Cada arquivo cuida de **um domínio**. A UI chama essas funções; não acessa Supabase/dados diretamente.
 
 | Arquivo | O que faz |
 |---------|-----------|

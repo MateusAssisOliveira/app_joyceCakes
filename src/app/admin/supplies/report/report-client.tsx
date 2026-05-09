@@ -2,8 +2,8 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { useUser, useCollection, useFirestore } from '@/firebase';
-import { collection, query } from 'firebase/firestore';
+import { useCollection, useSupabaseStore } from '@/supabase/compat';
+import { collection, query } from '@/supabase/compat/SupabaseStore';
 import {
   Card,
   CardHeader,
@@ -80,14 +80,13 @@ export function SuppliesReportClient() {
   const [viewMode, setViewMode] = useState<"active" | "archived" | "all">("all");
   const [typeFilter, setTypeFilter] = useState<'ingredient' | 'packaging' | 'all'>('all');
   
-  const firestore = useFirestore();
-  const { user, isUserLoading } = useUser();
-  const { activeTenantId } = useActiveTenant();
+  const SupabaseStore = useSupabaseStore();
+  const { activeTenantId, isLoading: isTenantLoading } = useActiveTenant();
   
   const suppliesCollection = useMemo(() => {
-    if (!firestore || !activeTenantId) return null;
-    return query(collection(firestore, getTenantCollectionPath(activeTenantId, "supplies")));
-  }, [firestore, activeTenantId]);
+    if (!SupabaseStore || !activeTenantId) return null;
+    return query(collection(SupabaseStore, getTenantCollectionPath(activeTenantId, "supplies")));
+  }, [SupabaseStore, activeTenantId]);
 
   const { data: supplies, isLoading } = useCollection<Supply>(suppliesCollection);
 
@@ -114,7 +113,7 @@ export function SuppliesReportClient() {
     });
   }, [supplies, searchTerm, viewMode, typeFilter]);
 
-  const showLoading = isUserLoading || (isLoading && !supplies);
+  const showLoading = isTenantLoading || (isLoading && !supplies);
   
   const getDate = (date: unknown): Date | null => {
       if (!date) return null;

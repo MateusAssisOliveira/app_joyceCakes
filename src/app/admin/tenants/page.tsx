@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2, RefreshCw, Users, Building2, Database } from 'lucide-react';
-import { useFirestore, useUser } from '@/firebase';
+import { useSupabaseStore, useUser } from '@/supabase/compat';
 import { useActiveTenant } from '@/hooks/use-active-tenant';
 import {
   createTenant,
@@ -24,7 +24,7 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export default function TenantsPage() {
-  const firestore = useFirestore();
+  const SupabaseStore = useSupabaseStore();
   const { user } = useUser();
   const { activeTenantId } = useActiveTenant();
   const { toast } = useToast();
@@ -50,23 +50,23 @@ export default function TenantsPage() {
     [tenants, activeTenantId]
   );
 
-  const reloadTenants = async () => {
+  const reloadTenants = useCallback(async () => {
     if (!user) return;
     setIsLoadingTenants(true);
     try {
-      const nextTenants = await listUserTenants(firestore, user.uid);
+      const nextTenants = await listUserTenants(SupabaseStore, user.uid);
       setTenants(nextTenants);
     } catch (error: any) {
       toast({ variant: 'destructive', title: 'Erro ao carregar tenants', description: error.message });
     } finally {
       setIsLoadingTenants(false);
     }
-  };
+  }, [SupabaseStore, toast, user]);
 
   useEffect(() => {
     if (!user) return;
     reloadTenants();
-  }, [user]);
+  }, [reloadTenants, user]);
 
   useEffect(() => {
     const run = async () => {
@@ -76,7 +76,7 @@ export default function TenantsPage() {
       }
       setIsLoadingMembers(true);
       try {
-        const list = await getTenantMembers(firestore, activeTenantId);
+        const list = await getTenantMembers(SupabaseStore, activeTenantId);
         setMembers(list);
       } catch (error: any) {
         toast({ variant: 'destructive', title: 'Erro ao carregar membros', description: error.message });
@@ -86,7 +86,7 @@ export default function TenantsPage() {
     };
 
     run();
-  }, [activeTenantId]);
+  }, [SupabaseStore, activeTenantId, toast]);
 
   const handleCreateTenant = async () => {
     if (!user) return;
@@ -98,7 +98,7 @@ export default function TenantsPage() {
 
     setIsCreatingTenant(true);
     try {
-      await createTenant(firestore, user, normalizedName);
+      await createTenant(SupabaseStore, user, normalizedName);
       setNewTenantName('');
       await reloadTenants();
       toast({ title: 'Tenant criado', description: `"${normalizedName}" foi criado com sucesso.` });
@@ -113,7 +113,7 @@ export default function TenantsPage() {
   const handleSwitchTenant = async (tenantId: string) => {
     if (!user) return;
     try {
-      await switchActiveTenant(firestore, user.uid, tenantId);
+      await switchActiveTenant(SupabaseStore, user.uid, tenantId);
       toast({ title: 'Tenant ativo atualizado' });
       router.refresh();
     } catch (error: any) {
@@ -131,9 +131,9 @@ export default function TenantsPage() {
 
     setIsInviting(true);
     try {
-      await inviteTenantMemberByUid(firestore, activeTenantId, normalizedUserId, inviteRole);
+      await inviteTenantMemberByUid(SupabaseStore, activeTenantId, normalizedUserId, inviteRole);
       setInviteUserId('');
-      const list = await getTenantMembers(firestore, activeTenantId);
+      const list = await getTenantMembers(SupabaseStore, activeTenantId);
       setMembers(list);
       toast({ title: 'Membro adicionado', description: `UID ${normalizedUserId} agora faz parte do tenant.` });
     } catch (error: any) {
@@ -148,7 +148,7 @@ export default function TenantsPage() {
 
     setIsMigrating(true);
     try {
-      const report = await migrateLegacyDataToTenant(firestore, user.uid, activeTenantId);
+      const report = await migrateLegacyDataToTenant(SupabaseStore, user.uid, activeTenantId);
       const summary = `products:${report.products} supplies:${report.supplies} history:${report.suppliesPriceHistory} sheets:${report.technicalSheets} orders:${report.orders} cash:${report.cashRegisters} moves:${report.financialMovements}`;
       setMigrationSummary(summary);
       toast({ title: 'Migracao concluida', description: 'Dados legados migrados para o tenant ativo.' });
@@ -164,7 +164,7 @@ export default function TenantsPage() {
 
     setIsImportingSyncServer(true);
     try {
-      const report = await importSyncServerDataToTenant(firestore, user.uid, activeTenantId);
+      const report = await importSyncServerDataToTenant(SupabaseStore, user.uid, activeTenantId);
       const summary = `products:${report.products} supplies:${report.supplies} orders:${report.orders} sheets:${report.technicalSheets}`;
       setSyncServerImportSummary(summary);
       toast({ title: 'Importacao concluida', description: 'Dados do Sync Server importados para o tenant ativo.' });

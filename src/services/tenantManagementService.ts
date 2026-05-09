@@ -8,7 +8,7 @@ type TenantUser = {
 };
 
 export async function createTenant(
-  firestore: unknown,
+  SupabaseStore: unknown,
   user: TenantUser,
   tenantName: string
 ): Promise<string> {
@@ -42,21 +42,21 @@ export async function createTenant(
   });
   if (memberError) throw memberError;
 
-  await updateUserProfile(firestore, userId, { activeTenantId: tenant.id });
+  await updateUserProfile(SupabaseStore, userId, { activeTenantId: tenant.id });
 
   return tenant.id;
 }
 
 export async function switchActiveTenant(
-  firestore: unknown,
+  SupabaseStore: unknown,
   userId: string,
   tenantId: string
 ): Promise<void> {
-  await updateUserProfile(firestore, userId, { activeTenantId: tenantId });
+  await updateUserProfile(SupabaseStore, userId, { activeTenantId: tenantId });
 }
 
 export async function inviteTenantMemberByUid(
-  _firestore: unknown,
+  _SupabaseStore: unknown,
   tenantId: string,
   targetUserId: string,
   role: TenantRole
@@ -77,7 +77,7 @@ export async function inviteTenantMemberByUid(
   if (error) throw error;
 }
 
-export async function listUserTenants(_firestore: unknown, userId: string): Promise<Tenant[]> {
+export async function listUserTenants(_SupabaseStore: unknown, userId: string): Promise<Tenant[]> {
   const client = getSupabaseBrowserClient();
   const { data, error } = await client
     .from("tenant_members")
@@ -96,7 +96,7 @@ export async function listUserTenants(_firestore: unknown, userId: string): Prom
   }));
 }
 
-export async function getTenantMembers(_firestore: unknown, tenantId: string): Promise<TenantMember[]> {
+export async function getTenantMembers(_SupabaseStore: unknown, tenantId: string): Promise<TenantMember[]> {
   const client = getSupabaseBrowserClient();
   const { data, error } = await client
     .from("tenant_members")

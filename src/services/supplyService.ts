@@ -1,6 +1,6 @@
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { toDate } from "@/lib/timestamp-utils";
-import { getSupplyPriceHistoryPath, getTenantCollectionPath, resolveTenantIdOrThrow } from "@/lib/tenant";
+import { getTenantCollectionPath, resolveTenantIdOrThrow } from "@/lib/tenant";
 import type { CashRegister, PriceVariation, Supply } from "@/types";
 import { addFinancialMovement } from "./financialMovementService";
 import { serializeObject, setDocumentActive } from "./utils";
@@ -57,7 +57,7 @@ async function addPriceHistoryEntry(
 }
 
 export async function addSupply(
-  _firestore: unknown,
+  _SupabaseStore: unknown,
   supplyData: Omit<Supply, "id" | "createdAt" | "isActive">,
   financialData?: FinancialRegistrationData,
   tenantId?: string
@@ -111,7 +111,7 @@ export async function addSupply(
 }
 
 export async function addSuppliesInBatch(
-  _firestore: unknown,
+  _SupabaseStore: unknown,
   suppliesData: Omit<Supply, "id" | "createdAt" | "isActive">[],
   tenantId?: string
 ) {
@@ -119,7 +119,7 @@ export async function addSuppliesInBatch(
 }
 
 export async function updateSupply(
-  _firestore: unknown,
+  _SupabaseStore: unknown,
   id: string,
   updatedData: Partial<Omit<Supply, "id" | "createdAt" | "isActive">>,
   financialData?: FinancialRegistrationData,
@@ -190,17 +190,17 @@ export async function updateSupply(
   }
 }
 
-export async function inactivateSupply(_firestore: unknown, id: string, tenantId?: string): Promise<void> {
+export async function inactivateSupply(_SupabaseStore: unknown, id: string, tenantId?: string): Promise<void> {
   const currentTenantId = resolveTenantIdOrThrow(tenantId);
   await setDocumentActive(null, getTenantCollectionPath(currentTenantId, "supplies"), id, false);
 }
 
-export async function reactivateSupply(_firestore: unknown, id: string, tenantId?: string): Promise<void> {
+export async function reactivateSupply(_SupabaseStore: unknown, id: string, tenantId?: string): Promise<void> {
   const currentTenantId = resolveTenantIdOrThrow(tenantId);
   await setDocumentActive(null, getTenantCollectionPath(currentTenantId, "supplies"), id, true);
 }
 
-export async function getSupplies(_firestore: unknown, tenantId?: string): Promise<Supply[]> {
+export async function getSupplies(_SupabaseStore: unknown, tenantId?: string): Promise<Supply[]> {
   const client = getSupabaseBrowserClient();
   const currentTenantId = resolveTenantIdOrThrow(tenantId);
 
@@ -211,7 +211,7 @@ export async function getSupplies(_firestore: unknown, tenantId?: string): Promi
 }
 
 export async function getPriceHistory(
-  _firestore: unknown,
+  _SupabaseStore: unknown,
   supplyId: string,
   tenantId?: string
 ): Promise<PriceVariation[]> {

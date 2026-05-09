@@ -8,7 +8,7 @@
 // Ele simula um estado realista do banco de dados com insumos, fichas técnicas e produtos.
 
 import type { Supply, TechnicalSheet, Product } from '@/types';
-import { Timestamp } from 'firebase/firestore';
+import { Timestamp } from '@/supabase/compat/SupabaseStore';
 
 // --- INSUMOS (MATÉRIA-PRIMA E EMBALAGENS) ---
 

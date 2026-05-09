@@ -18,6 +18,7 @@ import {
   House,
   LogOut,
   DollarSign,
+  BarChart3,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -41,6 +42,7 @@ const primaryNav = [
 
 const secondaryNav = [
     { href: "/admin/products", label: "Produtos", icon: Package },
+    { href: "/admin/supplies/report", label: "Relatório Estoque", icon: BarChart3 },
     { href: "/admin/calculator", label: "Calculadora", icon: Calculator },
     { href: "/admin/operations", label: "Operacoes", icon: Activity },
     { href: "/admin/tenants", label: "Tenants", icon: Building2 },

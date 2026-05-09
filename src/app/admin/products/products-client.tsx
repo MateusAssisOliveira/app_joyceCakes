@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useMemo, useEffect, useCallback } from "react";
-import { useUser, useFirestore, useCollection } from '@/firebase';
+import { useSupabaseStore, useCollection } from '@/supabase/compat';
 import {
   Card,
   CardHeader,
@@ -53,7 +53,7 @@ import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { ProductForm } from "@/components/admin/products/product-form";
 import Link from "next/link";
-import { collection, query } from 'firebase/firestore';
+import { collection, query } from '@/supabase/compat/SupabaseStore';
 
 
 export function ProductsClient() {
@@ -65,31 +65,30 @@ export function ProductsClient() {
   const [viewMode, setViewMode] = useState<"active" | "archived">("active");
   const { toast } = useToast();
 
-  const firestore = useFirestore();
-  const { user } = useUser();
+  const SupabaseStore = useSupabaseStore();
   const { activeTenantId } = useActiveTenant();
   
   const productsQuery = useMemo(() => {
-    if (!firestore || !activeTenantId) return null;
-    return query(collection(firestore, getTenantCollectionPath(activeTenantId, "products")));
-  }, [firestore, activeTenantId]);
+    if (!SupabaseStore || !activeTenantId) return null;
+    return query(collection(SupabaseStore, getTenantCollectionPath(activeTenantId, "products")));
+  }, [SupabaseStore, activeTenantId]);
   const { data: products, isLoading: areProductsLoading } = useCollection<Product>(productsQuery);
 
   const suppliesQuery = useMemo(() => {
-    if (!firestore || !activeTenantId) return null;
-    return query(collection(firestore, getTenantCollectionPath(activeTenantId, "supplies")));
-  }, [firestore, activeTenantId]);
+    if (!SupabaseStore || !activeTenantId) return null;
+    return query(collection(SupabaseStore, getTenantCollectionPath(activeTenantId, "supplies")));
+  }, [SupabaseStore, activeTenantId]);
   const { data: supplies, isLoading: areSuppliesLoading } = useCollection<Supply>(suppliesQuery);
 
   const sheetsQuery = useMemo(() => {
-    if (!firestore || !activeTenantId) return null;
-    return query(collection(firestore, getTenantCollectionPath(activeTenantId, "technical_sheets")));
-  }, [firestore, activeTenantId]);
+    if (!SupabaseStore || !activeTenantId) return null;
+    return query(collection(SupabaseStore, getTenantCollectionPath(activeTenantId, "technical_sheets")));
+  }, [SupabaseStore, activeTenantId]);
   const { data: technicalSheets, isLoading: areSheetsLoading } = useCollection<TechnicalSheet>(sheetsQuery);
 
   const isLoading = areProductsLoading || areSuppliesLoading || areSheetsLoading;
 
-  const baseSheets = useMemo(() => technicalSheets?.filter(r => r.type === 'base') || [], [technicalSheets]);
+  const sheets = useMemo(() => technicalSheets || [], [technicalSheets]);
 
   const filteredProducts = useMemo(() => {
     if (!products) return [];
@@ -126,11 +125,11 @@ export function ProductsClient() {
   }
   
   const handleConfirmAction = useCallback(async () => {
-    if (!selectedProduct || !firestore) return;
+    if (!selectedProduct || !SupabaseStore) return;
 
     const actionPromise = viewMode === 'active' 
-        ? inactivateProduct(firestore, selectedProduct.id, activeTenantId || undefined) 
-        : reactivateProduct(firestore, selectedProduct.id, activeTenantId || undefined);
+        ? inactivateProduct(SupabaseStore, selectedProduct.id, activeTenantId || undefined) 
+        : reactivateProduct(SupabaseStore, selectedProduct.id, activeTenantId || undefined);
 
     try {
         await actionPromise;
@@ -140,7 +139,7 @@ export function ProductsClient() {
     } catch (error: any) {
         toast({ variant: "destructive", title: "Erro", description: error.message });
     }
-  }, [selectedProduct, firestore, viewMode, toast, activeTenantId]);
+  }, [selectedProduct, SupabaseStore, viewMode, toast, activeTenantId]);
 
   return (
     <div className="w-full h-full flex flex-col">
@@ -301,7 +300,7 @@ export function ProductsClient() {
             <ProductForm
               product={productToEdit}
               supplies={supplies || []}
-              baseSheets={baseSheets}
+              sheets={sheets}
               onSaveSuccess={handleSaveSuccess}
             />
           </div>

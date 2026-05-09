@@ -6,7 +6,7 @@
  * 
  * Responsabilidade:
  * - Validar dados de entrada em operações críticas
- * - Garantir integridade de dados no Firestore
+ * - Garantir integridade de dados no SupabaseStore
  * - Reduzir erros causados por dados inválidos
  */
 

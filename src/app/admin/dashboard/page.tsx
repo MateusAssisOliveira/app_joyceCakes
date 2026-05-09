@@ -57,7 +57,7 @@ export default function DashboardPage() {
           <div className="absolute -right-12 -top-12 h-36 w-36 rounded-full bg-primary/10 blur-2xl" />
           <CardTitle className="font-headline text-3xl tracking-tight">Resumo do Dia</CardTitle>
           <CardDescription className="max-w-2xl text-sm md:text-base">
-            Conectado com Supabase. Agora vamos migrar os módulos do Firebase para o banco SQL aos poucos (começando por Produtos).
+            Conectado com Supabase. Agora vamos migrar os módulos do Supabase para o banco SQL aos poucos (começando por Produtos).
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-wrap gap-2">

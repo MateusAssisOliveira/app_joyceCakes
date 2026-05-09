@@ -2,10 +2,10 @@ import {
   collection,
   getDocs,
   getDocsFromCache,
-  type Firestore,
+  type SupabaseStore,
   type QueryDocumentSnapshot,
   type DocumentData,
-} from "firebase/firestore";
+} from "@/supabase/compat/SupabaseStore";
 import type { ClientSummary, SyncRecord } from "@/lib/sync-client";
 
 const RECONCILE_COLLECTIONS = [
@@ -74,8 +74,8 @@ function getLatestUpdatedAt(docs: QueryDocumentSnapshot<DocumentData>[]): string
   return latest ? latest.toISOString() : null;
 }
 
-async function getDocsPreferCache(firestore: Firestore, path: string) {
-  const ref = collection(firestore, path);
+async function getDocsPreferCache(SupabaseStore: SupabaseStore, path: string) {
+  const ref = collection(SupabaseStore, path);
   try {
     return await getDocsFromCache(ref);
   } catch {
@@ -83,14 +83,14 @@ async function getDocsPreferCache(firestore: Firestore, path: string) {
   }
 }
 
-export function createFirestoreClientSummaryGetter(firestore: Firestore) {
+export function createSupabaseStoreClientSummaryGetter(SupabaseStore: SupabaseStore) {
   return async function getClientSummary(): Promise<ClientSummary> {
     const summary: ClientSummary = {};
     const tenantId = getActiveTenantIdFromStorage();
 
     for (const collectionName of RECONCILE_COLLECTIONS) {
       const path = getCollectionPath(collectionName, tenantId);
-      const snapshot = await getDocsPreferCache(firestore, path);
+      const snapshot = await getDocsPreferCache(SupabaseStore, path);
       summary[collectionName] = {
         count: snapshot.size,
         latestUpdatedAt: getLatestUpdatedAt(snapshot.docs),
@@ -214,11 +214,11 @@ function normalizeRecordForSync(table: string, id: string, data: DocumentData, t
   return null;
 }
 
-export function createFirestoreTableDataGetter(firestore: Firestore) {
+export function createSupabaseStoreTableDataGetter(SupabaseStore: SupabaseStore) {
   return async function getTableData(table: string): Promise<SyncRecord[]> {
     const tenantId = getActiveTenantIdFromStorage();
     const path = getCollectionPath(table, tenantId);
-    const snapshot = await getDocsPreferCache(firestore, path);
+    const snapshot = await getDocsPreferCache(SupabaseStore, path);
     const records: SyncRecord[] = [];
 
     for (const doc of snapshot.docs) {

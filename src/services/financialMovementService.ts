@@ -5,7 +5,7 @@ import { updateUserProfile } from "./userService";
 import { serializeObject } from "./utils";
 
 export async function getCashRegisterById(
-  _firestore: unknown,
+  _SupabaseStore: unknown,
   registerId: string,
   tenantId?: string
 ): Promise<CashRegister | null> {
@@ -24,7 +24,7 @@ export async function getCashRegisterById(
 }
 
 export async function getFinancialMovements(
-  _firestore: unknown,
+  _SupabaseStore: unknown,
   cashRegisterId: string,
   tenantId?: string
 ): Promise<FinancialMovement[]> {
@@ -43,7 +43,7 @@ export async function getFinancialMovements(
 }
 
 export async function openCashRegister(
-  firestore: unknown,
+  SupabaseStore: unknown,
   userId: string,
   initialBalance: number,
   tenantId?: string
@@ -81,14 +81,14 @@ export async function openCashRegister(
 
   if (error) throw error;
 
-  await updateUserProfile(firestore, userId, {
+  await updateUserProfile(SupabaseStore, userId, {
     activeCashRegisterId: data.id,
     activeTenantId: currentTenantId,
   });
 }
 
 export async function closeCashRegister(
-  firestore: unknown,
+  SupabaseStore: unknown,
   userId: string,
   registerId: string,
   finalBalance: number,
@@ -109,14 +109,14 @@ export async function closeCashRegister(
 
   if (error) throw error;
 
-  await updateUserProfile(firestore, userId, {
+  await updateUserProfile(SupabaseStore, userId, {
     activeCashRegisterId: null,
     activeTenantId: currentTenantId,
   });
 }
 
 export async function addFinancialMovement(
-  _firestore: unknown,
+  _SupabaseStore: unknown,
   cashRegister: CashRegister,
   movementData: Omit<FinancialMovement, "id" | "movementDate" | "cashRegisterId">,
   tenantId?: string

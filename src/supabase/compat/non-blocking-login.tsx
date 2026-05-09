@@ -5,7 +5,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   // Assume getAuth and app are initialized elsewhere
-} from 'firebase/auth';
+} from '@/supabase/compat/auth';
 
 /** Initiate anonymous sign-in (non-blocking). */
 export function initiateAnonymousSignIn(authInstance: Auth): void {

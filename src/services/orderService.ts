@@ -1,9 +1,9 @@
-import type { Order, OrderItem, OrderStatus, Product, CashRegister } from "@/types";
+import type { Order, OrderItem, OrderStatus, Product } from "@/types";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { serializeObject } from "./utils";
 import { getProducts } from "./productService";
-import { errorEmitter } from "@/firebase/error-emitter";
-import { FirestorePermissionError } from "@/firebase/errors";
+import { errorEmitter } from "@/supabase/compat/error-emitter";
+import { SupabaseStorePermissionError } from "@/supabase/compat/errors";
 import { resolveTenantIdOrThrow } from "@/lib/tenant";
 
 type ProcessPolicy = {
@@ -201,7 +201,7 @@ export const addOrder = async (newOrderData: NewOrderData): Promise<void> => {
     });
   }
 
-  const stockUpdatePromises: Promise<any>[] = [];
+  const stockUpdatePromises: PromiseLike<any>[] = [];
   for (const [productId, reservedQty] of stockAdjustments.entries()) {
     const product = products.find((p) => p.id === productId);
     if (!product || product.stock_quantity === undefined) {
@@ -214,6 +214,7 @@ export const addOrder = async (newOrderData: NewOrderData): Promise<void> => {
         .update({ stock_quantity: updatedStock })
         .eq("tenantId", currentTenantId)
         .eq("id", productId)
+        .then(() => ({})) // Convert to Promise
     );
   }
 
@@ -279,13 +280,7 @@ export const updateOrder = async (
     newQtyByProduct.set(item.productId, (newQtyByProduct.get(item.productId) || 0) + qty);
   }
 
-  const stockUpdatePromises: Promise<any>[] = [];
-  const cashRegisterTotalsUpdate = {
-    totalSales: 0,
-    totalExpenses: 0,
-    shouldUpdate: false,
-  };
-
+  const stockUpdatePromises: PromiseLike<any>[] = [];
   const allProductIds = new Set<string>([
     ...Array.from(previousQtyByProduct.keys()),
     ...Array.from(newQtyByProduct.keys()),
@@ -314,6 +309,7 @@ export const updateOrder = async (
         .update({ stock_quantity: nextStock })
         .eq("tenantId", currentTenantId)
         .eq("id", productId)
+        .then(() => ({})) // Convert to Promise
     );
   }
 
@@ -346,7 +342,7 @@ export const updateOrder = async (
 
     let incomeHandled = false;
     let expenseHandled = false;
-    const movementRequests: Promise<any>[] = [];
+    const movementRequests: PromiseLike<any>[] = [];
 
     for (const movement of movements ?? []) {
       if (movement.type === "income" && !incomeHandled) {
@@ -360,6 +356,7 @@ export const updateOrder = async (
             })
             .eq("tenantId", currentTenantId)
             .eq("id", movement.id)
+            .then(() => ({})) // Convert to Promise
         );
         continue;
       }
@@ -375,6 +372,7 @@ export const updateOrder = async (
             })
             .eq("tenantId", currentTenantId)
             .eq("id", movement.id)
+            .then(() => ({})) // Convert to Promise
         );
       }
     }
@@ -391,7 +389,7 @@ export const updateOrder = async (
           cashRegisterId: existingOrder.cashRegisterId,
           tenantId: currentTenantId,
           movementDate: new Date().toISOString(),
-        })
+        }).then(() => ({})) // Convert to Promise
       );
     }
 
@@ -407,7 +405,7 @@ export const updateOrder = async (
           cashRegisterId: existingOrder.cashRegisterId,
           tenantId: currentTenantId,
           movementDate: new Date().toISOString(),
-        })
+        }).then(() => ({})) // Convert to Promise
       );
     }
 
@@ -421,18 +419,32 @@ export const updateOrder = async (
     const expensesDelta = Number(processed.totalCost) - Number(existingOrder.totalCost || 0);
 
     if (salesDelta !== 0 || expensesDelta !== 0) {
-      const cashRegisterUpdate = await client
+      // Get current values first
+      const { data: currentRegister } = await client
         .from("cash_registers")
-        .update({})
+        .select("totalSales, totalExpenses")
         .eq("tenantId", currentTenantId)
         .eq("id", existingOrder.cashRegisterId)
-        .increment("totalSales", salesDelta)
-        .increment("totalExpenses", expensesDelta);
+        .single();
+
+      if (currentRegister) {
+        const newTotalSales = (Number(currentRegister.totalSales) || 0) + salesDelta;
+        const newTotalExpenses = (Number(currentRegister.totalExpenses) || 0) + expensesDelta;
+
+        const cashRegisterUpdate = await client
+          .from("cash_registers")
+          .update({
+            totalSales: newTotalSales,
+            totalExpenses: newTotalExpenses,
+          })
+          .eq("tenantId", currentTenantId)
+          .eq("id", existingOrder.cashRegisterId);
 
       if (cashRegisterUpdate.error) {
         throw cashRegisterUpdate.error;
       }
     }
+  }
   }
 };
 
@@ -451,7 +463,7 @@ export const updateOrderStatus = async (
     .eq("id", orderId);
 
   if (error) {
-    const permissionError = new FirestorePermissionError({
+    const permissionError = new SupabaseStorePermissionError({
       path: `orders/${orderId}`,
       operation: "update",
       requestResourceData: { status },

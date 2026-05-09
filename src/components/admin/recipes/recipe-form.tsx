@@ -27,7 +27,7 @@ import { addTechnicalSheet } from "@/services";
 import type { Supply, TechnicalSheet, TechnicalSheetComponent } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useFirestore } from "@/firebase";
+import { useSupabaseStore } from "@/supabase/compat";
 import { useActiveTenant } from "@/hooks/use-active-tenant";
 import {
   Dialog,
@@ -87,7 +87,7 @@ export function RecipeForm({ supplies, savedSheets, onSaveSuccess }: RecipeFormP
 
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
-  const firestore = useFirestore();
+  const SupabaseStore = useSupabaseStore();
   const { activeTenantId } = useActiveTenant();
   void savedSheets;
 
@@ -255,7 +255,7 @@ export function RecipeForm({ supplies, savedSheets, onSaveSuccess }: RecipeFormP
   };
 
   const handleSaveSheet = async () => {
-    if (!firestore) return;
+    if (!SupabaseStore) return;
     if (!sheetName.trim()) {
       toast({ variant: "destructive", title: "Nome da receita invalido" });
       return;
@@ -286,7 +286,7 @@ export function RecipeForm({ supplies, savedSheets, onSaveSuccess }: RecipeFormP
         suggestedPrice: 0,
       };
 
-      await addTechnicalSheet(firestore, sheetData, activeTenantId || undefined);
+      await addTechnicalSheet(SupabaseStore, sheetData, activeTenantId || undefined);
 
       toast({
         title: "Receita salva",

@@ -1,10 +1,10 @@
-// src/firebase/multi-machine-sync.ts
+// src/Supabase/multi-machine-sync.ts
 // 🔄 Sincronização em Tempo Real entre Máquinas
 
 import { 
   collection, 
   onSnapshot
-} from 'firebase/firestore';
+} from '@/supabase/compat/SupabaseStore';
 import { getSdks } from './index';
 import React from 'react';
 
@@ -18,10 +18,10 @@ export function setupRealtimeListener<T extends { id: string }>(
   onError?: (error: Error) => void
 ) {
   try {
-    const { firestore } = getSdks();
-    const collectionRef = collection(firestore, collectionName);
+    const { SupabaseStore } = getSdks();
+    const collectionRef = collection(SupabaseStore, collectionName);
     
-    // Listener que atualiza quando há mudanças no Firestore
+    // Listener que atualiza quando há mudanças no SupabaseStore
     const unsubscribe = onSnapshot(
       collectionRef,
       (snapshot) => {
