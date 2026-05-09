@@ -5,7 +5,13 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useUser, useSupabaseStore, useCollection } from '@/supabase/compat';
-import { inactivateSupply, reactivateSupply, addSupply, updateSupply } from "@/services";
+import {
+  inactivateSupply,
+  reactivateSupply,
+  addSupply,
+  updateSupply,
+  getInventoryMovements,
+} from "@/services";
 import {
   Card,
   CardHeader,
@@ -34,9 +40,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Loader, ArrowRight } from "lucide-react";
-import type { Supply } from "@/types";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import type { InventoryMovement, Supply } from "@/types";
 import { useToast } from "@/hooks/use-toast";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 import { SupplyFormDialog } from "@/components/admin/supplies/supply-form-dialog";
@@ -44,6 +52,7 @@ import { SupplyQuickAddDialog } from "@/components/admin/supplies/supply-quick-a
 import { SupplyImportDialog } from "@/components/admin/supplies/supply-import-dialog";
 import { SupplyActions } from "@/components/admin/supplies/supply-actions";
 import { SupplyTable } from "@/components/admin/supplies/supply-table";
+import { InventoryMovementsTable } from "@/components/admin/supplies/inventory-movements-table";
 import { collection, query } from '@/supabase/compat/SupabaseStore';
 import Papa from "papaparse";
 import { getTenantCollectionPath } from "@/lib/tenant";
@@ -103,6 +112,10 @@ export function InventoryClient() {
   const [supplyToEdit, setSupplyToEdit] = useState<Supply | null>(null);
   const [viewMode, setViewMode] = useState<"active" | "archived">("active");
   const [activeTab, setActiveTab] = useState<'all' | 'ingredient' | 'packaging'>('all');
+  const [inventorySection, setInventorySection] = useState<"items" | "movements">("items");
+  const [inventoryMovements, setInventoryMovements] = useState<InventoryMovement[]>([]);
+  const [movementsLoading, setMovementsLoading] = useState(false);
+  const [movementsOnlySelected, setMovementsOnlySelected] = useState(false);
   const { toast } = useToast();
 
   const [sortKey, setSortKey] = useState<SortKey>('name');
@@ -169,6 +182,45 @@ export function InventoryClient() {
   useEffect(() => {
     setSelectedSupplyId(null);
   }, [viewMode, searchTerm, activeTab]);
+
+  const supplyNameById = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const s of allSupplies ?? []) {
+      map[s.id] = s.name;
+    }
+    return map;
+  }, [allSupplies]);
+
+  useEffect(() => {
+    if (inventorySection !== "movements" || !activeTenantId) return;
+
+    let cancelled = false;
+    setMovementsLoading(true);
+    const supplyFilter =
+      movementsOnlySelected && selectedSupplyId ? selectedSupplyId : undefined;
+
+    getInventoryMovements(null, activeTenantId, { supplyId: supplyFilter })
+      .then((rows) => {
+        if (!cancelled) setInventoryMovements(rows);
+      })
+      .catch((e: Error) => {
+        if (!cancelled) {
+          toast({
+            variant: "destructive",
+            title: "Não foi possível carregar movimentações",
+            description: e.message,
+          });
+          setInventoryMovements([]);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setMovementsLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [inventorySection, activeTenantId, movementsOnlySelected, selectedSupplyId, toast]);
   
   const handleOpenFormDialog = (supply: Supply | null) => {
     setSupplyToEdit(supply);
@@ -311,27 +363,59 @@ export function InventoryClient() {
             </div>
         </CardHeader>
         <CardContent className="flex-1 flex flex-col min-h-0">
-          <Alert className="mb-4">
-            <AlertTitle>Fluxo sugerido</AlertTitle>
-            <AlertDescription>
-              Use <strong>Cadastrar Item</strong> quando o ingrediente ou embalagem ainda não existe.
-              Use <strong>Repor Estoque</strong> quando o item já existe e você só quer registrar nova compra ou entrada.
-            </AlertDescription>
-          </Alert>
-          {isLoading ? (
-            <div className="flex flex-1 items-center justify-center">
-              <Loader className="h-8 w-8 animate-spin text-primary" />
-            </div>
-          ) : (
-            <SupplyTable
-                supplies={filteredSupplies}
-                selectedSupplyId={selectedSupplyId}
-                onRowClick={handleRowClick}
-                onRowDoubleClick={handleRowDoubleClick}
-                onSort={handleSort}
-                sortKey={sortKey}
-            />
-          )}
+          <Tabs
+            value={inventorySection}
+            onValueChange={(v) => setInventorySection(v as "items" | "movements")}
+            className="flex flex-col flex-1 min-h-0 gap-4"
+          >
+            <TabsList className="w-full sm:w-auto shrink-0">
+              <TabsTrigger value="items">Insumos</TabsTrigger>
+              <TabsTrigger value="movements">Movimentações</TabsTrigger>
+            </TabsList>
+            <TabsContent value="items" className="flex flex-col flex-1 min-h-0 mt-0 data-[state=inactive]:hidden">
+              <Alert className="mb-4 shrink-0">
+                <AlertTitle>Fluxo sugerido</AlertTitle>
+                <AlertDescription>
+                  Use <strong>Cadastrar insumo</strong> quando o ingrediente ou embalagem ainda não existe no sistema.
+                  Use <strong>Registrar entrada</strong> (menu Ações) quando o item já existe e você só quer registrar compra ou entrada física.
+                </AlertDescription>
+              </Alert>
+              {isLoading ? (
+                <div className="flex flex-1 items-center justify-center">
+                  <Loader className="h-8 w-8 animate-spin text-primary" />
+                </div>
+              ) : (
+                <SupplyTable
+                  supplies={filteredSupplies}
+                  selectedSupplyId={selectedSupplyId}
+                  onRowClick={handleRowClick}
+                  onRowDoubleClick={handleRowDoubleClick}
+                  onSort={handleSort}
+                  sortKey={sortKey}
+                />
+              )}
+            </TabsContent>
+            <TabsContent value="movements" className="flex flex-col flex-1 min-h-0 mt-0 data-[state=inactive]:hidden">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-4 shrink-0">
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id="movements-filter-selected"
+                    checked={movementsOnlySelected}
+                    onCheckedChange={(c) => setMovementsOnlySelected(c === true)}
+                    disabled={!selectedSupplyId}
+                  />
+                  <Label htmlFor="movements-filter-selected" className="text-sm font-normal cursor-pointer">
+                    Mostrar só o item selecionado na tabela
+                  </Label>
+                </div>
+              </div>
+              <InventoryMovementsTable
+                movements={inventoryMovements}
+                supplyNames={supplyNameById}
+                isLoading={movementsLoading}
+              />
+            </TabsContent>
+          </Tabs>
         </CardContent>
         <CardFooter className="flex justify-start w-full border-t pt-4">
           <Button variant="outline" asChild>

@@ -27,6 +27,7 @@ import { addProduct, updateProduct } from "@/services";
 import type { Supply, TechnicalSheet, TechnicalSheetComponent, Product } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useActiveTenant } from "@/hooks/use-active-tenant";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -48,6 +49,7 @@ import {
   validateDisplayUnitForType,
   type StockUnitType,
 } from "@/lib/stock-units";
+import { cn } from "@/lib/utils";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -86,6 +88,7 @@ export function ProductForm({ product, supplies, sheets, onSaveSuccess }: Produc
 
   const [suppliesPage, setSuppliesPage] = useState(1);
   const [sheetsPage, setSheetsPage] = useState(1);
+  const [productSectionTab, setProductSectionTab] = useState<"catalog" | "recipe" | "stock">("catalog");
 
   const { toast } = useToast();
   const { activeTenantId } = useActiveTenant();
@@ -349,8 +352,14 @@ export function ProductForm({ product, supplies, sheets, onSaveSuccess }: Produc
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start h-full">
-        {/* Coluna de Componentes */}
+    <div
+      className={cn(
+        "grid grid-cols-1 gap-8 items-start h-full",
+        productSectionTab === "recipe" ? "lg:grid-cols-3" : "lg:grid-cols-1"
+      )}
+    >
+        {/* Coluna de Componentes — só na aba Receita */}
+        {productSectionTab === "recipe" && (
         <div className="lg:col-span-1 h-full flex flex-col">
             <Card className="flex-1 flex flex-col min-h-0">
                 <CardHeader>
@@ -440,221 +449,265 @@ export function ProductForm({ product, supplies, sheets, onSaveSuccess }: Produc
                 </CardContent>
             </Card>
         </div>
+        )}
 
-        {/* Coluna de Formulário do Produto */}
-        <div className="lg:col-span-2 h-full flex flex-col">
-            <div className="flex-1 flex flex-col gap-6 overflow-y-auto px-1 pr-0 md:pr-4">
-                <CardHeader className="p-0">
+        {/* Formulário principal + abas */}
+        <div
+          className={cn(
+            "h-full flex flex-col",
+            productSectionTab === "recipe" ? "lg:col-span-2" : "lg:col-span-1 max-w-4xl w-full mx-auto"
+          )}
+        >
+            <Tabs
+              value={productSectionTab}
+              onValueChange={(v) => setProductSectionTab(v as "catalog" | "recipe" | "stock")}
+              className="flex flex-col flex-1 min-h-0"
+            >
+              <TabsList className="grid w-full grid-cols-3 mb-4 shrink-0">
+                <TabsTrigger value="catalog">Catálogo</TabsTrigger>
+                <TabsTrigger value="recipe">Receita</TabsTrigger>
+                <TabsTrigger value="stock">Estoque (PdV)</TabsTrigger>
+              </TabsList>
+
+              <div className="flex-1 flex flex-col gap-6 overflow-y-auto px-1 pr-0 md:pr-4 min-h-0">
+                <TabsContent value="catalog" className="mt-0 space-y-6 data-[state=inactive]:hidden">
+                  <CardHeader className="p-0">
                     <CardTitle>Montagem do Produto</CardTitle>
-                    <CardDescription>Defina os detalhes, adicione componentes e calcule o preço do seu produto final.</CardDescription>
-                </CardHeader>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <CardDescription>Dados de vitrine, descrição e custos operacionais.</CardDescription>
+                  </CardHeader>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="grid gap-2">
-                        <Label htmlFor="product-name">Nome do Produto</Label>
-                        <Input id="product-name" placeholder="Ex: Bolo de Pote de Chocolate" value={productName} onChange={(e) => setProductName(e.target.value)} />
+                      <Label htmlFor="product-name">Nome do Produto</Label>
+                      <Input id="product-name" placeholder="Ex: Bolo de Pote de Chocolate" value={productName} onChange={(e) => setProductName(e.target.value)} />
                     </div>
                     <div className="grid gap-2">
-                        <Label htmlFor="product-category">Categoria</Label>
-                        <Input id="product-category" placeholder="Ex: Bolos, Sobremesas" value={category} onChange={(e) => setCategory(e.target.value)} />
+                      <Label htmlFor="product-category">Categoria</Label>
+                      <Input id="product-category" placeholder="Ex: Bolos, Sobremesas" value={category} onChange={(e) => setCategory(e.target.value)} />
                     </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="grid gap-2">
-                        <Label>Tipo de estoque (base)</Label>
-                        <Select
-                          value={stockUnitType}
-                          onValueChange={(v) => {
-                            setStockUnitType(v as StockUnitType);
-                            setStockScale("");
-                            setStockUnitLabel("");
-                          }}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Unidade" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="un">Unitário (un)</SelectItem>
-                            <SelectItem value="g">Peso (gramas)</SelectItem>
-                            <SelectItem value="ml">Líquido (ml)</SelectItem>
-                          </SelectContent>
-                        </Select>
-                    </div>
-                    <div className="grid gap-2">
-                        <Label>Exibição / rótulo</Label>
-                        {stockUnitType === "un" ? (
-                          <Input
-                            placeholder="Opcional (ex.: caixa)"
-                            value={stockUnitLabel}
-                            onChange={(e) => setStockUnitLabel(e.target.value)}
-                          />
-                        ) : stockUnitType === "g" ? (
-                          <Select
-                            value={stockScale === "" ? "__base__" : stockScale}
-                            onValueChange={(v) => setStockScale(v === "__base__" ? "" : "kg")}
-                          >
-                            <SelectTrigger>
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="__base__">Gramas (g)</SelectItem>
-                              <SelectItem value="kg">Quilogramas (kg)</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        ) : (
-                          <Select
-                            value={stockScale === "" ? "__base__" : stockScale}
-                            onValueChange={(v) => setStockScale(v === "__base__" ? "" : "L")}
-                          >
-                            <SelectTrigger>
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="__base__">Mililitros (ml)</SelectItem>
-                              <SelectItem value="L">Litros (L)</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        )}
-                    </div>
-                    <div className="grid gap-2">
-                        <Label htmlFor="stock-qty">Quantidade em estoque</Label>
-                        <Input
-                          id="stock-qty"
-                          inputMode="decimal"
-                          value={stockQtyInput}
-                          onChange={(e) => setStockQtyInput(e.target.value)}
-                          placeholder={
-                            stockUnitType === "un"
-                              ? "Ex.: 50"
-                              : stockScale === "kg" || stockScale === "L"
-                                ? "Ex.: 5 ou 2"
-                                : "Ex.: 5000 ou 2000"
-                          }
-                        />
-                    </div>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Armazenado na menor unidade inteira (sem decimais no banco):{" "}
-                  <span className="font-medium text-foreground">{stockStoredPreview}</span>
-                </p>
-                <div className="grid gap-2">
+                  </div>
+                  <div className="grid gap-2">
                     <Label htmlFor="product-description">Descrição</Label>
                     <Textarea id="product-description" placeholder="Descreva o produto final para seus clientes." value={description} onChange={(e) => setDescription(e.target.value)} />
-                </div>
-                <div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="prep-time">Tempo de Preparo (min)</Label>
+                      <Input id="prep-time" type="number" value={preparationTime} onChange={e => setPreparationTime(parseInt(e.target.value) || 0)} />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="labor-cost">Custo da Mão de Obra (R$/hora)</Label>
+                      <Input id="labor-cost" type="number" value={laborCost} onChange={e => setLaborCost(parseFloat(e.target.value) || 0)} />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="fixed-cost">Custos Fixos / Admin. (R$)</Label>
+                      <Input id="fixed-cost" type="number" value={fixedCost} onChange={e => setFixedCost(parseFloat(e.target.value) || 0)} />
+                    </div>
+                  </div>
+                  <Card>
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-base">Transparência de Custo</CardTitle>
+                      <CardDescription>Como o custo final está sendo formado.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                      <div className="sm:col-span-2">
+                        <Alert>
+                          <AlertDescription>
+                            Esta tela calcula custo e margem. Nao cria entrada no caixa ate a venda acontecer.
+                          </AlertDescription>
+                        </Alert>
+                      </div>
+                      <div className="rounded border p-3">
+                        <p className="text-muted-foreground">Materiais</p>
+                        <p className="font-semibold">
+                          {materialCost.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                        </p>
+                      </div>
+                      <div className="rounded border p-3">
+                        <p className="text-muted-foreground">Mão de obra</p>
+                        <p className="font-semibold">
+                          {totalLaborCost.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                        </p>
+                      </div>
+                      <div className="rounded border p-3">
+                        <p className="text-muted-foreground">Custos fixos / admin</p>
+                        <p className="font-semibold">
+                          {fixedCost.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                        </p>
+                      </div>
+                      <div className="rounded border p-3">
+                        <p className="text-muted-foreground">Custo final</p>
+                        <p className="font-bold">
+                          {totalCost.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+
+                <TabsContent value="recipe" className="mt-0 space-y-4 data-[state=inactive]:hidden">
+                  <CardHeader className="p-0">
+                    <CardTitle>Receita do produto</CardTitle>
+                    <CardDescription>
+                      Em telas grandes use a lista à esquerda; no celular ela aparece acima desta área.
+                    </CardDescription>
+                  </CardHeader>
+                  <div>
                     <Label>Componentes do Produto</Label>
                     <Card className="mt-2">
-                        <CardContent className="p-2">
-                            <ScrollArea className="h-40">
-                                <div className="space-y-2 md:hidden">
-                                    {components.length > 0 ? (
-                                      components.map((item) => (
-                                        <div key={item.componentId} className="rounded-md border p-2">
-                                          <div className="flex items-center justify-between gap-2">
-                                            <p className="font-medium text-sm">{item.componentName}</p>
-                                            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => removeItem(item.componentId)}><Trash2 className="h-4 w-4 text-destructive"/></Button>
-                                          </div>
-                                          <div className="mt-2 grid grid-cols-3 gap-2 items-end">
-                                            <Input type="number" className="h-8" value={item.quantity} onChange={(e) => updateComponentQuantity(item.componentId, parseFloat(e.target.value) || 0)} min="0" />
-                                            <span className="text-xs text-muted-foreground">{item.unit}</span>
-                                            <span className="text-right text-sm">{getCost(item).toLocaleString("pt-BR", { style: "currency", currency: "BRL"})}</span>
-                                          </div>
-                                        </div>
-                                      ))
-                                    ) : (
-                                      <div className="h-24 rounded-md border text-center text-sm text-muted-foreground flex items-center justify-center">Adicione componentes da lista ao lado.</div>
-                                    )}
+                      <CardContent className="p-2">
+                        <ScrollArea className="h-40">
+                          <div className="space-y-2 md:hidden">
+                            {components.length > 0 ? (
+                              components.map((item) => (
+                                <div key={item.componentId} className="rounded-md border p-2">
+                                  <div className="flex items-center justify-between gap-2">
+                                    <p className="font-medium text-sm">{item.componentName}</p>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => removeItem(item.componentId)}><Trash2 className="h-4 w-4 text-destructive"/></Button>
+                                  </div>
+                                  <div className="mt-2 grid grid-cols-3 gap-2 items-end">
+                                    <Input type="number" className="h-8" value={item.quantity} onChange={(e) => updateComponentQuantity(item.componentId, parseFloat(e.target.value) || 0)} min="0" />
+                                    <span className="text-xs text-muted-foreground">{item.unit}</span>
+                                    <span className="text-right text-sm">{getCost(item).toLocaleString("pt-BR", { style: "currency", currency: "BRL"})}</span>
+                                  </div>
                                 </div>
-                                <div className="hidden md:block">
-                                  <Table>
-                                      <TableHeader>
-                                          <TableRow>
-                                              <TableHead className="w-3/5">Componente</TableHead>
-                                              <TableHead>Qtd.</TableHead>
-                                              <TableHead>Un.</TableHead>
-                                              <TableHead className="text-right">Custo</TableHead>
-                                              <TableHead className="text-right">Ação</TableHead>
-                                          </TableRow>
-                                      </TableHeader>
-                                      <TableBody>
-                                          {components.length > 0 ? (
-                                              components.map((item) => (
-                                              <TableRow key={item.componentId}>
-                                                  <TableCell className="font-medium py-1">{item.componentName}</TableCell>
-                                                  <TableCell className="py-1">
-                                                      <Input type="number" className="w-20 h-8" value={item.quantity} onChange={(e) => updateComponentQuantity(item.componentId, parseFloat(e.target.value) || 0)} min="0" />
-                                                  </TableCell>
-                                                  <TableCell className="text-xs text-muted-foreground py-1">{item.unit}</TableCell>
-                                                  <TableCell className="text-right py-1">{getCost(item).toLocaleString("pt-BR", { style: "currency", currency: "BRL"})}</TableCell>
-                                                  <TableCell className="text-right py-1">
-                                                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => removeItem(item.componentId)}><Trash2 className="h-4 w-4 text-destructive"/></Button>
-                                                  </TableCell>
-                                              </TableRow>
-                                              ))
-                                          ) : (
-                                              <TableRow><TableCell colSpan={5} className="text-center h-24 text-muted-foreground">Adicione componentes da lista ao lado.</TableCell></TableRow>
-                                          )}
-                                      </TableBody>
-                                  </Table>
-                                </div>
-                            </ScrollArea>
-                        </CardContent>
+                              ))
+                            ) : (
+                              <div className="h-24 rounded-md border text-center text-sm text-muted-foreground flex items-center justify-center">Adicione componentes da lista.</div>
+                            )}
+                          </div>
+                          <div className="hidden md:block">
+                            <Table>
+                              <TableHeader>
+                                <TableRow>
+                                  <TableHead className="w-3/5">Componente</TableHead>
+                                  <TableHead>Qtd.</TableHead>
+                                  <TableHead>Un.</TableHead>
+                                  <TableHead className="text-right">Custo</TableHead>
+                                  <TableHead className="text-right">Ação</TableHead>
+                                </TableRow>
+                              </TableHeader>
+                              <TableBody>
+                                {components.length > 0 ? (
+                                  components.map((item) => (
+                                    <TableRow key={item.componentId}>
+                                      <TableCell className="font-medium py-1">{item.componentName}</TableCell>
+                                      <TableCell className="py-1">
+                                        <Input type="number" className="w-20 h-8" value={item.quantity} onChange={(e) => updateComponentQuantity(item.componentId, parseFloat(e.target.value) || 0)} min="0" />
+                                      </TableCell>
+                                      <TableCell className="text-xs text-muted-foreground py-1">{item.unit}</TableCell>
+                                      <TableCell className="text-right py-1">{getCost(item).toLocaleString("pt-BR", { style: "currency", currency: "BRL"})}</TableCell>
+                                      <TableCell className="text-right py-1">
+                                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => removeItem(item.componentId)}><Trash2 className="h-4 w-4 text-destructive"/></Button>
+                                      </TableCell>
+                                    </TableRow>
+                                  ))
+                                ) : (
+                                  <TableRow><TableCell colSpan={5} className="text-center h-24 text-muted-foreground">Adicione componentes da lista ao lado.</TableCell></TableRow>
+                                )}
+                              </TableBody>
+                            </Table>
+                          </div>
+                        </ScrollArea>
+                      </CardContent>
                     </Card>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="grid gap-2">
-                        <Label htmlFor="prep-time">Tempo de Preparo (min)</Label>
-                        <Input id="prep-time" type="number" value={preparationTime} onChange={e => setPreparationTime(parseInt(e.target.value) || 0)} />
-                    </div>
-                    <div className="grid gap-2">
-                        <Label htmlFor="labor-cost">Custo da Mão de Obra (R$/hora)</Label>
-                        <Input id="labor-cost" type="number" value={laborCost} onChange={e => setLaborCost(parseFloat(e.target.value) || 0)} />
-                    </div>
-                    <div className="grid gap-2">
-                        <Label htmlFor="fixed-cost">Custos Fixos / Admin. (R$)</Label>
-                        <Input id="fixed-cost" type="number" value={fixedCost} onChange={e => setFixedCost(parseFloat(e.target.value) || 0)} />
-                    </div>
-                </div>
-                <Card>
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-base">Transparência de Custo</CardTitle>
-                    <CardDescription>Como o custo final está sendo formado.</CardDescription>
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="stock" className="mt-0 space-y-4 data-[state=inactive]:hidden">
+                  <CardHeader className="p-0">
+                    <CardTitle>Estoque no ponto de venda</CardTitle>
+                    <CardDescription>
+                      Quantidade disponível para vendas e tipo de contagem no PDV.
+                    </CardDescription>
                   </CardHeader>
-                  <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-                    <div className="sm:col-span-2">
-                      <Alert>
-                        <AlertDescription>
-                          Esta tela calcula custo e margem. Nao cria entrada no caixa ate a venda acontecer.
-                        </AlertDescription>
-                      </Alert>
+                  <Alert>
+                    <AlertDescription>
+                      Para itens vendidos por unidade no PDV (bolo inteiro, caixa), prefira a base <strong>un</strong>. Estoque em{" "}
+                      <strong>g</strong> ou <strong>ml</strong> combina com produtos por peso/volume, mas a quantidade por linha de pedido continua em número inteiro na menor unidade; evite misturar com vendas fracionadas pelo PDV atual.
+                    </AlertDescription>
+                  </Alert>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="grid gap-2">
+                      <Label>Tipo de estoque (base)</Label>
+                      <Select
+                        value={stockUnitType}
+                        onValueChange={(v) => {
+                          setStockUnitType(v as StockUnitType);
+                          setStockScale("");
+                          setStockUnitLabel("");
+                        }}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Unidade" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="un">Unitário (un)</SelectItem>
+                          <SelectItem value="g">Peso (gramas)</SelectItem>
+                          <SelectItem value="ml">Líquido (ml)</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
-                    <div className="rounded border p-3">
-                      <p className="text-muted-foreground">Materiais</p>
-                      <p className="font-semibold">
-                        {materialCost.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
-                      </p>
+                    <div className="grid gap-2">
+                      <Label>Exibição / rótulo</Label>
+                      {stockUnitType === "un" ? (
+                        <Input
+                          placeholder="Opcional (ex.: caixa)"
+                          value={stockUnitLabel}
+                          onChange={(e) => setStockUnitLabel(e.target.value)}
+                        />
+                      ) : stockUnitType === "g" ? (
+                        <Select
+                          value={stockScale === "" ? "__base__" : stockScale}
+                          onValueChange={(v) => setStockScale(v === "__base__" ? "" : "kg")}
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="__base__">Gramas (g)</SelectItem>
+                            <SelectItem value="kg">Quilogramas (kg)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      ) : (
+                        <Select
+                          value={stockScale === "" ? "__base__" : stockScale}
+                          onValueChange={(v) => setStockScale(v === "__base__" ? "" : "L")}
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="__base__">Mililitros (ml)</SelectItem>
+                            <SelectItem value="L">Litros (L)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      )}
                     </div>
-                    <div className="rounded border p-3">
-                      <p className="text-muted-foreground">Mão de obra</p>
-                      <p className="font-semibold">
-                        {totalLaborCost.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
-                      </p>
+                    <div className="grid gap-2">
+                      <Label htmlFor="stock-qty">Quantidade em estoque</Label>
+                      <Input
+                        id="stock-qty"
+                        inputMode="decimal"
+                        value={stockQtyInput}
+                        onChange={(e) => setStockQtyInput(e.target.value)}
+                        placeholder={
+                          stockUnitType === "un"
+                            ? "Ex.: 50"
+                            : stockScale === "kg" || stockScale === "L"
+                              ? "Ex.: 5 ou 2"
+                              : "Ex.: 5000 ou 2000"
+                        }
+                      />
                     </div>
-                    <div className="rounded border p-3">
-                      <p className="text-muted-foreground">Custos fixos / admin</p>
-                      <p className="font-semibold">
-                        {fixedCost.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
-                      </p>
-                    </div>
-                    <div className="rounded border p-3">
-                      <p className="text-muted-foreground">Custo final</p>
-                      <p className="font-bold">
-                        {totalCost.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-            </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Armazenado na menor unidade inteira (sem decimais no banco):{" "}
+                    <span className="font-medium text-foreground">{stockStoredPreview}</span>
+                  </p>
+                </TabsContent>
+              </div>
+            </Tabs>
             
             <div className="flex flex-col items-stretch gap-6 pt-6 border-t mt-auto bg-background">
                  <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">

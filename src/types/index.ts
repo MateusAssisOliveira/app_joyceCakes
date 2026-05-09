@@ -199,5 +199,28 @@ export type PriceVariation = {
   supplier?: string;
 };
 
+/** Movimentação de estoque de insumo (ledger). */
+export type SupplyInventoryMovementType =
+  | "PURCHASE"
+  | "ADJUSTMENT"
+  | "SALE_CONSUME"
+  | "PRODUCTION_CONSUME"
+  | "PRODUCTION_OUTPUT";
+
+export type InventoryMovement = {
+  id: string;
+  tenantId: string;
+  item_type: "supply";
+  supplyId: string | null;
+  productId: string | null;
+  movement_type: SupplyInventoryMovementType;
+  quantity_delta: number;
+  unit: string;
+  unit_cost: number | null;
+  note: string | null;
+  orderId: string | null;
+  created_at: string;
+};
+
 export type Recipe = TechnicalSheet;
 export type RecipeIngredient = TechnicalSheetComponent;

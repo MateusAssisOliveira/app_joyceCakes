@@ -1,7 +1,7 @@
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { toDate } from "@/lib/timestamp-utils";
 import { getTenantCollectionPath, resolveTenantIdOrThrow } from "@/lib/tenant";
-import type { CashRegister, PriceVariation, Supply } from "@/types";
+import type { CashRegister, InventoryMovement, PriceVariation, Supply } from "@/types";
 import { addFinancialMovement } from "./financialMovementService";
 import { serializeObject, setDocumentActive } from "./utils";
 
@@ -84,6 +84,20 @@ export async function addSupply(
 
   if (error) throw error;
 
+  const initialStock = Number(dataWithTimestamp.stock ?? 0);
+  if (initialStock > 0) {
+    const { error: movementError } = await client.from("inventory_movements").insert({
+      tenantId: currentTenantId,
+      item_type: "supply",
+      supplyId: data.id,
+      movement_type: "ADJUSTMENT",
+      quantity_delta: initialStock,
+      unit: dataWithTimestamp.unit,
+      note: "Saldo inicial (cadastro)",
+    });
+    if (movementError) throw movementError;
+  }
+
   await addPriceHistoryEntry(currentTenantId, data.id, dataWithTimestamp.costPerUnit, dataWithTimestamp.supplier);
 
   if (financialData?.shouldRegister && financialData.amount > 0) {
@@ -136,6 +150,7 @@ export async function updateSupply(
     .maybeSingle();
 
   if (loadError) throw loadError;
+  if (!oldData) throw new Error("Insumo não encontrado.");
 
   const sanitizedDataToUpdate = stripUndefinedFields({
     ...updatedData,
@@ -151,13 +166,45 @@ export async function updateSupply(
     packageQuantity: updatedData.packageQuantity ?? null,
   });
 
-  const { error } = await client
-    .from("supplies")
-    .update(sanitizedDataToUpdate)
-    .eq("tenantId", currentTenantId)
-    .eq("id", id);
+  let stockDelta: number | undefined;
+  if (Object.prototype.hasOwnProperty.call(sanitizedDataToUpdate, "stock")) {
+    stockDelta = Number(sanitizedDataToUpdate.stock) - Number(oldData.stock);
+  }
 
-  if (error) throw error;
+  const payloadWithoutStockMovement = { ...sanitizedDataToUpdate } as Record<string, unknown>;
+  if (stockDelta !== undefined && stockDelta !== 0) {
+    delete payloadWithoutStockMovement.stock;
+  }
+
+  if (stockDelta !== undefined && stockDelta !== 0) {
+    const movementType = stockDelta > 0 ? "PURCHASE" : "ADJUSTMENT";
+    const unitCostRaw =
+      sanitizedDataToUpdate.costPerUnit !== undefined
+        ? Number(sanitizedDataToUpdate.costPerUnit)
+        : Number(oldData.costPerUnit);
+    const { error: rpcError } = await client.rpc("apply_supply_inventory_movement", {
+      p_tenant_id: currentTenantId,
+      p_supply_id: id,
+      p_quantity_delta: stockDelta,
+      p_movement_type: movementType,
+      p_note: null,
+      p_unit_cost: movementType === "PURCHASE" && Number.isFinite(unitCostRaw) ? unitCostRaw : null,
+    });
+    if (rpcError) throw rpcError;
+  }
+
+  const keysLeft = Object.keys(payloadWithoutStockMovement).filter(
+    (k) => payloadWithoutStockMovement[k] !== undefined
+  );
+  if (keysLeft.length > 0) {
+    const { error } = await client
+      .from("supplies")
+      .update(payloadWithoutStockMovement)
+      .eq("tenantId", currentTenantId)
+      .eq("id", id);
+
+    if (error) throw error;
+  }
 
   if (oldData && oldData.costPerUnit !== sanitizedDataToUpdate.costPerUnit && sanitizedDataToUpdate.costPerUnit) {
     await addPriceHistoryEntry(
@@ -208,6 +255,31 @@ export async function getSupplies(_SupabaseStore: unknown, tenantId?: string): P
   if (error) throw error;
 
   return serializeObject((data ?? []) as Supply[]);
+}
+
+export async function getInventoryMovements(
+  _SupabaseStore: unknown,
+  tenantId?: string,
+  opts?: { supplyId?: string; limit?: number }
+): Promise<InventoryMovement[]> {
+  const client = getSupabaseBrowserClient();
+  const currentTenantId = resolveTenantIdOrThrow(tenantId);
+
+  let req = client
+    .from("inventory_movements")
+    .select("*")
+    .eq("tenantId", currentTenantId)
+    .order("created_at", { ascending: false })
+    .limit(opts?.limit ?? 300);
+
+  if (opts?.supplyId) {
+    req = req.eq("supplyId", opts.supplyId);
+  }
+
+  const { data, error } = await req;
+  if (error) throw error;
+
+  return (data ?? []) as InventoryMovement[];
 }
 
 export async function getPriceHistory(

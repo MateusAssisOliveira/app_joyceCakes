@@ -350,7 +350,7 @@ export function SupplyQuickAddDialog({
     <Dialog open={isOpen} onOpenChange={() => !isProcessing && onClose()}>
       <DialogContent className="w-[95vw] max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Repor Estoque: {supply.name}</DialogTitle>
+          <DialogTitle>Registrar entrada: {supply.name}</DialogTitle>
           <DialogDescription>
             Estoque atual:{" "}
             <span className="font-semibold">
