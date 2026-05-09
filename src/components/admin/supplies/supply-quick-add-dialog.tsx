@@ -350,12 +350,13 @@ export function SupplyQuickAddDialog({
     <Dialog open={isOpen} onOpenChange={() => !isProcessing && onClose()}>
       <DialogContent className="w-[95vw] max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Registrar entrada: {supply.name}</DialogTitle>
+          <DialogTitle>Movimentar estoque: {supply.name}</DialogTitle>
           <DialogDescription>
-            Estoque atual:{" "}
+            Entrada de compra ou ajuste de quantidade. Estoque atual:{" "}
             <span className="font-semibold">
               {supply.stock} {activeUnit}
             </span>
+            . O cadastro do item (ficha) fica em <strong>Cadastrar insumo</strong>.
           </DialogDescription>
         </DialogHeader>
 

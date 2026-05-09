@@ -23,8 +23,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Separator } from "@/components/ui/separator";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Loader, Calendar as CalendarIcon, Info } from "lucide-react";
 import type { Supply } from "@/types";
 import { useToast } from "@/hooks/use-toast";
@@ -68,7 +67,6 @@ export function SupplyFormDialog({ isOpen, onClose, onSave, supply, defaultType 
   const [humanQty, setHumanQty] = useState({
     contentUnit: "g" as SupplyContentUnit,
     contentPerPurchase: "",
-    stockPurchaseQty: "",
     minStockPurchaseQty: "",
   });
   const [formData, setFormData] = useState({
@@ -88,13 +86,6 @@ export function SupplyFormDialog({ isOpen, onClose, onSave, supply, defaultType 
     expirationDate: undefined as Date | undefined,
   });
 
-  const [financialData, setFinancialData] = useState({
-      shouldRegister: false,
-      paymentMethod: 'Dinheiro',
-      description: '',
-      amount: 0,
-  });
-
   const { toast } = useToast();
 
   const pkgQtyForCost = (() => {
@@ -105,7 +96,6 @@ export function SupplyFormDialog({ isOpen, onClose, onSave, supply, defaultType 
 
   const isPackageCalculation =
     (formData.packageCost ?? 0) > 0 && pkgQtyForCost !== undefined && pkgQtyForCost > 0;
-  const isEditing = !!supply;
 
   useEffect(() => {
     if (formData.purchaseFormat === "unidade") {
@@ -122,12 +112,6 @@ export function SupplyFormDialog({ isOpen, onClose, onSave, supply, defaultType 
     }
   }, [formData.packageCost, pkgQtyForCost, isPackageCalculation]);
 
-  // Atualiza os dados financeiros quando o custo do pacote muda
-  useEffect(() => {
-      setFinancialData(prev => ({ ...prev, amount: formData.packageCost || formData.costPerUnit || 0 }));
-  }, [formData.packageCost, formData.costPerUnit]);
-
-
   useEffect(() => {
     if (isOpen) {
       if (supply) {
@@ -138,7 +122,6 @@ export function SupplyFormDialog({ isOpen, onClose, onSave, supply, defaultType 
             split.purchaseFormat !== "unidade" && split.contentPerPurchase > 0
               ? String(split.contentPerPurchase)
               : "",
-          stockPurchaseQty: String(split.stockPurchaseQty),
           minStockPurchaseQty: String(split.minStockPurchaseQty),
         });
         setFormData({
@@ -157,17 +140,10 @@ export function SupplyFormDialog({ isOpen, onClose, onSave, supply, defaultType 
           lastPurchaseDate: toDate(supply.lastPurchaseDate) ?? undefined,
           expirationDate: toDate(supply.expirationDate) ?? undefined,
         });
-        setFinancialData({
-          shouldRegister: false,
-          paymentMethod: "Dinheiro",
-          description: "",
-          amount: 0,
-        });
       } else {
         setHumanQty({
           contentUnit: "g",
           contentPerPurchase: "",
-          stockPurchaseQty: "",
           minStockPurchaseQty: "",
         });
         setFormData({
@@ -183,18 +159,16 @@ export function SupplyFormDialog({ isOpen, onClose, onSave, supply, defaultType 
           sku: "",
           supplier: "",
           minStock: 0,
-          lastPurchaseDate: new Date(),
+          lastPurchaseDate: undefined,
           expirationDate: undefined,
-        });
-        setFinancialData({
-          shouldRegister: false,
-          paymentMethod: "Dinheiro",
-          description: "",
-          amount: 0,
         });
       }
     }
   }, [supply, isOpen, defaultType]);
+
+  const stockPurchaseQtyForDerived = supply
+    ? splitSupplyStockForUX(supply).stockPurchaseQty
+    : 0;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -203,12 +177,12 @@ export function SupplyFormDialog({ isOpen, onClose, onSave, supply, defaultType 
       purchaseFormat: formData.purchaseFormat,
       contentUnit: humanQty.contentUnit,
       contentPerPurchase: parseHumanQty(humanQty.contentPerPurchase),
-      stockPurchaseQty: parseHumanQty(humanQty.stockPurchaseQty),
+      stockPurchaseQty: stockPurchaseQtyForDerived,
       minStockPurchaseQty: parseHumanQty(humanQty.minStockPurchaseQty),
     });
 
     if ("error" in derived) {
-      toast({ variant: "destructive", title: "Estoque inválido", description: derived.error });
+      toast({ variant: "destructive", title: "Dados inválidos", description: derived.error });
       return;
     }
 
@@ -236,9 +210,12 @@ export function SupplyFormDialog({ isOpen, onClose, onSave, supply, defaultType 
         finalData.packageQuantity = undefined;
       }
 
-      const descriptionForFinancial = `Compra de insumo: ${finalData.name}`;
-
-      onSave(finalData, { ...financialData, description: descriptionForFinancial });
+      onSave(finalData, {
+        shouldRegister: false,
+        paymentMethod: "Dinheiro",
+        description: "",
+        amount: 0,
+      });
     } catch {
       // O erro ja e tratado pelo servico e pelo handler global
     } finally {
@@ -263,25 +240,35 @@ export function SupplyFormDialog({ isOpen, onClose, onSave, supply, defaultType 
     purchaseFormat: formData.purchaseFormat,
     contentUnit: humanQty.contentUnit,
     contentPerPurchase: parseHumanQty(humanQty.contentPerPurchase),
-    stockPurchaseQty: parseHumanQty(humanQty.stockPurchaseQty),
+    stockPurchaseQty: stockPurchaseQtyForDerived,
     minStockPurchaseQty: parseHumanQty(humanQty.minStockPurchaseQty),
   });
-  const stockPreviewText =
+  const minPreviewText =
     "error" in stockPreviewDerived
       ? "—"
-      : `${formatBaseStockHint(stockPreviewDerived.unit, stockPreviewDerived.stock)} no sistema · mín. ${formatBaseStockHint(stockPreviewDerived.unit, stockPreviewDerived.minStock)}`;
+      : `${formatBaseStockHint(stockPreviewDerived.unit, stockPreviewDerived.minStock)} (alerta de reposição)`;
 
 
   return (
     <Dialog open={isOpen} onOpenChange={() => !isProcessing && onClose()}>
       <DialogContent className="w-[95vw] max-w-2xl">
         <DialogHeader>
-          <DialogTitle>{supply ? 'Editar Item' : 'Adicionar Novo Item'}</DialogTitle>
-          {isEditing && (
-            <DialogDescription>Ajuste o estoque ou outros detalhes. Para registrar uma nova compra com custo diferente, use o botão "Adicionar".</DialogDescription>
-          )}
+          <DialogTitle>{supply ? "Editar ficha do insumo" : "Cadastrar insumo"}</DialogTitle>
+          <DialogDescription>
+            {supply
+              ? "Altere nome, custo de referência e alertas. Quantidade física e compras entram em Registrar entrada."
+              : "Apenas a ficha do item (sem saldo). Depois use Registrar entrada para compras, estoque físico e despesa no caixa."}
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="grid gap-6 py-4 max-h-[80vh] overflow-y-auto pr-2 sm:pr-4">
+            <Alert>
+              <AlertTitle>Cadastro ≠ movimentação</AlertTitle>
+              <AlertDescription>
+                Este formulário <strong>não</strong> altera quantidade em depósito. Novos insumos começam com saldo{" "}
+                <strong>zero</strong>; use <strong>Ações → Registrar entrada</strong> para dar entrada, atualizar custo da compra e
+                (opcional) lançar no caixa.
+              </AlertDescription>
+            </Alert>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="grid gap-2">
                     <Label htmlFor="supply-name">Nome do Item</Label>
@@ -323,20 +310,19 @@ export function SupplyFormDialog({ isOpen, onClose, onSave, supply, defaultType 
           
             <div className="space-y-4 rounded-lg border bg-muted/40 p-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <Label className="text-base font-semibold">Estoque (como você compra)</Label>
+                <Label className="text-base font-semibold">Como você compra (ficha)</Label>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <span className="inline-flex cursor-help items-center gap-1 text-xs text-muted-foreground">
                         <Info className="h-3.5 w-3.5" />
-                        Menor unidade no sistema
+                        Unidade usada em receitas
                       </span>
                     </TooltipTrigger>
                     <TooltipContent className="max-w-xs">
                       <p>
-                        Você informa pacotes, latas ou caixas. O app converte para{" "}
-                        <strong>gramas</strong>, <strong>mililitros</strong> ou <strong>unidades</strong> para custo e receitas.
-                        Itens antigos em kg/L continuam editáveis e são normalizados ao salvar.
+                        Define embalagem e conteúdo para calcular <strong>custo na menor unidade</strong> (g, ml ou un). Não é
+                        quantidade em estoque — isso é só em Registrar entrada.
                       </p>
                     </TooltipContent>
                   </Tooltip>
@@ -424,51 +410,34 @@ export function SupplyFormDialog({ isOpen, onClose, onSave, supply, defaultType 
                 </div>
               )}
 
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div className="grid gap-2">
-                  <Label htmlFor="stock-human">
-                    {formData.purchaseFormat === "unidade"
-                      ? humanQty.contentUnit === "un"
-                        ? "Quantidade em estoque (unidades)"
-                        : `Quantidade em estoque (${humanQty.contentUnit})`
-                      : `Quantidade em estoque (${purchaseFormatLabel(formData.purchaseFormat)}s)`}
-                  </Label>
-                  <Input
-                    id="stock-human"
-                    inputMode="decimal"
-                    placeholder={formData.purchaseFormat === "unidade" ? "Ex.: 10" : "Ex.: 1"}
-                    value={humanQty.stockPurchaseQty}
-                    onChange={(e) => setHumanQty((prev) => ({ ...prev, stockPurchaseQty: e.target.value }))}
-                    disabled={isProcessing}
-                    required
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="min-stock-human">
-                    {formData.purchaseFormat === "unidade"
-                      ? humanQty.contentUnit === "un"
-                        ? "Estoque mínimo (unidades)"
-                        : `Estoque mínimo (${humanQty.contentUnit})`
-                      : `Estoque mínimo (${purchaseFormatLabel(formData.purchaseFormat)}s)`}
-                  </Label>
-                  <Input
-                    id="min-stock-human"
-                    inputMode="decimal"
-                    placeholder="Ex.: 2"
-                    value={humanQty.minStockPurchaseQty}
-                    onChange={(e) => setHumanQty((prev) => ({ ...prev, minStockPurchaseQty: e.target.value }))}
-                    disabled={isProcessing}
-                  />
-                </div>
+              <div className="grid gap-2 sm:max-w-md">
+                <Label htmlFor="min-stock-human">
+                  {formData.purchaseFormat === "unidade"
+                    ? humanQty.contentUnit === "un"
+                      ? "Alerta: estoque mínimo (unidades)"
+                      : `Alerta: estoque mínimo (${humanQty.contentUnit})`
+                    : `Alerta: estoque mínimo (${purchaseFormatLabel(formData.purchaseFormat)}s)`}
+                </Label>
+                <Input
+                  id="min-stock-human"
+                  inputMode="decimal"
+                  placeholder="Ex.: 2 (opcional)"
+                  value={humanQty.minStockPurchaseQty}
+                  onChange={(e) => setHumanQty((prev) => ({ ...prev, minStockPurchaseQty: e.target.value }))}
+                  disabled={isProcessing}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Valor só para aviso de reposição; não movimenta estoque.
+                </p>
               </div>
 
               <div className="rounded-md border bg-background px-3 py-2 text-sm text-muted-foreground">
-                <span className="font-medium text-foreground">No sistema:</span> {stockPreviewText}
+                <span className="font-medium text-foreground">Mínimo convertido:</span> {minPreviewText}
               </div>
             </div>
 
             <div className="space-y-4 rounded-lg border bg-muted/50 p-4">
-              <Label className="text-base font-semibold">Custo desta compra</Label>
+              <Label className="text-base font-semibold">Custo de referência</Label>
               <div className="grid gap-2">
                 <Label htmlFor="package-cost">Valor total pago (opcional)</Label>
                 <Input
@@ -524,7 +493,7 @@ export function SupplyFormDialog({ isOpen, onClose, onSave, supply, defaultType 
             
              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="grid gap-2">
-                    <Label htmlFor="last-purchase-date">Data da Compra</Label>
+                    <Label htmlFor="last-purchase-date">Última compra (opcional, referência)</Label>
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button
@@ -575,44 +544,6 @@ export function SupplyFormDialog({ isOpen, onClose, onSave, supply, defaultType 
                 </div>
             </div>
 
-            <Separator />
-            
-            <div className="space-y-4 p-4 border rounded-md bg-background">
-                 <div className="flex items-center space-x-2">
-                    <Checkbox 
-                        id="register-expense"
-                        checked={financialData.shouldRegister}
-                        onCheckedChange={(checked) => setFinancialData(prev => ({...prev, shouldRegister: !!checked}))}
-                        disabled={isProcessing || financialData.amount <= 0}
-                    />
-                    <label htmlFor="register-expense" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                        Registrar esta compra no Fluxo de Caixa
-                    </label>
-                </div>
-
-                {financialData.shouldRegister && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 animate-in fade-in-0">
-                        <div className="grid gap-2">
-                            <Label htmlFor="payment-method">Método de Pagamento</Label>
-                            <Select name="payment-method" value={financialData.paymentMethod} onValueChange={(value) => setFinancialData(prev => ({...prev, paymentMethod: value}))}>
-                                <SelectTrigger id="payment-method"><SelectValue /></SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="Dinheiro">Dinheiro</SelectItem>
-                                    <SelectItem value="PIX">PIX</SelectItem>
-                                    <SelectItem value="Cartão de Crédito">Cartão de Crédito</SelectItem>
-                                    <SelectItem value="Cartão de Débito">Cartão de Débito</SelectItem>
-                                    <SelectItem value="Transferência">Transferência</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-                        <div className="grid gap-2">
-                            <Label htmlFor="expense-amount">Valor da Despesa</Label>
-                            <Input id="expense-amount" name="expense-amount" type="number" value={financialData.amount} disabled readOnly className="font-semibold" />
-                        </div>
-                    </div>
-                )}
-            </div>
-            
         <DialogFooter className="pt-4 border-t flex-col sm:flex-row">
           <Button className="w-full sm:w-auto" variant="outline" type="button" onClick={onClose} disabled={isProcessing}>Cancelar</Button>
           <Button className="w-full sm:w-auto" type="submit" disabled={isProcessing}>

@@ -258,7 +258,10 @@ export function InventoryClient() {
             toast({ title: "Item Atualizado!" });
         } else {
             await addSupply(SupabaseStore, dataToSave, { ...financialData, userId: user.uid, tenantId: activeTenantId || undefined }, activeTenantId || undefined);
-            toast({ title: "Item Adicionado!" });
+            toast({
+              title: "Insumo cadastrado",
+              description: "Saldo inicia em zero. Use Registrar entrada para compras e quantidade física.",
+            });
         }
         handleCloseFormDialog();
     } catch(e: any) {
@@ -374,10 +377,10 @@ export function InventoryClient() {
             </TabsList>
             <TabsContent value="items" className="flex flex-col flex-1 min-h-0 mt-0 data-[state=inactive]:hidden">
               <Alert className="mb-4 shrink-0">
-                <AlertTitle>Fluxo sugerido</AlertTitle>
+                <AlertTitle>Cadastro e estoque</AlertTitle>
                 <AlertDescription>
-                  Use <strong>Cadastrar insumo</strong> quando o ingrediente ou embalagem ainda não existe no sistema.
-                  Use <strong>Registrar entrada</strong> (menu Ações) quando o item já existe e você só quer registrar compra ou entrada física.
+                  <strong>Cadastrar insumo</strong> = só ficha (nome, unidade, custo de referência, mínimo). Saldo começa em zero.
+                  <strong className="mx-1">Registrar entrada</strong> (Ações) = quantidade física, custo da compra, histórico e opcional despesa no caixa.
                 </AlertDescription>
               </Alert>
               {isLoading ? (
