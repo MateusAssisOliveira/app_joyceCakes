@@ -43,7 +43,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { PlusCircle, Trash2, Search, Loader, Pencil, ArchiveRestore, Link as LinkIcon, Link2Off, BarChart3 } from "lucide-react";
+import { PlusCircle, Trash2, Search, Loader, Pencil, ArchiveRestore, Link as LinkIcon, Link2Off, BarChart3, FileSpreadsheet } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { inactivateProduct, reactivateProduct } from "@/services";
 import { getTenantCollectionPath } from "@/lib/tenant";
@@ -52,6 +52,7 @@ import { useActiveTenant } from "@/hooks/use-active-tenant";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { ProductForm } from "@/components/admin/products/product-form";
+import { ProductImportExportDialog } from "@/components/admin/products/product-import-export-dialog";
 import Link from "next/link";
 import { collection, query } from '@/supabase/compat/SupabaseStore';
 
@@ -63,6 +64,7 @@ export function ProductsClient() {
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [productToEdit, setProductToEdit] = useState<Product | null>(null);
   const [viewMode, setViewMode] = useState<"active" | "archived">("active");
+  const [importExportOpen, setImportExportOpen] = useState(false);
   const { toast } = useToast();
 
   const SupabaseStore = useSupabaseStore();
@@ -157,6 +159,16 @@ export function ProductsClient() {
                     <BarChart3 className="mr-2 h-4 w-4" />
                     Análise de Margens
                   </Link>
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full sm:w-auto"
+                  onClick={() => setImportExportOpen(true)}
+                  title="Importar ou exportar produtos em CSV"
+                >
+                  <FileSpreadsheet className="mr-2 h-4 w-4 shrink-0" />
+                  CSV
                 </Button>
                 <Button variant="outline" onClick={() => selectedProduct && handleOpenFormDialog(selectedProduct)} disabled={!selectedProduct} className="w-full sm:w-auto"><Pencil className="mr-2 h-4 w-4" />Editar</Button>
                 <Button 
@@ -306,6 +318,13 @@ export function ProductsClient() {
           </div>
         </DialogContent>
       </Dialog>
+
+      <ProductImportExportDialog
+        open={importExportOpen}
+        onOpenChange={setImportExportOpen}
+        products={products ?? []}
+        tenantId={activeTenantId}
+      />
 
        <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
         <AlertDialogContent>
