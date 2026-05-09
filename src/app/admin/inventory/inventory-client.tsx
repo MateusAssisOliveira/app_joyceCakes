@@ -45,7 +45,7 @@ import { Label } from "@/components/ui/label";
 import type { InventoryMovement, Supply } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 import { SupplyFormDialog } from "@/components/admin/supplies/supply-form-dialog";
 import { SupplyQuickAddDialog } from "@/components/admin/supplies/supply-quick-add-dialog";
@@ -259,8 +259,8 @@ export function InventoryClient() {
         } else {
             await addSupply(SupabaseStore, dataToSave, { ...financialData, userId: user.uid, tenantId: activeTenantId || undefined }, activeTenantId || undefined);
             toast({
-              title: "Insumo cadastrado",
-              description: "Saldo inicia em zero. Use Registrar entrada para compras e quantidade física.",
+              title: "Ficha salva",
+              description: "Saldo em zero. Use Registrar entrada para compras e estoque físico.",
             });
         }
         handleCloseFormDialog();
@@ -319,8 +319,11 @@ export function InventoryClient() {
         <CardHeader>
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <CardTitle>Gestão de Itens de Estoque</CardTitle>
-                    <CardDescription>Gerencie ingredientes, embalagens e todos os seus insumos em um só lugar.</CardDescription>
+                    <CardTitle>Insumos e movimentação</CardTitle>
+                    <CardDescription>
+                      <strong>Nova ficha</strong> só cadastra o item (sem saldo). Compras e quantidade em{" "}
+                      <strong>Registrar entrada</strong>.
+                    </CardDescription>
                 </div>
                  <SupplyActions
                     onAdd={() => handleOpenFormDialog(null)}
@@ -376,11 +379,10 @@ export function InventoryClient() {
               <TabsTrigger value="movements">Movimentações</TabsTrigger>
             </TabsList>
             <TabsContent value="items" className="flex flex-col flex-1 min-h-0 mt-0 data-[state=inactive]:hidden">
-              <Alert className="mb-4 shrink-0">
-                <AlertTitle>Cadastro e estoque</AlertTitle>
-                <AlertDescription>
-                  <strong>Cadastrar insumo</strong> = só ficha (nome, unidade, custo de referência, mínimo). Saldo começa em zero.
-                  <strong className="mx-1">Registrar entrada</strong> (Ações) = quantidade física, custo da compra, histórico e opcional despesa no caixa.
+              <Alert className="mb-4 shrink-0 py-3">
+                <AlertDescription className="text-sm">
+                  <strong>Nova ficha</strong> = nome, unidade, custo e mínimo (saldo 0).{" "}
+                  <strong>Registrar entrada</strong> = pacotes, quantidade, custo da compra e caixa.
                 </AlertDescription>
               </Alert>
               {isLoading ? (

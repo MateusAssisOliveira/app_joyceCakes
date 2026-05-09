@@ -43,7 +43,7 @@ export function SupplyActions({
     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full sm:w-auto">
       <Button className="w-full sm:w-auto tap-target" onClick={onAdd}>
         <PlusCircle className="mr-2 h-4 w-4" />
-        Cadastrar insumo
+        Nova ficha
       </Button>
 
       <DropdownMenu>

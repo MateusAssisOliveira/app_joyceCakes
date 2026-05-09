@@ -356,7 +356,7 @@ export function SupplyQuickAddDialog({
             <span className="font-semibold">
               {supply.stock} {activeUnit}
             </span>
-            . O cadastro do item (ficha) fica em <strong>Cadastrar insumo</strong>.
+            . A ficha do item fica em <strong>Nova ficha</strong>.
           </DialogDescription>
         </DialogHeader>
 
