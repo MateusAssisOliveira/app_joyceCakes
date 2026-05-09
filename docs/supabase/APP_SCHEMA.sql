@@ -53,6 +53,7 @@ create table if not exists public.supplies (
   id uuid primary key default gen_random_uuid(),
   "tenantId" uuid not null references public.tenants(id) on delete cascade,
   name text not null,
+  brand text not null default '',
   sku text not null default '',
   category text not null default 'Geral',
   type text not null default 'ingredient',

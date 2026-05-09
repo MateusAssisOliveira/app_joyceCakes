@@ -122,6 +122,8 @@ export type Supply = {
   id: string;
   tenantId?: string;
   name: string;
+  /** Marca comercial (cadastro). */
+  brand?: string;
   sku: string;
   category: string;
   type: "ingredient" | "packaging";

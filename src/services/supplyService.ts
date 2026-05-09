@@ -67,10 +67,11 @@ export async function addSupply(
 
   const dataWithTimestamp = stripUndefinedFields({
     ...supplyData,
+    brand: supplyData.brand ?? "",
     tenantId: currentTenantId,
     isActive: true,
     createdAt: new Date().toISOString(),
-    lastPurchaseDate: toDate(supplyData.lastPurchaseDate)?.toISOString() ?? new Date().toISOString(),
+    lastPurchaseDate: toDate(supplyData.lastPurchaseDate)?.toISOString() ?? undefined,
     expirationDate: toDate(supplyData.expirationDate)?.toISOString() ?? undefined,
     packageCost: supplyData.packageCost ?? undefined,
     packageQuantity: supplyData.packageQuantity ?? undefined,
@@ -98,7 +99,9 @@ export async function addSupply(
     if (movementError) throw movementError;
   }
 
-  await addPriceHistoryEntry(currentTenantId, data.id, dataWithTimestamp.costPerUnit, dataWithTimestamp.supplier);
+  if (Number(dataWithTimestamp.costPerUnit) > 0) {
+    await addPriceHistoryEntry(currentTenantId, data.id, dataWithTimestamp.costPerUnit, dataWithTimestamp.supplier);
+  }
 
   if (financialData?.shouldRegister && financialData.amount > 0) {
     const activeCashRegister = await findOpenCashRegister(currentTenantId);
@@ -235,6 +238,43 @@ export async function updateSupply(
       currentTenantId
     );
   }
+}
+
+/** Corrige saldo via ledger (ADJUSTMENT) até o valor alvo na unidade do cadastro. */
+export async function applySupplyLedgerAbsoluteAdjust(
+  _SupabaseStore: unknown,
+  supplyId: string,
+  newStockAbsolute: number,
+  note: string,
+  tenantId?: string
+): Promise<void> {
+  const client = getSupabaseBrowserClient();
+  const currentTenantId = resolveTenantIdOrThrow(tenantId);
+
+  const { data: row, error: loadError } = await client
+    .from("supplies")
+    .select("stock")
+    .eq("tenantId", currentTenantId)
+    .eq("id", supplyId)
+    .maybeSingle();
+
+  if (loadError) throw loadError;
+  if (!row) throw new Error("Insumo não encontrado.");
+
+  const current = Number(row.stock);
+  const next = Math.max(0, Number(newStockAbsolute));
+  const delta = next - current;
+  if (delta === 0) return;
+
+  const { error: rpcError } = await client.rpc("apply_supply_inventory_movement", {
+    p_tenant_id: currentTenantId,
+    p_supply_id: supplyId,
+    p_quantity_delta: delta,
+    p_movement_type: "ADJUSTMENT",
+    p_note: note.trim() || "Ajuste de estoque",
+    p_unit_cost: null,
+  });
+  if (rpcError) throw rpcError;
 }
 
 export async function inactivateSupply(_SupabaseStore: unknown, id: string, tenantId?: string): Promise<void> {

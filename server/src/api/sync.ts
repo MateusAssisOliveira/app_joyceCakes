@@ -70,6 +70,7 @@ const tableColumns: Record<string, Set<string>> = {
   supplies: new Set([
     'tenantid',
     'name',
+    'brand',
     'sku',
     'category',
     'type',
@@ -113,6 +114,7 @@ const diagnosticsFields: Record<string, string[]> = {
   orders: ['ordernumber', 'customername', 'paymentmethod', 'total', 'status'],
   supplies: [
     'name',
+    'brand',
     'type',
     'category',
     'stock',

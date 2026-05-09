@@ -175,6 +175,7 @@ export async function initializeDatabase() {
         ALTER TABLE supplies ADD COLUMN IF NOT EXISTS expirationDate TIMESTAMP NULL;
         ALTER TABLE supplies ADD COLUMN IF NOT EXISTS minStock DECIMAL(12, 3) DEFAULT 0;
         ALTER TABLE supplies ADD COLUMN IF NOT EXISTS isActive BOOLEAN DEFAULT true;
+        ALTER TABLE supplies ADD COLUMN IF NOT EXISTS brand VARCHAR(160) DEFAULT '';
         ALTER TABLE products ADD COLUMN IF NOT EXISTS tenantId VARCHAR(255);
         ALTER TABLE products ADD COLUMN IF NOT EXISTS costPrice DECIMAL(10, 2) DEFAULT 0;
         ALTER TABLE products ADD COLUMN IF NOT EXISTS isActive BOOLEAN DEFAULT true;

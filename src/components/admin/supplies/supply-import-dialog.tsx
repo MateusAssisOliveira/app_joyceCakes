@@ -84,6 +84,7 @@ export function SupplyImportDialog({ isOpen, onClose, onSuccess, defaultType }: 
 
                 suppliesToImport.push({
                     name: row.nome,
+                    brand: row.marca || "",
                     category: row.categoria || "",
                     type: defaultType,
                     stock: parseFloat(row.estoque_atual) || 0,

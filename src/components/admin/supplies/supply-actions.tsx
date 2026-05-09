@@ -5,40 +5,17 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  PlusCircle,
-  Upload,
-  Trash2,
-  ArchiveRestore,
-  Pencil,
-  ChevronDown,
-  Download,
-} from "lucide-react";
+import { PlusCircle, Upload, ChevronDown, Download } from "lucide-react";
 
 type SupplyActionsProps = {
   onAdd: () => void;
   onImport: () => void;
   onExport: () => void;
-  onEdit: () => void;
-  onArchive: () => void;
-  isEditDisabled: boolean;
-  isArchiveActionDisabled: boolean;
-  archiveButtonLabel: "Arquivar" | "Reativar";
 };
 
-export function SupplyActions({
-  onAdd,
-  onImport,
-  onExport,
-  onEdit,
-  onArchive,
-  isEditDisabled,
-  isArchiveActionDisabled,
-  archiveButtonLabel,
-}: SupplyActionsProps) {
+export function SupplyActions({ onAdd, onImport, onExport }: SupplyActionsProps) {
   return (
     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full sm:w-auto">
       <Button className="w-full sm:w-auto tap-target" onClick={onAdd}>
@@ -49,51 +26,18 @@ export function SupplyActions({
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" className="w-full sm:w-auto tap-target">
-            Acoes
-            <ChevronDown className="ml-2 h-4 w-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem onClick={onEdit} disabled={isEditDisabled}>
-            <Pencil className="mr-2 h-4 w-4" />
-            Registrar entrada
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={onArchive}
-            disabled={isArchiveActionDisabled}
-            className="text-destructive focus:text-destructive"
-          >
-            {archiveButtonLabel === "Arquivar" ? (
-              <>
-                <Trash2 className="mr-2 h-4 w-4" />
-                <span>Arquivar</span>
-              </>
-            ) : (
-              <>
-                <ArchiveRestore className="mr-2 h-4 w-4" />
-                <span>Reativar</span>
-              </>
-            )}
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="outline" className="w-full sm:w-auto tap-target">
-            Consultas
+            Mais
             <ChevronDown className="ml-2 h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem onClick={onImport}>
             <Upload className="mr-2 h-4 w-4" />
-            Importar via CSV
+            Importar CSV
           </DropdownMenuItem>
           <DropdownMenuItem onClick={onExport}>
             <Download className="mr-2 h-4 w-4" />
-            Exportar para Excel (CSV)
+            Exportar CSV
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
