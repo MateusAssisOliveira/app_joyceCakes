@@ -6,6 +6,7 @@ import {
   serverTimestamp,
   writeBatch,
 } from '@/supabase/compat/SupabaseStore';
+import { normalizeStockUnitType } from '@/lib/stock-units';
 import { getSupplyPriceHistoryPath, getTenantCollectionPath } from '@/lib/tenant';
 import { updateUserProfile } from './userService';
 
@@ -360,6 +361,13 @@ export async function importSyncServerDataToTenant(
       if (!item?.id) continue;
       const targetRef = doc(SupabaseStore, getTenantCollectionPath(tenantId, 'products'), String(item.id));
       const createdAt = pickFirst(item, ['createdAt', 'createdat', 'updatedAt', 'updatedat']);
+      const rawDisplayUnit = pickFirst(item, ['display_unit', 'displayunit']);
+      const display_unit =
+        rawDisplayUnit === undefined || rawDisplayUnit === null
+          ? undefined
+          : String(rawDisplayUnit).trim() === ''
+            ? null
+            : String(rawDisplayUnit).trim();
       const productData = removeUndefinedFields({
         name: toStringValue(pickFirst(item, ['name']), 'Sem nome'),
         description: toStringValue(pickFirst(item, ['description']), ''),
@@ -368,6 +376,8 @@ export async function importSyncServerDataToTenant(
         category: toStringValue(pickFirst(item, ['category']), 'Geral'),
         imageUrlId: toStringValue(pickFirst(item, ['imageUrlId', 'imageurlid', 'image_url_id']), ''),
         stock_quantity: toNumber(pickFirst(item, ['stock_quantity', 'stockquantity', 'stock']), 0),
+        unit_type: normalizeStockUnitType(pickFirst(item, ['unit_type', 'unittype'])),
+        ...(display_unit !== undefined ? { display_unit } : {}),
         createdAt: createdAt ?? serverTimestamp(),
         isActive: toBoolean(pickFirst(item, ['isActive', 'isactive']), true),
         tenantId,

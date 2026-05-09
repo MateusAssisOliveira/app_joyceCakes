@@ -52,6 +52,8 @@ const tableColumns: Record<string, Set<string>> = {
     'category',
     'imageurlid',
     'stock_quantity',
+    'unit_type',
+    'display_unit',
     'isactive',
   ]),
   orders: new Set([
@@ -107,7 +109,7 @@ const tableColumns: Record<string, Set<string>> = {
   ]),
 };
 const diagnosticsFields: Record<string, string[]> = {
-  products: ['name', 'price', 'costprice', 'category', 'stock_quantity', 'isactive'],
+  products: ['name', 'price', 'costprice', 'category', 'stock_quantity', 'unit_type', 'display_unit', 'isactive'],
   orders: ['ordernumber', 'customername', 'paymentmethod', 'total', 'status'],
   supplies: [
     'name',

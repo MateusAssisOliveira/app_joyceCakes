@@ -158,6 +158,14 @@ function normalizeRecordForSync(table: string, id: string, data: DocumentData, t
       category: data.category || "Sem categoria",
       imageUrlId: data.imageUrlId || null,
       stock_quantity: Number(data.stock_quantity ?? 0),
+      unit_type: (() => {
+        const v = String(data.unit_type ?? "un").trim().toLowerCase();
+        return v === "g" || v === "ml" || v === "un" ? v : "un";
+      })(),
+      display_unit:
+        data.display_unit === undefined || data.display_unit === null
+          ? null
+          : String(data.display_unit),
       isActive: data.isActive !== false,
       updatedAt,
     };

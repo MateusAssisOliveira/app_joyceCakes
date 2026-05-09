@@ -1,4 +1,5 @@
 import type { Order, OrderItem, OrderStatus, Product } from "@/types";
+import { stockQuantityLabel } from "@/lib/stock-units";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { serializeObject } from "./utils";
 import { getProducts } from "./productService";
@@ -95,7 +96,7 @@ async function processOrderItemsWithPolicy(
           normalizedItems: [],
           stockAdjustments: new Map(),
           available: false,
-          message: `Estoque insuficiente para o produto "${product.name}". Necessario: ${newReserved}, Disponivel: ${currentStock}`,
+          message: `Estoque insuficiente para o produto "${product.name}". Necessario: ${newReserved}, disponivel: ${stockQuantityLabel(product)}`,
         };
       }
       stockAdjustments.set(product.id, newReserved);
@@ -299,7 +300,7 @@ export const updateOrder = async (
     const nextStock = currentStock - deltaQty;
     if (nextStock < 0) {
       throw new Error(
-        `Estoque insuficiente para o produto "${product.name}" ao editar pedido. Necessario adicional: ${deltaQty}, Disponivel: ${currentStock}`
+        `Estoque insuficiente para o produto "${product.name}" ao editar pedido. Necessario adicional: ${deltaQty}, disponivel: ${stockQuantityLabel(product)}`
       );
     }
 

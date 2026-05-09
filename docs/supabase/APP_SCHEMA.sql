@@ -37,13 +37,16 @@ create table if not exists public.products (
   category text not null default '',
   "imageUrlId" text not null default '',
   stock_quantity integer not null default 0,
+  unit_type text not null default 'un',
+  display_unit text null,
   "isActive" boolean not null default true,
   components jsonb,
   "preparationTime" integer,
   "laborCost" numeric(12,2) not null default 0,
   "fixedCost" numeric(12,2) not null default 0,
   "createdAt" timestamptz not null default now(),
-  "updatedAt" timestamptz not null default now()
+  "updatedAt" timestamptz not null default now(),
+  constraint products_unit_type_check check (unit_type in ('g', 'ml', 'un'))
 );
 
 create table if not exists public.supplies (

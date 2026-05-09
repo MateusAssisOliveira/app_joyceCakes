@@ -11,6 +11,7 @@
  */
 
 import { z } from 'zod';
+import { normalizeStockUnitType, validateDisplayUnitForType } from '@/lib/stock-units';
 
 // ==================== Common Schemas ====================
 
@@ -46,21 +47,41 @@ export const UpdateOrderSchema = z.object({
 
 // ==================== Product Schemas ====================
 
-export const CreateProductSchema = z.object({
-  name: NonEmptyString,
-  description: z.string().optional(),
-  price: PositiveNumber,
-  costPrice: NonNegativeNumber,
-  stock_quantity: NonNegativeNumber.default(0),
-  minStockLevel: NonNegativeNumber.default(0),
-});
+const StockUnitTypeSchema = z.enum(['g', 'ml', 'un']);
+const DisplayUnitSchema = z.union([z.string().max(32), z.literal(''), z.null()]).optional();
+
+export const CreateProductSchema = z
+  .object({
+    name: NonEmptyString,
+    description: z.string().optional(),
+    price: PositiveNumber,
+    costPrice: NonNegativeNumber,
+    stock_quantity: z.number().int().min(0).default(0),
+    unit_type: StockUnitTypeSchema.default('un'),
+    display_unit: DisplayUnitSchema,
+    minStockLevel: NonNegativeNumber.default(0),
+  })
+  .superRefine((data, ctx) => {
+    const ut = normalizeStockUnitType(data.unit_type);
+    const du =
+      data.display_unit === undefined || data.display_unit === '' ? null : data.display_unit;
+    if (!validateDisplayUnitForType(du, ut)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'display_unit incompatível com unit_type (ex.: peso aceita g ou kg).',
+        path: ['display_unit'],
+      });
+    }
+  });
 
 export const UpdateProductSchema = z.object({
   name: NonEmptyString.optional(),
   description: z.string().optional(),
   price: PositiveNumber.optional(),
   costPrice: NonNegativeNumber.optional(),
-  stock_quantity: NonNegativeNumber.optional(),
+  stock_quantity: z.number().int().min(0).optional(),
+  unit_type: StockUnitTypeSchema.optional(),
+  display_unit: DisplayUnitSchema,
   minStockLevel: NonNegativeNumber.optional(),
 });
 

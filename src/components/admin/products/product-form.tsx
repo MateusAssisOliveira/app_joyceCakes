@@ -30,6 +30,24 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useActiveTenant } from "@/hooks/use-active-tenant";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  normalizeStockUnitType,
+  splitProductDisplayFields,
+  mergeProductDisplayFields,
+  parseDisplayQuantityToBaseInteger,
+  baseQuantityToDisplayNumeric,
+  formatStockQuantityInputFromNumber,
+  stockQuantityLabel,
+  validateDisplayUnitForType,
+  type StockUnitType,
+} from "@/lib/stock-units";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -61,6 +79,11 @@ export function ProductForm({ product, supplies, sheets, onSaveSuccess }: Produc
   const [laborCost, setLaborCost] = useState(0);
   const [fixedCost, setFixedCost] = useState(0);
 
+  const [stockUnitType, setStockUnitType] = useState<StockUnitType>("un");
+  const [stockScale, setStockScale] = useState<"" | "kg" | "L">("");
+  const [stockUnitLabel, setStockUnitLabel] = useState("");
+  const [stockQtyInput, setStockQtyInput] = useState("0");
+
   const [suppliesPage, setSuppliesPage] = useState(1);
   const [sheetsPage, setSheetsPage] = useState(1);
 
@@ -87,6 +110,15 @@ export function ProductForm({ product, supplies, sheets, onSaveSuccess }: Produc
       }
       setManualPriceInput(String(price || 0));
 
+      const ut = normalizeStockUnitType(product.unit_type);
+      setStockUnitType(ut);
+      const { scale, unitLabel } = splitProductDisplayFields(ut, product.display_unit ?? null);
+      setStockScale(scale);
+      setStockUnitLabel(unitLabel);
+      const disp = typeof product.display_unit === "string" ? product.display_unit : null;
+      const shown = baseQuantityToDisplayNumeric(product.stock_quantity ?? 0, ut, disp);
+      setStockQtyInput(formatStockQuantityInputFromNumber(shown));
+
     } else {
       setProductName("");
       setDescription("");
@@ -98,8 +130,26 @@ export function ProductForm({ product, supplies, sheets, onSaveSuccess }: Produc
       setMarkup(150);
       setPricingMode("markup");
       setManualPriceInput("0");
+      setStockUnitType("un");
+      setStockScale("");
+      setStockUnitLabel("");
+      setStockQtyInput("0");
     }
   }, [product]);
+
+  const stockStoredPreview = useMemo(() => {
+    const displayStored = mergeProductDisplayFields(stockUnitType, stockScale, stockUnitLabel);
+    const sq = parseDisplayQuantityToBaseInteger(
+      parseNumericInput(stockQtyInput),
+      displayStored,
+      stockUnitType
+    );
+    return stockQuantityLabel({
+      stock_quantity: sq,
+      unit_type: stockUnitType,
+      display_unit: displayStored,
+    });
+  }, [stockUnitType, stockScale, stockUnitLabel, stockQtyInput]);
 
   // --- LOGICA DA LISTA DE COMPONENTES ---
   const filteredSupplies = useMemo(() => {
@@ -241,6 +291,29 @@ export function ProductForm({ product, supplies, sheets, onSaveSuccess }: Produc
         return;
     }
 
+    const displayStored = mergeProductDisplayFields(stockUnitType, stockScale, stockUnitLabel);
+    if (!validateDisplayUnitForType(displayStored, stockUnitType)) {
+      toast({
+        variant: "destructive",
+        title: "Unidade de exibição inválida",
+        description: "Confira o rótulo ou a escala (g/kg ou ml/L).",
+      });
+      return;
+    }
+    const stock_quantity = parseDisplayQuantityToBaseInteger(
+      parseNumericInput(stockQtyInput),
+      displayStored,
+      stockUnitType
+    );
+    if (!Number.isInteger(stock_quantity) || stock_quantity < 0) {
+      toast({
+        variant: "destructive",
+        title: "Quantidade de estoque inválida",
+        description: "Informe um número válido e não negativo.",
+      });
+      return;
+    }
+
     setIsProcessing(true);
     try {
       const productData = {
@@ -254,7 +327,9 @@ export function ProductForm({ product, supplies, sheets, onSaveSuccess }: Produc
         laborCost,
         fixedCost,
         imageUrlId: product?.imageUrlId || "product-desserts-1",
-        stock_quantity: product?.stock_quantity || 0,
+        stock_quantity,
+        unit_type: stockUnitType,
+        display_unit: displayStored,
       };
 
       if (product && product.id) {
@@ -384,6 +459,84 @@ export function ProductForm({ product, supplies, sheets, onSaveSuccess }: Produc
                         <Input id="product-category" placeholder="Ex: Bolos, Sobremesas" value={category} onChange={(e) => setCategory(e.target.value)} />
                     </div>
                 </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="grid gap-2">
+                        <Label>Tipo de estoque (base)</Label>
+                        <Select
+                          value={stockUnitType}
+                          onValueChange={(v) => {
+                            setStockUnitType(v as StockUnitType);
+                            setStockScale("");
+                            setStockUnitLabel("");
+                          }}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Unidade" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="un">Unitário (un)</SelectItem>
+                            <SelectItem value="g">Peso (gramas)</SelectItem>
+                            <SelectItem value="ml">Líquido (ml)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                    </div>
+                    <div className="grid gap-2">
+                        <Label>Exibição / rótulo</Label>
+                        {stockUnitType === "un" ? (
+                          <Input
+                            placeholder="Opcional (ex.: caixa)"
+                            value={stockUnitLabel}
+                            onChange={(e) => setStockUnitLabel(e.target.value)}
+                          />
+                        ) : stockUnitType === "g" ? (
+                          <Select
+                            value={stockScale === "" ? "__base__" : stockScale}
+                            onValueChange={(v) => setStockScale(v === "__base__" ? "" : "kg")}
+                          >
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="__base__">Gramas (g)</SelectItem>
+                              <SelectItem value="kg">Quilogramas (kg)</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        ) : (
+                          <Select
+                            value={stockScale === "" ? "__base__" : stockScale}
+                            onValueChange={(v) => setStockScale(v === "__base__" ? "" : "L")}
+                          >
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="__base__">Mililitros (ml)</SelectItem>
+                              <SelectItem value="L">Litros (L)</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        )}
+                    </div>
+                    <div className="grid gap-2">
+                        <Label htmlFor="stock-qty">Quantidade em estoque</Label>
+                        <Input
+                          id="stock-qty"
+                          inputMode="decimal"
+                          value={stockQtyInput}
+                          onChange={(e) => setStockQtyInput(e.target.value)}
+                          placeholder={
+                            stockUnitType === "un"
+                              ? "Ex.: 50"
+                              : stockScale === "kg" || stockScale === "L"
+                                ? "Ex.: 5 ou 2"
+                                : "Ex.: 5000 ou 2000"
+                          }
+                        />
+                    </div>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Armazenado na menor unidade inteira (sem decimais no banco):{" "}
+                  <span className="font-medium text-foreground">{stockStoredPreview}</span>
+                </p>
                 <div className="grid gap-2">
                     <Label htmlFor="product-description">Descrição</Label>
                     <Textarea id="product-description" placeholder="Descreva o produto final para seus clientes." value={description} onChange={(e) => setDescription(e.target.value)} />

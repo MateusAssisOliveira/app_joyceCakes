@@ -1,5 +1,6 @@
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import type { ProductCsvImportRow } from "@/lib/product-csv";
+import { normalizeStockUnitType } from "@/lib/stock-units";
 import { getTenantCollectionPath, resolveTenantIdOrThrow } from "@/lib/tenant";
 import type { Product } from "@/types";
 import { serializeObject, setDocumentActive } from "./utils";
@@ -77,6 +78,8 @@ type ProductUpsertPayload = {
   category: string;
   imageUrlId: string;
   stock_quantity: number;
+  unit_type: NonNullable<Product["unit_type"]>;
+  display_unit: Product["display_unit"];
   isActive: boolean;
   preparationTime: number | null;
   laborCost: number;
@@ -118,6 +121,8 @@ export async function bulkImportProducts(
     category: row.category,
     imageUrlId: row.imageUrlId,
     stock_quantity: row.stock_quantity,
+    unit_type: normalizeStockUnitType(row.unit_type),
+    display_unit: row.display_unit ?? null,
     isActive: row.isActive,
     preparationTime: row.preparationTime,
     laborCost: row.laborCost,

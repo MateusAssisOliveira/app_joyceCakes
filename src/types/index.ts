@@ -23,6 +23,9 @@ export type TenantMember = {
   updatedAt?: DateLike;
 };
 
+/** Estoque do produto na menor unidade inteira: gramas, mililitros ou unidades. */
+export type ProductStockUnitType = "g" | "ml" | "un";
+
 export type Product = {
   id: string;
   tenantId?: string;
@@ -33,6 +36,10 @@ export type Product = {
   category: string;
   imageUrlId: string;
   stock_quantity: number;
+  /** Base do estoque; omitido em registros antigos → tratar como `un`. */
+  unit_type?: ProductStockUnitType;
+  /** Preferência de exibição (kg, L, caixa…); opcional. */
+  display_unit?: string | null;
   createdAt: DateLike;
   isActive: boolean;
   components?: TechnicalSheetComponent[];

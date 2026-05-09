@@ -60,6 +60,8 @@ export async function initializeDatabase() {
           category VARCHAR(255),
           imageUrlId VARCHAR(255),
           stock_quantity INT NOT NULL DEFAULT 0,
+          unit_type VARCHAR(10) NOT NULL DEFAULT 'un',
+          display_unit VARCHAR(32) NULL,
           isActive BOOLEAN NOT NULL DEFAULT true,
           createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
           updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -176,6 +178,10 @@ export async function initializeDatabase() {
         ALTER TABLE products ADD COLUMN IF NOT EXISTS tenantId VARCHAR(255);
         ALTER TABLE products ADD COLUMN IF NOT EXISTS costPrice DECIMAL(10, 2) DEFAULT 0;
         ALTER TABLE products ADD COLUMN IF NOT EXISTS isActive BOOLEAN DEFAULT true;
+        ALTER TABLE products ADD COLUMN IF NOT EXISTS unit_type VARCHAR(10) NOT NULL DEFAULT 'un';
+        ALTER TABLE products ADD COLUMN IF NOT EXISTS display_unit VARCHAR(32) NULL;
+        ALTER TABLE products DROP CONSTRAINT IF EXISTS products_unit_type_check;
+        ALTER TABLE products ADD CONSTRAINT products_unit_type_check CHECK (unit_type IN ('g', 'ml', 'un'));
         ALTER TABLE orders ADD COLUMN IF NOT EXISTS tenantId VARCHAR(255);
         ALTER TABLE orders ADD COLUMN IF NOT EXISTS orderNumber VARCHAR(255);
         ALTER TABLE orders ADD COLUMN IF NOT EXISTS userId VARCHAR(255);

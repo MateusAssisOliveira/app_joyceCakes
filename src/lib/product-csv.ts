@@ -1,5 +1,10 @@
 import Papa from "papaparse";
-import type { Product } from "@/types";
+import type { Product, ProductStockUnitType } from "@/types";
+import {
+  normalizeStockUnitType,
+  normalizeDisplayUnitForStorage,
+  validateDisplayUnitForType,
+} from "@/lib/stock-units";
 
 export const PRODUCT_CSV_HEADERS = [
   "id",
@@ -15,9 +20,14 @@ export const PRODUCT_CSV_HEADERS = [
   "laborCost",
   "fixedCost",
   "components_json",
+  "unit_type",
+  "display_unit",
 ] as const;
 
 export type ProductCsvHeader = (typeof PRODUCT_CSV_HEADERS)[number];
+
+/** Cabeçalhos que podem estar ausentes em CSVs antigos — valores padrão na importação. */
+const PRODUCT_CSV_OPTIONAL_HEADERS = new Set<ProductCsvHeader>(["unit_type", "display_unit"]);
 
 /** Documentação das colunas correspondentes à tabela `public.products` no Supabase */
 export const PRODUCT_CSV_COLUMN_DOCS: Array<{
@@ -44,6 +54,8 @@ export const PRODUCT_CSV_COLUMN_DOCS: Array<{
     dbColumn: "components (jsonb)",
     notes: 'JSON de componentes da ficha técnica. Ex.: [{"componentId":"uuid","componentName":"Farinha","componentType":"supply","quantity":0.5,"unit":"kg"}]. Vazio = sem componentes.',
   },
+  { key: "unit_type", required: false, dbColumn: "unit_type", notes: "g | ml | un. Padrão un (compatível com dados antigos)." },
+  { key: "display_unit", required: false, dbColumn: "display_unit", notes: "Opcional: kg, L ou rótulo (ex.: caixa). Exibição na UI." },
 ];
 
 export type ProductCsvImportRow = {
@@ -61,6 +73,8 @@ export type ProductCsvImportRow = {
   laborCost: number;
   fixedCost: number;
   components: unknown[] | null;
+  unit_type: ProductStockUnitType;
+  display_unit: Product["display_unit"];
 };
 
 function parseFlexibleNumber(raw: string, field: string): number {
@@ -109,6 +123,8 @@ export function serializeProductsToCsv(products: Product[]): string {
     laborCost: p.laborCost ?? 0,
     fixedCost: p.fixedCost ?? 0,
     components_json: JSON.stringify(p.components ?? []),
+    unit_type: p.unit_type ?? "un",
+    display_unit: p.display_unit ?? "",
   }));
 
   return Papa.unparse(rows, {
@@ -141,7 +157,9 @@ export function parseProductsCsv(text: string): ProductCsvParseResult {
   }
 
   const fields = parsed.meta.fields?.map(normalizeHeaderKey) ?? [];
-  const missing = PRODUCT_CSV_HEADERS.filter((h) => !fields.includes(h));
+  const missing = PRODUCT_CSV_HEADERS.filter(
+    (h) => !PRODUCT_CSV_OPTIONAL_HEADERS.has(h) && !fields.includes(h)
+  );
   if (missing.length) {
     return {
       ok: false,
@@ -173,6 +191,14 @@ export function parseProductsCsv(text: string): ProductCsvParseResult {
       const imageUrlId = (record.imageUrlId ?? "").trim();
       const stockRaw = String(record.stock_quantity ?? "").trim();
       const stock_quantity = stockRaw === "" ? 0 : Math.round(parseFlexibleNumber(stockRaw, "stock_quantity"));
+
+      const unit_type = normalizeStockUnitType(String(record.unit_type ?? "").trim() || "un");
+      const dispRaw = String(record.display_unit ?? "").trim();
+      const display_unit_raw = dispRaw === "" ? null : dispRaw;
+      if (!validateDisplayUnitForType(display_unit_raw, unit_type)) {
+        throw new Error(`display_unit inválido para unit_type=${unit_type}`);
+      }
+      const display_unit = normalizeDisplayUnitForStorage(display_unit_raw, unit_type);
 
       const isActive = parseBool(record.isActive, true);
 
@@ -212,6 +238,8 @@ export function parseProductsCsv(text: string): ProductCsvParseResult {
         laborCost,
         fixedCost,
         components,
+        unit_type,
+        display_unit,
       });
     } catch (e) {
       const message = e instanceof Error ? e.message : String(e);
