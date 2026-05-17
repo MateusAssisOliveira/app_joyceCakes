@@ -241,6 +241,11 @@ export function InventoryClient() {
     financialData: { shouldRegister: boolean; paymentMethod: string; description: string; amount: number }
   ) => {
     if (!SupabaseStore || !user) return;
+    if (!activeTenantId) {
+      const message = "Tenant ativo nao identificado. Recarregue a pagina ou entre novamente.";
+      toast({ variant: "destructive", title: "Erro ao salvar", description: message });
+      throw new Error(message);
+    }
 
     const defaultType = activeTab === "all" ? "ingredient" : activeTab;
     const dataToSave = { ...formData, type: formData.type || defaultType };
@@ -249,8 +254,8 @@ export function InventoryClient() {
       await addSupply(
         SupabaseStore,
         dataToSave,
-        { ...financialData, userId: user.uid, tenantId: activeTenantId || undefined },
-        activeTenantId || undefined
+        { ...financialData, userId: user.uid, tenantId: activeTenantId },
+        activeTenantId
       );
       toast({
         title: "Ficha criada",

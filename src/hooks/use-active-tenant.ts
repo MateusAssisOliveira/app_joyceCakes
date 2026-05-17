@@ -9,14 +9,27 @@ export function useActiveTenant() {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isProfileLoading, setIsProfileLoading] = useState(false);
   const [hasTriedBackfill, setHasTriedBackfill] = useState(false);
+  const [storedTenantId, setStoredTenantId] = useState<string | null>(null);
 
   const userId = user?.id ?? null;
 
   const activeTenantId = useMemo(() => {
     const fromProfile = userProfile?.activeTenantId;
     if (fromProfile && fromProfile.trim().length > 0) return fromProfile;
-    return null;
-  }, [userProfile]);
+    return storedTenantId;
+  }, [storedTenantId, userProfile]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (!userId) {
+      setStoredTenantId(null);
+      return;
+    }
+
+    const userScoped = window.localStorage.getItem(`activeTenantId:${userId}`);
+    const legacy = window.localStorage.getItem('activeTenantId');
+    setStoredTenantId(userScoped || legacy || null);
+  }, [userId]);
 
   useEffect(() => {
     let ignore = false;
@@ -107,8 +120,11 @@ export function useActiveTenant() {
     if (typeof window === 'undefined') return;
     if (activeTenantId) {
       window.localStorage.setItem('activeTenantId', activeTenantId);
+      if (userId) {
+        window.localStorage.setItem(`activeTenantId:${userId}`, activeTenantId);
+      }
     }
-  }, [activeTenantId]);
+  }, [activeTenantId, userId]);
 
   return {
     activeTenantId,
